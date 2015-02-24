@@ -1,4 +1,4 @@
-package ch.hsr.ogv.ctrl;
+package ch.hsr.ogv.controller;
 
 import java.io.File;
 

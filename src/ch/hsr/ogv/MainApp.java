@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.hsr.ogv.ctrl.RootLayoutController;
+import ch.hsr.ogv.controller.RootLayoutController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -56,7 +56,7 @@ public class MainApp extends Application {
         this.primaryStage.getIcons().add(new Image("file:resources/images/dummy_icon.png")); // set the application icon
         
         initRootLayout();
-        
+
         Scene scene = new Scene(this.rootLayout);
         this.primaryStage.setScene(scene);
         this.primaryStage.show();
