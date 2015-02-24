@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.input.*?>
 <?import java.net.*?>
 <?import javafx.scene.control.*?>
@@ -7,49 +8,67 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" stylesheets="@OGV.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.ogv.ctrl.RootLayoutController">
-   <top>
-      <MenuBar stylesheets="@OGV.css" BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-                  <MenuItem mnemonicParsing="false" onAction="#handleNew" text="New">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#handleOpen" text="Open...">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#handleSave" text="Save">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-              <MenuItem mnemonicParsing="false" onAction="#handleExit" text="Exit">
-                     <accelerator>
-                        <KeyCodeCombination alt="DOWN" code="F4" control="UP" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator></MenuItem>
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="About" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-   </top>
+<BorderPane minHeight="600.0" minWidth="800.0" prefHeight="600.0"
+	prefWidth="800.0" stylesheets="@OGV.css" xmlns="http://javafx.com/javafx/8"
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.ogv.controller.RootLayoutController">
+	<top>
+		<MenuBar stylesheets="@OGV.css" BorderPane.alignment="CENTER">
+			<menus>
+				<Menu mnemonicParsing="false" text="File">
+					<items>
+						<MenuItem mnemonicParsing="false" onAction="#handleNew"
+							text="New">
+							<accelerator>
+								<KeyCodeCombination alt="UP" code="N"
+									control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+							</accelerator>
+						</MenuItem>
+						<MenuItem mnemonicParsing="false" onAction="#handleOpen"
+							text="Open...">
+							<accelerator>
+								<KeyCodeCombination alt="UP" code="O"
+									control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+							</accelerator>
+						</MenuItem>
+						<MenuItem mnemonicParsing="false" onAction="#handleSave"
+							text="Save">
+							<accelerator>
+								<KeyCodeCombination alt="UP" code="S"
+									control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+							</accelerator>
+						</MenuItem>
+						<MenuItem mnemonicParsing="false" onAction="#handleSaveAs"
+							text="Save As...">
+							<accelerator>
+								<KeyCodeCombination alt="UP" code="S"
+									control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+							</accelerator>
+						</MenuItem>
+						<MenuItem mnemonicParsing="false" onAction="#handleExit"
+							text="Exit">
+							<accelerator>
+								<KeyCodeCombination alt="DOWN" code="F4"
+									control="UP" meta="UP" shift="UP" shortcut="UP" />
+							</accelerator>
+						</MenuItem>
+					</items>
+				</Menu>
+				<Menu mnemonicParsing="false" text="Edit">
+					<items>
+						<MenuItem mnemonicParsing="false" text="Delete" />
+					</items>
+				</Menu>
+				<Menu mnemonicParsing="false" text="Help">
+					<items>
+						<MenuItem mnemonicParsing="false" onAction="#handleAbout"
+							text="About" />
+					</items>
+				</Menu>
+			</menus>
+		</MenuBar>
+	</top>
+	<center>
+		<Pane prefHeight="200.0" prefWidth="200.0"
+			style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />
+	</center>
 </BorderPane>
