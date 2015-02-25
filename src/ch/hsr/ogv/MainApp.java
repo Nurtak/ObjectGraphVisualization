@@ -30,8 +30,8 @@ public class MainApp extends Application {
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 
-	private static final int MIN_WIDTH = 800;
-	private static final int MIN_HEIGHT = 600;
+	private static final int MIN_WIDTH = 1024;
+	private static final int MIN_HEIGHT = 768;
 	
 	public Stage getPrimaryStage() {
 		return primaryStage;

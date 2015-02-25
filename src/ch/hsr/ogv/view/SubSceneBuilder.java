@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 
 public class SubSceneBuilder {
 	
-	private static final Color BACKGROUND = Color.BLACK;
+	private static final Color BACKGROUND = Color.DARKGRAY;
 	
 	private SubScene subScene = null;
 
@@ -23,7 +23,7 @@ public class SubSceneBuilder {
         this.subScene.setFill(BACKGROUND);
         
         new Axis(this.world);
-    	new Camera(this.root, subScene);
+    	new SubSceneCamera(this.root, subScene);
     	
     	root.getChildren().add(world);
     }

@@ -7,26 +7,31 @@ import javafx.scene.shape.Box;
 
 public class Axis {
 
-	private static final int LENGTH = 240;
+	private static final int LENGTH = 200;
+	private static final int THICKNESS = 2;
 	
     private final Group axisGroup = new Group();
     
+    private Color getBrighterColor(Color c) {
+    	return c.brighter().brighter().brighter().brighter();
+    }
+    
 	public Axis(Xform world) {
         final PhongMaterial redMaterial = new PhongMaterial();
-        redMaterial.setDiffuseColor(Color.DARKRED);
-        redMaterial.setSpecularColor(Color.RED);
+        redMaterial.setDiffuseColor(getBrighterColor(Color.DARKRED));
+        redMaterial.setSpecularColor(getBrighterColor(Color.RED));
 
         final PhongMaterial greenMaterial = new PhongMaterial();
-        greenMaterial.setDiffuseColor(Color.DARKGREEN);
-        greenMaterial.setSpecularColor(Color.GREEN);
+        greenMaterial.setDiffuseColor(getBrighterColor(Color.DARKGREEN));
+        greenMaterial.setSpecularColor(getBrighterColor(Color.GREEN));
 
         final PhongMaterial blueMaterial = new PhongMaterial();
-        blueMaterial.setDiffuseColor(Color.DARKBLUE);
-        blueMaterial.setSpecularColor(Color.BLUE);
+        blueMaterial.setDiffuseColor(getBrighterColor(Color.DARKBLUE));
+        blueMaterial.setSpecularColor(getBrighterColor(Color.BLUE));
 
-        final Box xAxis = new Box(LENGTH, 1, 1);
-        final Box yAxis = new Box(1, LENGTH, 1);
-        final Box zAxis = new Box(1, 1, LENGTH);
+        final Box xAxis = new Box(LENGTH, THICKNESS, THICKNESS);
+        final Box yAxis = new Box(THICKNESS, LENGTH, THICKNESS);
+        final Box zAxis = new Box(THICKNESS, THICKNESS, LENGTH);
 
         xAxis.setMaterial(redMaterial);
         yAxis.setMaterial(greenMaterial);

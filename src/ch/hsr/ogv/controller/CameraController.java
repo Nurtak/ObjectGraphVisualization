@@ -1,20 +1,18 @@
-package ch.hsr.ogv.view;
+package ch.hsr.ogv.controller;
 
+import ch.hsr.ogv.view.SubSceneCamera;
+import ch.hsr.ogv.view.Xform;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.PerspectiveCamera;
 import javafx.scene.SubScene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 
-public class Camera {
-
-	private final PerspectiveCamera camera = new PerspectiveCamera(true);
-	private final Xform cameraXform = new Xform();
-	private final Xform cameraXform2 = new Xform();
-	private final Xform cameraXform3 = new Xform();
-	private final double cameraDistance = 1000;
+public class CameraController {
+	
+	private SubSceneCamera ssCamera;
 	
 	private double CONTROL_MULTIPLIER = 0.1;
 	private double SHIFT_MULTIPLIER = 0.1;
@@ -26,27 +24,12 @@ public class Camera {
 	private double mouseDeltaX;
 	private double mouseDeltaY;
 	
-	public Camera(Group root, SubScene subScene) {
-        root.getChildren().add(cameraXform);
-        cameraXform.getChildren().add(cameraXform2);
-        cameraXform2.getChildren().add(cameraXform3);
-        cameraXform3.getChildren().add(camera);
-        cameraXform3.setRotateZ(180.0);
-        
-        camera.setNearClip(0.1);
-        camera.setFarClip(10000.0);
-        camera.setTranslateZ(-cameraDistance);
-        cameraXform.ry.setAngle(320.0);
-        cameraXform.rx.setAngle(40);
-        
-        subScene.setCamera(camera);
-        
+	public CameraController(Group root, SubScene subScene, SubSceneCamera camera) {
+		this.ssCamera = camera;
         handleMouse(root, subScene);
         handleKeyboard(root, subScene);
 	}
-	
 
-    
     private void handleMouse(final Node root, SubScene scene) {
         scene.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent me) {
@@ -65,8 +48,10 @@ public class Camera {
                 mousePosY = me.getSceneY();
                 mouseDeltaX = (mousePosX - mouseOldX);
                 mouseDeltaY = (mousePosY - mouseOldY);
+                Xform cameraXform = ssCamera.getCameraXform();
+                Xform cameraXform2 = ssCamera.getCameraXform2();
 
-                double modifier = 5.0;
+                double modifier = 2.0;
                 double modifierFactor = 0.1;
 
                 if (me.isControlDown()) {
@@ -76,30 +61,43 @@ public class Camera {
                     modifier = 10.0;
                 }
                 if (me.isPrimaryButtonDown()) {
-                    cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * modifierFactor * modifier * 2.0);  // +
-                    cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * modifierFactor * modifier * 2.0);  // -
+                	cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX * modifierFactor * modifier * 2.0);  // -
+                	cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * modifierFactor * modifier * 2.0);  // -
                 } else if (me.isSecondaryButtonDown()) {
-                    double z = camera.getTranslateZ();
-                    double newZ = z + mouseDeltaX * modifierFactor * modifier;
-                    camera.setTranslateZ(newZ);
+                	cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * modifierFactor * modifier);  // +
+                	cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * modifierFactor * modifier);  // -
                 } else if (me.isMiddleButtonDown()) {
-                    cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX * modifierFactor * modifier * 0.3);  // -
-                    cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * modifierFactor * modifier * 0.3);  // -
+					double z = ssCamera.getPerspectiveCamera().getTranslateZ();
+					double newZ = z - mouseDeltaY * 2 + modifierFactor * modifier;
+					ssCamera.getPerspectiveCamera().setTranslateZ(newZ);
                 }
             }
+            
         });
+        scene.setOnScroll(new EventHandler<ScrollEvent>() {
+            @Override public void handle(ScrollEvent se) {
+                double z = ssCamera.getPerspectiveCamera().getTranslateZ();
+                double newZ = z + se.getDeltaY();
+                ssCamera.getPerspectiveCamera().setTranslateZ(newZ);
+            }
+        });
+
     }
 
     private void handleKeyboard(final Node root, SubScene scene) {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
+            	
+                Xform cameraXform = ssCamera.getCameraXform();
+                Xform cameraXform2 = ssCamera.getCameraXform2();
+            	
                 switch (event.getCode()) {
                     case Z:
                         if (event.isShiftDown()) {
                             cameraXform.ry.setAngle(0.0);
                             cameraXform.rx.setAngle(0.0);
-                            camera.setTranslateZ(-300.0);
+                            ssCamera.getPerspectiveCamera().setTranslateZ(-300.0);
                         }
                         cameraXform2.t.setX(0.0);
                         cameraXform2.t.setY(0.0);
@@ -123,9 +121,9 @@ public class Camera {
                         } else if (event.isAltDown()) {
                             cameraXform.rx.setAngle(cameraXform.rx.getAngle() - 2.0 * ALT_MULTIPLIER);
                         } else if (event.isShiftDown()) {
-                            double z = camera.getTranslateZ();
+                            double z = ssCamera.getPerspectiveCamera().getTranslateZ();
                             double newZ = z + 5.0 * SHIFT_MULTIPLIER;
-                            camera.setTranslateZ(newZ);
+                            ssCamera.getPerspectiveCamera().setTranslateZ(newZ);
                         }
                         break;
                     case DOWN:
@@ -138,9 +136,9 @@ public class Camera {
                         } else if (event.isAltDown()) {
                             cameraXform.rx.setAngle(cameraXform.rx.getAngle() + 2.0 * ALT_MULTIPLIER);
                         } else if (event.isShiftDown()) {
-                            double z = camera.getTranslateZ();
+                            double z = ssCamera.getPerspectiveCamera().getTranslateZ();
                             double newZ = z - 5.0 * SHIFT_MULTIPLIER;
-                            camera.setTranslateZ(newZ);
+                            ssCamera.getPerspectiveCamera().setTranslateZ(newZ);
                         }
                         break;
                     case RIGHT:
