@@ -1,9 +1,6 @@
 package ch.hsr.ogv.view;
 
-import ch.hsr.ogv.controller.CameraController;
-import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.SubScene;
 
 public class SubSceneCamera {
 
@@ -29,8 +26,7 @@ public class SubSceneCamera {
 		return cameraXform3;
 	}
 	
-	public SubSceneCamera(Group root, SubScene subScene) {
-        root.getChildren().add(cameraXform);
+	public SubSceneCamera() {
         cameraXform.getChildren().add(cameraXform2);
         cameraXform2.getChildren().add(cameraXform3);
         cameraXform3.getChildren().add(camera);
@@ -41,10 +37,6 @@ public class SubSceneCamera {
         camera.setTranslateZ(-cameraDistance);
         cameraXform.ry.setAngle(320.0);
         cameraXform.rx.setAngle(40);
-        
-        subScene.setCamera(camera);
-        
-        new CameraController(root, subScene, this);
 	}
 	
 }

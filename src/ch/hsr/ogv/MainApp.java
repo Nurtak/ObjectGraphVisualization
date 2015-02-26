@@ -1,6 +1,7 @@
 package ch.hsr.ogv;
 	
 import java.io.IOException;
+import java.lang.Thread.UncaughtExceptionHandler;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -15,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.controller.RootLayoutController;
-import ch.hsr.ogv.view.SubSceneBuilder;
+import ch.hsr.ogv.view.SubScene3D;
 
 /**
  * Starting point of the application.
@@ -24,7 +25,7 @@ import ch.hsr.ogv.view.SubSceneBuilder;
  */
 public class MainApp extends Application {
 	
-	private final Logger logger = LoggerFactory.getLogger(MainApp.class);
+	private final static Logger logger = LoggerFactory.getLogger(MainApp.class);
 	
 	private String appTitle = "Object Graph Visualization";
 	private Stage primaryStage;
@@ -51,6 +52,12 @@ public class MainApp extends Application {
 	}
 		
 	public static void main(String[] args) {
+		Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() { 
+			 public void uncaughtException(Thread thread, final Throwable throwable) {
+				 logger.debug("Error in thread " + thread + ": " + throwable.getMessage());
+				 throwable.printStackTrace();
+			 }
+		 });
 		launch(args);
 	}
 	
@@ -67,7 +74,7 @@ public class MainApp extends Application {
         
         Pane canvas = (Pane) this.rootLayout.getCenter();
         
-        SubSceneBuilder ssBuilder = new SubSceneBuilder(canvas.getWidth(), canvas.getHeight());
+        SubScene3D ssBuilder = new SubScene3D(canvas.getWidth(), canvas.getHeight());
         SubScene subScene = ssBuilder.getSubScene();
         
         canvas.getChildren().add(subScene);
@@ -85,9 +92,9 @@ public class MainApp extends Application {
      * Initializes the root layout.
      */
     public void initRootLayout() {
-        try {
-            FXMLLoader loader = new FXMLLoader(); // load rootlayout from fxml file
-            loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+    	FXMLLoader loader = new FXMLLoader(); // load rootlayout from fxml file
+        loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+    	try {
             this.rootLayout = (BorderPane) loader.load();
             RootLayoutController controller = loader.getController();
             controller.setMainApp(this);

@@ -12,11 +12,15 @@ public class Axis {
 	
     private final Group axisGroup = new Group();
     
-    private Color getBrighterColor(Color c) {
+    public Group getAxisGroup() {
+		return axisGroup;
+	}
+
+	private Color getBrighterColor(Color c) {
     	return c.brighter().brighter().brighter().brighter();
     }
     
-	public Axis(Xform world) {
+	public Axis() {
         final PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setDiffuseColor(getBrighterColor(Color.DARKRED));
         redMaterial.setSpecularColor(getBrighterColor(Color.RED));
@@ -38,8 +42,6 @@ public class Axis {
         zAxis.setMaterial(blueMaterial);
 
         axisGroup.getChildren().addAll(xAxis, yAxis, zAxis);
-        
-        world.getChildren().add(axisGroup);
     }
     
 }

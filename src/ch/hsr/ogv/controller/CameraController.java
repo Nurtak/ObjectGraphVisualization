@@ -3,7 +3,6 @@ package ch.hsr.ogv.controller;
 import ch.hsr.ogv.view.SubSceneCamera;
 import ch.hsr.ogv.view.Xform;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.SubScene;
 import javafx.scene.input.KeyEvent;
@@ -11,8 +10,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 public class CameraController {
-	
-	private SubSceneCamera ssCamera;
 	
 	private double CONTROL_MULTIPLIER = 0.1;
 	private double SHIFT_MULTIPLIER = 0.1;
@@ -23,14 +20,8 @@ public class CameraController {
 	private double mouseOldY;
 	private double mouseDeltaX;
 	private double mouseDeltaY;
-	
-	public CameraController(Group root, SubScene subScene, SubSceneCamera camera) {
-		this.ssCamera = camera;
-        handleMouse(root, subScene);
-        handleKeyboard(root, subScene);
-	}
 
-    private void handleMouse(final Node root, SubScene scene) {
+    public void handleMouse(final Node root, SubScene scene, SubSceneCamera ssCamera) {
         scene.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent me) {
                 mousePosX = me.getSceneX();
@@ -84,7 +75,7 @@ public class CameraController {
 
     }
 
-    private void handleKeyboard(final Node root, SubScene scene) {
+    public void handleKeyboard(final Node root, SubScene scene, SubSceneCamera ssCamera) {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
