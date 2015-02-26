@@ -1,10 +1,13 @@
 package ch.hsr.ogv.view;
 
+
 import ch.hsr.ogv.controller.CameraController;
 import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class SubScene3D {
 	
@@ -44,6 +47,16 @@ public class SubScene3D {
         object3D.setSize(50, 50, 10);
         object3D.setPosition(100, 200, 50);
         world.getChildren().add(object3D.getBox());
+        
+//        Text t = new Text();
+//        t.setText("This is a text sample");
+//        
+//        Text text = new Text("This is a text node");
+//        text.setFont(Font.font(Font.getDefault().getFamily(), 70));
+//        world.getChildren().add(text);
+        
+        Class2D class2D = new Class2D();
+        world.getChildren().add(class2D.getBorderPane());
     	
     	// populate the root group with the world objects
     	root.getChildren().add(world);

@@ -35,8 +35,8 @@ public class SubSceneCamera {
         camera.setNearClip(0.1);
         camera.setFarClip(10000.0);
         camera.setTranslateZ(-cameraDistance);
-        cameraXform.ry.setAngle(320.0);
-        cameraXform.rx.setAngle(40);
+        cameraXform.ry.setAngle(0.0);
+        cameraXform.rx.setAngle(0);
 	}
 	
 }
