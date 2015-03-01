@@ -56,7 +56,7 @@ public class CameraController {
                 	cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * modifierFactor * modifier * 2.0);  // -
                 } else if (me.isSecondaryButtonDown()) {
                 	cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * modifierFactor * modifier);  // +
-                	cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * modifierFactor * modifier);  // -
+                	cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * modifierFactor * modifier);
                 } else if (me.isMiddleButtonDown()) {
 					double z = ssCamera.getPerspectiveCamera().getTranslateZ();
 					double newZ = z - mouseDeltaY * 2 + modifierFactor * modifier;

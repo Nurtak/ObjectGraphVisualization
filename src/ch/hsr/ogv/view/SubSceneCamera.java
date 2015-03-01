@@ -8,7 +8,7 @@ public class SubSceneCamera {
 	private final Xform cameraXform = new Xform();
 	private final Xform cameraXform2 = new Xform();
 	private final Xform cameraXform3 = new Xform();
-	private final double cameraDistance = 1000;
+	private final double cameraDistance = 2000;
 	
 	public PerspectiveCamera getPerspectiveCamera() {
 		return camera;
@@ -32,11 +32,11 @@ public class SubSceneCamera {
         cameraXform3.getChildren().add(camera);
         cameraXform3.setRotateZ(180.0);
         
-        camera.setNearClip(0.1);
+        camera.setNearClip(1); // 0.1
         camera.setFarClip(10000.0);
         camera.setTranslateZ(-cameraDistance);
-        cameraXform.ry.setAngle(0.0);
-        cameraXform.rx.setAngle(0);
+        cameraXform.ry.setAngle(0.0); // 320
+        cameraXform.rx.setAngle(90.0); // 40
 	}
 	
 }

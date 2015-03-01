@@ -2,28 +2,36 @@ package ch.hsr.ogv.view;
 
 
 import ch.hsr.ogv.controller.CameraController;
+import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 public class SubScene3D {
 	
-	private static final Color BACKGROUND = Color.WHITE;
+	private static final Color BACKGROUND = Color.WHITESMOKE;
 	
 	private SubScene subScene = null;
+	private final Group root = new Group();
 
+	private final Xform world = new Xform();
+    
 	public SubScene getSubScene() {
 		return subScene;
 	}
-
-	private final Group root = new Group();
-    private final Xform world = new Xform();
     
-    public SubScene3D(double initWidth, double initHeight) {
+    public Xform getWorld() {
+		return world;
+	}
+    
+    public Group getRoot() {
+		return root;
+	}
+
+	public SubScene3D(double initWidth, double initHeight) {
     	// create a new subscene that resides in the root group
+    	this.root.setDepthTest(DepthTest.ENABLE);
     	this.subScene = new SubScene(this.root, initWidth, initHeight, true, SceneAntialiasing.BALANCED);
         this.subScene.setFill(BACKGROUND);
         
@@ -38,28 +46,11 @@ public class SubScene3D {
         
         // add a camera controller
         CameraController cameraController = new CameraController();
-        cameraController.handleMouse(root, subScene, ssCamera);
-        cameraController.handleKeyboard(root, subScene, ssCamera);
+        cameraController.handleMouse(this.root, subScene, ssCamera);
+        cameraController.handleKeyboard(this.root, subScene, ssCamera);
         
-        //TODO just for tests
-        Object3D object3D = new Object3D();
-        object3D.setColor(Color.GOLD);
-        object3D.setSize(50, 50, 10);
-        object3D.setPosition(100, 200, 50);
-        world.getChildren().add(object3D.getBox());
-        
-//        Text t = new Text();
-//        t.setText("This is a text sample");
-//        
-//        Text text = new Text("This is a text node");
-//        text.setFont(Font.font(Font.getDefault().getFamily(), 70));
-//        world.getChildren().add(text);
-        
-        Class2D class2D = new Class2D();
-        world.getChildren().add(class2D.getBorderPane());
-    	
     	// populate the root group with the world objects
-    	root.getChildren().add(world);
+    	this.root.getChildren().add(world);
     }
 	
 }

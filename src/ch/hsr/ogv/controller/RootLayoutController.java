@@ -8,7 +8,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ch.hsr.ogv.MainApp;
+import ch.hsr.ogv.StageManager;
 import ch.hsr.ogv.util.UserPreferences;
 
 /**
@@ -20,16 +20,16 @@ import ch.hsr.ogv.util.UserPreferences;
  */
 public class RootLayoutController {
 
-	// Reference to the main application
-	private MainApp mainApp;
+	// Reference to the stage manager
+	private StageManager stageManager;
 
 	/**
 	 * Is called by the main application to give a reference back to itself.
 	 * 
 	 * @param mainApp
 	 */
-	public void setMainApp(MainApp mainApp) {
-		this.mainApp = mainApp;
+	public void setStageManager(StageManager mainApp) {
+		this.stageManager = mainApp;
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class RootLayoutController {
 	 */
 	@FXML
 	private void handleNew() {
-		this.mainApp.setAppTitle(this.mainApp.getAppTitle()); // set new app title TODO
+		this.stageManager.setAppTitle(this.stageManager.getAppTitle()); // set new app title TODO
 	}
 
 	/**
@@ -55,10 +55,10 @@ public class RootLayoutController {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show open file dialog
-		File file = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
+		File file = fileChooser.showOpenDialog(stageManager.getPrimaryStage());
 
 		if (file != null) {
-			this.mainApp.setAppTitle(this.mainApp.getAppTitle() + " - " + file.getName()); // set new app title
+			this.stageManager.setAppTitle(this.stageManager.getAppTitle() + " - " + file.getName()); // set new app title
 			//TODO
 		}
 	}
@@ -92,7 +92,7 @@ public class RootLayoutController {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show save file dialog
-		File file = fileChooser.showSaveDialog(this.mainApp.getPrimaryStage());
+		File file = fileChooser.showSaveDialog(this.stageManager.getPrimaryStage());
 
 		if (file != null) {
 			// Make sure it has the correct extension
@@ -100,7 +100,7 @@ public class RootLayoutController {
 				file = new File(file.getPath() + ".ogv");
 			}
 			UserPreferences.setSavedFilePath(file);
-			this.mainApp.setAppTitle(this.mainApp.getAppTitle() + " - " + file.getName()); // set new app title
+			this.stageManager.setAppTitle(this.stageManager.getAppTitle() + " - " + file.getName()); // set new app title
 			//TODO
 		}
 	}
@@ -116,7 +116,7 @@ public class RootLayoutController {
 		alert.setContentText("Authors: Simon Gwerder, Adrian Rieser");
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image("file:resources/images/dummy_icon.png")); // add a custom icon
-		alert.initOwner(this.mainApp.getPrimaryStage());
+		alert.initOwner(this.stageManager.getPrimaryStage());
 		alert.showAndWait();
 	}
 
