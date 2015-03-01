@@ -2,10 +2,13 @@ package ch.hsr.ogv.view;
 
 import org.fxyz.shapes.primitives.CuboidMesh;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.CacheHint;
 import javafx.scene.DepthTest;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
+import javafx.scene.transform.Transform;
 
 public class Cuboid3D {
 	
@@ -20,12 +23,12 @@ public class Cuboid3D {
 		return box;
 	}
 	
-	public Cuboid3D() {
-		this(Color.WHITE);
+	public Cuboid3D(double size) {
+		this(Color.WHITE, size);
 	}
 
-	public Cuboid3D(Color color) {
-		this.box = new CuboidMesh();
+	public Cuboid3D(Color color, double size) {
+		this.box = new CuboidMesh(size, size , size);
 		this.box.setDepthTest(DepthTest.ENABLE);
 		this.box.setCache(true);
 		this.box.setCacheHint(CacheHint.SCALE_AND_ROTATE);
@@ -39,17 +42,45 @@ public class Cuboid3D {
 		material.setSpecularColor(this.color.brighter());
 		box.setMaterial(material);
 	}
-	
-	public void setSize(double width, double depth, double height) {
-		this.box.setWidth(width);
-		this.box.setDepth(depth);
-		this.box.setHeight(height);
+		
+	public DoubleProperty widthProperty() {
+		return this.box.widthProperty();
 	}
 	
-	public void setPosition(double x, double z, double y) {
-		this.box.setTranslateX(x);
-		this.box.setTranslateZ(z);
-		this.box.setTranslateY(y);
+	public DoubleProperty heightProperty() {
+		return this.box.heightProperty();
+	}
+	
+	public DoubleProperty depthProperty() {
+		return this.box.depthProperty();
+	}
+	
+	public DoubleProperty translateXProperty() {
+		return this.box.translateXProperty();
+	}
+	
+	public DoubleProperty translateYProperty() {
+		return this.box.translateYProperty();
+	}
+	
+	public DoubleProperty translateZProperty() {
+		return this.box.translateZProperty();
+	}
+	
+	public ObservableList<Transform> getTransforms() {
+		return this.box.getTransforms();
+	}
+	
+	public void setDrawTopFace(boolean drawTopFace) {
+		this.box.setDrawTopFace(drawTopFace);
+	}
+	
+	public void setVisible(boolean visible) {
+		this.box.setVisible(visible);
+	}
+	
+	public boolean isVisible() {
+		return this.box.isVisible();
 	}
 
 }
