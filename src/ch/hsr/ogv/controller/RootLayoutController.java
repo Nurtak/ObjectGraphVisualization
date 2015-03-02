@@ -2,13 +2,16 @@ package ch.hsr.ogv.controller;
 
 import java.io.File;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.StageManager;
+import ch.hsr.ogv.ThemeChooser.Style;
 import ch.hsr.ogv.util.UserPreferences;
 
 /**
@@ -20,16 +23,18 @@ import ch.hsr.ogv.util.UserPreferences;
  */
 public class RootLayoutController {
 
-	// Reference to the stage manager
-	private StageManager stageManager;
+	
+	private StageManager stageManager; // reference back to the stage manager
+	private ThemeMenuController themeMenuController;
 
 	/**
 	 * Is called by the main application to give a reference back to itself.
 	 * 
-	 * @param mainApp
+	 * @param stageManager
 	 */
-	public void setStageManager(StageManager mainApp) {
-		this.stageManager = mainApp;
+	public void setStageManager(StageManager stageManager) {
+		this.stageManager = stageManager;
+		this.themeMenuController = new ThemeMenuController(stageManager);
 	}
 
 	/**
@@ -125,6 +130,31 @@ public class RootLayoutController {
 	 */
 	@FXML
 	private void handleExit() {
-		System.exit(0);
+		Platform.exit();
 	}
+	
+	@FXML
+	private CheckMenuItem modena;
+	
+	@FXML
+	private CheckMenuItem caspian;
+	
+	@FXML
+	private CheckMenuItem aqua;
+		
+	@FXML
+	private void handleSetModena() {
+		this.themeMenuController.handleSetTheme(this.modena, Style.MODENA);
+	}
+	
+	@FXML
+	private void handleSetCaspian() {
+		this.themeMenuController.handleSetTheme(this.caspian, Style.CASPIANDARK);
+	}
+	
+	@FXML
+	private void handleSetAqua() {
+		this.themeMenuController.handleSetTheme(this.aqua, Style.AQUA);
+	}
+		
 }

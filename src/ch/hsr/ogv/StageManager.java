@@ -22,7 +22,7 @@ public class StageManager {
 	
 private final static Logger logger = LoggerFactory.getLogger(StageManager.class);
 	
-	private String appTitle = "Object Graph Visualization";
+	private String appTitle = "Object Graph Visualizer";
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 
@@ -31,6 +31,10 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	
 	public Stage getPrimaryStage() {
 		return primaryStage;
+	}
+	
+	public BorderPane getRootLayout() {
+		return rootLayout;
 	}
 	
 	private SubScene3D subScene3D;
@@ -58,6 +62,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         this.primaryStage.getIcons().add(new Image("file:resources/images/dummy_icon.png")); // set the application icon
         
         initRootLayout();
+        setLightTheme();
         
         Pane canvas = (Pane) this.rootLayout.getCenter();
         
@@ -76,6 +81,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         //TODO: Remove test paneBox3D
 	    PaneBox3D paneBox3D = new PaneBox3D(Color.ALICEBLUE);
 	    showInSubScene(paneBox3D.getNode());
+	    
 	}
 	
 	/**
@@ -86,7 +92,21 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		this.subScene3D.getWorld().getChildren().add(node);
 		this.rootLayout.applyCss();
 	}
+	
+	public void setLightTheme() {
+		String lightTheme = MainApp.class.getResource("view/LightTheme.css").toExternalForm();
+		this.rootLayout.getStylesheets().clear();
+		this.rootLayout.getStylesheets().add(lightTheme);
+		this.rootLayout.applyCss();
+	}
 
+	public void setDarkTheme() {
+		String darkTheme = MainApp.class.getResource("view/DarkTheme.css").toExternalForm();
+		this.rootLayout.getStylesheets().clear();
+		this.rootLayout.getStylesheets().add(darkTheme);
+		this.rootLayout.applyCss();
+	}
+	
 	/**
      * Initializes the root layout.
      */
