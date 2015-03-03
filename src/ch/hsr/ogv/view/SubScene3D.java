@@ -1,7 +1,6 @@
 package ch.hsr.ogv.view;
 
 
-import ch.hsr.ogv.controller.CameraController;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
@@ -13,6 +12,8 @@ public class SubScene3D {
 	private static final Color BACKGROUND = Color.WHITESMOKE;
 	
 	private SubScene subScene = null;
+	private SubSceneCamera subSceneCamera;
+
 	private final Group root = new Group();
 
 	private final Xform world = new Xform();
@@ -24,9 +25,9 @@ public class SubScene3D {
     public Xform getWorld() {
 		return world;
 	}
-    
-    public Group getRoot() {
-		return root;
+        
+	public SubSceneCamera getSubSceneCamera() {
+		return subSceneCamera;
 	}
 
 	public SubScene3D(double initWidth, double initHeight) {
@@ -40,14 +41,9 @@ public class SubScene3D {
         world.getChildren().add(axis.getAxisGroup());
 
         // add a camera for the subscene
-    	SubSceneCamera ssCamera = new SubSceneCamera();
-    	root.getChildren().add(ssCamera.getCameraXform());
-        subScene.setCamera(ssCamera.getPerspectiveCamera());
-        
-        // add a camera controller
-        CameraController cameraController = new CameraController();
-        cameraController.handleMouse(this.root, subScene, ssCamera);
-        cameraController.handleKeyboard(this.root, subScene, ssCamera);
+        this.subSceneCamera = new SubSceneCamera();
+    	root.getChildren().add(this.subSceneCamera.getCameraXform());
+        subScene.setCamera(this.subSceneCamera.getPerspectiveCamera());
         
     	// populate the root group with the world objects
     	this.root.getChildren().add(world);

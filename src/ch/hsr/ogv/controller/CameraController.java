@@ -1,9 +1,9 @@
 package ch.hsr.ogv.controller;
 
+import ch.hsr.ogv.view.SubScene3D;
 import ch.hsr.ogv.view.SubSceneCamera;
 import ch.hsr.ogv.view.Xform;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.SubScene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -20,8 +20,16 @@ public class CameraController {
 	private double mouseOldY;
 	private double mouseDeltaX;
 	private double mouseDeltaY;
+	
+	public void handle2DClassView(SubSceneCamera ssCamera) {
+		Xform cameraXform = ssCamera.getCameraXform();
+        cameraXform.ry.setAngle(0.0); // 320
+        cameraXform.rx.setAngle(90.0); // 40
+	}
 
-    public void handleMouse(final Node root, SubScene scene, SubSceneCamera ssCamera) {
+    public void handleMouse(SubScene3D subScene3D) {
+    	SubScene scene = subScene3D.getSubScene();
+    	SubSceneCamera ssCamera = subScene3D.getSubSceneCamera();
         scene.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent me) {
                 mousePosX = me.getSceneX();
@@ -75,7 +83,9 @@ public class CameraController {
 
     }
 
-    public void handleKeyboard(final Node root, SubScene scene, SubSceneCamera ssCamera) {
+    public void handleKeyboard(SubScene3D subScene3D) {
+    	SubScene scene = subScene3D.getSubScene();
+    	SubSceneCamera ssCamera = subScene3D.getSubSceneCamera();
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {

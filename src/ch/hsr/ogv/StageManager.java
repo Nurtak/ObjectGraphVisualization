@@ -25,6 +25,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	private String appTitle = "Object Graph Visualizer";
 	private Stage primaryStage;
 	private BorderPane rootLayout;
+	private RootLayoutController rootLayoutController;
+	private SubScene3D subScene3D;
 
 	private static final int MIN_WIDTH = 1024;
 	private static final int MIN_HEIGHT = 768;
@@ -37,8 +39,11 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		return rootLayout;
 	}
 	
-	private SubScene3D subScene3D;
 		
+	public SubScene3D getSubScene3D() {
+		return subScene3D;
+	}
+
 	public String getAppTitle() {
 		return appTitle;
 	}
@@ -75,13 +80,15 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         
         Scene scene = new Scene(this.rootLayout);
 
+        this.rootLayoutController.initController(this);
+        
         this.primaryStage.setScene(scene);
         this.primaryStage.show();
         
         //TODO: Remove test paneBox3D
 	    PaneBox3D paneBox3D = new PaneBox3D(Color.ALICEBLUE);
 	    showInSubScene(paneBox3D.getNode());
-	    
+	    paneBox3D.setBoxHeightScale(10);
 	}
 	
 	/**
@@ -115,8 +122,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
     	try {
             this.rootLayout = (BorderPane) loader.load();
-            RootLayoutController controller = loader.getController();
-            controller.setStageManager(this);
+            this.rootLayoutController = loader.getController();
         } catch (IOException e) {
         	logger.debug(e.getMessage());
             e.printStackTrace();

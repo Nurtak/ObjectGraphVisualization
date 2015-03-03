@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import ch.hsr.ogv.StageManager;
 import ch.hsr.ogv.ThemeChooser.Style;
 import ch.hsr.ogv.util.UserPreferences;
+import ch.hsr.ogv.view.SubSceneCamera;
 
 /**
  * The controller for the root layout. The root layout provides the basic
@@ -26,15 +27,23 @@ public class RootLayoutController {
 	
 	private StageManager stageManager; // reference back to the stage manager
 	private ThemeMenuController themeMenuController;
+	private CameraController cameraController;
 
 	/**
 	 * Is called by the main application to give a reference back to itself.
 	 * 
 	 * @param stageManager
 	 */
-	public void setStageManager(StageManager stageManager) {
+	public void initController(StageManager stageManager) {
 		this.stageManager = stageManager;
 		this.themeMenuController = new ThemeMenuController(stageManager);
+		initCameraController();
+	}
+	
+	private void initCameraController() {
+        this.cameraController = new CameraController();
+        this.cameraController.handleMouse(stageManager.getSubScene3D());
+        this.cameraController.handleKeyboard(stageManager.getSubScene3D());
 	}
 
 	/**
@@ -131,6 +140,12 @@ public class RootLayoutController {
 	@FXML
 	private void handleExit() {
 		Platform.exit();
+	}
+	
+	@FXML
+	private void handle2DClassView() {
+		SubSceneCamera ssCamera = stageManager.getSubScene3D().getSubSceneCamera();
+		this.cameraController.handle2DClassView(ssCamera);
 	}
 	
 	@FXML

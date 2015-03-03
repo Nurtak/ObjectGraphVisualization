@@ -48,7 +48,7 @@
 				</Menu>
             <Menu id="menu_view" mnemonicParsing="false" text="View">
               <items>
-                  <CheckMenuItem id="checkmenuitem_classview" mnemonicParsing="false" selected="true" text="2D Class View" />
+                  <CheckMenuItem id="checkmenuitem_classview" mnemonicParsing="false" onAction="#handle2DClassView" selected="true" text="2D Class View" />
                   <CheckMenuItem id="checkmenuitem_objectview" mnemonicParsing="false" text="3D Object View" />
               </items>
             </Menu>
