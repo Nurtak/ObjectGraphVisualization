@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.hsr.ogv.ResourceLocator.Resource;
 import ch.hsr.ogv.controller.RootLayoutController;
 import ch.hsr.ogv.view.PaneBox3D;
 import ch.hsr.ogv.view.SubScene3D;
@@ -63,8 +64,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		this.setAppTitle(this.appTitle);
         this.primaryStage.setMinWidth(MIN_WIDTH);
         this.primaryStage.setMinHeight(MIN_HEIGHT);
-
-        this.primaryStage.getIcons().add(new Image("file:resources/images/dummy_icon.png")); // set the application icon
+        
+        this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_PNG).toExternalForm())); // set the application icon
         
         initRootLayout();
         setLightTheme();
@@ -88,7 +89,6 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         //TODO: Remove test paneBox3D
 	    PaneBox3D paneBox3D = new PaneBox3D(Color.ALICEBLUE);
 	    showInSubScene(paneBox3D.getNode());
-	    paneBox3D.setBoxHeightScale(10);
 	}
 	
 	/**
@@ -101,14 +101,14 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	}
 	
 	public void setLightTheme() {
-		String lightTheme = MainApp.class.getResource("view/LightTheme.css").toExternalForm();
+		String lightTheme = ResourceLocator.getResourcePath(Resource.LIGHTHEME_CSS).toExternalForm();
 		this.rootLayout.getStylesheets().clear();
 		this.rootLayout.getStylesheets().add(lightTheme);
 		this.rootLayout.applyCss();
 	}
 
 	public void setDarkTheme() {
-		String darkTheme = MainApp.class.getResource("view/DarkTheme.css").toExternalForm();
+		String darkTheme = ResourceLocator.getResourcePath(Resource.DARKTHEME_CSS).toExternalForm();
 		this.rootLayout.getStylesheets().clear();
 		this.rootLayout.getStylesheets().add(darkTheme);
 		this.rootLayout.applyCss();
@@ -119,7 +119,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
      */
     private void initRootLayout() {
     	FXMLLoader loader = new FXMLLoader(); // load rootlayout from fxml file
-        loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
+        loader.setLocation(ResourceLocator.getResourcePath(Resource.ROOTLAYOUT_FXML));
     	try {
             this.rootLayout = (BorderPane) loader.load();
             this.rootLayoutController = loader.getController();

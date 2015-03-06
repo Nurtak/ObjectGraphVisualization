@@ -10,7 +10,7 @@
 
 <BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@LightTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.ogv.controller.RootLayoutController">
 	<top>
-		<MenuBar id="menubar" stylesheets="@LightTheme.css" BorderPane.alignment="CENTER">
+		<MenuBar id="menubar" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER">
 			<menus>
 				<Menu id="menu_file" mnemonicParsing="false" text="File">
 					<items>

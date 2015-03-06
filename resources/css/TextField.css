@@ -1,0 +1,11 @@
+.text-field {
+	-fx-font-size: 15;
+    -fx-background-color: transparent;
+}
+
+.text-field:focused {
+    -fx-font-size: 15;
+    -fx-background-color: white;
+    -fx-border-color: dodgerblue;
+    -fx-background-insets: 1 1 1 1;
+}

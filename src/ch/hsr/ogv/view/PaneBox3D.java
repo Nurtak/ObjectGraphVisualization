@@ -5,16 +5,24 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.CacheHint;
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
-import ch.hsr.ogv.MainApp;
+import ch.hsr.ogv.ResourceLocator;
+import ch.hsr.ogv.ResourceLocator.Resource;
 import ch.hsr.ogv.util.ColorUtils;
+import ch.hsr.ogv.util.TextUtils;
 
 public class PaneBox3D {
 	
@@ -37,11 +45,7 @@ public class PaneBox3D {
 	
 	public void setColor(Color color) {
 		this.color = color;
-		this.borderPane.setStyle(
-			  "-fx-background-color: " + ColorUtils.toRGBCode(this.color) + ";\n"
-			+ "-fx-border-color: black;\n"
-			+ "-fx-border-width: 2;"
-		);
+		this.borderPane.setStyle(getPaneStyle());
 		this.box.setColor(color);
 	}
 	
@@ -69,16 +73,60 @@ public class PaneBox3D {
         group.getTransforms().add(new Translate(0, INIT_BOX_HEIGHT, 0)); // position the group's center at the origin (0, 0, 0)
         
         setColor(color);
+        
+        getTop().textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+            	adaptWidthByText(getTop().getFont(), newValue);
+            }
+        });
+	}
+	
+	private String getPaneStyle() {
+		return "-fx-background-color: " + ColorUtils.toRGBCode(this.color) + ";\n"
+		+ "-fx-border-color: black;\n"
+		+ "-fx-border-width: 2;";
 	}
 	
 	private void initLayout() {
 		FXMLLoader loader = new FXMLLoader(); // load classpreset from fxml file
-        loader.setLocation(MainApp.class.getResource("view/PanePreset.fxml"));
+        loader.setLocation(ResourceLocator.getResourcePath(Resource.PANEPRESET_FXML));
         try {
 			this.borderPane = (BorderPane) loader.load();
 		} catch (IOException e) {
 			logger.debug(e.getMessage());
             e.printStackTrace();
+		}
+	}
+	
+	public TextField getTop() {
+		Node topNode = this.borderPane.getTop();
+		if((topNode instanceof VBox)) {
+			VBox topVBox = (VBox) topNode;
+			if(!topVBox.getChildren().isEmpty() && topVBox.getChildren().get(0) instanceof TextField) {
+				return (TextField) topVBox.getChildren().get(0);
+			}
+		}
+		return null;
+	}
+	
+	public void adaptWidthByText(Font font, String text) {
+		// + 50px for some additional space to compensate insets, borders etc.
+		double newWidth = TextUtils.computeTextWidth(font, text, 0.0D) + 50;
+		this.borderPane.setPrefWidth(newWidth);
+	}
+	
+	public void setTopText(String text) {
+		TextField topTextField = getTop();
+		if(topTextField == null) return;
+		adaptWidthByText(topTextField.getFont(), text);
+		topTextField.setText(text);
+	}
+	
+	public void setTopFont(Font font) {
+		TextField topTextField = getTop();
+		if(topTextField != null) {
+			topTextField.setFont(font);
 		}
 	}
 	
