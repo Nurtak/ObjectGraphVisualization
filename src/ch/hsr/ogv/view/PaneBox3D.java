@@ -19,10 +19,10 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
-import ch.hsr.ogv.ResourceLocator;
-import ch.hsr.ogv.ResourceLocator.Resource;
 import ch.hsr.ogv.util.ColorUtils;
+import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.TextUtils;
+import ch.hsr.ogv.util.ResourceLocator.Resource;
 
 public class PaneBox3D {
 	

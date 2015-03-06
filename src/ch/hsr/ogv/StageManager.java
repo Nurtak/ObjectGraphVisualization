@@ -5,8 +5,9 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.hsr.ogv.ResourceLocator.Resource;
 import ch.hsr.ogv.controller.RootLayoutController;
+import ch.hsr.ogv.util.ResourceLocator;
+import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.PaneBox3D;
 import ch.hsr.ogv.view.SubScene3D;
 import javafx.fxml.FXMLLoader;

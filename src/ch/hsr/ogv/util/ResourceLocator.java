@@ -1,4 +1,4 @@
-package ch.hsr.ogv;
+package ch.hsr.ogv.util;
 
 import java.net.URL;
 
