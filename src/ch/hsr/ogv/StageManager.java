@@ -87,6 +87,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         this.primaryStage.setScene(scene);
         this.primaryStage.show();
         
+        this.subScene3D.getSubScene().requestFocus();
+        
         //TODO: Remove test paneBox3D
 	    PaneBox3D paneBox3D = new PaneBox3D(Color.ALICEBLUE);
 	    showInSubScene(paneBox3D.getNode());

@@ -1,18 +1,23 @@
 package ch.hsr.ogv.view;
 
-
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class SubScene3D {
 	
 	private static final Color BACKGROUND = Color.WHITESMOKE;
 	
-	private SubScene subScene = null;
+	private SubScene subScene;
 	private SubSceneCamera subSceneCamera;
+	private Axis axis;
 
 	private final Group root = new Group();
 
@@ -29,6 +34,10 @@ public class SubScene3D {
 	public SubSceneCamera getSubSceneCamera() {
 		return subSceneCamera;
 	}
+	
+	public Axis getAxis() {
+		return this.axis;
+	}
 
 	public SubScene3D(double initWidth, double initHeight) {
     	// create a new subscene that resides in the root group
@@ -36,8 +45,16 @@ public class SubScene3D {
     	this.subScene = new SubScene(this.root, initWidth, initHeight, true, SceneAntialiasing.BALANCED);
         this.subScene.setFill(BACKGROUND);
         
+        this.subScene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent t) {
+				Platform.runLater(() -> subScene.requestFocus());
+			}
+
+        });
+                
         // create axis and add them to the world Xform
-        Axis axis = new Axis();
+        this.axis = new Axis();
         world.getChildren().add(axis.getAxisGroup());
 
         // add a camera for the subscene
