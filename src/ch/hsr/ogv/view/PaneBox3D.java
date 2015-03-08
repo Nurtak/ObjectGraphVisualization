@@ -7,11 +7,13 @@ import org.slf4j.LoggerFactory;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.CacheHint;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -29,11 +31,13 @@ public class PaneBox3D {
 	private final static Logger logger = LoggerFactory.getLogger(PaneBox3D.class);
 	
 	private final static int INIT_BOX_HEIGHT = 5;
+	private final static int INIT_SELECT_SIZE = 4;
 	
 	private Group group = new Group();
 	private BorderPane borderPane = null;
 	private Color color;
 	private Cuboid3D box;
+	private Group selection = new Group();
 	
 	public Group getNode() {
 		return group;
@@ -67,9 +71,10 @@ public class PaneBox3D {
         this.borderPane.translateZProperty().bind(this.borderPane.heightProperty().divide(2));
         
         buildBox();
+        buildSelection();
         
-        group.getChildren().add(this.borderPane);
-        group.getChildren().add(this.box.getNode());
+        group.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection);
+        this.selection.setVisible(false);
         group.getTransforms().add(new Translate(0, INIT_BOX_HEIGHT, 0)); // position the group's center at the origin (0, 0, 0)
         
         setColor(color);
@@ -79,6 +84,48 @@ public class PaneBox3D {
             public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
             	adaptWidthByText(getTop().getFont(), newValue);
             }
+        });
+        
+        this.group.setOnMouseDragged(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				group.setTranslateX(group.getTranslateX() + event.getX() * 0.5);
+				group.setTranslateZ(group.getTranslateZ() + event.getZ() * 0.5);
+			}
+			
+		});
+        
+        this.group.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent t) {
+				group.requestFocus();
+			}
+        });
+        
+        this.box.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(!selection.isVisible()) {
+					selection.setVisible(true);
+				}
+				else {
+					selection.setVisible(false);
+				}
+			}
+        });
+        
+        this.group.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+				if(group.focusedProperty().get()) {
+					selection.setVisible(true);
+				}
+				else {
+					selection.setVisible(false);
+				}
+				
+			}
         });
 	}
 	
@@ -139,6 +186,88 @@ public class PaneBox3D {
 		this.box.translateXProperty().bind(this.borderPane.translateXProperty().subtract(this.borderPane.widthProperty().divide(2)));
 		this.box.translateZProperty().bind(this.borderPane.translateZProperty().subtract(this.borderPane.heightProperty().divide(2)));
 		this.box.translateYProperty().bind(this.borderPane.translateYProperty().subtract(INIT_BOX_HEIGHT));
+	}
+	
+	private void buildSelection() {
+		
+		Group pointNE = new Group();
+		Group pointNW = new Group();
+		Group pointSE = new Group();
+		Group pointSW = new Group();
+		
+		for(int i = 0; i < 8; i++) {
+			Sphere3D sphere3D = new Sphere3D(Color.DODGERBLUE, INIT_SELECT_SIZE);
+			
+			Cylinder3D cylinderV3D = new Cylinder3D(Color.DODGERBLUE, INIT_SELECT_SIZE - 2, 10);
+			cylinderV3D.heightProperty().bind(this.box.depthProperty());
+			cylinderV3D.translateYProperty().bind(this.box.translateYProperty());
+			
+			Cylinder3D cylinderH3D = new Cylinder3D(Color.DODGERBLUE, INIT_SELECT_SIZE - 2, 10);
+			cylinderH3D.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
+			
+			if(i == 0 || i == 1 || i == 4 || i == 5) {
+				sphere3D.translateZProperty().bind(this.box.translateZProperty().subtract(this.box.heightProperty().divide(2)));
+				cylinderV3D.translateZProperty().bind(this.box.translateZProperty().subtract(this.box.heightProperty().divide(2)));
+				if(i == 0 || i == 1) {
+					cylinderH3D.translateZProperty().bind(this.box.translateZProperty().subtract(this.box.heightProperty().divide(2)));
+					cylinderH3D.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
+					cylinderH3D.heightProperty().bind(this.box.widthProperty());
+					pointSE.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
+				}
+
+			}
+			
+			if(i == 0 || i == 1 || i == 6 || i == 7) {
+				sphere3D.translateXProperty().bind(this.box.translateXProperty().subtract(this.box.widthProperty().divide(2)));
+				cylinderV3D.translateXProperty().bind(this.box.translateXProperty().subtract(this.box.widthProperty().divide(2)));
+				if(i == 6 || i == 7) {
+					cylinderH3D.translateXProperty().bind(this.box.translateXProperty().add(this.box.widthProperty().divide(2)));
+					cylinderH3D.heightProperty().bind(this.box.heightProperty());
+					pointNE.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
+				}
+			}
+			
+			if(i == 2 || i == 3 || i == 6 || i == 7) {
+				sphere3D.translateZProperty().bind(this.box.translateZProperty().add(this.box.heightProperty().divide(2)));
+				cylinderV3D.translateZProperty().bind(this.box.translateZProperty().add(this.box.heightProperty().divide(2)));
+				if(i == 2 || i == 3) {
+					cylinderH3D.translateXProperty().bind(this.box.translateXProperty());
+					cylinderH3D.translateZProperty().bind(this.box.translateZProperty().add(this.box.heightProperty().divide(2)));
+					cylinderH3D.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
+					cylinderH3D.heightProperty().bind(this.box.widthProperty());
+					pointNW.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
+				}
+			}
+				
+			if(i == 2 || i == 3 || i == 4 || i == 5) {
+				sphere3D.translateXProperty().bind(this.box.translateXProperty().add(this.box.widthProperty().divide(2)));
+				cylinderV3D.translateXProperty().bind(this.box.translateXProperty().add(this.box.widthProperty().divide(2)));
+				if(i == 4 || i == 5) {
+					cylinderH3D.translateXProperty().bind(this.box.translateXProperty().subtract(this.box.widthProperty().divide(2)));
+					cylinderH3D.translateZProperty().bind(this.box.translateZProperty());
+					cylinderH3D.heightProperty().bind(this.box.heightProperty());
+					pointSW.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
+				}
+			}
+				
+			if(i % 2 == 1) {
+				sphere3D.translateYProperty().bind(this.box.translateZProperty().subtract(this.box.depthProperty()));
+				cylinderH3D.translateYProperty().bind(this.box.translateZProperty().subtract(this.box.depthProperty()));
+				this.selection.getChildren().add(cylinderV3D.getNode());
+			}
+			this.selection.getChildren().add(cylinderH3D.getNode());
+		}
+		this.selection.getChildren().addAll(pointNE, pointSE, pointNW, pointSW);
+		
+		pointSE.setOnMouseDragged(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent event) {
+				System.out.println("SE clicked");
+			}
+			
+		});
+		
 	}
 	
 	public void setBoxHeightScale(double scale) {

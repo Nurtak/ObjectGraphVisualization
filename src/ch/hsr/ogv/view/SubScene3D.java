@@ -1,13 +1,10 @@
 package ch.hsr.ogv.view;
 
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
@@ -45,10 +42,10 @@ public class SubScene3D {
     	this.subScene = new SubScene(this.root, initWidth, initHeight, true, SceneAntialiasing.BALANCED);
         this.subScene.setFill(BACKGROUND);
         
-        this.subScene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        this.subScene.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent t) {
-				Platform.runLater(() -> subScene.requestFocus());
+				subScene.requestFocus();
 			}
 
         });

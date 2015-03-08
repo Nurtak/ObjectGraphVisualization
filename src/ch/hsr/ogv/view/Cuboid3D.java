@@ -3,9 +3,12 @@ package ch.hsr.ogv.view;
 import org.fxyz.shapes.primitives.CuboidMesh;
 
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
 import javafx.scene.DepthTest;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.transform.Transform;
@@ -23,6 +26,10 @@ public class Cuboid3D {
 		return box;
 	}
 	
+	public Cuboid3D() {
+		this(10);
+	}
+	
 	public Cuboid3D(double size) {
 		this(Color.WHITE, size);
 	}
@@ -33,6 +40,13 @@ public class Cuboid3D {
 		this.box.setCache(true);
 		this.box.setCacheHint(CacheHint.SCALE_AND_ROTATE);
 		setColor(color);
+        this.box.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent t) {
+				box.requestFocus();
+			}
+
+        });
 	}
 	
 	public void setColor(Color color) {
@@ -71,6 +85,14 @@ public class Cuboid3D {
 		return this.box.getTransforms();
 	}
 	
+	public ReadOnlyBooleanProperty focusedProperty() {
+		return this.box.focusedProperty();
+	}
+	
+	public void requestFocus() {
+		this.box.requestFocus();
+	}
+		
 	public void setDrawTopFace(boolean drawTopFace) {
 		this.box.setDrawTopFace(drawTopFace);
 	}
