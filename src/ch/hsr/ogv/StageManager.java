@@ -1,6 +1,8 @@
 package ch.hsr.ogv;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,11 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	private BorderPane rootLayout;
 	private RootLayoutController rootLayoutController;
 	private SubScene3D subScene3D;
+	private List<PaneBox3D> classes = new ArrayList<PaneBox3D>();
+
+	public List<PaneBox3D> getClasses() {
+		return classes;
+	}
 
 	private static final int MIN_WIDTH = 1024;
 	private static final int MIN_HEIGHT = 768;
@@ -41,7 +48,6 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		return rootLayout;
 	}
 	
-		
 	public SubScene3D getSubScene3D() {
 		return subScene3D;
 	}
@@ -91,7 +97,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         
         //TODO: Remove test paneBox3D
 	    PaneBox3D paneBox3D = new PaneBox3D(Color.ALICEBLUE);
-	    showInSubScene(paneBox3D.getNode());
+	    showClassInSubScene(paneBox3D);
 	}
 	
 	/**
@@ -101,6 +107,12 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	public void showInSubScene(Node node) {
 		this.subScene3D.getWorld().getChildren().add(node);
 		this.rootLayout.applyCss();
+	}
+	
+	public void showClassInSubScene(PaneBox3D classBox) {
+		this.classes.add(classBox);
+		this.rootLayoutController.addPaneBox3DControls(classBox);
+		showInSubScene(classBox.getNode());
 	}
 	
 	public void setLightTheme() {

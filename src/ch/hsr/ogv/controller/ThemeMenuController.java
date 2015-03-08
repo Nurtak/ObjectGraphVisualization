@@ -9,15 +9,10 @@ import ch.hsr.ogv.ThemeChooser.Style;
 
 public class ThemeMenuController {
 
-	private ThemeChooser themeChooser;
-	
-	public ThemeMenuController(StageManager stageManager) {
-		this.themeChooser = new ThemeChooser(stageManager);
-	}
-	
-	public void handleSetTheme(CheckMenuItem choosenMenu, Style style) {
-		if(choosenMenu == null || style == null) return;
-		this.themeChooser.setStyle(style);
+	public void handleSetTheme(StageManager stageManager, CheckMenuItem choosenMenu, Style style) {
+		if(stageManager == null || choosenMenu == null || style == null) return;
+		ThemeChooser themeChooser = new ThemeChooser(stageManager);
+		themeChooser.setStyle(style);
 		Menu theme = choosenMenu.getParentMenu();
 		for(MenuItem menuItem : theme.getItems()) {
 			if(menuItem instanceof CheckMenuItem) {

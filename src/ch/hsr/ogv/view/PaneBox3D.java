@@ -5,15 +5,11 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.CacheHint;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -34,13 +30,21 @@ public class PaneBox3D {
 	private final static int INIT_SELECT_SIZE = 4;
 	
 	private Group group = new Group();
+	private Group selection = new Group();
 	private BorderPane borderPane = null;
 	private Color color;
 	private Cuboid3D box;
-	private Group selection = new Group();
 	
 	public Group getNode() {
 		return group;
+	}
+	
+	public Group getSelection() {
+		return selection;
+	}
+	
+	public Cuboid3D getBox() {
+		return this.box;
 	}
 	
 	public Color getColor() {
@@ -78,55 +82,6 @@ public class PaneBox3D {
         group.getTransforms().add(new Translate(0, INIT_BOX_HEIGHT, 0)); // position the group's center at the origin (0, 0, 0)
         
         setColor(color);
-        
-        getTop().textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-            	adaptWidthByText(getTop().getFont(), newValue);
-            }
-        });
-        
-        this.group.setOnMouseDragged(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				group.setTranslateX(group.getTranslateX() + event.getX() * 0.5);
-				group.setTranslateZ(group.getTranslateZ() + event.getZ() * 0.5);
-			}
-			
-		});
-        
-        this.group.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent t) {
-				group.requestFocus();
-			}
-        });
-        
-        this.box.focusedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if(!selection.isVisible()) {
-					selection.setVisible(true);
-				}
-				else {
-					selection.setVisible(false);
-				}
-			}
-        });
-        
-        this.group.focusedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if(group.focusedProperty().get()) {
-					selection.setVisible(true);
-				}
-				else {
-					selection.setVisible(false);
-				}
-				
-			}
-        });
 	}
 	
 	private String getPaneStyle() {
@@ -175,6 +130,12 @@ public class PaneBox3D {
 		if(topTextField != null) {
 			topTextField.setFont(font);
 		}
+	}
+	
+	public void setSelected(boolean value) {
+		this.selection.setVisible(value);
+		getTop().setEditable(value);
+		getTop().setDisable(!value);
 	}
 	
 	private void buildBox() {
@@ -238,7 +199,7 @@ public class PaneBox3D {
 					pointNW.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
 				}
 			}
-				
+			
 			if(i == 2 || i == 3 || i == 4 || i == 5) {
 				sphere3D.translateXProperty().bind(this.box.translateXProperty().add(this.box.widthProperty().divide(2)));
 				cylinderV3D.translateXProperty().bind(this.box.translateXProperty().add(this.box.widthProperty().divide(2)));
@@ -249,7 +210,7 @@ public class PaneBox3D {
 					pointSW.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
 				}
 			}
-				
+			
 			if(i % 2 == 1) {
 				sphere3D.translateYProperty().bind(this.box.translateZProperty().subtract(this.box.depthProperty()));
 				cylinderH3D.translateYProperty().bind(this.box.translateZProperty().subtract(this.box.depthProperty()));
@@ -259,14 +220,14 @@ public class PaneBox3D {
 		}
 		this.selection.getChildren().addAll(pointNE, pointSE, pointNW, pointSW);
 		
-		pointSE.setOnMouseDragged(new EventHandler<MouseEvent>() {
-
-			@Override
-			public void handle(MouseEvent event) {
-				System.out.println("SE clicked");
-			}
-			
-		});
+//		pointSE.setOnMouseDragged(new EventHandler<MouseEvent>() {
+//
+//			@Override
+//			public void handle(MouseEvent event) {
+//				System.out.println("SE clicked");
+//			}
+//			
+//		});
 		
 	}
 	

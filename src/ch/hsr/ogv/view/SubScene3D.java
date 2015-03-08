@@ -1,11 +1,9 @@
 package ch.hsr.ogv.view;
 
-import javafx.event.EventHandler;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class SubScene3D {
@@ -41,14 +39,6 @@ public class SubScene3D {
     	this.root.setDepthTest(DepthTest.ENABLE);
     	this.subScene = new SubScene(this.root, initWidth, initHeight, true, SceneAntialiasing.BALANCED);
         this.subScene.setFill(BACKGROUND);
-        
-        this.subScene.setOnMouseReleased(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent t) {
-				subScene.requestFocus();
-			}
-
-        });
                 
         // create axis and add them to the world Xform
         this.axis = new Axis();

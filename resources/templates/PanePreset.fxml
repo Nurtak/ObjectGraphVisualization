@@ -12,7 +12,7 @@
    <top>
       <VBox alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" style="-fx-border-color: transparent transparent black transparent;" BorderPane.alignment="CENTER">
          <children>
-            <TextField alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" prefHeight="28.0" prefWidth="126.0" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" stylesheets="@../css/TextField.css" text="ClassName">
+            <TextField alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" prefHeight="28.0" prefWidth="126.0" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="ClassName">
                <font>
                   <Font size="16.0" />
                </font>

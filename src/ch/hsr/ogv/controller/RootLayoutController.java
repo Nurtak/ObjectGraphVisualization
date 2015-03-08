@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import ch.hsr.ogv.StageManager;
 import ch.hsr.ogv.ThemeChooser.Style;
 import ch.hsr.ogv.util.UserPreferences;
+import ch.hsr.ogv.view.PaneBox3D;
 import ch.hsr.ogv.view.SubSceneCamera;
 
 /**
@@ -26,8 +27,10 @@ public class RootLayoutController {
 
 	
 	private StageManager stageManager; // reference back to the stage manager
-	private ThemeMenuController themeMenuController;
-	private CameraController cameraController;
+	private ThemeMenuController themeMenuController = new ThemeMenuController();
+	private CameraController cameraController = new CameraController();
+	private SubScene3DController subScene3DController = new SubScene3DController();
+	private PaneBox3DController paneBox3DController = new PaneBox3DController();
 
 	/**
 	 * Is called by the main application to give a reference back to itself.
@@ -36,14 +39,24 @@ public class RootLayoutController {
 	 */
 	public void initController(StageManager stageManager) {
 		this.stageManager = stageManager;
-		this.themeMenuController = new ThemeMenuController(stageManager);
 		initCameraController();
+		initSubScene3DController();
+		
 	}
 	
 	private void initCameraController() {
-        this.cameraController = new CameraController();
         this.cameraController.handleMouse(stageManager.getSubScene3D());
         this.cameraController.handleKeyboard(stageManager.getSubScene3D());
+	}
+	
+	private void initSubScene3DController() {
+		this.subScene3DController = new SubScene3DController();
+		this.subScene3DController.handleMouse(stageManager.getSubScene3D());
+	}
+	
+	public void addPaneBox3DControls(PaneBox3D paneBox3D) {
+		this.paneBox3DController.addAllControls(paneBox3D);
+		this.paneBox3DController.addObserver(this.cameraController);
 	}
 
 	/**
@@ -159,17 +172,17 @@ public class RootLayoutController {
 		
 	@FXML
 	private void handleSetModena() {
-		this.themeMenuController.handleSetTheme(this.modena, Style.MODENA);
+		this.themeMenuController.handleSetTheme(this.stageManager, this.modena, Style.MODENA);
 	}
 	
 	@FXML
 	private void handleSetCaspian() {
-		this.themeMenuController.handleSetTheme(this.caspian, Style.CASPIANDARK);
+		this.themeMenuController.handleSetTheme(this.stageManager, this.caspian, Style.CASPIANDARK);
 	}
 	
 	@FXML
 	private void handleSetAqua() {
-		this.themeMenuController.handleSetTheme(this.aqua, Style.AQUA);
+		this.themeMenuController.handleSetTheme(this.stageManager, this.aqua, Style.AQUA);
 	}
 		
 }
