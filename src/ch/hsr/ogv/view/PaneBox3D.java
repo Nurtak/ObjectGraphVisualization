@@ -27,20 +27,24 @@ public class PaneBox3D {
 	private final static Logger logger = LoggerFactory.getLogger(PaneBox3D.class);
 	
 	private final static int INIT_BOX_HEIGHT = 5;
-	private final static int INIT_SELECT_SIZE = 4;
 	
-	private Group group = new Group();
-	private Group selection = new Group();
+	private Group paneBoxSelection = new Group();
+	private Selection3D selection3D = null;
 	private BorderPane borderPane = null;
+	private Group paneBox = new Group();
 	private Color color;
 	private Cuboid3D box;
 	
 	public Group getNode() {
-		return group;
+		return paneBoxSelection;
 	}
 	
-	public Group getSelection() {
-		return selection;
+	public Group getPaneBox() {
+		return this.paneBox;
+	}
+	
+	public Selection3D getSelection3D() {
+		return selection3D;
 	}
 	
 	public Cuboid3D getBox() {
@@ -74,12 +78,15 @@ public class PaneBox3D {
         this.borderPane.translateXProperty().bind(this.borderPane.widthProperty().divide(2));
         this.borderPane.translateZProperty().bind(this.borderPane.heightProperty().divide(2));
         
+        // build the box that stays beneath the borderPane
         buildBox();
-        buildSelection();
         
-        group.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection);
-        this.selection.setVisible(false);
-        group.getTransforms().add(new Translate(0, INIT_BOX_HEIGHT, 0)); // position the group's center at the origin (0, 0, 0)
+        // create the selection objects that stays with this box
+        this.selection3D = new Selection3D(this);
+        
+        this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection3D.getNode());
+        this.selection3D.getNode().setVisible(false);
+        paneBoxSelection.getTransforms().add(new Translate(0, INIT_BOX_HEIGHT, 0)); // position the group's center at the origin (0, 0, 0)
         
         setColor(color);
 	}
@@ -133,7 +140,7 @@ public class PaneBox3D {
 	}
 	
 	public void setSelected(boolean value) {
-		this.selection.setVisible(value);
+		this.selection3D.getNode().setVisible(value);
 		getTop().setEditable(value);
 		getTop().setDisable(!value);
 	}
@@ -149,119 +156,37 @@ public class PaneBox3D {
 		this.box.translateYProperty().bind(this.borderPane.translateYProperty().subtract(INIT_BOX_HEIGHT));
 	}
 	
-	private void buildSelection() {
-		
-		Group pointNE = new Group();
-		Group pointNW = new Group();
-		Group pointSE = new Group();
-		Group pointSW = new Group();
-		
-		for(int i = 0; i < 8; i++) {
-			Sphere3D sphere3D = new Sphere3D(Color.DODGERBLUE, INIT_SELECT_SIZE);
-			
-			Cylinder3D cylinderV3D = new Cylinder3D(Color.DODGERBLUE, INIT_SELECT_SIZE - 2, 10);
-			cylinderV3D.heightProperty().bind(this.box.depthProperty());
-			cylinderV3D.translateYProperty().bind(this.box.translateYProperty());
-			
-			Cylinder3D cylinderH3D = new Cylinder3D(Color.DODGERBLUE, INIT_SELECT_SIZE - 2, 10);
-			cylinderH3D.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
-			
-			if(i == 0 || i == 1 || i == 4 || i == 5) {
-				sphere3D.translateZProperty().bind(this.box.translateZProperty().subtract(this.box.heightProperty().divide(2)));
-				cylinderV3D.translateZProperty().bind(this.box.translateZProperty().subtract(this.box.heightProperty().divide(2)));
-				if(i == 0 || i == 1) {
-					cylinderH3D.translateZProperty().bind(this.box.translateZProperty().subtract(this.box.heightProperty().divide(2)));
-					cylinderH3D.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
-					cylinderH3D.heightProperty().bind(this.box.widthProperty());
-					pointSE.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
-				}
-
-			}
-			
-			if(i == 0 || i == 1 || i == 6 || i == 7) {
-				sphere3D.translateXProperty().bind(this.box.translateXProperty().subtract(this.box.widthProperty().divide(2)));
-				cylinderV3D.translateXProperty().bind(this.box.translateXProperty().subtract(this.box.widthProperty().divide(2)));
-				if(i == 6 || i == 7) {
-					cylinderH3D.translateXProperty().bind(this.box.translateXProperty().add(this.box.widthProperty().divide(2)));
-					cylinderH3D.heightProperty().bind(this.box.heightProperty());
-					pointNE.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
-				}
-			}
-			
-			if(i == 2 || i == 3 || i == 6 || i == 7) {
-				sphere3D.translateZProperty().bind(this.box.translateZProperty().add(this.box.heightProperty().divide(2)));
-				cylinderV3D.translateZProperty().bind(this.box.translateZProperty().add(this.box.heightProperty().divide(2)));
-				if(i == 2 || i == 3) {
-					cylinderH3D.translateXProperty().bind(this.box.translateXProperty());
-					cylinderH3D.translateZProperty().bind(this.box.translateZProperty().add(this.box.heightProperty().divide(2)));
-					cylinderH3D.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
-					cylinderH3D.heightProperty().bind(this.box.widthProperty());
-					pointNW.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
-				}
-			}
-			
-			if(i == 2 || i == 3 || i == 4 || i == 5) {
-				sphere3D.translateXProperty().bind(this.box.translateXProperty().add(this.box.widthProperty().divide(2)));
-				cylinderV3D.translateXProperty().bind(this.box.translateXProperty().add(this.box.widthProperty().divide(2)));
-				if(i == 4 || i == 5) {
-					cylinderH3D.translateXProperty().bind(this.box.translateXProperty().subtract(this.box.widthProperty().divide(2)));
-					cylinderH3D.translateZProperty().bind(this.box.translateZProperty());
-					cylinderH3D.heightProperty().bind(this.box.heightProperty());
-					pointSW.getChildren().addAll(sphere3D.getNode(), cylinderV3D.getNode());
-				}
-			}
-			
-			if(i % 2 == 1) {
-				sphere3D.translateYProperty().bind(this.box.translateZProperty().subtract(this.box.depthProperty()));
-				cylinderH3D.translateYProperty().bind(this.box.translateZProperty().subtract(this.box.depthProperty()));
-				this.selection.getChildren().add(cylinderV3D.getNode());
-			}
-			this.selection.getChildren().add(cylinderH3D.getNode());
-		}
-		this.selection.getChildren().addAll(pointNE, pointSE, pointNW, pointSW);
-		
-//		pointSE.setOnMouseDragged(new EventHandler<MouseEvent>() {
-//
-//			@Override
-//			public void handle(MouseEvent event) {
-//				System.out.println("SE clicked");
-//			}
-//			
-//		});
-		
-	}
-	
 	public void setBoxHeightScale(double scale) {
 		this.box.getTransforms().add(new Scale(1, 1, scale));
 		this.borderPane.getTransforms().add(new Translate(0, 0, (scale * -INIT_BOX_HEIGHT) + INIT_BOX_HEIGHT));
 	}
 	
 	public void setTranslateY(double y) {
-		this.group.setTranslateY(y);
+		this.paneBoxSelection.setTranslateY(y);
 	}
 	
 	public void setTranslateX(double x) {
-		this.group.setTranslateX(x);
+		this.paneBoxSelection.setTranslateX(x);
 	}
 	
 	public void setTranslateZ(double z) {
-		this.group.setTranslateZ(z);
+		this.paneBoxSelection.setTranslateZ(z);
 	}
 	
 	public double getTranslateY() {
-		return this.group.getTranslateY();
+		return this.paneBoxSelection.getTranslateY();
 	}
 	
 	public double getTranslateX() {
-		return this.group.getTranslateX();
+		return this.paneBoxSelection.getTranslateX();
 	}
 	
 	public double getTranslateZ() {
-		return this.group.getTranslateZ();
+		return this.paneBoxSelection.getTranslateZ();
 	}
 	
 	public void setVisible(boolean visible) {
-		this.group.setVisible(visible);
+		this.paneBoxSelection.setVisible(visible);
 	}
 	
 	public void setPaneVisible(boolean visible) {

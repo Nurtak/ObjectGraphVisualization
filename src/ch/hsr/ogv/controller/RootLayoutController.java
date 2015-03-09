@@ -46,16 +46,16 @@ public class RootLayoutController {
 	
 	private void initCameraController() {
         this.cameraController.handleMouse(stageManager.getSubScene3D());
-        this.cameraController.handleKeyboard(stageManager.getSubScene3D());
+        this.cameraController.handleKeyboard(this.stageManager.getSubScene3D());
 	}
 	
 	private void initSubScene3DController() {
 		this.subScene3DController = new SubScene3DController();
-		this.subScene3DController.handleMouse(stageManager.getSubScene3D());
+		this.subScene3DController.handleMouse(this.stageManager.getSubScene3D());
 	}
 	
 	public void addPaneBox3DControls(PaneBox3D paneBox3D) {
-		this.paneBox3DController.addAllControls(paneBox3D);
+		this.paneBox3DController.addAllControls(this.stageManager.getSubScene3D().getSubScene(), paneBox3D);
 		this.paneBox3DController.addObserver(this.cameraController);
 	}
 
