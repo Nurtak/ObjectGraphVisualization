@@ -17,8 +17,8 @@ public class Axis {
 	
     private final Group axisGroup = new Group();
     
-    public Group getAxisGroup() {
-		return axisGroup;
+    public Group get() {
+		return this.axisGroup;
 	}
 
 	private Color getBrighterColor(Color c) {

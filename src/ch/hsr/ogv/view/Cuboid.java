@@ -16,28 +16,28 @@ import javafx.scene.transform.Transform;
  * @author Simon Gwerder
  *
  */
-public class Cuboid3D {
+public class Cuboid {
 	
 	private CuboidMesh box = null;
 	private Color color;
 	
 	public Color getColor() {
-		return color;
+		return this.color;
 	}
 
-	public CuboidMesh getNode() {
-		return box;
+	public CuboidMesh get() {
+		return this.box;
 	}
 	
-	public Cuboid3D() {
+	public Cuboid() {
 		this(10);
 	}
 	
-	public Cuboid3D(double size) {
+	public Cuboid(double size) {
 		this(Color.WHITE, size);
 	}
 
-	public Cuboid3D(Color color, double size) {
+	public Cuboid(Color color, double size) {
 		this.box = new CuboidMesh(size, size , size);
 		this.box.setDepthTest(DepthTest.ENABLE);
 		this.box.setCache(true);

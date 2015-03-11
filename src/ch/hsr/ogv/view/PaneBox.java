@@ -26,30 +26,29 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
  * @author Simon Gwerder
  *
  */
-public class PaneBox3D {
+public class PaneBox {
 	
-	private final static Logger logger = LoggerFactory.getLogger(PaneBox3D.class);
+	private final static Logger logger = LoggerFactory.getLogger(PaneBox.class);
 	
 	private final static int INIT_BOX_HEIGHT = 10;
 	
 	private Group paneBox = new Group();
-	private Selection3D selection3D = null;
+	private Selection selection = null;
 	private BorderPane borderPane = null;
 	private Color color;
-	private Cuboid3D box;
+	private Cuboid box;
 	
-	public Group getPaneBox() {
+	public Group get() {
 		return this.paneBox;
 	}
 
-	public Cuboid3D getBox() {
+	public Cuboid getBox() {
 		return this.box;
 	}
 
-	public Selection3D getSelection3D() {
-		return this.selection3D;
+	public Selection getSelection() {
+		return this.selection;
 	}
-	
 	
 	public Color getColor() {
 		return this.color;
@@ -61,11 +60,11 @@ public class PaneBox3D {
 		this.box.setColor(color);
 	}
 	
-	public PaneBox3D() {
+	public PaneBox() {
 		this(Color.WHITE);
 	}
 	
-	public PaneBox3D(Color color) {
+	public PaneBox(Color color) {
 		initLayout();
         this.borderPane.setCache(true);
         this.borderPane.setCacheHint(CacheHint.SCALE_AND_ROTATE);
@@ -82,11 +81,11 @@ public class PaneBox3D {
         buildBox();
         
         // create the selection objects that stays with this box
-        this.selection3D = new Selection3D(this);
+        this.selection = new Selection(this);
         
-        //this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection3D.getNode());
-        this.paneBox.getChildren().addAll(this.borderPane, this.box.getNode());
-        this.selection3D.getNode().setVisible(false);
+        //this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection.getNode());
+        this.paneBox.getChildren().addAll(this.borderPane, this.box.get());
+        this.selection.get().setVisible(false);
         
         // position the whole group so, that the center is at scene's origin (0, 0, 0)
         setTranslateY(INIT_BOX_HEIGHT / 2);
@@ -112,7 +111,7 @@ public class PaneBox3D {
 	}
 	
 	private void buildBox() {
-		this.box = new Cuboid3D(INIT_BOX_HEIGHT);
+		this.box = new Cuboid(INIT_BOX_HEIGHT);
 		this.box.setDrawTopFace(false);
 		this.box.widthProperty().bind(this.borderPane.widthProperty());
 		this.box.heightProperty().bind(this.borderPane.heightProperty());
@@ -155,7 +154,7 @@ public class PaneBox3D {
 	}
 	
 	public void setSelected(boolean value) {
-		this.selection3D.getNode().setVisible(value);
+		this.selection.get().setVisible(value);
 		getTop().setEditable(value);
 		getTop().setDisable(!value);
 	}
@@ -188,22 +187,22 @@ public class PaneBox3D {
 	
 	public void setTranslateY(double y) {
 		this.paneBox.setTranslateY(y);
-		this.selection3D.getNode().setTranslateY(y);
+		this.selection.get().setTranslateY(y);
 	}
 	
 	public void setTranslateXYZ(double x, double y, double z) {
 		this.paneBox.getTransforms().add(new Translate(x, y, z));
-		this.selection3D.getNode().getTransforms().add(new Translate(x, y, z));
+		this.selection.get().getTransforms().add(new Translate(x, y, z));
 	}
 	
 	public void setTranslateX(double x) {
 		this.paneBox.setTranslateX(x);
-		this.selection3D.getNode().setTranslateX(x);
+		this.selection.get().setTranslateX(x);
 	}
 	
 	public void setTranslateZ(double z) {
 		this.paneBox.setTranslateZ(z);
-		this.selection3D.getNode().setTranslateZ(z);
+		this.selection.get().setTranslateZ(z);
 	}
 	
 	public double getTranslateY() {

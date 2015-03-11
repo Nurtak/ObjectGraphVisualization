@@ -4,7 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.scene.Group;
-import ch.hsr.ogv.view.PaneBox3D;
+import ch.hsr.ogv.view.PaneBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.Cursor;
@@ -16,54 +16,54 @@ import javafx.scene.Cursor;
  */
 public class DragMoveController extends Observable implements Observer {
 	
-	private volatile PaneBox3D selected = null;
+	private volatile PaneBox selected = null;
 	private volatile boolean dragInProgress = false;
 	
 	private volatile double relMousePosX;
 	private volatile double relMousePosZ;
 	
-	protected void setDragInProgress(PaneBox3D paneBox3D, boolean value) {
+	protected void setDragInProgress(PaneBox paneBox, boolean value) {
 		this.dragInProgress = value;
 		setChanged();
-		notifyObservers(paneBox3D);
+		notifyObservers(paneBox);
 	}
 	
 	public boolean isDragInProgress() {
 		return this.dragInProgress;
 	}
 	
-	public void enableDragMove(PaneBox3D paneBox3D) {
-		Group paneBox3DGroup = paneBox3D.getPaneBox();
+	public void enableDragMove(PaneBox paneBox) {
+		Group paneBoxGroup = paneBox.get();
 		
-		paneBox3DGroup.setOnMousePressed((MouseEvent me) -> {
-			if(isSelected(paneBox3D) && MouseButton.PRIMARY.equals(me.getButton())) {
+		paneBoxGroup.setOnMousePressed((MouseEvent me) -> {
+			if(isSelected(paneBox) && MouseButton.PRIMARY.equals(me.getButton())) {
 	            relMousePosX = me.getX();
 	            relMousePosZ = me.getZ();
 			}
         });
 		
-		paneBox3DGroup.setOnMouseDragged((MouseEvent me) -> {
-			if(paneBox3DGroup.focusedProperty().get() && MouseButton.PRIMARY.equals(me.getButton())) {
-				setDragInProgress(paneBox3D, true);
+		paneBoxGroup.setOnMouseDragged((MouseEvent me) -> {
+			if(paneBoxGroup.focusedProperty().get() && MouseButton.PRIMARY.equals(me.getButton())) {
+				setDragInProgress(paneBox, true);
 				//TODO improve movement => fix y jump of mouse at fast movements
-				//double yPlaneAlpha = Math.abs(me.getY() - paneBox3DGroup.getTranslateY());
+				//double yPlaneAlpha = Math.abs(me.getY() - paneBoxGroup.getTranslateY());
 				//System.out.println(yPlaneAlpha);
-				paneBox3DGroup.setCursor(Cursor.MOVE);
-				paneBox3D.setTranslateX(paneBox3D.getTranslateX() + (me.getX() - relMousePosX));
-				paneBox3D.setTranslateZ(paneBox3D.getTranslateZ() + (me.getZ() - relMousePosZ));
+				paneBoxGroup.setCursor(Cursor.MOVE);
+				paneBox.setTranslateX(paneBox.getTranslateX() + (me.getX() - relMousePosX));
+				paneBox.setTranslateZ(paneBox.getTranslateZ() + (me.getZ() - relMousePosZ));
 			}
 		});
 		
-		paneBox3DGroup.setOnMouseReleased((MouseEvent me) -> {
-			if(paneBox3DGroup.focusedProperty().get() && MouseButton.PRIMARY.equals(me.getButton())) {
-				setDragInProgress(paneBox3D, false);
-				paneBox3DGroup.setCursor(Cursor.DEFAULT);
+		paneBoxGroup.setOnMouseReleased((MouseEvent me) -> {
+			if(paneBoxGroup.focusedProperty().get() && MouseButton.PRIMARY.equals(me.getButton())) {
+				setDragInProgress(paneBox, false);
+				paneBoxGroup.setCursor(Cursor.DEFAULT);
 			}
 		});
 	}
 	
-	private boolean isSelected(PaneBox3D paneBox3D) {
-		return this.selected != null && this.selected.equals(paneBox3D);
+	private boolean isSelected(PaneBox paneBox) {
+		return this.selected != null && this.selected.equals(paneBox);
 	}
 
 	@Override

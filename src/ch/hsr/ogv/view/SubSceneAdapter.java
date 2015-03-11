@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
  * @author Simon Gwerder
  *
  */
-public class SubScene3D {
+public class SubSceneAdapter {
 	
 	private static final Color BACKGROUND = Color.WHITESMOKE;
 	
@@ -24,22 +24,22 @@ public class SubScene3D {
 	private final Xform world = new Xform();
     
 	public SubScene getSubScene() {
-		return subScene;
+		return this.subScene;
 	}
     
     public Xform getWorld() {
-		return world;
+		return this.world;
 	}
         
 	public SubSceneCamera getSubSceneCamera() {
-		return subSceneCamera;
+		return this.subSceneCamera;
 	}
 	
 	public Axis getAxis() {
 		return this.axis;
 	}
 
-	public SubScene3D(double initWidth, double initHeight) {
+	public SubSceneAdapter(double initWidth, double initHeight) {
     	// create a new subscene that resides in the root group
     	this.root.setDepthTest(DepthTest.ENABLE);
     	this.subScene = new SubScene(this.root, initWidth, initHeight, true, SceneAntialiasing.BALANCED);
@@ -47,12 +47,12 @@ public class SubScene3D {
                 
         // create axis and add them to the world Xform
         this.axis = new Axis();
-        world.getChildren().add(axis.getAxisGroup());
+        world.getChildren().add(axis.get());
 
         // add a camera for the subscene
         this.subSceneCamera = new SubSceneCamera();
     	root.getChildren().add(this.subSceneCamera.getCameraXform());
-        subScene.setCamera(this.subSceneCamera.getPerspectiveCamera());
+        subScene.setCamera(this.subSceneCamera.get());
         
     	// populate the root group with the world objects
     	this.root.getChildren().add(world);

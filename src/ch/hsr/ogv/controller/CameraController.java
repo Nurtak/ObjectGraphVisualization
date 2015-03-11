@@ -3,7 +3,7 @@ package ch.hsr.ogv.controller;
 import java.util.Observable;
 import java.util.Observer;
 
-import ch.hsr.ogv.view.SubScene3D;
+import ch.hsr.ogv.view.SubSceneAdapter;
 import ch.hsr.ogv.view.SubSceneCamera;
 import ch.hsr.ogv.view.Xform;
 import javafx.scene.Group;
@@ -38,9 +38,9 @@ public class CameraController implements Observer {
         cameraXform.rx.setAngle(90.0); // 40
 	}
 
-    public void handleMouse(SubScene3D subScene3D) {
-    	SubScene subScene = subScene3D.getSubScene();
-    	SubSceneCamera ssCamera = subScene3D.getSubSceneCamera();
+    public void handleMouse(SubSceneAdapter subSceneAdapter) {
+    	SubScene subScene = subSceneAdapter.getSubScene();
+    	SubSceneCamera ssCamera = subSceneAdapter.getSubSceneCamera();
         
     	subScene.setOnMousePressed((MouseEvent me) -> {
     		if(!moveCamera) return;
@@ -77,24 +77,24 @@ public class CameraController implements Observer {
             	cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MODIFIER_FACTOR * modifier);
             	cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MODIFIER_FACTOR * modifier);
             } else if (me.isMiddleButtonDown()) {
-				double z = ssCamera.getPerspectiveCamera().getTranslateZ();
+				double z = ssCamera.get().getTranslateZ();
 				double newZ = z - mouseDeltaY * 2 + MODIFIER_FACTOR * modifier;
-				ssCamera.getPerspectiveCamera().setTranslateZ(newZ);
+				ssCamera.get().setTranslateZ(newZ);
             }
         });
         
         subScene.setOnScroll((ScrollEvent se) -> {
         	if(!moveCamera) return;
-            double z = ssCamera.getPerspectiveCamera().getTranslateZ();
+            double z = ssCamera.get().getTranslateZ();
             double newZ = z + se.getDeltaY();
-            ssCamera.getPerspectiveCamera().setTranslateZ(newZ);
+            ssCamera.get().setTranslateZ(newZ);
         });
 
     }
 
-    public void handleKeyboard(SubScene3D subScene3D) {
-    	SubScene subScene = subScene3D.getSubScene();
-    	SubSceneCamera ssCamera = subScene3D.getSubSceneCamera();
+    public void handleKeyboard(SubSceneAdapter subSceneAdapter) {
+    	SubScene subScene = subSceneAdapter.getSubScene();
+    	SubSceneCamera ssCamera = subSceneAdapter.getSubSceneCamera();
 
     	subScene.setOnKeyPressed((KeyEvent ke) -> {
         	if(!moveCamera) return;
@@ -104,12 +104,12 @@ public class CameraController implements Observer {
             switch (ke.getCode()) {
                 case Z:
                 	handle2DClassView(ssCamera);
-                    ssCamera.getPerspectiveCamera().setTranslateZ(-SubSceneCamera.CAMERA_DISTANCE);
+                    ssCamera.get().setTranslateZ(-SubSceneCamera.CAMERA_DISTANCE);
                     cameraXform2.t.setX(0.0);
                     cameraXform2.t.setY(0.0);
                     break;
                 case X:
-                	Group axisGroup = subScene3D.getAxis().getAxisGroup();
+                	Group axisGroup = subSceneAdapter.getAxis().get();
                 	if (axisGroup.isVisible()) {
                 		axisGroup.setVisible(false);
                     } else {
@@ -117,24 +117,24 @@ public class CameraController implements Observer {
                     }
                     break;
                 case UP:
-                    double oldY_UP = ssCamera.getPerspectiveCamera().getTranslateY();
+                    double oldY_UP = ssCamera.get().getTranslateY();
                     double newY_UP = oldY_UP + MODIFIER * 7;
-                    ssCamera.getPerspectiveCamera().setTranslateY(newY_UP);
+                    ssCamera.get().setTranslateY(newY_UP);
                     break;
                 case DOWN:
-                	double oldY_DOWN = ssCamera.getPerspectiveCamera().getTranslateY();
+                	double oldY_DOWN = ssCamera.get().getTranslateY();
                     double newY_DOWN = oldY_DOWN - MODIFIER * 7;
-                    ssCamera.getPerspectiveCamera().setTranslateY(newY_DOWN);
+                    ssCamera.get().setTranslateY(newY_DOWN);
                     break;
                 case RIGHT:
-                	double oldX_RIGHT = ssCamera.getPerspectiveCamera().getTranslateX();
+                	double oldX_RIGHT = ssCamera.get().getTranslateX();
                     double newX_RIGHT = oldX_RIGHT - MODIFIER * 7;
-                    ssCamera.getPerspectiveCamera().setTranslateX(newX_RIGHT);
+                    ssCamera.get().setTranslateX(newX_RIGHT);
                     break;
                 case LEFT:
-                	double oldX_LEFT = ssCamera.getPerspectiveCamera().getTranslateX();
+                	double oldX_LEFT = ssCamera.get().getTranslateX();
                     double newX_LEFT = oldX_LEFT + MODIFIER * 7;
-                    ssCamera.getPerspectiveCamera().setTranslateX(newX_LEFT);
+                    ssCamera.get().setTranslateX(newX_LEFT);
                     break;
                 default:
                 	break;

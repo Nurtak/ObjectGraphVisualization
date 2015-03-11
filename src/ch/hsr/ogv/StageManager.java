@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import ch.hsr.ogv.controller.RootLayoutController;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
-import ch.hsr.ogv.view.PaneBox3D;
-import ch.hsr.ogv.view.SubScene3D;
+import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.SubSceneAdapter;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -35,10 +35,10 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private RootLayoutController rootLayoutController;
-	private SubScene3D subScene3D;
-	private List<PaneBox3D> classes = new ArrayList<PaneBox3D>();
+	private SubSceneAdapter subSceneAdpater;
+	private List<PaneBox> classes = new ArrayList<PaneBox>();
 
-	public List<PaneBox3D> getClasses() {
+	public List<PaneBox> getClasses() {
 		return classes;
 	}
 
@@ -53,8 +53,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		return rootLayout;
 	}
 	
-	public SubScene3D getSubScene3D() {
-		return subScene3D;
+	public SubSceneAdapter getSubSceneAdpater() {
+		return subSceneAdpater;
 	}
 
 	public String getAppTitle() {
@@ -84,8 +84,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         
         Pane canvas = (Pane) this.rootLayout.getCenter();
         
-        this.subScene3D = new SubScene3D(canvas.getWidth(), canvas.getHeight());
-        SubScene subScene = this.subScene3D.getSubScene();
+        this.subSceneAdpater = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());
+        SubScene subScene = this.subSceneAdpater.getSubScene();
         
         canvas.getChildren().add(subScene);
         subScene.heightProperty().bind(canvas.heightProperty());
@@ -98,11 +98,11 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         this.primaryStage.setScene(scene);
         this.primaryStage.show();
         
-        this.subScene3D.getSubScene().requestFocus();
+        this.subSceneAdpater.getSubScene().requestFocus();
         
-        //TODO: Remove test paneBox3D
-	    PaneBox3D paneBox3D = new PaneBox3D(Color.ALICEBLUE);
-	    addClassToSubScene(paneBox3D);
+        //TODO: Remove test paneBox
+	    PaneBox paneBox = new PaneBox(Color.ALICEBLUE);
+	    addClassToSubScene(paneBox);
 	}
 	
 	/**
@@ -110,15 +110,15 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	 * @param node node.
 	 */
 	private void addToSubScene(Node node) {
-		this.subScene3D.getWorld().getChildren().add(node);
+		this.subSceneAdpater.getWorld().getChildren().add(node);
 		this.rootLayout.applyCss();
 	}
 	
-	public void addClassToSubScene(PaneBox3D classBox) {
+	public void addClassToSubScene(PaneBox classBox) {
 		this.classes.add(classBox);
-		this.rootLayoutController.addPaneBox3DControls(classBox);
-		addToSubScene(classBox.getPaneBox());
-		addToSubScene(classBox.getSelection3D().getNode());
+		this.rootLayoutController.addPaneBoxControls(classBox);
+		addToSubScene(classBox.get());
+		addToSubScene(classBox.getSelection().get());
 	}
 	
 	public void setLightTheme() {

@@ -9,7 +9,7 @@ import javafx.scene.DepthTest;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Cylinder;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Transform;
 
 /**
@@ -17,37 +17,37 @@ import javafx.scene.transform.Transform;
  * @author Simon Gwerder
  *
  */
-public class Cylinder3D {
+public class SphereAdapter {
 	
-	private Cylinder cylinder;
+	private Sphere sphere;
 	private Color color;
 	
 	public Color getColor() {
-		return color;
+		return this.color;
 	}
 
-	public Cylinder getNode() {
-		return this.cylinder;
+	public Sphere get() {
+		return this.sphere;
 	}
 	
-	public Cylinder3D() {
+	public SphereAdapter() {
 		this(5);
 	}
 	
-	public Cylinder3D(double radius) {
-		this(Color.WHITE, radius, 10);
+	public SphereAdapter(double radius) {
+		this(Color.WHITE, radius);
 	}
 
-	public Cylinder3D(Color color, double radius, double height) {
-		this.cylinder = new Cylinder(radius, height);
-		this.cylinder.setDepthTest(DepthTest.ENABLE);
-		this.cylinder.setCache(true);
-		this.cylinder.setCacheHint(CacheHint.SCALE_AND_ROTATE);
+	public SphereAdapter(Color color, double radius) {
+		this.sphere = new Sphere(radius);
+		this.sphere.setDepthTest(DepthTest.ENABLE);
+		this.sphere.setCache(true);
+		this.sphere.setCacheHint(CacheHint.SCALE_AND_ROTATE);
 		setColor(color);
-		this.cylinder.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        this.sphere.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent t) {
-				cylinder.requestFocus();
+				sphere.requestFocus();
 			}
         });
 	}
@@ -57,47 +57,43 @@ public class Cylinder3D {
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(this.color);
 		material.setSpecularColor(this.color.brighter());
-		cylinder.setMaterial(material);
+		sphere.setMaterial(material);
 	}
 	
 	public DoubleProperty radiusProperty() {
-		return this.cylinder.radiusProperty();
-	}
-	
-	public DoubleProperty heightProperty() {
-		return this.cylinder.heightProperty();
+		return this.sphere.radiusProperty();
 	}
 		
 	public DoubleProperty translateXProperty() {
-		return this.cylinder.translateXProperty();
+		return this.sphere.translateXProperty();
 	}
 	
 	public DoubleProperty translateYProperty() {
-		return this.cylinder.translateYProperty();
+		return this.sphere.translateYProperty();
 	}
 	
 	public DoubleProperty translateZProperty() {
-		return this.cylinder.translateZProperty();
+		return this.sphere.translateZProperty();
 	}
 	
 	public ObservableList<Transform> getTransforms() {
-		return this.cylinder.getTransforms();
+		return this.sphere.getTransforms();
 	}
 	
 	public ReadOnlyBooleanProperty focusedProperty() {
-		return this.cylinder.focusedProperty();
+		return this.sphere.focusedProperty();
 	}
 	
 	public void setVisible(boolean visible) {
-		this.cylinder.setVisible(visible);
+		this.sphere.setVisible(visible);
 	}
 	
 	public boolean isVisible() {
-		return this.cylinder.isVisible();
+		return this.sphere.isVisible();
 	}
 	
 	public void requestFocus() {
-		this.cylinder.requestFocus();
+		this.sphere.requestFocus();
 	}
-	
+
 }

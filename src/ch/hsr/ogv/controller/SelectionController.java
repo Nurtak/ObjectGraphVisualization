@@ -4,7 +4,7 @@ import java.util.Observable;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import ch.hsr.ogv.view.PaneBox3D;
+import ch.hsr.ogv.view.PaneBox;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -14,74 +14,74 @@ import javafx.scene.input.MouseEvent;
  */
 public class SelectionController extends Observable {
 	
-	private volatile PaneBox3D selectedBox = null;
+	private volatile PaneBox selectedBox = null;
 	
 	public boolean hasSelection() {
 		return this.selectedBox != null;
 	}
 
-	public PaneBox3D getSelected() {
+	public PaneBox getSelected() {
 		return this.selectedBox;
 	}
 	
-	public void enableSelection(PaneBox3D paneBox3D) {
-		focusOnClick(paneBox3D);
-		selectOnFocus(paneBox3D);
+	public void enableSelection(PaneBox paneBox) {
+		focusOnClick(paneBox);
+		selectOnFocus(paneBox);
 	}
 	
-	private void focusOnClick(PaneBox3D paneBox3D) {
-		paneBox3D.getPaneBox().setOnMouseClicked((MouseEvent me) -> {
-			paneBox3D.getPaneBox().requestFocus();
+	private void focusOnClick(PaneBox paneBox) {
+		paneBox.get().setOnMouseClicked((MouseEvent me) -> {
+			paneBox.get().requestFocus();
 		});
 	}
 	
-	private void setSelected(PaneBox3D paneBox3D, boolean selected) {
+	private void setSelected(PaneBox paneBox, boolean selected) {
 		if(selected) {
-			this.selectedBox = paneBox3D;
+			this.selectedBox = paneBox;
 			setChanged();
-			notifyObservers(paneBox3D);
+			notifyObservers(paneBox);
 		}
 		else {
 			this.selectedBox = null;
 			setChanged();
-			notifyObservers(paneBox3D);
+			notifyObservers(paneBox);
 		}
-		paneBox3D.setSelected(selected);
+		paneBox.setSelected(selected);
 	}
 	
-	private void selectOnFocus(PaneBox3D paneBox3D) {
-		paneBox3D.getPaneBox().focusedProperty().addListener(new ChangeListener<Boolean>() {
+	private void selectOnFocus(PaneBox paneBox) {
+		paneBox.get().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-            	if(paneBox3D.getPaneBox().focusedProperty().get()) {
-            		setSelected(paneBox3D, true);
+            	if(paneBox.get().focusedProperty().get()) {
+            		setSelected(paneBox, true);
 				}
 				else {
-					setSelected(paneBox3D, false);
+					setSelected(paneBox, false);
             	}
             }
         });
 		
-		paneBox3D.getTop().focusedProperty().addListener(new ChangeListener<Boolean>() {
+		paneBox.getTop().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-            	if(paneBox3D.getTop().focusedProperty().get()) {
-            		setSelected(paneBox3D, true);
+            	if(paneBox.getTop().focusedProperty().get()) {
+            		setSelected(paneBox, true);
 				}
 				else {
-					setSelected(paneBox3D, false);
+					setSelected(paneBox, false);
             	}
             }
         });
 		
-		paneBox3D.getBox().focusedProperty().addListener(new ChangeListener<Boolean>() {
+		paneBox.getBox().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-            	if(paneBox3D.getBox().focusedProperty().get()) {
-            		setSelected(paneBox3D, true);
+            	if(paneBox.getBox().focusedProperty().get()) {
+            		setSelected(paneBox, true);
 				}
 				else {
-					setSelected(paneBox3D, false);
+					setSelected(paneBox, false);
             	}
             }
         });

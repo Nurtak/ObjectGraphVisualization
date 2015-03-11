@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import ch.hsr.ogv.StageManager;
 import ch.hsr.ogv.ThemeChooser.Style;
 import ch.hsr.ogv.util.UserPreferences;
-import ch.hsr.ogv.view.PaneBox3D;
+import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneCamera;
 
 /**
@@ -29,7 +29,7 @@ public class RootLayoutController {
 	private StageManager stageManager; // reference back to the stage manager
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
-	private SubScene3DController subScene3DController = new SubScene3DController();
+	private SubSceneController subSceneController = new SubSceneController();
 	
 	private SelectionController selectionController = new SelectionController();
 	private TextInputController textInputController = new TextInputController();
@@ -42,29 +42,29 @@ public class RootLayoutController {
 	 */
 	public void initController(StageManager stageManager) {
 		this.stageManager = stageManager;
-		initSubScene3DController();
+		initSubSceneController();
 		initCameraController();
-		initPaneBox3DController();
+		initPaneBoxController();
 	}
 	
 	private void initCameraController() {
-        this.cameraController.handleMouse(stageManager.getSubScene3D());
-        this.cameraController.handleKeyboard(this.stageManager.getSubScene3D());
+        this.cameraController.handleMouse(stageManager.getSubSceneAdpater());
+        this.cameraController.handleKeyboard(this.stageManager.getSubSceneAdpater());
 	}
 	
-	private void initSubScene3DController() {
-		this.subScene3DController.handleMouse(this.stageManager.getSubScene3D());
+	private void initSubSceneController() {
+		this.subSceneController.handleMouse(this.stageManager.getSubSceneAdpater());
 	}
 	
-	private void initPaneBox3DController() {
+	private void initPaneBoxController() {
 		this.dragMoveController.addObserver(this.cameraController);
 		this.selectionController.addObserver(this.dragMoveController);
 	}
 	
-	public void addPaneBox3DControls(PaneBox3D paneBox3D) {
-		this.selectionController.enableSelection(paneBox3D);
-		this.textInputController.enableTextInput(paneBox3D);
-		this.dragMoveController.enableDragMove(paneBox3D);
+	public void addPaneBoxControls(PaneBox paneBox) {
+		this.selectionController.enableSelection(paneBox);
+		this.textInputController.enableTextInput(paneBox);
+		this.dragMoveController.enableDragMove(paneBox);
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class RootLayoutController {
 	
 	@FXML
 	private void handle2DClassView() {
-		SubSceneCamera ssCamera = stageManager.getSubScene3D().getSubSceneCamera();
+		SubSceneCamera ssCamera = stageManager.getSubSceneAdpater().getSubSceneCamera();
 		this.cameraController.handle2DClassView(ssCamera);
 	}
 	
