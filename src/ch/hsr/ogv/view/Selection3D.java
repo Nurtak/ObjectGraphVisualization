@@ -4,6 +4,11 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class Selection3D {
 	
 	private final static int INIT_SELECT_SIZE = 4;

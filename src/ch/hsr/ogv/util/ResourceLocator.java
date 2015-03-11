@@ -2,6 +2,11 @@ package ch.hsr.ogv.util;
 
 import java.net.URL;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class ResourceLocator {
 	
 	public static URL getResourcePath(Resource res) {

@@ -12,6 +12,11 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.transform.Transform;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class Cylinder3D {
 	
 	private Cylinder cylinder;

@@ -2,6 +2,11 @@ package ch.hsr.ogv.util;
 
 import javafx.scene.paint.Color;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class ColorUtils
 {
     public static String toRGBCode( Color color ) {

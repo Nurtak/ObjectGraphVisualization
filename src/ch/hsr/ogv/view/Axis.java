@@ -5,6 +5,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class Axis {
 
 	private static final int LENGTH = 200;

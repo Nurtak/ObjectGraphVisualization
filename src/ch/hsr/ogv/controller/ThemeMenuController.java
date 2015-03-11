@@ -7,6 +7,11 @@ import ch.hsr.ogv.StageManager;
 import ch.hsr.ogv.ThemeChooser;
 import ch.hsr.ogv.ThemeChooser.Style;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class ThemeMenuController {
 
 	public void handleSetTheme(StageManager stageManager, CheckMenuItem choosenMenu, Style style) {

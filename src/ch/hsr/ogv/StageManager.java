@@ -22,6 +22,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class StageManager {
 	
 private final static Logger logger = LoggerFactory.getLogger(StageManager.class);
@@ -97,22 +102,23 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         
         //TODO: Remove test paneBox3D
 	    PaneBox3D paneBox3D = new PaneBox3D(Color.ALICEBLUE);
-	    showClassInSubScene(paneBox3D);
+	    addClassToSubScene(paneBox3D);
 	}
 	
 	/**
 	 * Adds node to the subscene of the primary stage.
 	 * @param node node.
 	 */
-	public void showInSubScene(Node node) {
+	private void addToSubScene(Node node) {
 		this.subScene3D.getWorld().getChildren().add(node);
 		this.rootLayout.applyCss();
 	}
 	
-	public void showClassInSubScene(PaneBox3D classBox) {
+	public void addClassToSubScene(PaneBox3D classBox) {
 		this.classes.add(classBox);
 		this.rootLayoutController.addPaneBox3DControls(classBox);
-		showInSubScene(classBox.getNode());
+		addToSubScene(classBox.getPaneBox());
+		addToSubScene(classBox.getSelection3D().getNode());
 	}
 	
 	public void setLightTheme() {

@@ -2,6 +2,11 @@ package ch.hsr.ogv.view;
 
 import javafx.scene.PerspectiveCamera;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class SubSceneCamera {
 
 	private final PerspectiveCamera camera = new PerspectiveCamera(true);

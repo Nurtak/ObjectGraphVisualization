@@ -12,6 +12,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class CameraController implements Observer {
 	
 	private static final double MODIFIER = 2;
@@ -139,9 +144,9 @@ public class CameraController implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o instanceof PaneBox3DController) {
-			PaneBox3DController paneBox3DController = (PaneBox3DController) o;
-			moveCamera = !paneBox3DController.editInProgress();
+		if(o instanceof DragMoveController) {
+			DragMoveController dragMoveController = (DragMoveController) o;
+			this.moveCamera = !dragMoveController.isDragInProgress();
 		}
 	}
 }

@@ -15,41 +15,41 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import ch.hsr.ogv.util.ColorUtils;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.TextUtils;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class PaneBox3D {
 	
 	private final static Logger logger = LoggerFactory.getLogger(PaneBox3D.class);
 	
-	private final static int INIT_BOX_HEIGHT = 5;
+	private final static int INIT_BOX_HEIGHT = 10;
 	
-	private Group paneBoxSelection = new Group();
+	private Group paneBox = new Group();
 	private Selection3D selection3D = null;
 	private BorderPane borderPane = null;
-	private Group paneBox = new Group();
 	private Color color;
 	private Cuboid3D box;
-	
-	public Group getNode() {
-		return paneBoxSelection;
-	}
 	
 	public Group getPaneBox() {
 		return this.paneBox;
 	}
-	
-	public Selection3D getSelection3D() {
-		return selection3D;
-	}
-	
+
 	public Cuboid3D getBox() {
 		return this.box;
 	}
+
+	public Selection3D getSelection3D() {
+		return this.selection3D;
+	}
+	
 	
 	public Color getColor() {
 		return this.color;
@@ -84,9 +84,12 @@ public class PaneBox3D {
         // create the selection objects that stays with this box
         this.selection3D = new Selection3D(this);
         
-        this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection3D.getNode());
+        //this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection3D.getNode());
+        this.paneBox.getChildren().addAll(this.borderPane, this.box.getNode());
         this.selection3D.getNode().setVisible(false);
-        paneBoxSelection.getTransforms().add(new Translate(0, INIT_BOX_HEIGHT, 0)); // position the group's center at the origin (0, 0, 0)
+        
+        // position the whole group so, that the center is at scene's origin (0, 0, 0)
+        setTranslateY(INIT_BOX_HEIGHT / 2);
         
         setColor(color);
 	}
@@ -98,7 +101,7 @@ public class PaneBox3D {
 	}
 	
 	private void initLayout() {
-		FXMLLoader loader = new FXMLLoader(); // load classpreset from fxml file
+		FXMLLoader loader = new FXMLLoader(); // load class preset from fxml file
         loader.setLocation(ResourceLocator.getResourcePath(Resource.PANEPRESET_FXML));
         try {
 			this.borderPane = (BorderPane) loader.load();
@@ -106,6 +109,17 @@ public class PaneBox3D {
 			logger.debug(e.getMessage());
             e.printStackTrace();
 		}
+	}
+	
+	private void buildBox() {
+		this.box = new Cuboid3D(INIT_BOX_HEIGHT);
+		this.box.setDrawTopFace(false);
+		this.box.widthProperty().bind(this.borderPane.widthProperty());
+		this.box.heightProperty().bind(this.borderPane.heightProperty());
+		this.box.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
+		this.box.translateXProperty().bind(this.borderPane.translateXProperty().subtract(this.borderPane.widthProperty().divide(2)));
+		this.box.translateZProperty().bind(this.borderPane.translateZProperty().subtract(this.borderPane.heightProperty().divide(2)));
+		this.box.translateYProperty().bind(this.borderPane.translateYProperty().subtract(INIT_BOX_HEIGHT / 2));
 	}
 	
 	public TextField getTop() {
@@ -136,6 +150,7 @@ public class PaneBox3D {
 		TextField topTextField = getTop();
 		if(topTextField != null) {
 			topTextField.setFont(font);
+			adaptWidthByText(topTextField.getFont(), topTextField.getText());
 		}
 	}
 	
@@ -145,48 +160,66 @@ public class PaneBox3D {
 		getTop().setDisable(!value);
 	}
 	
-	private void buildBox() {
-		this.box = new Cuboid3D(INIT_BOX_HEIGHT * 2);
-		this.box.setDrawTopFace(false);
-		this.box.widthProperty().bind(this.borderPane.widthProperty());
-		this.box.heightProperty().bind(this.borderPane.heightProperty());
-		this.box.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
-		this.box.translateXProperty().bind(this.borderPane.translateXProperty().subtract(this.borderPane.widthProperty().divide(2)));
-		this.box.translateZProperty().bind(this.borderPane.translateZProperty().subtract(this.borderPane.heightProperty().divide(2)));
-		this.box.translateYProperty().bind(this.borderPane.translateYProperty().subtract(INIT_BOX_HEIGHT));
+	public void setWidth(double witdh) {
+		this.borderPane.setMinWidth(witdh);
 	}
 	
-	public void setBoxHeightScale(double scale) {
-		this.box.getTransforms().add(new Scale(1, 1, scale));
-		this.borderPane.getTransforms().add(new Translate(0, 0, (scale * -INIT_BOX_HEIGHT) + INIT_BOX_HEIGHT));
+	public double getWidth() {
+		return this.borderPane.getWidth();
+	}
+	
+	public void setHeight(double height) {
+		this.borderPane.setMinHeight(height);
+	}
+	
+	public double getHeight() {
+		return this.borderPane.getHeight();
+	}
+
+	public void setDepth(double depth) {
+		this.box.setDepth(depth);
+		this.box.translateYProperty().bind(this.borderPane.translateYProperty().subtract(depth / 2));
+		setTranslateY( (depth / 2) - (getTranslateY() / 2) );
+	}
+	
+	public double getDepth() {
+		return this.box.getDepth();
 	}
 	
 	public void setTranslateY(double y) {
-		this.paneBoxSelection.setTranslateY(y);
+		this.paneBox.setTranslateY(y);
+		this.selection3D.getNode().setTranslateY(y);
+	}
+	
+	public void setTranslateXYZ(double x, double y, double z) {
+		this.paneBox.getTransforms().add(new Translate(x, y, z));
+		this.selection3D.getNode().getTransforms().add(new Translate(x, y, z));
 	}
 	
 	public void setTranslateX(double x) {
-		this.paneBoxSelection.setTranslateX(x);
+		this.paneBox.setTranslateX(x);
+		this.selection3D.getNode().setTranslateX(x);
 	}
 	
 	public void setTranslateZ(double z) {
-		this.paneBoxSelection.setTranslateZ(z);
+		this.paneBox.setTranslateZ(z);
+		this.selection3D.getNode().setTranslateZ(z);
 	}
 	
 	public double getTranslateY() {
-		return this.paneBoxSelection.getTranslateY();
+		return this.paneBox.getTranslateY();
 	}
 	
 	public double getTranslateX() {
-		return this.paneBoxSelection.getTranslateX();
+		return this.paneBox.getTranslateX();
 	}
 	
 	public double getTranslateZ() {
-		return this.paneBoxSelection.getTranslateZ();
+		return this.paneBox.getTranslateZ();
 	}
 	
 	public void setVisible(boolean visible) {
-		this.paneBoxSelection.setVisible(visible);
+		this.paneBox.setVisible(visible);
 	}
 	
 	public void setPaneVisible(boolean visible) {

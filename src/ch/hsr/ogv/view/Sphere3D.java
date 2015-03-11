@@ -12,6 +12,11 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Transform;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class Sphere3D {
 	
 	private Sphere sphere;

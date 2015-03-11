@@ -6,6 +6,11 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class SubScene3D {
 	
 	private static final Color BACKGROUND = Color.WHITESMOKE;

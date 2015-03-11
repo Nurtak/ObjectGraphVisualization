@@ -3,6 +3,11 @@ package ch.hsr.ogv;
 import com.aquafx_project.AquaFx;
 import javafx.application.Application;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class ThemeChooser {
 	
 	private StageManager stageManager;

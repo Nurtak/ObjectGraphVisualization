@@ -30,7 +30,10 @@ public class RootLayoutController {
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
 	private SubScene3DController subScene3DController = new SubScene3DController();
-	private PaneBox3DController paneBox3DController = new PaneBox3DController();
+	
+	private SelectionController selectionController = new SelectionController();
+	private TextInputController textInputController = new TextInputController();
+	private DragMoveController dragMoveController = new DragMoveController();
 
 	/**
 	 * Is called by the main application to give a reference back to itself.
@@ -39,9 +42,9 @@ public class RootLayoutController {
 	 */
 	public void initController(StageManager stageManager) {
 		this.stageManager = stageManager;
-		initCameraController();
 		initSubScene3DController();
-		
+		initCameraController();
+		initPaneBox3DController();
 	}
 	
 	private void initCameraController() {
@@ -50,13 +53,18 @@ public class RootLayoutController {
 	}
 	
 	private void initSubScene3DController() {
-		this.subScene3DController = new SubScene3DController();
 		this.subScene3DController.handleMouse(this.stageManager.getSubScene3D());
 	}
 	
+	private void initPaneBox3DController() {
+		this.dragMoveController.addObserver(this.cameraController);
+		this.selectionController.addObserver(this.dragMoveController);
+	}
+	
 	public void addPaneBox3DControls(PaneBox3D paneBox3D) {
-		this.paneBox3DController.addAllControls(this.stageManager.getSubScene3D().getSubScene(), paneBox3D);
-		this.paneBox3DController.addObserver(this.cameraController);
+		this.selectionController.enableSelection(paneBox3D);
+		this.textInputController.enableTextInput(paneBox3D);
+		this.dragMoveController.enableDragMove(paneBox3D);
 	}
 
 	/**
