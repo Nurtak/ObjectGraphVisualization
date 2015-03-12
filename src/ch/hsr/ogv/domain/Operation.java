@@ -1,14 +1,15 @@
 package ch.hsr.ogv.domain;
 
+import java.util.List;
+
 public class Operation {
 
 	private String name;
-	private Class theClass;
 	private Type returnType;
+	private List<Parameter> parameters;
 
-	public Operation(String name, Class theClass, Type returnType) {
+	public Operation(String name, Type returnType) {
 		this.name = name;
-		this.theClass = theClass;
 		this.returnType = returnType;
 	}
 

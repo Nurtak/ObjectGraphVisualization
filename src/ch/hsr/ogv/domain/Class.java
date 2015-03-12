@@ -1,7 +1,14 @@
 package ch.hsr.ogv.domain;
 
-public class Class extends Type {
+import java.util.List;
 
+public class Class extends Type {
+	
+	private List<Attribute> attributes;
+	private List<Operation> operations;
+	private List<ClassRelationEndpoint> classRelationEndpoints;
+	private List<Instance> instances;
+	
 	public Class(String name) {
 		super(name);
 	}
