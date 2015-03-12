@@ -1,6 +1,6 @@
 package ch.hsr.ogv.domain;
 
-public class InstanceRelation {
+public abstract class InstanceRelation {
 
 	private InstanceRelationEndpoint start;
 	private InstanceRelationEndpoint end;
