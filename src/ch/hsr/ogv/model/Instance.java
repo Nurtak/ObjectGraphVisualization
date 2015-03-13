@@ -1,4 +1,4 @@
-package ch.hsr.ogv.domain;
+package ch.hsr.ogv.model;
 
 import java.util.List;
 
