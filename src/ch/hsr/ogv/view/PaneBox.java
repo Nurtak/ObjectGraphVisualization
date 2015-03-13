@@ -81,7 +81,7 @@ public class PaneBox {
         buildBox();
         
         // create the selection objects that stays with this box
-        this.selection = new Selection(this);
+        this.selection = new Selection(getBox());
         
         //this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection.getNode());
         this.paneBox.getChildren().addAll(this.borderPane, this.box.get());

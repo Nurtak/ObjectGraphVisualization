@@ -63,8 +63,8 @@ public class Selection {
 		return this.lineW;
 	}
 
-	public Selection(PaneBox paneBox) {
-		this.box = paneBox.getBox();
+	public Selection(Cuboid box) {
+		this.box = box;
 		buildSelection();
 	}
 	

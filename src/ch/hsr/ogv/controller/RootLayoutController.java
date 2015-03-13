@@ -1,6 +1,8 @@
 package ch.hsr.ogv.controller;
 
 import java.io.File;
+import java.util.Observable;
+import java.util.Observer;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -23,7 +25,7 @@ import ch.hsr.ogv.view.SubSceneCamera;
  * 
  * @author Simon Gwerder
  */
-public class RootLayoutController {
+public class RootLayoutController implements Observer {
 
 	
 	private StageManager stageManager; // reference back to the stage manager
@@ -40,7 +42,7 @@ public class RootLayoutController {
 	 * 
 	 * @param stageManager
 	 */
-	public void initController(StageManager stageManager) {
+	private void initController(StageManager stageManager) {
 		this.stageManager = stageManager;
 		initSubSceneController();
 		initCameraController();
@@ -48,7 +50,7 @@ public class RootLayoutController {
 	}
 	
 	private void initCameraController() {
-        this.cameraController.handleMouse(stageManager.getSubSceneAdpater());
+        this.cameraController.handleMouse(this.stageManager.getSubSceneAdpater());
         this.cameraController.handleKeyboard(this.stageManager.getSubSceneAdpater());
 	}
 	
@@ -61,7 +63,7 @@ public class RootLayoutController {
 		this.selectionController.addObserver(this.dragMoveController);
 	}
 	
-	public void addPaneBoxControls(PaneBox paneBox) {
+	private void addPaneBoxControls(PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox);
 		this.textInputController.enableTextInput(paneBox);
 		this.dragMoveController.enableDragMove(paneBox);
@@ -191,6 +193,19 @@ public class RootLayoutController {
 	@FXML
 	private void handleSetAqua() {
 		this.themeMenuController.handleSetTheme(this.stageManager, this.aqua, Style.AQUA);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if(o instanceof StageManager && arg instanceof StageManager) {
+			StageManager stageManager = (StageManager) arg;
+			initController(stageManager);
+		}
+		
+		else if(o instanceof StageManager && arg instanceof PaneBox) {
+			PaneBox paneBox = (PaneBox) arg;
+			addPaneBoxControls(paneBox);
+		}
 	}
 		
 }

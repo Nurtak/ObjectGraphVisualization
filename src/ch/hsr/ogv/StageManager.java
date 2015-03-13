@@ -3,11 +3,11 @@ package ch.hsr.ogv;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.hsr.ogv.controller.RootLayoutController;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.PaneBox;
@@ -27,14 +27,13 @@ import javafx.stage.Stage;
  * @author Simon Gwerder
  *
  */
-public class StageManager {
+public class StageManager extends Observable {
 	
 private final static Logger logger = LoggerFactory.getLogger(StageManager.class);
 	
 	private String appTitle = "Object Graph Visualizer";
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	private RootLayoutController rootLayoutController;
 	private SubSceneAdapter subSceneAdpater;
 	private List<PaneBox> classes = new ArrayList<PaneBox>();
 
@@ -93,8 +92,6 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         
         Scene scene = new Scene(this.rootLayout);
 
-        this.rootLayoutController.initController(this);
-        
         this.primaryStage.setScene(scene);
         this.primaryStage.show();
         
@@ -103,6 +100,15 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         //TODO: Remove test paneBox
 	    PaneBox paneBox = new PaneBox(Color.ALICEBLUE);
 	    addClassToSubScene(paneBox);
+	    
+	    PaneBox paneBox1 = new PaneBox(Color.AQUA);
+	    addClassToSubScene(paneBox1);
+	    
+	    PaneBox paneBox2 = new PaneBox(Color.CHARTREUSE);
+	    addClassToSubScene(paneBox2);
+	    
+        setChanged();
+        notifyObservers(this);
 	}
 	
 	/**
@@ -116,7 +122,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	
 	public void addClassToSubScene(PaneBox classBox) {
 		this.classes.add(classBox);
-		this.rootLayoutController.addPaneBoxControls(classBox);
+		setChanged();
+		notifyObservers(classBox);
 		addToSubScene(classBox.get());
 		addToSubScene(classBox.getSelection().get());
 	}
@@ -143,7 +150,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         loader.setLocation(ResourceLocator.getResourcePath(Resource.ROOTLAYOUT_FXML));
     	try {
             this.rootLayout = (BorderPane) loader.load();
-            this.rootLayoutController = loader.getController();
+            addObserver(loader.getController()); // its the RootLayoutController
         } catch (IOException e) {
         	logger.debug(e.getMessage());
             e.printStackTrace();
