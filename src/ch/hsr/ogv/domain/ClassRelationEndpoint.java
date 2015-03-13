@@ -2,13 +2,27 @@ package ch.hsr.ogv.domain;
 
 public class ClassRelationEndpoint {
 
-	private Class theClass;
 	private String roleName;
 	private char multiplicity;
 
-	public ClassRelationEndpoint(Class theClass, String roleName, char multiplicity) {
-		this.theClass = theClass;
+	public ClassRelationEndpoint(String roleName, char multiplicity) {
 		this.roleName = roleName;
+		this.multiplicity = multiplicity;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public char getMultiplicity() {
+		return multiplicity;
+	}
+
+	public void setMultiplicity(char multiplicity) {
 		this.multiplicity = multiplicity;
 	}
 }
