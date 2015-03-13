@@ -36,6 +36,7 @@ public class RootLayoutController implements Observer {
 	private SelectionController selectionController = new SelectionController();
 	private TextInputController textInputController = new TextInputController();
 	private DragMoveController dragMoveController = new DragMoveController();
+	private DragResizeController dragResizeController = new DragResizeController();
 
 	/**
 	 * Is called by the main application to give a reference back to itself.
@@ -60,13 +61,15 @@ public class RootLayoutController implements Observer {
 	
 	private void initPaneBoxController() {
 		this.dragMoveController.addObserver(this.cameraController);
+		this.dragResizeController.addObserver(this.cameraController);
 		this.selectionController.addObserver(this.dragMoveController);
 	}
 	
 	private void addPaneBoxControls(PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox);
 		this.textInputController.enableTextInput(paneBox);
-		this.dragMoveController.enableDragMove(paneBox);
+		this.dragMoveController.enableDrag(paneBox);
+		this.dragResizeController.enableDrag(paneBox);
 	}
 
 	/**

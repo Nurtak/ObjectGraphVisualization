@@ -33,6 +33,11 @@ public class SelectionController extends Observable {
 		paneBox.get().setOnMouseClicked((MouseEvent me) -> {
 			paneBox.get().requestFocus();
 		});
+		
+		paneBox.getSelection().getLineN().setOnMouseClicked((MouseEvent me) -> {
+			setSelected(paneBox, true);
+			paneBox.getSelection().getLineN().requestFocus();
+        });
 	}
 	
 	private void setSelected(PaneBox paneBox, boolean selected) {
@@ -85,6 +90,19 @@ public class SelectionController extends Observable {
             	}
             }
         });
+		
+		paneBox.getSelection().getLineN().focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+            	if(paneBox.getSelection().getLineN().focusedProperty().get()) {
+            		setSelected(paneBox, true);
+				}
+				else {
+					setSelected(paneBox, false);
+            	}
+            }
+        });
+		
 	}
 
 }

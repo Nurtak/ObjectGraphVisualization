@@ -144,9 +144,9 @@ public class CameraController implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o instanceof DragMoveController) {
-			DragMoveController dragMoveController = (DragMoveController) o;
-			this.moveCamera = !dragMoveController.isDragInProgress();
+		if(o instanceof DragController) {
+			DragController dragController = (DragController) o;
+			this.moveCamera = !dragController.isDragInProgress();
 		}
 	}
 }

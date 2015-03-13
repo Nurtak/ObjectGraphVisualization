@@ -1,8 +1,5 @@
 package ch.hsr.ogv.controller;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import javafx.scene.Group;
 import ch.hsr.ogv.view.PaneBox;
 import javafx.scene.input.MouseEvent;
@@ -14,25 +11,9 @@ import javafx.scene.Cursor;
  * @author Simon Gwerder
  *
  */
-public class DragMoveController extends Observable implements Observer {
+public class DragMoveController extends DragController {
 	
-	private volatile PaneBox selected = null;
-	private volatile boolean dragInProgress = false;
-	
-	private volatile double relMousePosX;
-	private volatile double relMousePosZ;
-	
-	protected void setDragInProgress(PaneBox paneBox, boolean value) {
-		this.dragInProgress = value;
-		setChanged();
-		notifyObservers(paneBox);
-	}
-	
-	public boolean isDragInProgress() {
-		return this.dragInProgress;
-	}
-	
-	public void enableDragMove(PaneBox paneBox) {
+	public void enableDrag(PaneBox paneBox) {
 		Group paneBoxGroup = paneBox.get();
 		
 		paneBoxGroup.setOnMousePressed((MouseEvent me) -> {
@@ -62,16 +43,4 @@ public class DragMoveController extends Observable implements Observer {
 		});
 	}
 	
-	private boolean isSelected(PaneBox paneBox) {
-		return this.selected != null && this.selected.equals(paneBox);
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		if(o instanceof SelectionController) {
-			SelectionController selectionController = (SelectionController) o;
-			this.selected = selectionController.getSelected();
-		}
-	}
-
 }
