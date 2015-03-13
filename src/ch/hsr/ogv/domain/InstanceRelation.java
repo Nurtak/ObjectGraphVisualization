@@ -10,4 +10,20 @@ public abstract class InstanceRelation {
 		this.end = end;
 	}
 
+	public InstanceRelationEndpoint getStart() {
+		return start;
+	}
+
+	public void setStart(InstanceRelationEndpoint start) {
+		this.start = start;
+	}
+
+	public InstanceRelationEndpoint getEnd() {
+		return end;
+	}
+
+	public void setEnd(InstanceRelationEndpoint end) {
+		this.end = end;
+	}
+
 }

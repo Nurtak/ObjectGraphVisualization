@@ -9,4 +9,20 @@ public abstract class ClassRelation {
 		this.start = start;
 		this.end = end;
 	}
+
+	public ClassRelationEndpoint getStart() {
+		return start;
+	}
+
+	public void setStart(ClassRelationEndpoint start) {
+		this.start = start;
+	}
+
+	public ClassRelationEndpoint getEnd() {
+		return end;
+	}
+
+	public void setEnd(ClassRelationEndpoint end) {
+		this.end = end;
+	}
 }
