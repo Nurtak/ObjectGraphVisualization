@@ -5,7 +5,6 @@ import java.util.List;
 public class Class extends Type {
 
 	private List<Attribute> attributes;
-	private List<Operation> operations;
 	private List<ClassRelationEndpoint> classRelationEndpoints;
 	private List<Instance> instances;
 
@@ -19,14 +18,6 @@ public class Class extends Type {
 
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
-	}
-
-	public List<Operation> getOperations() {
-		return operations;
-	}
-
-	public void setOperations(List<Operation> operations) {
-		this.operations = operations;
 	}
 
 	public List<ClassRelationEndpoint> getClassRelationEndpoints() {
@@ -47,10 +38,6 @@ public class Class extends Type {
 
 	public void addAttribute(Attribute attribute) {
 		attributes.add(attribute);
-	}
-
-	public void addOperation(Operation operation) {
-		operations.add(operation);
 	}
 
 	public void addClassRelationEndpoint(ClassRelationEndpoint classRelationEndpoint) {
