@@ -13,7 +13,7 @@ public class SubSceneCamera {
 	private final Xform cameraXform = new Xform();
 	private final Xform cameraXform2 = new Xform();
 	private final Xform cameraXform3 = new Xform();
-	public static final int CAMERA_DISTANCE = 1500;
+	public static final int CAMERA_DISTANCE = 1800;
 	
 	public PerspectiveCamera get() {
 		return camera;

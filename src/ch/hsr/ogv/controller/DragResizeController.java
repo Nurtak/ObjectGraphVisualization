@@ -13,7 +13,7 @@ import javafx.scene.Cursor;
  */
 public class DragResizeController extends DragController {
 	
-	public void enableDrag(PaneBox paneBox) {
+	public void enableDragResize(PaneBox paneBox) {
 		enableNLine(paneBox);
 	}
 	

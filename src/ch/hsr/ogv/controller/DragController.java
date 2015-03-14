@@ -13,8 +13,6 @@ public abstract class DragController extends Observable implements Observer {
 	protected volatile double relMousePosX;
 	protected volatile double relMousePosZ;
 	
-	protected abstract void enableDrag(PaneBox paneBox);
-	
 	protected boolean isSelected(PaneBox paneBox) {
 		return this.selected != null && this.selected.equals(paneBox);
 	}

@@ -68,8 +68,8 @@ public class RootLayoutController implements Observer {
 	private void addPaneBoxControls(PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox);
 		this.textInputController.enableTextInput(paneBox);
-		this.dragMoveController.enableDrag(paneBox);
-		this.dragResizeController.enableDrag(paneBox);
+		this.dragMoveController.enableDragMove(paneBox, this.stageManager.getSubSceneAdpater());
+		this.dragResizeController.enableDragResize(paneBox);
 	}
 
 	/**

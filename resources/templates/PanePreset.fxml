@@ -32,18 +32,17 @@
    <center>
       <Pane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <GridPane layoutX="9.0" layoutY="3.0" prefHeight="52.0" prefWidth="107.0">
+            <GridPane layoutX="9.0" layoutY="3.0" prefHeight="30.0" prefWidth="140.0">
                <columnConstraints>
                   <ColumnConstraints />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints />
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Text cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" layoutX="14.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="field: Type" wrappingWidth="106.515625" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Text cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" layoutX="14.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="field" wrappingWidth="140.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="15.0" />
                      </font>

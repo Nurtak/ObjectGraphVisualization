@@ -97,6 +97,9 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         
         this.subSceneAdpater.getSubScene().requestFocus();
         
+        setChanged();
+        notifyObservers(this);
+        
         //TODO: Remove test paneBox
 	    PaneBox paneBox = new PaneBox(Color.ALICEBLUE);
 	    addClassToSubScene(paneBox);
@@ -106,9 +109,6 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	    
 	    PaneBox paneBox2 = new PaneBox(Color.CHARTREUSE);
 	    addClassToSubScene(paneBox2);
-	    
-        setChanged();
-        notifyObservers(this);
 	}
 	
 	/**
@@ -116,7 +116,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	 * @param node node.
 	 */
 	private void addToSubScene(Node node) {
-		this.subSceneAdpater.getWorld().getChildren().add(node);
+		this.subSceneAdpater.add(node);
 		this.rootLayout.applyCss();
 	}
 	
