@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
+import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 import javafx.fxml.FXMLLoader;
@@ -100,15 +101,24 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         setChanged();
         notifyObservers(this);
         
-        //TODO: Remove test paneBox
+        //TODO: Remove everything below this line:
+        
+        Arrow arrow = new Arrow();
+        addToSubScene(arrow);
+        
+        arrow.setTranslateX(20);
+        arrow.setTranslateZ(60);
+                
 	    PaneBox paneBox = new PaneBox(Color.ALICEBLUE);
 	    addClassToSubScene(paneBox);
 	    
 	    PaneBox paneBox1 = new PaneBox(Color.AQUA);
 	    addClassToSubScene(paneBox1);
+	    paneBox1.setTranslateZ(222);
 	    
 	    PaneBox paneBox2 = new PaneBox(Color.CHARTREUSE);
 	    addClassToSubScene(paneBox2);
+	    paneBox2.setTranslateX(360);
 	}
 	
 	/**

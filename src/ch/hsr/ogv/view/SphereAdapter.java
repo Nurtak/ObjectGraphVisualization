@@ -1,23 +1,21 @@
 package ch.hsr.ogv.view;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
 import javafx.scene.DepthTest;
+import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Sphere;
-import javafx.scene.transform.Transform;
 
 /**
  * 
  * @author Simon Gwerder
  *
  */
-public class SphereAdapter {
+public class SphereAdapter extends Group {
 	
 	private Sphere sphere;
 	private Color color;
@@ -26,10 +24,6 @@ public class SphereAdapter {
 		return this.color;
 	}
 
-	public Sphere get() {
-		return this.sphere;
-	}
-	
 	public SphereAdapter() {
 		this(5);
 	}
@@ -50,6 +44,7 @@ public class SphereAdapter {
 				sphere.requestFocus();
 			}
         });
+        getChildren().add(this.sphere);
 	}
 	
 	public void setColor(Color color) {
@@ -64,34 +59,6 @@ public class SphereAdapter {
 		return this.sphere.radiusProperty();
 	}
 		
-	public DoubleProperty translateXProperty() {
-		return this.sphere.translateXProperty();
-	}
-	
-	public DoubleProperty translateYProperty() {
-		return this.sphere.translateYProperty();
-	}
-	
-	public DoubleProperty translateZProperty() {
-		return this.sphere.translateZProperty();
-	}
-	
-	public ObservableList<Transform> getTransforms() {
-		return this.sphere.getTransforms();
-	}
-	
-	public ReadOnlyBooleanProperty focusedProperty() {
-		return this.sphere.focusedProperty();
-	}
-	
-	public void setVisible(boolean visible) {
-		this.sphere.setVisible(visible);
-	}
-	
-	public boolean isVisible() {
-		return this.sphere.isVisible();
-	}
-	
 	public void requestFocus() {
 		this.sphere.requestFocus();
 	}

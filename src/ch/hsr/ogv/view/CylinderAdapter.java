@@ -1,23 +1,19 @@
 package ch.hsr.ogv.view;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
 import javafx.scene.DepthTest;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
-import javafx.scene.transform.Transform;
 
 /**
  * 
  * @author Simon Gwerder
  *
  */
-public class CylinderAdapter {
+public class CylinderAdapter extends Group {
 	
 	private Cylinder cylinder;
 	private Color color;
@@ -26,10 +22,6 @@ public class CylinderAdapter {
 		return color;
 	}
 
-	public Cylinder get() {
-		return this.cylinder;
-	}
-	
 	public CylinderAdapter() {
 		this(5);
 	}
@@ -44,12 +36,7 @@ public class CylinderAdapter {
 		this.cylinder.setCache(true);
 		this.cylinder.setCacheHint(CacheHint.SCALE_AND_ROTATE);
 		setColor(color);
-		this.cylinder.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent t) {
-				cylinder.requestFocus();
-			}
-        });
+		getChildren().add(this.cylinder);
 	}
 	
 	public void setColor(Color color) {
@@ -66,38 +53,6 @@ public class CylinderAdapter {
 	
 	public DoubleProperty heightProperty() {
 		return this.cylinder.heightProperty();
-	}
-		
-	public DoubleProperty translateXProperty() {
-		return this.cylinder.translateXProperty();
-	}
-	
-	public DoubleProperty translateYProperty() {
-		return this.cylinder.translateYProperty();
-	}
-	
-	public DoubleProperty translateZProperty() {
-		return this.cylinder.translateZProperty();
-	}
-	
-	public ObservableList<Transform> getTransforms() {
-		return this.cylinder.getTransforms();
-	}
-	
-	public ReadOnlyBooleanProperty focusedProperty() {
-		return this.cylinder.focusedProperty();
-	}
-	
-	public void setVisible(boolean visible) {
-		this.cylinder.setVisible(visible);
-	}
-	
-	public boolean isVisible() {
-		return this.cylinder.isVisible();
-	}
-	
-	public void requestFocus() {
-		this.cylinder.requestFocus();
 	}
 	
 }

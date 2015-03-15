@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
  * @author Simon Gwerder
  *
  */
-public class ColorUtils
+public class ColorUtil
 {
     public static String toRGBCode( Color color ) {
         return String.format( "#%02X%02X%02X",

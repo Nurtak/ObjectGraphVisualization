@@ -34,7 +34,7 @@ public class DragMoveController extends DragController {
 				setDragInProgress(paneBox, true);
 				paneBoxGroup.setCursor(Cursor.MOVE);
 				PickResult pick = me.getPickResult();
-				if(pick != null && pick.getIntersectedNode() != null && pick.getIntersectedNode().equals(floor.get())) {
+				if(pick != null && pick.getIntersectedNode() != null && floor.equalsRectangle(pick.getIntersectedNode())) {
 					Point3D coords = floor.localToParent(pick.getIntersectedPoint());
 					paneBox.setTranslateX(coords.getX() - relMousePosX);
 					paneBox.setTranslateZ(coords.getZ() - relMousePosZ);

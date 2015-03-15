@@ -109,11 +109,11 @@ public class CameraController implements Observer {
                     cameraXform2.t.setY(0.0);
                     break;
                 case X:
-                	Group axisGroup = subSceneAdapter.getAxis().get();
-                	if (axisGroup.isVisible()) {
-                		axisGroup.setVisible(false);
+                	Group axis = subSceneAdapter.getAxis();
+                	if (axis.isVisible()) {
+                		axis.setVisible(false);
                     } else {
-                    	axisGroup.setVisible(true);
+                    	axis.setVisible(true);
                     }
                     break;
                 case UP:

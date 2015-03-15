@@ -9,7 +9,7 @@ import javafx.scene.text.TextBoundsType;
  * @author Simon Gwerder
  *
  */
-public class TextUtils {
+public class TextUtil {
 
 static final Text helper;
 static final double DEFAULT_WRAPPING_WIDTH;

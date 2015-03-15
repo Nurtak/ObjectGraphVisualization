@@ -14,7 +14,7 @@ import javafx.scene.paint.Color;
  */
 public class SubSceneAdapter {
 	
-	private Color color = Color.AZURE;
+	private Color color = Color.LIGHTCYAN;
 	
 	private SubScene subScene;
 	private SubSceneCamera subSceneCamera;
@@ -58,11 +58,11 @@ public class SubSceneAdapter {
                 
         // create axis and add them to the world Xform
         this.axis = new Axis();
-        this.world.getChildren().add(axis.get());
+        this.world.getChildren().add(axis);
         
         // create ground floor and add it to the world Xform
         this.floor = new Floor();
-        this.world.getChildren().add(floor.get());
+        this.world.getChildren().add(floor);
 
         // add a camera for the subscene
         this.subSceneCamera = new SubSceneCamera();
@@ -87,7 +87,7 @@ public class SubSceneAdapter {
 	
 	public boolean add(Node node) {
 		boolean retAdd = this.world.getChildren().add(node);
-		this.floor.get().toFront();
+		this.floor.toFront();
 		return retAdd;
 	}
 	

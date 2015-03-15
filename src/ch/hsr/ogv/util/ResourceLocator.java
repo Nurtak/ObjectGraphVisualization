@@ -20,7 +20,10 @@ public class ResourceLocator {
 		ROOTLAYOUT_FXML("templates/RootLayout.fxml"),
 		LIGHTHEME_CSS("css/LightTheme.css"),
 		DARKTHEME_CSS("css/DarkTheme.css"),
-		TEXTFIELD_CSS("css/TextField.css");
+		TEXTFIELD_CSS("css/TextField.css"),
+		OPEN_OBJ("models/arrow_open.obj"),
+		FILLED_OBJ("models/arrow_filled.obj"),
+		BORDER_OBJ("models/arrow_border.obj");
 		
 		private String relativePath = "./";
 		

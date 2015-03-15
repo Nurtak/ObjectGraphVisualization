@@ -3,31 +3,21 @@ package ch.hsr.ogv.view;
 import org.fxyz.shapes.primitives.CuboidMesh;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.collections.ObservableList;
 import javafx.scene.CacheHint;
 import javafx.scene.DepthTest;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.transform.Transform;
 
 /**
  * 
  * @author Simon Gwerder
  *
  */
-public class Cuboid {
+public class Cuboid extends Group {
 	
 	private CuboidMesh box = null;
 	private Color color;
-	
-	public Color getColor() {
-		return this.color;
-	}
-
-	public CuboidMesh get() {
-		return this.box;
-	}
 	
 	public Cuboid() {
 		this(10);
@@ -43,6 +33,11 @@ public class Cuboid {
 		this.box.setCache(true);
 		this.box.setCacheHint(CacheHint.SCALE_AND_ROTATE);
 		setColor(color);
+		getChildren().add(this.box);
+	}
+	
+	public Color getColor() {
+		return this.color;
 	}
 	
 	public void setColor(Color color) {
@@ -64,57 +59,9 @@ public class Cuboid {
 	public DoubleProperty depthProperty() {
 		return this.box.depthProperty();
 	}
-	
-	public DoubleProperty translateXProperty() {
-		return this.box.translateXProperty();
-	}
-	
-	public DoubleProperty translateYProperty() {
-		return this.box.translateYProperty();
-	}
-	
-	public DoubleProperty translateZProperty() {
-		return this.box.translateZProperty();
-	}
-	
-	public ObservableList<Transform> getTransforms() {
-		return this.box.getTransforms();
-	}
-	
-	public ReadOnlyBooleanProperty focusedProperty() {
-		return this.box.focusedProperty();
-	}
-	
-	public void requestFocus() {
-		this.box.requestFocus();
-	}
-		
+			
 	public void setDrawTopFace(boolean drawTopFace) {
 		this.box.setDrawTopFace(drawTopFace);
-	}
-	
-	public void setVisible(boolean visible) {
-		this.box.setVisible(visible);
-	}
-	
-	public boolean isVisible() {
-		return this.box.isVisible();
-	}
-	
-	public void setHeight(double value) {
-		this.box.setHeight(value);
-	}
-	
-	public double getHeight() {
-		return this.box.getHeight();
-	}
-	
-	public void setWidth(double value) {
-		this.box.setWidth(value);
-	}
-	
-	public double getWidth() {
-		return this.box.getWidth();
 	}
 	
 	public void setDepth(double value) {

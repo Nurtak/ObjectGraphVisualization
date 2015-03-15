@@ -16,9 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-import ch.hsr.ogv.util.ColorUtils;
+import ch.hsr.ogv.util.ColorUtil;
 import ch.hsr.ogv.util.ResourceLocator;
-import ch.hsr.ogv.util.TextUtils;
+import ch.hsr.ogv.util.TextUtil;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
 /**
@@ -84,7 +84,7 @@ public class PaneBox {
         this.selection = new Selection(getBox());
         
         //this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection.getNode());
-        this.paneBox.getChildren().addAll(this.borderPane, this.box.get());
+        this.paneBox.getChildren().addAll(this.borderPane, this.box);
         this.selection.get().setVisible(false);
         
         // position the whole group so, that the center is at scene's origin (0, 0, 0)
@@ -94,7 +94,7 @@ public class PaneBox {
 	}
 	
 	private String getPaneStyle() {
-		return "-fx-background-color: " + ColorUtils.toRGBCode(this.color) + ";\n"
+		return "-fx-background-color: " + ColorUtil.toRGBCode(this.color) + ";\n"
 		+ "-fx-border-color: black;\n"
 		+ "-fx-border-width: 2;";
 	}
@@ -134,7 +134,7 @@ public class PaneBox {
 	
 	public void adaptWidthByText(Font font, String text) {
 		// + 50px for some additional space to compensate insets, borders etc.
-		double newWidth = TextUtils.computeTextWidth(font, text, 0.0D) + 50;
+		double newWidth = TextUtil.computeTextWidth(font, text, 0.0D) + 50;
 		this.borderPane.setPrefWidth(newWidth);
 	}
 	

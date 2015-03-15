@@ -10,17 +10,11 @@ import javafx.scene.shape.Box;
  * @author Simon Gwerder
  *
  */
-public class Axis {
+public class Axis extends Group {
 
 	private static final int LENGTH = 200;
-	private static final int THICKNESS = 2;
+	private static final int WIDTH = 2;
 	
-    private final Group axisGroup = new Group();
-    
-    public Group get() {
-		return this.axisGroup;
-	}
-
 	private Color getBrighterColor(Color c) {
     	return c.brighter().brighter().brighter().brighter();
     }
@@ -38,15 +32,15 @@ public class Axis {
         blueMaterial.setDiffuseColor(getBrighterColor(Color.DARKBLUE));
         blueMaterial.setSpecularColor(getBrighterColor(Color.BLUE));
 
-        final Box xAxis = new Box(LENGTH, THICKNESS, THICKNESS);
-        final Box yAxis = new Box(THICKNESS, LENGTH, THICKNESS);
-        final Box zAxis = new Box(THICKNESS, THICKNESS, LENGTH);
+        final Box xAxis = new Box(LENGTH, WIDTH, WIDTH);
+        final Box yAxis = new Box(WIDTH, LENGTH, WIDTH);
+        final Box zAxis = new Box(WIDTH, WIDTH, LENGTH);
 
         xAxis.setMaterial(redMaterial);
         yAxis.setMaterial(greenMaterial);
         zAxis.setMaterial(blueMaterial);
 
-        axisGroup.getChildren().addAll(xAxis, yAxis, zAxis);
+        getChildren().addAll(xAxis, yAxis, zAxis);
     }
     
 }

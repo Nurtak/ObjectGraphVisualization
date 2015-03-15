@@ -87,8 +87,8 @@ public class Selection {
 					cylinderH.translateZProperty().bind(this.box.translateZProperty().subtract(this.box.heightProperty().divide(2)));
 					cylinderH.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
 					cylinderH.heightProperty().bind(this.box.widthProperty());
-					this.lineS.getChildren().add(cylinderH.get());
-					this.pointSE.getChildren().addAll(sphere.get(), cylinderV.get());
+					this.lineS.getChildren().add(cylinderH);
+					this.pointSE.getChildren().addAll(sphere, cylinderV);
 				}
 			}
 			
@@ -98,8 +98,8 @@ public class Selection {
 				if(i == 6 || i == 7) {
 					cylinderH.translateXProperty().bind(this.box.translateXProperty().add(this.box.widthProperty().divide(2)));
 					cylinderH.heightProperty().bind(this.box.heightProperty());
-					this.lineW.getChildren().add(cylinderH.get());
-					this.pointNE.getChildren().addAll(sphere.get(), cylinderV.get());
+					this.lineW.getChildren().add(cylinderH);
+					this.pointNE.getChildren().addAll(sphere, cylinderV);
 				}
 			}
 			
@@ -111,8 +111,8 @@ public class Selection {
 					cylinderH.translateZProperty().bind(this.box.translateZProperty().add(this.box.heightProperty().divide(2)));
 					cylinderH.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
 					cylinderH.heightProperty().bind(this.box.widthProperty());
-					this.lineN.getChildren().add(cylinderH.get());
-					this.pointNW.getChildren().addAll(sphere.get(), cylinderV.get());
+					this.lineN.getChildren().add(cylinderH);
+					this.pointNW.getChildren().addAll(sphere, cylinderV);
 				}
 			}
 			
@@ -123,15 +123,15 @@ public class Selection {
 					cylinderH.translateXProperty().bind(this.box.translateXProperty().subtract(this.box.widthProperty().divide(2)));
 					cylinderH.translateZProperty().bind(this.box.translateZProperty());
 					cylinderH.heightProperty().bind(this.box.heightProperty());
-					this.lineE.getChildren().add(cylinderH.get());
-					this.pointSW.getChildren().addAll(sphere.get(), cylinderV.get());
+					this.lineE.getChildren().add(cylinderH);
+					this.pointSW.getChildren().addAll(sphere, cylinderV);
 				}
 			}
 			
 			if(i % 2 == 1) {
 				sphere.translateYProperty().bind(this.box.translateZProperty().subtract(this.box.depthProperty()));
 				cylinderH.translateYProperty().bind(this.box.translateZProperty().subtract(this.box.depthProperty()));
-				this.selection.getChildren().add(cylinderV.get());
+				this.selection.getChildren().add(cylinderV);
 			}
 		}
 		this.selection.getChildren().addAll(this.pointNE, this.pointSE, this.pointNW, this.pointSW);
