@@ -1,6 +1,7 @@
 package ch.hsr.ogv.view;
 
-import javafx.geometry.Point3D;
+import java.util.HashSet;
+
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -10,52 +11,61 @@ import javafx.scene.transform.Rotate;
 
 public class Floor extends Group {
 	
-	private final double SIZE = 10000;
+	private HashSet<Rectangle> tiles = new HashSet<Rectangle>();
+	private final double TILE_SIZE = 1000;
+	private final int TILE_DIMENSION = 10;
 	private Color color = Color.WHITESMOKE;
 	
-	private Rectangle floor;
-	
 	public Floor() {
-		this.floor = new Rectangle(SIZE, SIZE, color);
+		for(int x = 0; x < TILE_DIMENSION; x++) {
+			for(int z = 0; z < TILE_DIMENSION; z++) {
+				buildFloorTile(x, z);
+			}
+		}
+		
+		for(Rectangle tile : this.tiles) {
+			getChildren().add(tile);
+		}
 		setMouseTransparent(true);
-		this.floor.setDepthTest(DepthTest.ENABLE);
-		this.floor.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
-		this.floor.setTranslateX(- SIZE / 2);
-		this.floor.setTranslateZ(- SIZE / 2);
-		this.floor.setOpacity(0.6);
-		getChildren().add(this.floor);
+	}
+	
+	private void buildFloorTile(int x, int z) {
+		Rectangle tile = new Rectangle(TILE_SIZE, TILE_SIZE, color);
+		tile.setDepthTest(DepthTest.ENABLE);
+		tile.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
+		tile.setTranslateX(-((TILE_DIMENSION * TILE_SIZE) / 2) + (x * TILE_SIZE));
+		tile.setTranslateZ(-((TILE_DIMENSION * TILE_SIZE) / 2) + (z * TILE_SIZE));
+		tile.setOpacity(0.6);
+		this.tiles.add(tile);
 	}
 	
 	public void setSeeable(boolean value) {
-		if(value) {
-			this.floor.setFill(getColor());
+		for(Rectangle tile : this.tiles) {
+			if(value) {
+				tile.setFill(getColor());
+			}
+			else {
+				tile.setFill(Color.TRANSPARENT);
+			}
 		}
-		else {
-			this.floor.setFill(Color.TRANSPARENT);
-		}
+
 	}
 	
 	public void setColor(Color color) {
-		if(this.floor != null) this.floor.setFill(color);
+		for(Rectangle tile : this.tiles) {
+			tile.setFill(color);
+		}
 		this.color = color;
 	}
 	
 	public Color getColor() {
 		return this.color;
 	}
-		
-	public Point3D localToParent(double x, double y, double z) {
-		return localToParent(new Point3D(x,y,z));
-	}
-	
-	public Point3D localToParent(Point3D coords) {
-		return this.floor.localToParent(coords);
-	}
-	
-	public boolean equalsRectangle(Node node) {
+
+	public boolean hasTile(Node node) {
 		if(node == null || !(node instanceof Rectangle)) return false;
 		Rectangle rect = (Rectangle) node;
-		return this.floor.equals(rect);
+		return this.tiles.contains(rect);
 	}
 
 }
