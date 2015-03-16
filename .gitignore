@@ -1,3 +1,5 @@
+!*.obj
+
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -42,3 +44,5 @@ local.properties
 
 # TeXlipse plugin
 .texlipse
+
+*.DS_Store
