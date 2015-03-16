@@ -80,8 +80,6 @@ public class ArrowHead extends Group {
 			mv.setMaterial(material);
 		}
 	}
-		
-	
 	
 	public enum ArrowHeadType {
 		OPEN, FILLED, BORDER

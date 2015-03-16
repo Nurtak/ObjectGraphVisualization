@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point3D;
 import javafx.scene.CacheHint;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -190,6 +191,10 @@ public class PaneBox {
 		this.selection.get().setTranslateY(y);
 	}
 	
+	public void setTranslateXYZ(Point3D point) {
+		setTranslateXYZ(point.getX(), point.getY(), point.getZ());
+	}
+	
 	public void setTranslateXYZ(double x, double y, double z) {
 		this.paneBox.getTransforms().add(new Translate(x, y, z));
 		this.selection.get().getTransforms().add(new Translate(x, y, z));
@@ -227,6 +232,11 @@ public class PaneBox {
 	
 	public void setBoxVisible(boolean visible) {
 		this.box.setVisible(visible);
+	}
+	
+	public Point3D getCenterPoint() {
+		double y = (this.paneBox.getTranslateY() + this.box.getTranslateY()) / 2;
+		return new Point3D(this.paneBox.getTranslateX(), y, this.paneBox.getTranslateZ());
 	}
 	
 }
