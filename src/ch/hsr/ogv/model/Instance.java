@@ -1,15 +1,20 @@
 package ch.hsr.ogv.model;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Instance {
+import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
+
+public class Instance extends ModelBox {
 
 	private String name;
-	private List<AttributeValue> attributeValues;
-	private List<InstanceRelationEndpoint> instanceRelationEndpoint;
+	private Map<Attribute, String> attributeValues;
 
-	public Instance(String name) {
+	public Instance(String name, Point3D coordinates, double width, double heigth, Color color) {
+		super(coordinates, width, heigth, color);
 		this.name = name;
+		attributeValues = new HashMap<Attribute, String>();
 	}
 
 	public String getName() {
@@ -20,20 +25,19 @@ public class Instance {
 		this.name = name;
 	}
 
-	public List<AttributeValue> getAttributeValues() {
+	public Map<Attribute, String> getAttributeValues() {
 		return attributeValues;
 	}
 
-	public void setAttributeValues(List<AttributeValue> attributeValues) {
+	public void setAttributeValues(Map<Attribute, String> attributeValues) {
 		this.attributeValues = attributeValues;
 	}
 
-	public List<InstanceRelationEndpoint> getInstanceRelationEndpoint() {
-		return instanceRelationEndpoint;
+	public boolean addAttributeValue(Attribute attribute, String attributeValue) {
+		if (attributeValues.containsKey(attribute)) {
+			return false;
+		}
+		attributeValues.put(attribute, attributeValue);
+		return true;
 	}
-
-	public void setInstanceRelationEndpoint(List<InstanceRelationEndpoint> instanceRelationEndpoint) {
-		this.instanceRelationEndpoint = instanceRelationEndpoint;
-	}
-
 }

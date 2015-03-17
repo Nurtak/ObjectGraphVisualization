@@ -1,15 +1,30 @@
 package ch.hsr.ogv.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Class extends Type {
+import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
 
+public class Class extends ModelBox {
+
+	private String name;
 	private List<Attribute> attributes;
-	private List<ClassRelationEndpoint> classRelationEndpoints;
 	private List<Instance> instances;
 
-	public Class(String name) {
-		super(name);
+	public Class(String name, Point3D coordinates, double width, double heigth, Color color) {
+		super(coordinates, width, heigth, color);
+		this.name = name;
+		attributes = new ArrayList<Attribute>();
+		instances = new ArrayList<Instance>();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public List<Attribute> getAttributes() {
@@ -20,14 +35,6 @@ public class Class extends Type {
 		this.attributes = attributes;
 	}
 
-	public List<ClassRelationEndpoint> getClassRelationEndpoints() {
-		return classRelationEndpoints;
-	}
-
-	public void setClassRelationEndpoints(List<ClassRelationEndpoint> classRelationEndpoints) {
-		this.classRelationEndpoints = classRelationEndpoints;
-	}
-
 	public List<Instance> getInstances() {
 		return instances;
 	}
@@ -36,15 +43,21 @@ public class Class extends Type {
 		this.instances = instances;
 	}
 
-	public void addAttribute(Attribute attribute) {
-		attributes.add(attribute);
+	public boolean addAttribute(Attribute attribute) {
+		return attributes.add(attribute);
 	}
 
-	public void addClassRelationEndpoint(ClassRelationEndpoint classRelationEndpoint) {
-		classRelationEndpoints.add(classRelationEndpoint);
+	public boolean addInstance(Instance instance) {
+		return instances.add(instance);
 	}
 
-	public void addInstance(Instance instance) {
-		instances.add(instance);
+	public void createAttribute(String name) {
+		Attribute attribute = new Attribute(name);
+		addAttribute(attribute);
+	}
+
+	public void createInstance(String name, Point3D coordinates, double width, double height, Color color) {
+		Instance instance = new Instance(name, coordinates, width, height, color);
+		addInstance(instance);
 	}
 }
