@@ -2,6 +2,7 @@ package ch.hsr.ogv.controller;
 
 import javafx.scene.Group;
 import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.SubSceneAdapter;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.Cursor;
@@ -13,11 +14,11 @@ import javafx.scene.Cursor;
  */
 public class DragResizeController extends DragController {
 	
-	public void enableDragResize(PaneBox paneBox) {
-		enableNLine(paneBox);
+	public void enableDragResize(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		enableNLine(paneBox, subSceneAdapter);
 	}
 	
-	private void enableNLine(PaneBox paneBox) {
+	private void enableNLine(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		Group lineN = paneBox.getSelection().getLineN();
 		
 		lineN.setOnMouseEntered((MouseEvent me) -> {
@@ -28,27 +29,21 @@ public class DragResizeController extends DragController {
 			lineN.setCursor(Cursor.DEFAULT);
 	    });
 		
-		lineN.setOnMousePressed((MouseEvent me) -> {
-	        if(isSelected(paneBox) && MouseButton.PRIMARY.equals(me.getButton())) {
-	        	relMousePosZ = me.getZ();
-	        }
-	    });
-		
-		lineN.setOnMouseDragged((MouseEvent me) -> {
+		setOnMousePressed(lineN, paneBox, subSceneAdapter);
+		setOnMouseDragged(lineN, paneBox, subSceneAdapter);
+		setOnMouseReleased(lineN, subSceneAdapter);
+	}
+
+	@Override
+	protected void setOnMouseDragged(Group g, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		g.setOnMouseDragged((MouseEvent me) -> {
 			if(MouseButton.PRIMARY.equals(me.getButton())) {
-				lineN.setCursor(Cursor.N_RESIZE);
-				setDragInProgress(paneBox, true);
+				g.setCursor(Cursor.N_RESIZE);
+				
 				//TODO: needs lots of improvements
 		        double newHeight = paneBox.getHeight() + (me.getZ() - relMousePosZ);
 		        paneBox.setHeight(newHeight);
 		        relMousePosZ = me.getZ();
-			}
-		});
-		
-		lineN.setOnMouseReleased((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton())) {
-				setDragInProgress(paneBox, false);
-				lineN.setCursor(Cursor.DEFAULT);
 			}
 		});
 	}

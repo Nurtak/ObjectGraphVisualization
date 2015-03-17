@@ -25,7 +25,7 @@ import ch.hsr.ogv.view.SubSceneCamera;
  * 
  * @author Simon Gwerder
  */
-public class RootLayoutController implements Observer {
+public class RootController implements Observer {
 
 	
 	private StageManager stageManager; // reference back to the stage manager
@@ -63,13 +63,14 @@ public class RootLayoutController implements Observer {
 		this.dragMoveController.addObserver(this.cameraController);
 		this.dragResizeController.addObserver(this.cameraController);
 		this.selectionController.addObserver(this.dragMoveController);
+		this.selectionController.addObserver(this.dragResizeController);
 	}
 	
 	private void addPaneBoxControls(PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox);
 		this.textInputController.enableTextInput(paneBox);
 		this.dragMoveController.enableDragMove(paneBox, this.stageManager.getSubSceneAdpater());
-		this.dragResizeController.enableDragResize(paneBox);
+		this.dragResizeController.enableDragResize(paneBox, this.stageManager.getSubSceneAdpater());
 	}
 
 	/**

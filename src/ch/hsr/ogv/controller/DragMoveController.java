@@ -19,20 +19,17 @@ public class DragMoveController extends DragController {
 	
 	public void enableDragMove(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		Group paneBoxGroup = paneBox.get();
+		setOnMousePressed(paneBoxGroup, paneBox, subSceneAdapter);
+		setOnMouseDragged(paneBoxGroup, paneBox, subSceneAdapter);
+		setOnMouseReleased(paneBoxGroup, subSceneAdapter);
+	}
+
+	@Override
+	protected void setOnMouseDragged(Group g, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		Floor floor = subSceneAdapter.getFloor();
-		
-		paneBoxGroup.setOnMousePressed((MouseEvent me) -> {
-			if(isSelected(paneBox) && MouseButton.PRIMARY.equals(me.getButton())) {
-				relMousePosX = me.getX();
-				relMousePosZ = me.getZ();
-				subSceneAdapter.onlyFloorMouseEvent(true);
-			}
-        });
-		
-		paneBoxGroup.setOnMouseDragged((MouseEvent me) -> {
-			if(paneBoxGroup.focusedProperty().get() && MouseButton.PRIMARY.equals(me.getButton())) {
-				setDragInProgress(paneBox, true);
-				paneBoxGroup.setCursor(Cursor.MOVE);
+		g.setOnMouseDragged((MouseEvent me) -> {
+			if(g.focusedProperty().get() && MouseButton.PRIMARY.equals(me.getButton())) {
+				g.setCursor(Cursor.MOVE);
 				PickResult pick = me.getPickResult();
 				if(pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
 					Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
@@ -40,14 +37,7 @@ public class DragMoveController extends DragController {
 					paneBox.setTranslateZ(coords.getZ() - relMousePosZ);
 					//paneBox.setTranslateY(coords.getY());
 				}
-				
 			}
-		});
-		
-		paneBoxGroup.setOnMouseReleased((MouseEvent me) -> {
-			setDragInProgress(paneBox, false);
-			paneBoxGroup.setCursor(Cursor.DEFAULT);
-			subSceneAdapter.onlyFloorMouseEvent(false);
 		});
 	}
 	
