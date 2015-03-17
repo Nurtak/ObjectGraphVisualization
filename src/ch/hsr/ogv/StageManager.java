@@ -102,21 +102,22 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         notifyObservers(this);
         
         //TODO: Remove everything below this line:
-        
-	    PaneBox paneBox = new PaneBox(Color.ALICEBLUE);
-	    addClassToSubScene(paneBox);
 	    
-	    PaneBox paneBox1 = new PaneBox(Color.AQUA);
-	    addClassToSubScene(paneBox1);
-	    paneBox1.setTranslateZ(222);
-	    paneBox1.setTranslateX(900);
+	    PaneBox paneBoxA = new PaneBox(Color.AQUA);
+	    paneBoxA.setTopText("A");
 	    
-	    PaneBox paneBox2 = new PaneBox(Color.CHARTREUSE);
-	    addClassToSubScene(paneBox2);
-	    paneBox2.setTranslateX(360);
-	    paneBox2.setTranslateZ(360);
+	    addClassToSubScene(paneBoxA);
+	    paneBoxA.setTranslateZ(-100);
+	    paneBoxA.setTranslateX(100);
 	    
-        Arrow arrow = new Arrow(paneBox, paneBox1);
+	    PaneBox paneBoxB = new PaneBox(Color.CHARTREUSE);
+	    paneBoxB.setTopText("B");
+	    
+	    addClassToSubScene(paneBoxB);
+	    paneBoxB.setTranslateX(500);
+	    paneBoxB.setTranslateZ(500);
+	    
+        Arrow arrow = new Arrow(paneBoxA, paneBoxB);
         addToSubScene(arrow);
         
 	}
