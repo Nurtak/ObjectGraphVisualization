@@ -3,11 +3,9 @@ package ch.hsr.ogv.model;
 public class Attribute {
 
 	private String name;
-	private Type type;
 
-	public Attribute(String name, Type type) {
+	public Attribute(String name) {
 		this.name = name;
-		this.type = type;
 	}
 
 	public String getName() {
@@ -18,11 +16,4 @@ public class Attribute {
 		this.name = name;
 	}
 
-	public Type getType() {
-		return type;
-	}
-
-	public void setType(Type type) {
-		this.type = type;
-	}
 }
