@@ -1,5 +1,10 @@
 package ch.hsr.ogv.model;
 
+/**
+ * 
+ * @author arieser
+ *
+ */
 public abstract class Relation {
 
 	private Endpoint first;

@@ -6,6 +6,11 @@ import java.util.Map;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
+/**
+ * 
+ * @author arieser
+ *
+ */
 public class Instance extends ModelBox {
 
 	private String name;

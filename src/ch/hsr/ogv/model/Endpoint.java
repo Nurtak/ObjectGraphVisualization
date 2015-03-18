@@ -2,6 +2,11 @@ package ch.hsr.ogv.model;
 
 import javafx.geometry.Point3D;
 
+/**
+ * 
+ * @author arieser
+ *
+ */
 public class Endpoint {
 
 	private EndpointType type;

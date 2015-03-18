@@ -1,5 +1,10 @@
 package ch.hsr.ogv.model;
 
+/**
+ * 
+ * @author arieser
+ *
+ */
 public class Attribute {
 
 	private String name;
