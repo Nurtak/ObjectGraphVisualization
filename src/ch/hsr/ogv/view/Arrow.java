@@ -11,7 +11,7 @@ import ch.hsr.ogv.view.ArrowHead.ArrowHeadType;
 
 /**
  * 
- * @author Simon Gwerder
+ * @author Simon Gwerder, Adrian Rieser
  *
  */
 public class Arrow extends Group {

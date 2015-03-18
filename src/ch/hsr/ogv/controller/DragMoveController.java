@@ -21,10 +21,9 @@ public class DragMoveController extends DragController {
 		Group paneBoxGroup = paneBox.get();
 		setOnMousePressed(paneBoxGroup, paneBox, subSceneAdapter);
 		setOnMouseDragged(paneBoxGroup, paneBox, subSceneAdapter);
-		setOnMouseReleased(paneBoxGroup, subSceneAdapter);
+		setOnMouseReleased(paneBoxGroup, paneBox, subSceneAdapter);
 	}
 
-	@Override
 	protected void setOnMouseDragged(Group g, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		Floor floor = subSceneAdapter.getFloor();
 		g.setOnMouseDragged((MouseEvent me) -> {
@@ -33,8 +32,8 @@ public class DragMoveController extends DragController {
 				PickResult pick = me.getPickResult();
 				if(pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
 					Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
-					paneBox.setTranslateX(coords.getX() - relMousePosX);
-					paneBox.setTranslateZ(coords.getZ() - relMousePosZ);
+					paneBox.setTranslateX(coords.getX() - origRelMouseX);
+					paneBox.setTranslateZ(coords.getZ() - origRelMouseZ);
 					//paneBox.setTranslateY(coords.getY());
 				}
 			}

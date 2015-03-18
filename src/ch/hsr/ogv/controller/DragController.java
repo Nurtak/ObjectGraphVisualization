@@ -20,9 +20,17 @@ public abstract class DragController extends Observable implements Observer {
 	private volatile PaneBox selected = null;
 	private volatile boolean dragInProgress = false;
 	
-	protected volatile double relMousePosX;
-	protected volatile double relMousePosY;
-	protected volatile double relMousePosZ;
+	protected volatile double origRelMouseX;
+	protected volatile double origRelMouseY;
+	protected volatile double origRelMouseZ;
+	
+	protected volatile double origTranslateX;
+	protected volatile double origTranslateY;
+	protected volatile double origTranslateZ;
+	
+	protected volatile double origWidth;
+	protected volatile double origHeight;
+	protected volatile double origDepth;
 	
 	protected boolean isSelected(PaneBox paneBox) {
 		return this.selected != null && this.selected.equals(paneBox);
@@ -32,16 +40,20 @@ public abstract class DragController extends Observable implements Observer {
 		g.setOnMousePressed((MouseEvent me) -> {
 			if(isSelected(paneBox) && MouseButton.PRIMARY.equals(me.getButton())) {
 				setDragInProgress(subSceneAdapter, true);
-				relMousePosX = me.getX();
-				relMousePosY = me.getY();
-				relMousePosZ = me.getZ();
+				origRelMouseX = me.getX();
+				origRelMouseY = me.getY();
+				origRelMouseZ = me.getZ();
+				origTranslateX = paneBox.getTranslateX();
+				origTranslateY = paneBox.getTranslateY();
+				origTranslateZ = paneBox.getTranslateZ();
+				origWidth = paneBox.getWidth();
+				origHeight = paneBox.getHeight();
+				origDepth = paneBox.getDepth();
 			}
 		});
  	}
 	
-	protected abstract void setOnMouseDragged(Group g, PaneBox paneBox,  SubSceneAdapter subSceneAdapter);
-	
-	protected void setOnMouseReleased(Group g, SubSceneAdapter subSceneAdapter) {
+	protected void setOnMouseReleased(Group g, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		g.setOnMouseReleased((MouseEvent me) -> {
 			if(MouseButton.PRIMARY.equals(me.getButton())) {
 				setDragInProgress(subSceneAdapter, false);
