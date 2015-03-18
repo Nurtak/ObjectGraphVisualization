@@ -55,7 +55,7 @@ public class Arrow extends Group {
 	public double getAngleBetweenXandZ(Point3D p1, Point3D p2) {
 		double xDiff = p2.getX() - p1.getX();
 		double zDiff = p2.getZ() - p1.getZ();
-		return Math.toDegrees(Math.atan2(zDiff, xDiff));
+		return Math.toDegrees(Math.atan2(xDiff, zDiff));
 	}
 
 	public void setColor(Color color) {
@@ -87,7 +87,7 @@ public class Arrow extends Group {
 	}
 
 	public void addRotate(double degree) {
-		getTransforms().add(new Rotate(degree, Rotate.Y_AXIS));
+		getTransforms().add(new Rotate(degree, getTranslateX(), getTranslateY(), getTranslateZ(), Rotate.Y_AXIS));
 	}
 
 	public double getWidth() {
