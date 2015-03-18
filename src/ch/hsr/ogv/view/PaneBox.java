@@ -31,9 +31,13 @@ public class PaneBox {
 	
 	private final static Logger logger = LoggerFactory.getLogger(PaneBox.class);
 	
-	public final static int MIN_DEPTH = 10;
+	public final static int INIT_DEPTH = 10;
+	
 	public final static int MIN_WIDTH = 100;
 	public final static int MIN_HEIGHT = 100;
+	
+	public final static int MAX_WIDTH = 500;
+	public final static int MAX_HEIGHT = 500;
 	
 	private Group paneBox = new Group();
 	private Selection selection = null;
@@ -91,7 +95,7 @@ public class PaneBox {
         this.selection.get().setVisible(false);
         
         // position the whole group so, that the center is at scene's origin (0, 0, 0)
-        setTranslateY(MIN_DEPTH / 2);
+        setTranslateY(INIT_DEPTH / 2);
         setColor(color);
 	}
 	
@@ -113,14 +117,14 @@ public class PaneBox {
 	}
 	
 	private void buildBox() {
-		this.box = new Cuboid(MIN_DEPTH);
+		this.box = new Cuboid(INIT_DEPTH);
 		this.box.setDrawTopFace(false);
 		this.box.widthProperty().bind(this.borderPane.widthProperty());
 		this.box.heightProperty().bind(this.borderPane.heightProperty());
 		this.box.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
 		this.box.translateXProperty().bind(this.borderPane.translateXProperty().subtract(this.borderPane.widthProperty().divide(2)));
 		this.box.translateZProperty().bind(this.borderPane.translateZProperty().subtract(this.borderPane.heightProperty().divide(2)));
-		this.box.translateYProperty().bind(this.borderPane.translateYProperty().subtract(MIN_DEPTH / 2));
+		this.box.translateYProperty().bind(this.borderPane.translateYProperty().subtract(INIT_DEPTH / 2));
 	}
 	
 	public TextField getTop() {
@@ -161,6 +165,28 @@ public class PaneBox {
 		getTop().setDisable(!value);
 	}
 	
+	private double restrictedWidth(double width) {
+		double retWidth = width;
+		if(width < MIN_WIDTH) {
+			retWidth = MIN_WIDTH;
+		}
+		else if(width > MAX_WIDTH) {
+			retWidth = MAX_WIDTH;
+		}
+		return retWidth;
+	}
+	
+	private double restrictedHeight(double height) {
+		double retHeight = height;
+		if(height < MIN_HEIGHT) {
+			retHeight = MIN_HEIGHT;
+		}
+		else if(height > MAX_HEIGHT) {
+			retHeight = MAX_HEIGHT;
+		}
+		return retHeight;
+	}
+	
 	public void setWidth(double witdh) {
 		this.borderPane.setPrefWidth(witdh);
 	}
@@ -174,10 +200,7 @@ public class PaneBox {
 	 * @param width
 	 */
 	public void setMinWidth(double width) {
-		if(width < MIN_WIDTH) {
-			width = MIN_WIDTH;
-		}
-		this.borderPane.setMinWidth(width);
+		this.borderPane.setMinWidth(restrictedWidth(width));
 	}
 	
 	public double getMinWidth() {
@@ -193,18 +216,39 @@ public class PaneBox {
 	}
 	
 	/**
-	 * Sets the minimum width of this box. Note that it can not be set blow {@link PaneBox#MIN_HEIGHT}.
+	 * Sets the maximum width of this box. Note that it can not be set blow {@link PaneBox#MAX_WIDTH}.
+	 * @param width
+	 */
+	public void setMaxWidth(double width) {
+		this.borderPane.setMaxWidth(restrictedWidth(width));
+	}
+	
+	public double getMaxWidth() {
+		return this.borderPane.getMaxWidth();
+	}
+	
+	/**
+	 * Sets the minimum height of this box. Note that it can not be set above {@link PaneBox#MIN_HEIGHT}.
 	 * @param height
 	 */
 	public void setMinHeight(double height) {
-		if(height < MIN_HEIGHT) {
-			height = MIN_HEIGHT;
-		}
-		this.borderPane.setMinHeight(height);
+		this.borderPane.setMinHeight(restrictedHeight(height));
 	}
 
 	public double getMinHeight() {
 		return this.borderPane.getMinHeight();
+	}
+	
+	/**
+	 * Sets the maximum height of this box. Note that it can not be set above {@link PaneBox#MAX_HEIGHT}.
+	 * @param width
+	 */
+	public void setMaxHeight(double height) {
+		this.borderPane.setMaxHeight(restrictedHeight(height));
+	}
+	
+	public double getMaxHeight() {
+		return this.borderPane.getMaxHeight();
 	}
 
 	public void setDepth(double depth) {

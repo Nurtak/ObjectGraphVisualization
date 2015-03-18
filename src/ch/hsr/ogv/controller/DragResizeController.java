@@ -30,11 +30,11 @@ public class DragResizeController extends DragController {
 	
 	private void enableDirection(Group g, Cursor direction, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		g.setOnMouseEntered((MouseEvent me) -> {
-			g.setCursor(direction);
+			subSceneAdapter.getSubScene().setCursor(direction);
 	    });
 		
 		g.setOnMouseExited((MouseEvent me) -> {
-			g.setCursor(direction);
+			subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 	    });
 		
 		setOnMousePressed(g, paneBox, subSceneAdapter);
@@ -46,7 +46,7 @@ public class DragResizeController extends DragController {
 		Floor floor = subSceneAdapter.getFloor();
 		g.setOnMouseDragged((MouseEvent me) -> {
 			if(MouseButton.PRIMARY.equals(me.getButton())) {
-				g.setCursor(direction);
+				subSceneAdapter.getSubScene().setCursor(direction);
 				PickResult pick = me.getPickResult();
 				if(pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
 					Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
@@ -85,38 +85,52 @@ public class DragResizeController extends DragController {
 	
 	protected void northResize(PaneBox paneBox, Point3D coords) {
 		double newHeight = paneBox.getHeight() / 2 - paneBox.getTranslateZ() + coords.getZ();
-		if(newHeight <= paneBox.getMinHeight()) {
-			newHeight = paneBox.getMinHeight();
-		}
+		newHeight = restrictedHeight(paneBox, newHeight);
 		paneBox.setHeight(newHeight);
 		paneBox.setTranslateZ(origTranslateZ - origHeight / 2 + newHeight / 2);
 	}
 	
 	protected void eastResize(PaneBox paneBox, Point3D coords) {
 		double newWidth = paneBox.getWidth() / 2 + paneBox.getTranslateX() - coords.getX();
-		if(newWidth <= paneBox.getMinWidth()) {
-			newWidth = paneBox.getMinWidth();
-		}
+		newWidth = restrictedWidth(paneBox, newWidth);
 		paneBox.setWidth(newWidth);
 		paneBox.setTranslateX(origTranslateX + origWidth / 2 - newWidth / 2);
 	}
 	
 	protected void southResize(PaneBox paneBox, Point3D coords) {
 		double newHeight = paneBox.getHeight() / 2 + paneBox.getTranslateZ() - coords.getZ();
-		if(newHeight <= paneBox.getMinHeight()) {
-			newHeight = paneBox.getMinHeight();
-		}
+		newHeight = restrictedHeight(paneBox, newHeight);
 		paneBox.setHeight(newHeight);
 		paneBox.setTranslateZ(origTranslateZ + origHeight / 2 - newHeight / 2);
 	}
 	
 	protected void westResize(PaneBox paneBox, Point3D coords) {
 		double newWidth = paneBox.getWidth() / 2 - paneBox.getTranslateX() + coords.getX();
-		if(newWidth <= paneBox.getMinWidth()) {
-			newWidth = paneBox.getMinWidth();
-		}
+		newWidth = restrictedWidth(paneBox, newWidth);
 		paneBox.setWidth(newWidth);
 		paneBox.setTranslateX(origTranslateX - origWidth / 2 + newWidth / 2);
+	}
+	
+	private double restrictedWidth(PaneBox paneBox, double newWidth) {
+		double retWidth = newWidth;
+		if(newWidth <= paneBox.getMinWidth()) {
+			retWidth = paneBox.getMinWidth();
+		}
+		else if(newWidth >= paneBox.getMaxWidth()) {
+			retWidth = paneBox.getMaxWidth();
+		}
+		return retWidth;
+	}
+	
+	private double restrictedHeight(PaneBox paneBox, double newHeight) {
+		double retHeight = newHeight;
+		if(newHeight <= paneBox.getMinHeight()) {
+			retHeight = paneBox.getMinHeight();
+		}
+		else if(newHeight >= paneBox.getMaxHeight()) {
+			retHeight = paneBox.getMaxHeight();
+		}
+		return retHeight;
 	}
 		
 }

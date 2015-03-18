@@ -16,7 +16,7 @@ import ch.hsr.ogv.view.PaneBox;
  */
 public class TextInputController {
 	
-	private final int MAX_CHAR_COUNT = 50;
+	private final int MAX_CHAR_COUNT = 32;
 
 	public void enableTextInput(PaneBox paneBox) {
 		TextField topTextField = paneBox.getTop();
@@ -30,13 +30,12 @@ public class TextInputController {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
             	//TODO validate input
-            	if(newValue.length() >= MAX_CHAR_COUNT) {
-            		int overflow = newValue.length() - MAX_CHAR_COUNT;
-            		newValue = newValue.substring(0, newValue.length() - overflow);
-            		newValue = newValue + "...";
-            	}
+//            	if(newValue.length() >= MAX_CHAR_COUNT) {
+//            		int overflow = newValue.length() - MAX_CHAR_COUNT;
+//            		newValue = newValue.substring(0, newValue.length() - overflow);
+//            		newValue = newValue + "...";
+//            	}
            		paneBox.adaptWidthByText(topTextField.getFont(), newValue);
-
             }
         });
 		

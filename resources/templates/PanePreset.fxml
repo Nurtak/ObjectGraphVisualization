@@ -8,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="500.0" maxWidth="500.0" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" style="-fx-border-color: transparent transparent black transparent;" BorderPane.alignment="CENTER">
          <children>

@@ -28,7 +28,7 @@ public class DragMoveController extends DragController {
 		Floor floor = subSceneAdapter.getFloor();
 		g.setOnMouseDragged((MouseEvent me) -> {
 			if(g.focusedProperty().get() && MouseButton.PRIMARY.equals(me.getButton())) {
-				g.setCursor(Cursor.MOVE);
+				subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
 				PickResult pick = me.getPickResult();
 				if(pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
 					Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
