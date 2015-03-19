@@ -27,6 +27,7 @@ public class DragMoveController extends DragController {
 	protected void setOnMouseDragged(Group g, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		Floor floor = subSceneAdapter.getFloor();
 		g.setOnMouseDragged((MouseEvent me) -> {
+			setDragInProgress(subSceneAdapter, true);
 			if(g.focusedProperty().get() && MouseButton.PRIMARY.equals(me.getButton())) {
 				subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
 				PickResult pick = me.getPickResult();

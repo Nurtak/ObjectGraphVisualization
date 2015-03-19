@@ -45,6 +45,7 @@ public class DragResizeController extends DragController {
 	protected void setOnMouseDragged(Group g, PaneBox paneBox, SubSceneAdapter subSceneAdapter, Cursor direction) {
 		Floor floor = subSceneAdapter.getFloor();
 		g.setOnMouseDragged((MouseEvent me) -> {
+			setDragInProgress(subSceneAdapter, true);
 			if(MouseButton.PRIMARY.equals(me.getButton())) {
 				subSceneAdapter.getSubScene().setCursor(direction);
 				PickResult pick = me.getPickResult();

@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import ch.hsr.ogv.StageManager;
 import ch.hsr.ogv.ThemeChooser.Style;
 import ch.hsr.ogv.util.UserPreferences;
+import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneCamera;
 
@@ -209,6 +210,12 @@ public class RootController implements Observer {
 		else if(o instanceof StageManager && arg instanceof PaneBox) {
 			PaneBox paneBox = (PaneBox) arg;
 			addPaneBoxControls(paneBox);
+		}
+		
+		else  if(o instanceof StageManager && arg instanceof Arrow) {
+			Arrow a = (Arrow) arg;
+			this.dragMoveController.addObserver(a);
+			this.dragResizeController.addObserver(a);
 		}
 	}
 		

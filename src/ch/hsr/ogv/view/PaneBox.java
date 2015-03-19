@@ -192,7 +192,7 @@ public class PaneBox {
 	}
 	
 	public double getWidth() {
-		return this.borderPane.getWidth();
+		return this.borderPane.getPrefWidth();
 	}
 	
 	/**
@@ -212,7 +212,7 @@ public class PaneBox {
 	}
 	
 	public double getHeight() {
-		return this.borderPane.getHeight();
+		return this.borderPane.getPrefHeight();
 	}
 	
 	/**

@@ -16,7 +16,7 @@ import ch.hsr.ogv.view.PaneBox;
  */
 public class TextInputController {
 	
-	private final int MAX_CHAR_COUNT = 32;
+	//private final int MAX_CHAR_COUNT = 32;
 
 	public void enableTextInput(PaneBox paneBox) {
 		TextField topTextField = paneBox.getTop();

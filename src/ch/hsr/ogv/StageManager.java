@@ -36,6 +36,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdpater;
+	
+	//TODO
 	private List<PaneBox> classes = new ArrayList<PaneBox>();
 
 	public List<PaneBox> getClasses() {
@@ -107,19 +109,21 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	    paneBoxA.setTopText("A");
 	    
 	    addClassToSubScene(paneBoxA);
-	    paneBoxA.setTranslateX(-100);
+	    paneBoxA.setTranslateX(100);
 	    paneBoxA.setTranslateZ(100);
 	    
 	    PaneBox paneBoxB = new PaneBox(Color.CHARTREUSE);
 	    paneBoxB.setTopText("B");
 	    
 	    addClassToSubScene(paneBoxB);
-	    paneBoxB.setTranslateX(-500);
-	    paneBoxB.setTranslateZ(500);
+	    paneBoxB.setTranslateX(500);
+	    paneBoxB.setTranslateZ(100);
 	    
         Arrow arrow = new Arrow(paneBoxA, paneBoxB);
         addToSubScene(arrow);
-        
+        setChanged();
+        notifyObservers(arrow);
+	    
 	}
 	
 	/**
