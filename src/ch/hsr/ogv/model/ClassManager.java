@@ -1,7 +1,8 @@
 package ch.hsr.ogv.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
@@ -13,37 +14,40 @@ import javafx.scene.paint.Color;
  */
 public class ClassManager {
 
-	private List<Class> classes;
-	private Point3D defaultCoordinates;
-	private double defaultWidth, defaultHeight;
-	private Color defaultColor;
-	
+	private Map<String, Class> classes;
+
 	public ClassManager() {
-		classes = new ArrayList<Class>();
-		defaultCoordinates = new Point3D(-100, 0, 100);
-		defaultWidth = 100;
-		defaultHeight = 100;
-		defaultColor = Color.BLUE;
+		classes = new HashMap<String, Class>();
 	}
 
-	public List<Class> getClasses() {
-		return classes;
+	public Collection<Class> getClasses() {
+		return classes.values();
 	}
 
-	public void setClasses(List<Class> classes) {
-		this.classes = classes;
+	public void addClass(Class theClass) {
+		classes.put(theClass.getName(), theClass);
 	}
 
-	public boolean addClass(Class theClass) {
-		return classes.add(theClass);
+	public void createClass(String name, Point3D coordinates, double width, double heigth, Color color) {
+		if (!classes.containsKey(name)) {
+			Class theClass = new Class(name, coordinates, width, heigth, color);
+			addClass(theClass);
+		}
+	}
+
+	public void createClass(String name, Point3D coordinates) {
+		createClass(name, coordinates);
+	}
+
+	public Class getClass(String name) {
+		return classes.get(name);
+	}
+
+	public boolean isNameTaken(String name) {
+		return classes.containsKey(name);
 	}
 	
-	public void createClass(String name, Point3D coordinates, double width, double heigth, Color color) {
-		Class theClass = new Class(name, coordinates, width, heigth, color);
-		addClass(theClass);
-	}
-
-	public void createClass(String name) {
-		createClass(name, defaultCoordinates, defaultWidth, defaultHeight, defaultColor);
+	public void deleteClass(Class theClass){
+		classes.remove(theClass.getName());
 	}
 }

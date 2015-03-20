@@ -13,11 +13,19 @@ import javafx.scene.paint.Color;
  */
 public class ModelBox {
 
+	private static double defaultWidth = 100;
+	private static double defaultHeight = 100;
+	private static Color defaultColor = Color.BLUE;
+	
 	private Point3D coordinates;
 	private double width;
 	private double height;
-	private Color color;
+	private Color color;	
 	private List<Endpoint> endpoints;
+	
+	public ModelBox(Point3D coordinates) {
+		this(coordinates, defaultWidth, defaultHeight, defaultColor);
+	}
 
 	public ModelBox(Point3D coordinates, double width, double heigth, Color color) {
 		this.coordinates = coordinates;

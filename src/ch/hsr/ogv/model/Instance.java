@@ -22,6 +22,12 @@ public class Instance extends ModelBox {
 		attributeValues = new HashMap<Attribute, String>();
 	}
 
+	public Instance(String name, Point3D coordinates) {
+		super(coordinates);
+		this.name = name;
+		attributeValues = new HashMap<Attribute, String>();
+	}
+
 	public String getName() {
 		return name;
 	}

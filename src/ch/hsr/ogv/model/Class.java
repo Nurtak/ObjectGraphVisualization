@@ -1,6 +1,7 @@
 package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javafx.geometry.Point3D;
@@ -14,13 +15,20 @@ import javafx.scene.paint.Color;
 public class Class extends ModelBox {
 
 	private String name;
-	private List<Attribute> attributes;
+	private LinkedHashSet<Attribute> attributes;
 	private List<Instance> instances;
+
+	public Class(String name, Point3D coordinates) {
+		super(coordinates);
+		this.name = name;
+		attributes = new LinkedHashSet<Attribute>();
+		instances = new ArrayList<Instance>();
+	}
 
 	public Class(String name, Point3D coordinates, double width, double heigth, Color color) {
 		super(coordinates, width, heigth, color);
 		this.name = name;
-		attributes = new ArrayList<Attribute>();
+		attributes = new LinkedHashSet<Attribute>();
 		instances = new ArrayList<Instance>();
 	}
 
@@ -32,11 +40,11 @@ public class Class extends ModelBox {
 		this.name = name;
 	}
 
-	public List<Attribute> getAttributes() {
+	public LinkedHashSet<Attribute> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<Attribute> attributes) {
+	public void setAttributes(LinkedHashSet<Attribute> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -49,11 +57,25 @@ public class Class extends ModelBox {
 	}
 
 	public boolean addAttribute(Attribute attribute) {
-		return attributes.add(attribute);
+		if (!attributes.contains(attribute)) {
+			return attributes.add(attribute);
+		}
+		return false;
+	}
+
+	public boolean deleteAttribute(Attribute attribute) {
+		return attributes.remove(attribute);
 	}
 
 	public boolean addInstance(Instance instance) {
-		return instances.add(instance);
+		if (!instances.contains(instance)) {
+			return instances.add(instance);
+		}
+		return false;
+	}
+	
+	public boolean deleteInstance(Instance instance) {
+		return instances.remove(instance);
 	}
 
 	public void createAttribute(String name) {
@@ -61,8 +83,34 @@ public class Class extends ModelBox {
 		addAttribute(attribute);
 	}
 
-	public void createInstance(String name, Point3D coordinates, double width, double height, Color color) {
-		Instance instance = new Instance(name, coordinates, width, height, color);
+	public void createInstance(String name, Point3D coordinates) {
+		Instance instance = new Instance(name, coordinates);
 		addInstance(instance);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Class other = (Class) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+
 }

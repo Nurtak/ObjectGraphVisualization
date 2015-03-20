@@ -47,5 +47,5 @@ public abstract class Relation {
 		}
 		return first;
 	}
-	
+
 }
