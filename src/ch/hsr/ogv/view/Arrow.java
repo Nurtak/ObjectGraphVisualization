@@ -12,6 +12,7 @@ import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import ch.hsr.ogv.controller.DragController;
+import ch.hsr.ogv.util.GeometryUtil;
 import ch.hsr.ogv.view.ArrowHead.ArrowHeadType;
 
 /**
@@ -38,6 +39,7 @@ public class Arrow extends Group implements Observer {
 	public Arrow(PaneBox startBox, PaneBox endBox) {
 		this.startBox = startBox;
 		this.endBox = endBox;
+		this.line = new Box(this.width, this.width, this.length);
 		drawArrow();
 	}
 
@@ -46,87 +48,47 @@ public class Arrow extends Group implements Observer {
 		Point3D startPoint = this.startBox.getCenterPoint();
 		Point3D endPoint = this.endBox.getCenterPoint();
 
-		Point2D interEndPoint2D = intersectionEndpoint();
-		Point3D interEndPoint3D = endPoint;
-		if(interEndPoint2D != null) {
-			interEndPoint3D = new Point3D(interEndPoint2D.getX(), endPoint.getY(), interEndPoint2D.getY());
-		}
-
-		this.length = startPoint.distance(interEndPoint3D);
-		if(this.line == null) {
-			this.line = new Box(this.width, this.width, this.length);
-		}
+		Point2D arrowEndPoint2D = lineBoxIntersection(startPoint, this.endBox);
+		Point2D arrowStartPoint2D = lineBoxIntersection(endPoint, this.startBox);
+		Point3D arrowEndPoint3D = endPoint;
+		Point3D arrowStartPoint3D = startPoint;
+		if(arrowEndPoint2D != null) arrowEndPoint3D = new Point3D(arrowEndPoint2D.getX(), endPoint.getY(), arrowEndPoint2D.getY());
+		if(arrowStartPoint2D != null) arrowStartPoint3D = new Point3D(arrowStartPoint2D.getX(), startPoint.getY(), arrowStartPoint2D.getY());
+		
+		this.length = arrowStartPoint3D.distance(arrowEndPoint3D);
 		this.line.setDepth(this.length);
-		setTranslateXYZ(startPoint.midpoint(interEndPoint3D));
-		double angle = getAngleBetweenXandZ(startPoint, endPoint);
-		addRotate(angle);
-
+		
 		setArrowHeadType(ArrowHeadType.OPEN);
 		setColor(this.color);
+		
+		Point3D midPoint = arrowStartPoint3D.midpoint(arrowEndPoint3D);
+		setTranslateXYZ(midPoint);
+		
+		double angle = GeometryUtil.getAngleBetweenXandZ(startPoint, endPoint);
+		addRotate(angle);
 	}
 
-	private double getAngleBetweenXandZ(Point3D p1, Point3D p2) {
-		double xDiff = p2.getX() - p1.getX();
-		double zDiff = p2.getZ() - p1.getZ();
-		return Math.toDegrees(Math.atan2(xDiff, zDiff));
-	}
-	
-	private Point2D intersectionEndpoint() {
-		Point3D startPoint = this.startBox.getCenterPoint();
-		Point3D endPoint   = this.endBox.getCenterPoint();
+	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box) {
+		Point3D boxCenter = box.getCenterPoint();
+		double halfWidth = box.getWidth() / 2;
+		double halfHeight = box.getHeight() / 2;
 		
-		double halfWidth = endBox.getWidth() / 2;
-		double halfHeight = endBox.getHeight() / 2;
+		Point2D lineStart = new Point2D(externalPoint.getX(), externalPoint.getZ());
+		Point2D lineEnd   = new Point2D(boxCenter.getX(), boxCenter.getZ());
+		Point2D northEast  = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() + halfHeight);
+		Point2D southEast  = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() - halfHeight);
+		Point2D southWest  = new Point2D(boxCenter.getX() + halfWidth, boxCenter.getZ() - halfHeight);
+		Point2D northWest  = new Point2D(boxCenter.getX() + halfWidth, boxCenter.getZ() + halfHeight);
 		
-		Point2D arrowStart = new Point2D(startPoint.getX(), startPoint.getZ());
-		Point2D arrowEnd   = new Point2D(endPoint.getX(), endPoint.getZ());
-		Point2D northEast  = new Point2D(endPoint.getX() - halfWidth, endPoint.getZ() + halfHeight);
-		Point2D southEast  = new Point2D(endPoint.getX() - halfWidth, endPoint.getZ() - halfHeight);
-		Point2D southWest  = new Point2D(endPoint.getX() + halfWidth, endPoint.getZ() - halfHeight);
-		Point2D northWest  = new Point2D(endPoint.getX() + halfWidth, endPoint.getZ() + halfHeight);
+		Point2D interEastHeight = GeometryUtil.lineIntersect(lineStart, lineEnd, northEast, southEast);
+		Point2D interWestHeight = GeometryUtil.lineIntersect(lineStart, lineEnd, northWest, southWest);
+		Point2D interNorthWidth = GeometryUtil.lineIntersect(lineStart, lineEnd, northEast, northWest);
+		Point2D interSouthWidth = GeometryUtil.lineIntersect(lineStart, lineEnd, southEast, southWest);
 		
-		Point2D interEastHeight = lineIntersect(arrowStart, arrowEnd, northEast, southEast);
-		Point2D interWestHeight = lineIntersect(arrowStart, arrowEnd, northWest, southWest);
-		Point2D interNorthWidth = lineIntersect(arrowStart, arrowEnd, northEast, northWest);
-		Point2D interSouthWidth = lineIntersect(arrowStart, arrowEnd, southEast, southWest);
-		
-		if(interEastHeight != null) {
-			return interEastHeight;
-		}
-		
-		if(interWestHeight != null) {
-			return interWestHeight;
-		}
-		
-		if(interNorthWidth != null) {
-			return interNorthWidth;
-		}
-		
-		if(interSouthWidth != null) {
-			return interSouthWidth;
-		}
-		
-		return null;
-	}
-
-    private Point2D lineIntersect(Point2D firstLineStart, Point2D firstLineEnd, Point2D secondLineStart, Point2D secondLineEnd) {
-    	double x1 = firstLineStart.getX();
-    	double y1 = firstLineEnd.getY();
-    	double x2 = firstLineEnd.getX();
-    	double y2 = firstLineEnd.getY();
-    	double x3 = secondLineStart.getX();
-    	double y3 = secondLineStart.getY();
-    	double x4 = secondLineEnd.getX();
-    	double y4 = secondLineEnd.getY();
-    	double denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
-		if (denom == 0.0) { // Lines are parallel.
-		   return null;
-		}
-		double ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
-		double ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
-		if (ua >= 0.0f && ua <= 1.0f && ub >= 0.0f && ub <= 1.0f) {
-		    return new Point2D((x1 + ua*(x2 - x1)), (y1 + ua*(y2 - y1))); // Get the intersection point.
-		}
+		if(interEastHeight != null) return interEastHeight;
+		if(interWestHeight != null) return interWestHeight;
+		if(interNorthWidth != null) return interNorthWidth;
+		if(interSouthWidth != null) return interSouthWidth;
 		return null;
 	}
 	

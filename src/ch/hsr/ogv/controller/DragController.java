@@ -55,10 +55,10 @@ public abstract class DragController extends Observable implements Observer {
 	
 	protected void setOnMouseReleased(Group g, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		g.setOnMouseReleased((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton())) {
+			//if(MouseButton.PRIMARY.equals(me.getButton())) {
 				setDragInProgress(subSceneAdapter, false);
 				subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
-			}
+			//}
 		});
 	}
 	

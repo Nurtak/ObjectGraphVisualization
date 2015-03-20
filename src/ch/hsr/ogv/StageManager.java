@@ -116,8 +116,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	    paneBoxB.setTopText("B");
 	    
 	    addClassToSubScene(paneBoxB);
-	    paneBoxB.setTranslateX(500);
-	    paneBoxB.setTranslateZ(100);
+	    paneBoxB.setTranslateX(300);
+	    paneBoxB.setTranslateZ(300);
 	    
         Arrow arrow = new Arrow(paneBoxA, paneBoxB);
         addToSubScene(arrow);
