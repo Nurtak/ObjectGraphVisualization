@@ -51,4 +51,8 @@ public class Instance extends ModelBox {
 		attributeValues.put(attribute, attributeValue);
 		return true;
 	}
+	
+	public void updateAttribute(Attribute attribute, String value) {
+		attributeValues.replace(attribute, value);
+	}
 }

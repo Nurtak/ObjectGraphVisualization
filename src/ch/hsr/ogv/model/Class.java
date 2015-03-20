@@ -73,7 +73,7 @@ public class Class extends ModelBox {
 		}
 		return false;
 	}
-	
+
 	public boolean deleteInstance(Instance instance) {
 		return instances.remove(instance);
 	}
@@ -111,6 +111,24 @@ public class Class extends ModelBox {
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	public boolean hasSuperClass() {
+		for (Endpoint endpoint : this.getEndpoints()) {
+			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Class getSuperClass() {
+		for (Endpoint endpoint : this.getEndpoints()) {
+			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
+				return (Class) endpoint.getTarget();
+			}
+		}
+		return null;
 	}
 
 }

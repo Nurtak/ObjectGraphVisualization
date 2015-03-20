@@ -13,15 +13,16 @@ public class Endpoint {
 	private Point3D coordinates;
 	private String roleName;
 	private String multiplicity;
-
 	private Relation relation;
+	private ModelBox target;
 
-	public Endpoint(EndpointType type, Point3D coordinates, String roleName, String multiplicity) {
+	public Endpoint(EndpointType type, Point3D coordinates, String roleName, String multiplicity, ModelBox target) {
 		this.type = type;
 		this.coordinates = coordinates;
 		this.roleName = roleName;
 		this.multiplicity = multiplicity;
 		this.relation = null;
+		this.target = target;
 	}
 
 	public EndpointType getType() {
@@ -31,8 +32,7 @@ public class Endpoint {
 	public void setType(EndpointType type) {
 		this.type = type;
 	}
-	
-	
+
 	public String getRoleName() {
 		return roleName;
 	}
@@ -57,9 +57,23 @@ public class Endpoint {
 		this.coordinates = coordinates;
 	}
 
+	public Relation getRelation() {
+		return relation;
+	}
 
+	public void setRelation(Relation relation) {
+		this.relation = relation;
+	}
 	
-	public Endpoint getFriend(){
+	public ModelBox getTarget() {
+		return target;
+	}
+
+	public void setTarget(ModelBox target) {
+		this.target = target;
+	}
+
+	public Endpoint getFriend() {
 		return relation.getFriend(this);
 	}
 }
