@@ -12,12 +12,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ch.hsr.ogv.StageManager;
-import ch.hsr.ogv.ThemeChooser.Style;
+import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.util.UserPreferences;
-import ch.hsr.ogv.view.Arrow;
-import ch.hsr.ogv.view.PaneBox;
-import ch.hsr.ogv.view.SubSceneCamera;
 
 /**
  * The controller for the root layout. The root layout provides the basic
@@ -26,54 +22,10 @@ import ch.hsr.ogv.view.SubSceneCamera;
  * 
  * @author Simon Gwerder
  */
-public class RootController implements Observer {
-
+public class RootLayoutController implements Observer {
 	
 	private StageManager stageManager; // reference back to the stage manager
-	private ThemeMenuController themeMenuController = new ThemeMenuController();
-	private CameraController cameraController = new CameraController();
-	private SubSceneController subSceneController = new SubSceneController();
 	
-	private SelectionController selectionController = new SelectionController();
-	private TextInputController textInputController = new TextInputController();
-	private DragMoveController dragMoveController = new DragMoveController();
-	private DragResizeController dragResizeController = new DragResizeController();
-
-	/**
-	 * Is called by the main application to give a reference back to itself.
-	 * 
-	 * @param stageManager
-	 */
-	private void initController(StageManager stageManager) {
-		this.stageManager = stageManager;
-		initSubSceneController();
-		initCameraController();
-		initPaneBoxController();
-	}
-	
-	private void initCameraController() {
-        this.cameraController.handleMouse(this.stageManager.getSubSceneAdpater());
-        this.cameraController.handleKeyboard(this.stageManager.getSubSceneAdpater());
-	}
-	
-	private void initSubSceneController() {
-		this.subSceneController.handleMouse(this.stageManager.getSubSceneAdpater());
-	}
-	
-	private void initPaneBoxController() {
-		this.dragMoveController.addObserver(this.cameraController);
-		this.dragResizeController.addObserver(this.cameraController);
-		this.selectionController.addObserver(this.dragMoveController);
-		this.selectionController.addObserver(this.dragResizeController);
-	}
-	
-	private void addPaneBoxControls(PaneBox paneBox) {
-		this.selectionController.enableSelection(paneBox);
-		this.textInputController.enableTextInput(paneBox);
-		this.dragMoveController.enableDragMove(paneBox, this.stageManager.getSubSceneAdpater());
-		this.dragResizeController.enableDragResize(paneBox, this.stageManager.getSubSceneAdpater());
-	}
-
 	/**
 	 * Creates an empty view.
 	 */
@@ -172,8 +124,7 @@ public class RootController implements Observer {
 	
 	@FXML
 	private void handle2DClassView() {
-		SubSceneCamera ssCamera = stageManager.getSubSceneAdpater().getSubSceneCamera();
-		this.cameraController.handle2DClassView(ssCamera);
+		this.stageManager.handle2DClassView();
 	}
 	
 	@FXML
@@ -187,36 +138,24 @@ public class RootController implements Observer {
 		
 	@FXML
 	private void handleSetModena() {
-		this.themeMenuController.handleSetTheme(this.stageManager, this.modena, Style.MODENA);
+		this.stageManager.handleSetTheme(this.modena, Style.MODENA);
 	}
 	
 	@FXML
 	private void handleSetCaspian() {
-		this.themeMenuController.handleSetTheme(this.stageManager, this.caspian, Style.CASPIANDARK);
+		this.stageManager.handleSetTheme(this.caspian, Style.CASPIANDARK);
 	}
 	
 	@FXML
 	private void handleSetAqua() {
-		this.themeMenuController.handleSetTheme(this.stageManager, this.aqua, Style.AQUA);
+		this.stageManager.handleSetTheme(this.aqua, Style.AQUA);
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o instanceof StageManager && arg instanceof StageManager) {
+		if(o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
 			StageManager stageManager = (StageManager) arg;
-			initController(stageManager);
-		}
-		
-		else if(o instanceof StageManager && arg instanceof PaneBox) {
-			PaneBox paneBox = (PaneBox) arg;
-			addPaneBoxControls(paneBox);
-		}
-		
-		else  if(o instanceof StageManager && arg instanceof Arrow) {
-			Arrow a = (Arrow) arg;
-			this.dragMoveController.addObserver(a);
-			this.dragResizeController.addObserver(a);
+			this.stageManager = stageManager;
 		}
 	}
-		
 }

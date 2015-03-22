@@ -102,7 +102,7 @@ public class Class extends ModelBox {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof Class))
 			return false;
 		Class other = (Class) obj;
 		if (name == null) {
