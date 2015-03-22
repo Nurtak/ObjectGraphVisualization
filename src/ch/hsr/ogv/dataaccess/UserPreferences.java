@@ -1,4 +1,4 @@
-package ch.hsr.ogv.util;
+package ch.hsr.ogv.dataaccess;
 
 import java.io.File;
 import java.util.prefs.Preferences;

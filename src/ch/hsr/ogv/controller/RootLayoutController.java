@@ -13,7 +13,7 @@ import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
-import ch.hsr.ogv.util.UserPreferences;
+import ch.hsr.ogv.dataaccess.UserPreferences;
 
 /**
  * The controller for the root layout. The root layout provides the basic
