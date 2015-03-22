@@ -15,21 +15,17 @@ import javafx.scene.paint.Color;
 public class Class extends ModelBox {
 
 	private String name;
-	private LinkedHashSet<Attribute> attributes;
-	private List<Instance> instances;
+	private LinkedHashSet<Attribute> attributes = new LinkedHashSet<Attribute>();
+	private List<Instance> instances = new ArrayList<Instance>();
 
 	public Class(String name, Point3D coordinates) {
 		super(coordinates);
 		this.name = name;
-		attributes = new LinkedHashSet<Attribute>();
-		instances = new ArrayList<Instance>();
 	}
 
 	public Class(String name, Point3D coordinates, double width, double heigth, Color color) {
 		super(coordinates, width, heigth, color);
 		this.name = name;
-		attributes = new LinkedHashSet<Attribute>();
-		instances = new ArrayList<Instance>();
 	}
 
 	public String getName() {

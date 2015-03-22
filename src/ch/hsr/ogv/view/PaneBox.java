@@ -16,7 +16,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
 import ch.hsr.ogv.util.ColorUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.TextUtil;
@@ -271,8 +270,9 @@ public class PaneBox {
 	}
 	
 	public void setTranslateXYZ(double x, double y, double z) {
-		this.paneBox.getTransforms().add(new Translate(x, y, z));
-		this.selection.get().getTransforms().add(new Translate(x, y, z));
+		setTranslateX(x);
+		setTranslateY(y);
+		setTranslateZ(z);
 	}
 	
 	public void setTranslateX(double x) {

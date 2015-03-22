@@ -14,18 +14,16 @@ import javafx.scene.paint.Color;
 public class Instance extends ModelBox {
 
 	private String name;
-	private Map<Attribute, String> attributeValues;
+	private Map<Attribute, String> attributeValues = new HashMap<Attribute, String>();
 
 	public Instance(String name, Point3D coordinates, double width, double heigth, Color color) {
 		super(coordinates, width, heigth, color);
 		this.name = name;
-		attributeValues = new HashMap<Attribute, String>();
 	}
 
 	public Instance(String name, Point3D coordinates) {
 		super(coordinates);
 		this.name = name;
-		attributeValues = new HashMap<Attribute, String>();
 	}
 
 	public String getName() {

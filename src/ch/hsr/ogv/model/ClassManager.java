@@ -3,6 +3,7 @@ package ch.hsr.ogv.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
@@ -12,7 +13,7 @@ import javafx.scene.paint.Color;
  * @author arieser
  *
  */
-public class ClassManager {
+public class ClassManager extends Observable {
 
 	private Map<String, Class> classes;
 
@@ -24,8 +25,10 @@ public class ClassManager {
 		return classes.values();
 	}
 
-	public void addClass(Class theClass) {
+	private void addClass(Class theClass) {
 		classes.put(theClass.getName(), theClass);
+		setChanged();
+		notifyObservers(theClass);
 	}
 
 	public void createClass(String name, Point3D coordinates, double width, double heigth, Color color) {
@@ -36,7 +39,7 @@ public class ClassManager {
 	}
 
 	public void createClass(String name, Point3D coordinates) {
-		createClass(name, coordinates);
+		createClass(name, coordinates, ModelBox.DEFAULT_WIDTH, ModelBox.DEFAULT_HEIGHT, ModelBox.DEFAULT_COLOR);
 	}
 
 	public Class getClass(String name) {
