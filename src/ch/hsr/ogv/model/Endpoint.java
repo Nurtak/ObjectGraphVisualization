@@ -16,10 +16,9 @@ public class Endpoint {
 	private Relation relation;
 	private ModelBox appendant;
 
-	public Endpoint(EndpointType type, Point3D coordinates, Relation relation, ModelBox appendant) {
+	public Endpoint(EndpointType type, Point3D coordinates, ModelBox appendant) {
 		this.type = type;
 		this.coordinates = coordinates;
-		this.relation = relation;
 		this.appendant = appendant;
 	}
 

@@ -1,36 +1,38 @@
 package ch.hsr.ogv.model;
 
+import java.util.Observable;
+
 /**
  * 
  * @author Adrian Rieser
  *
  */
-public abstract class Relation {
+public class Relation extends Observable {
 
-	private Endpoint first;
-	private Endpoint second;
+	private Endpoint start;
+	private Endpoint end;
 	private LineType type;
 
-	public Relation(Endpoint first, Endpoint second, LineType type) {
-		this.first = first;
-		this.second = second;
+	public Relation(Endpoint start, Endpoint end, LineType type) {
+		this.start = start;
+		this.end = end;
 		this.type = type;
 	}
 
-	public Endpoint getFirst() {
-		return first;
+	public Endpoint getStart() {
+		return start;
 	}
 
-	public void setFirst(Endpoint first) {
-		this.first = first;
+	public void setStart(Endpoint start) {
+		this.start = start;
 	}
 
-	public Endpoint getSecond() {
-		return second;
+	public Endpoint getEnd() {
+		return end;
 	}
 
-	public void setSecond(Endpoint second) {
-		this.second = second;
+	public void setEnd(Endpoint end) {
+		this.end = end;
 	}
 
 	public LineType getType() {
@@ -42,10 +44,10 @@ public abstract class Relation {
 	}
 
 	public Endpoint getFriend(Endpoint other) {
-		if (other.equals(first)) {
-			return second;
+		if (other.equals(start)) {
+			return end;
 		}
-		return first;
+		return start;
 	}
 
 }

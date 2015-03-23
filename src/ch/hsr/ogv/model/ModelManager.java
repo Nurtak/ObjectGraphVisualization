@@ -48,9 +48,18 @@ public class ModelManager extends Observable {
 	public ModelClass deleteClass(ModelClass theClass) {
 		return classes.remove(theClass.getName());
 	}
+	
+	private void addRelation(Relation relation) {
+		relations.add(relation);
+		setChanged();
+		notifyObservers(relation);
+	}
 
-	public void createRelation(ModelClass start, Point3D endpointCoords, RelationType relationType) {
-		//TODO
+	public void createRelation(ModelClass startAppendant, Point3D startCoords, Point3D endCoords, RelationType relationType) {
+		Endpoint start = new Endpoint(relationType.getStartType(), startCoords, startAppendant);
+		Endpoint end = new Endpoint(relationType.getEndType(), endCoords, null);
+		Relation relation = new Relation(start, end, relationType.getLineType());
+		addRelation(relation);
 	}
 	
 }
