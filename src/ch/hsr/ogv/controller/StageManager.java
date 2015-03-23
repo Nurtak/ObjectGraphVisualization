@@ -196,11 +196,16 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 				Arrow changedArrow = this.arrows.get(relation);
 				if(changedArrow != null && changedBox != null && friendChangedBox != null) {
 					if(endpoint.equals(relation.getStart())) {
-						changedArrow.drawBasedOnBoxes(changedBox, friendChangedBox);
+						changedArrow.setPointsBasedOnBoxes(changedBox, friendChangedBox);
+						endpoint.setCoordinates(changedArrow.getStartPoint());
+						friendEndpoint.setCoordinates(changedArrow.getEndPoint());
 					}
 					else {
-						changedArrow.drawBasedOnBoxes(friendChangedBox, changedBox);
+						changedArrow.setPointsBasedOnBoxes(friendChangedBox, changedBox);
+						friendEndpoint.setCoordinates(changedArrow.getStartPoint());
+						endpoint.setCoordinates(changedArrow.getEndPoint());
 					}
+					changedArrow.drawArrow();
 				}
 			}
 		}

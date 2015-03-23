@@ -27,10 +27,26 @@ public class Arrow extends Group {
 
 	private Point3D startPoint;
 	private Point3D endPoint;
-
+	
 	private Box line;
 	private ArrowHead head;
 	private Color color = Color.BLACK;
+	
+	public Point3D getStartPoint() {
+		return startPoint;
+	}
+
+	public void setStartPoint(Point3D startPoint) {
+		this.startPoint = startPoint;
+	}
+
+	public Point3D getEndPoint() {
+		return endPoint;
+	}
+
+	public void setEndPoint(Point3D endPoint) {
+		this.endPoint = endPoint;
+	}
 	
 	public Arrow(Point3D startPoint, Point3D endPoint) {
 		this.startPoint = startPoint;
@@ -39,22 +55,22 @@ public class Arrow extends Group {
 		drawArrow();
 	}
 	
-	public void drawBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
+	public Arrow(PaneBox startBox, PaneBox endBox) {
+		this.line = new Box(this.width, this.width, this.length);
+		setPointsBasedOnBoxes(startBox, endBox);
+		drawArrow();
+	}
+	
+	public void setPointsBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
 		this.startPoint = startBox.getCenterPoint();
 		this.endPoint = endBox.getCenterPoint();
 		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox);
 		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox);
 		if(startIntersection != null) this.startPoint = new Point3D(startIntersection.getX(), this.startPoint.getY(), startIntersection.getY());
 		if(endIntersection != null) this.endPoint = new Point3D(endIntersection.getX(), endPoint.getY(), endIntersection.getY());
-		drawArrow();
-	}
-
-	public Arrow(PaneBox startBox, PaneBox endBox) {
-		this.line = new Box(this.width, this.width, this.length);
-		drawBasedOnBoxes(startBox, endBox);
 	}
 	
-	private void drawArrow() {
+	public void drawArrow() {
 		getTransforms().clear();
 		this.length = this.startPoint.distance(this.endPoint);
 		this.line.setDepth(this.length);

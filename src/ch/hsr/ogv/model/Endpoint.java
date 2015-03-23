@@ -73,4 +73,5 @@ public class Endpoint {
 	public Endpoint getFriend() {
 		return relation.getFriend(this);
 	}
+	
 }
