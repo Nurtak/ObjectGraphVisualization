@@ -15,17 +15,17 @@ import javafx.scene.paint.Color;
  */
 public class ClassManager extends Observable {
 
-	private Map<String, Class> classes;
+	private Map<String, ModelClass> classes;
 
 	public ClassManager() {
-		classes = new HashMap<String, Class>();
+		classes = new HashMap<String, ModelClass>();
 	}
 
-	public Collection<Class> getClasses() {
+	public Collection<ModelClass> getClasses() {
 		return classes.values();
 	}
 
-	private void addClass(Class theClass) {
+	private void addClass(ModelClass theClass) {
 		classes.put(theClass.getName(), theClass);
 		setChanged();
 		notifyObservers(theClass);
@@ -33,7 +33,7 @@ public class ClassManager extends Observable {
 
 	public void createClass(String name, Point3D coordinates, double width, double heigth, Color color) {
 		if (!classes.containsKey(name)) {
-			Class theClass = new Class(name, coordinates, width, heigth, color);
+			ModelClass theClass = new ModelClass(name, coordinates, width, heigth, color);
 			addClass(theClass);
 		}
 	}
@@ -42,7 +42,7 @@ public class ClassManager extends Observable {
 		createClass(name, coordinates, ModelBox.DEFAULT_WIDTH, ModelBox.DEFAULT_HEIGHT, ModelBox.DEFAULT_COLOR);
 	}
 
-	public Class getClass(String name) {
+	public ModelClass getClass(String name) {
 		return classes.get(name);
 	}
 
@@ -50,7 +50,7 @@ public class ClassManager extends Observable {
 		return classes.containsKey(name);
 	}
 	
-	public void deleteClass(Class theClass){
+	public void deleteClass(ModelClass theClass){
 		classes.remove(theClass.getName());
 	}
 }

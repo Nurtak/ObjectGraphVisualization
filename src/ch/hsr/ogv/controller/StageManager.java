@@ -10,12 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
-import ch.hsr.ogv.model.Class;
+import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ClassManager;
-import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
-import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 import ch.hsr.ogv.view.SubSceneCamera;
@@ -45,8 +43,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	private SubSceneAdapter subSceneAdpater;
 	
 	private ClassManager classManager;
-	private Map<Class, PaneBox> boxes = new HashMap<Class, PaneBox>();
-	private Map<Relation, Arrow> arrows = new HashMap<Relation, Arrow>();
+	private Map<ModelClass, PaneBox> boxes = new HashMap<ModelClass, PaneBox>();
+	//private Map<Relation, Arrow> arrows = new HashMap<Relation, Arrow>();
 	
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
@@ -96,8 +94,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         this.subSceneAdpater = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());
         SubScene subScene = this.subSceneAdpater.getSubScene();
         canvas.getChildren().add(subScene);
-        subScene.heightProperty().bind(canvas.heightProperty());
         subScene.widthProperty().bind(canvas.widthProperty());
+        subScene.heightProperty().bind(canvas.heightProperty());
         
         Scene scene = new Scene(this.rootLayout);
         this.primaryStage.setScene(scene);
@@ -152,31 +150,29 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		this.selectionController.addObserver(this.dragResizeController);
 	}
 	
-	private void addClassToSubScene(Class theClass) {
-		PaneBox classBox = new PaneBox();
-		classBox.setTopText(theClass.getName());
-		classBox.setColor(theClass.getColor());
-		classBox.setTranslateXYZ(theClass.getCoordinates());
-		addPaneBoxControls(classBox);
-		addToSubScene(classBox.get());
-		addToSubScene(classBox.getSelection().get());
-		this.boxes.put(theClass, classBox);
+	private void addClassToSubScene(ModelClass theClass) {
+		theClass.addObserver(this);
+		PaneBox paneBox = new PaneBox();
+		addPaneBoxControls(theClass, paneBox);
+		addToSubScene(paneBox.get());
+		addToSubScene(paneBox.getSelection().get());
+		this.boxes.put(theClass, paneBox);
 	}
 	
-	private void addPaneBoxControls(PaneBox paneBox) {
+	private void addPaneBoxControls(ModelClass theClass, PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox);
 		this.textInputController.enableTextInput(paneBox);
-		this.dragMoveController.enableDragMove(paneBox, this.subSceneAdpater);
-		this.dragResizeController.enableDragResize(paneBox, this.subSceneAdpater);
+		this.dragMoveController.enableDragMove(theClass, paneBox, this.subSceneAdpater);
+		this.dragResizeController.enableDragResize(theClass, paneBox, this.subSceneAdpater);
 	}
 	
-	private void addArrowToSubScene(Relation relation) {
+//	private void addArrowToSubScene(Relation relation) {
 //		Arrow arrow = new Arrow();
 //		this.dragMoveController.addObserver(arrow);
 //		this.dragResizeController.addObserver(arrow);
 //		addToSubScene(arrow);
 //		this.arrows.put(relation, arrow);
-	}
+//	}
 	
 	/**
 	 * Adds node to the subscene of the primary stage.
@@ -196,19 +192,35 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		this.rootLayout.applyCss();
 	}
 	
+	private void adaptClassBoxSettings(ModelClass theClass) {
+		PaneBox changedBox = this.boxes.get(theClass);
+		if(changedBox != null) {
+			changedBox.setTopText(theClass.getName());
+			changedBox.setColor(theClass.getColor());
+			changedBox.setWidth(theClass.getWidth());
+			changedBox.setHeight(theClass.getHeight());
+			changedBox.setTranslateXYZ(theClass.getCoordinates());
+		}
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o instanceof ClassManager && arg instanceof Class) {
-			//TODO: Provisorisch
-			Class theClass = (Class) arg;
+		//TODO: Provisorisch
+		if(o instanceof ClassManager && arg instanceof ModelClass) { // a new class was created
+			ModelClass theClass = (ModelClass) arg;
 			if(!this.boxes.containsKey(theClass)) { // class is new
 				addClassToSubScene(theClass);
+				adaptClassBoxSettings(theClass);
 			}
 			else {
 				PaneBox toDelete = this.boxes.remove(theClass);
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection().get());
 			}
+		}
+		else if(o instanceof ModelClass) {
+			ModelClass theClass = (ModelClass) o;
+			adaptClassBoxSettings(theClass);
 		}
 	}
 	

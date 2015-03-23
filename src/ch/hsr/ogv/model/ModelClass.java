@@ -12,18 +12,18 @@ import javafx.scene.paint.Color;
  * @author arieser
  *
  */
-public class Class extends ModelBox {
+public class ModelClass extends ModelBox {
 
 	private String name;
 	private LinkedHashSet<Attribute> attributes = new LinkedHashSet<Attribute>();
 	private List<Instance> instances = new ArrayList<Instance>();
 
-	public Class(String name, Point3D coordinates) {
+	public ModelClass(String name, Point3D coordinates) {
 		super(coordinates);
 		this.name = name;
 	}
 
-	public Class(String name, Point3D coordinates, double width, double heigth, Color color) {
+	public ModelClass(String name, Point3D coordinates, double width, double heigth, Color color) {
 		super(coordinates, width, heigth, color);
 		this.name = name;
 	}
@@ -34,6 +34,8 @@ public class Class extends ModelBox {
 
 	public void setName(String name) {
 		this.name = name;
+		setChanged();
+		notifyObservers(name);
 	}
 
 	public LinkedHashSet<Attribute> getAttributes() {
@@ -98,9 +100,9 @@ public class Class extends ModelBox {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof Class))
+		if (!(obj instanceof ModelClass))
 			return false;
-		Class other = (Class) obj;
+		ModelClass other = (ModelClass) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -118,10 +120,10 @@ public class Class extends ModelBox {
 		return false;
 	}
 	
-	public Class getSuperClass() {
+	public ModelClass getSuperClass() {
 		for (Endpoint endpoint : this.getEndpoints()) {
 			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
-				return (Class) endpoint.getTarget();
+				return (ModelClass) endpoint.getTarget();
 			}
 		}
 		return null;

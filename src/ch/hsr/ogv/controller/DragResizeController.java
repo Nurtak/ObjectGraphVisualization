@@ -2,6 +2,7 @@ package ch.hsr.ogv.controller;
 
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
+import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
@@ -17,18 +18,18 @@ import javafx.scene.Cursor;
  */
 public class DragResizeController extends DragController {
 	
-	public void enableDragResize(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
-		enableDirection(paneBox.getSelection().getLineN(),   Cursor.N_RESIZE, paneBox, subSceneAdapter);
-		enableDirection(paneBox.getSelection().getPointNE(), Cursor.NE_RESIZE, paneBox, subSceneAdapter);
-		enableDirection(paneBox.getSelection().getLineE(),   Cursor.E_RESIZE, paneBox, subSceneAdapter);
-		enableDirection(paneBox.getSelection().getPointSE(), Cursor.SE_RESIZE, paneBox, subSceneAdapter);
-		enableDirection(paneBox.getSelection().getLineS(),   Cursor.S_RESIZE, paneBox, subSceneAdapter);
-		enableDirection(paneBox.getSelection().getPointSW(), Cursor.SW_RESIZE, paneBox, subSceneAdapter);
-		enableDirection(paneBox.getSelection().getLineW(),   Cursor.W_RESIZE, paneBox, subSceneAdapter);
-		enableDirection(paneBox.getSelection().getPointNW(), Cursor.NW_RESIZE, paneBox, subSceneAdapter);
+	public void enableDragResize(ModelClass theClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		enableDirection(paneBox.getSelection().getLineN(),   Cursor.N_RESIZE, theClass, paneBox, subSceneAdapter);
+		enableDirection(paneBox.getSelection().getPointNE(), Cursor.NE_RESIZE, theClass, paneBox, subSceneAdapter);
+		enableDirection(paneBox.getSelection().getLineE(),   Cursor.E_RESIZE, theClass, paneBox, subSceneAdapter);
+		enableDirection(paneBox.getSelection().getPointSE(), Cursor.SE_RESIZE, theClass, paneBox, subSceneAdapter);
+		enableDirection(paneBox.getSelection().getLineS(),   Cursor.S_RESIZE, theClass, paneBox, subSceneAdapter);
+		enableDirection(paneBox.getSelection().getPointSW(), Cursor.SW_RESIZE, theClass, paneBox, subSceneAdapter);
+		enableDirection(paneBox.getSelection().getLineW(),   Cursor.W_RESIZE, theClass, paneBox, subSceneAdapter);
+		enableDirection(paneBox.getSelection().getPointNW(), Cursor.NW_RESIZE, theClass, paneBox, subSceneAdapter);
 	}
 	
-	private void enableDirection(Group g, Cursor direction, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	private void enableDirection(Group g, Cursor direction, ModelClass theClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		g.setOnMouseEntered((MouseEvent me) -> {
 			subSceneAdapter.getSubScene().setCursor(direction);
 	    });
@@ -37,12 +38,12 @@ public class DragResizeController extends DragController {
 			subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 	    });
 		
-		setOnMousePressed(g, paneBox, subSceneAdapter);
-		setOnMouseDragged(g, paneBox, subSceneAdapter, direction);
-		setOnMouseReleased(g, paneBox, subSceneAdapter);
+		setOnMousePressed(g, theClass, paneBox, subSceneAdapter);
+		setOnMouseDragged(g, theClass, paneBox, subSceneAdapter, direction);
+		setOnMouseReleased(g, subSceneAdapter);
 	}
 	
-	protected void setOnMouseDragged(Group g, PaneBox paneBox, SubSceneAdapter subSceneAdapter, Cursor direction) {
+	protected void setOnMouseDragged(Group g, ModelClass theClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter, Cursor direction) {
 		Floor floor = subSceneAdapter.getFloor();
 		g.setOnMouseDragged((MouseEvent me) -> {
 			setDragInProgress(subSceneAdapter, true);
@@ -52,64 +53,64 @@ public class DragResizeController extends DragController {
 				if(pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
 					Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
 					if(Cursor.N_RESIZE.equals(direction)) {
-						northResize(paneBox, coords);
+						northResize(theClass, paneBox, coords);
 					}
 					else if(Cursor.NE_RESIZE.equals(direction)) {
-						northResize(paneBox, coords);
-						eastResize(paneBox, coords);
+						northResize(theClass, paneBox, coords);
+						eastResize(theClass, paneBox, coords);
 					}
 					else if(Cursor.E_RESIZE.equals(direction)) {
-						eastResize(paneBox, coords);
+						eastResize(theClass, paneBox, coords);
 					}
 					else if(Cursor.SE_RESIZE.equals(direction)) {
-						southResize(paneBox, coords);
-						eastResize(paneBox, coords);
+						southResize(theClass, paneBox, coords);
+						eastResize(theClass, paneBox, coords);
 					}
 					else if(Cursor.S_RESIZE.equals(direction)) {
-						southResize(paneBox, coords);
+						southResize(theClass, paneBox, coords);
 					}
 					else if(Cursor.SW_RESIZE.equals(direction)) {
-						southResize(paneBox, coords);
-						westResize(paneBox, coords);
+						southResize(theClass, paneBox, coords);
+						westResize(theClass, paneBox, coords);
 					}
 					else if(Cursor.W_RESIZE.equals(direction)) {
-						westResize(paneBox, coords);
+						westResize(theClass, paneBox, coords);
 					}
 					else if(Cursor.NW_RESIZE.equals(direction)) {
-						northResize(paneBox, coords);
-						westResize(paneBox, coords);
+						northResize(theClass, paneBox, coords);
+						westResize(theClass, paneBox, coords);
 					}
 				}
 			}
 		});
 	}
 	
-	protected void northResize(PaneBox paneBox, Point3D coords) {
-		double newHeight = paneBox.getHeight() / 2 - paneBox.getTranslateZ() + coords.getZ();
+	protected void northResize(ModelClass theClass, PaneBox paneBox, Point3D coords) {
+		double newHeight = theClass.getHeight() / 2 - theClass.getZ() + coords.getZ();
 		newHeight = restrictedHeight(paneBox, newHeight);
-		paneBox.setHeight(newHeight);
-		paneBox.setTranslateZ(origTranslateZ - origHeight / 2 + newHeight / 2);
+		theClass.setHeight(newHeight);
+		theClass.setZ(origTranslateZ - origHeight / 2 + newHeight / 2);
 	}
 	
-	protected void eastResize(PaneBox paneBox, Point3D coords) {
-		double newWidth = paneBox.getWidth() / 2 + paneBox.getTranslateX() - coords.getX();
+	protected void eastResize(ModelClass theClass, PaneBox paneBox, Point3D coords) {
+		double newWidth = theClass.getWidth() / 2 + theClass.getX() - coords.getX();
 		newWidth = restrictedWidth(paneBox, newWidth);
-		paneBox.setWidth(newWidth);
-		paneBox.setTranslateX(origTranslateX + origWidth / 2 - newWidth / 2);
+		theClass.setWidth(newWidth);
+		theClass.setX(origTranslateX + origWidth / 2 - newWidth / 2);
 	}
 	
-	protected void southResize(PaneBox paneBox, Point3D coords) {
-		double newHeight = paneBox.getHeight() / 2 + paneBox.getTranslateZ() - coords.getZ();
+	protected void southResize(ModelClass theClass, PaneBox paneBox, Point3D coords) {
+		double newHeight = theClass.getHeight() / 2 + theClass.getZ() - coords.getZ();
 		newHeight = restrictedHeight(paneBox, newHeight);
-		paneBox.setHeight(newHeight);
-		paneBox.setTranslateZ(origTranslateZ + origHeight / 2 - newHeight / 2);
+		theClass.setHeight(newHeight);
+		theClass.setZ(origTranslateZ + origHeight / 2 - newHeight / 2);
 	}
 	
-	protected void westResize(PaneBox paneBox, Point3D coords) {
-		double newWidth = paneBox.getWidth() / 2 - paneBox.getTranslateX() + coords.getX();
+	protected void westResize(ModelClass theClass, PaneBox paneBox, Point3D coords) {
+		double newWidth = theClass.getWidth() / 2 - theClass.getX() + coords.getX();
 		newWidth = restrictedWidth(paneBox, newWidth);
-		paneBox.setWidth(newWidth);
-		paneBox.setTranslateX(origTranslateX - origWidth / 2 + newWidth / 2);
+		theClass.setWidth(newWidth);
+		theClass.setX(origTranslateX - origWidth / 2 + newWidth / 2);
 	}
 	
 	private double restrictedWidth(PaneBox paneBox, double newWidth) {
