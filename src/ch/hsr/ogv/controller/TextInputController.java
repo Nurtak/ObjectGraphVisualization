@@ -7,6 +7,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.view.PaneBox;
 
 /**
@@ -18,7 +19,7 @@ public class TextInputController {
 	
 	//private final int MAX_CHAR_COUNT = 32;
 
-	public void enableTextInput(PaneBox paneBox) {
+	public void enableTextInput(ModelClass theClass, PaneBox paneBox) {
 		TextField topTextField = paneBox.getTop();
 		
 		topTextField.setOnMouseClicked((MouseEvent me) -> {
@@ -35,7 +36,8 @@ public class TextInputController {
 //            		newValue = newValue.substring(0, newValue.length() - overflow);
 //            		newValue = newValue + "...";
 //            	}
-           		paneBox.adaptWidthByText(topTextField.getFont(), newValue);
+            	theClass.setName(newValue);
+           		//paneBox.adaptWidthByText(topTextField.getFont(), newValue);
             }
         });
 		

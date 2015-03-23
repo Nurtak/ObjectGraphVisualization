@@ -10,8 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
+import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
 import ch.hsr.ogv.model.ModelClass;
-import ch.hsr.ogv.model.ClassManager;
+import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.PaneBox;
@@ -42,7 +43,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdpater;
 	
-	private ClassManager classManager;
+	private ModelManager modelManager;
 	private Map<ModelClass, PaneBox> boxes = new HashMap<ModelClass, PaneBox>();
 	//private Map<Relation, Arrow> arrows = new HashMap<Relation, Arrow>();
 	
@@ -74,8 +75,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		if(primaryStage == null) throw new IllegalArgumentException("The primaryStage argument can not be null!");
 		this.primaryStage = primaryStage;
 		
-		this.classManager = new ClassManager();
-		this.classManager.addObserver(this);
+		this.modelManager = new ModelManager();
+		this.modelManager.addObserver(this);
 		
 		initRootLayoutController();
 		setupStage();
@@ -106,8 +107,8 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         notifyObservers(this); // pass StageManager to RootLayoutController
         
         //TODO: Remove everything below this line:
-        this.classManager.createClass("A", new Point3D(100, 5, 100));
-        this.classManager.createClass("B", new Point3D(500, 5, 500));
+        this.modelManager.createClass("A", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+        this.modelManager.createClass("B", new Point3D(500, PaneBox.INIT_DEPTH / 2, 500), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 	    
 //        Arrow arrow = new Arrow(paneBoxA, paneBoxB);
 //        addArrowToSubScene(arrow);
@@ -161,7 +162,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	
 	private void addPaneBoxControls(ModelClass theClass, PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox);
-		this.textInputController.enableTextInput(paneBox);
+		this.textInputController.enableTextInput(theClass, paneBox);
 		this.dragMoveController.enableDragMove(theClass, paneBox, this.subSceneAdpater);
 		this.dragResizeController.enableDragResize(theClass, paneBox, this.subSceneAdpater);
 	}
@@ -203,10 +204,46 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		}
 	}
 	
+	private void adaptBoxName(ModelClass theClass) {
+		PaneBox changedBox = this.boxes.get(theClass);
+		if(changedBox != null) {
+			changedBox.setTopText(theClass.getName());
+			theClass.setWidth(changedBox.getMinWidth());
+		}
+	}
+	
+	private void adaptBoxWidth(ModelClass theClass) {
+		PaneBox changedBox = this.boxes.get(theClass);
+		if(changedBox != null) {
+			changedBox.setWidth(theClass.getWidth());
+		}
+	}
+	
+	private void adaptBoxHeight(ModelClass theClass) {
+		PaneBox changedBox = this.boxes.get(theClass);
+		if(changedBox != null) {
+			changedBox.setHeight(theClass.getHeight());
+		}
+	}
+	
+	private void adaptBoxColor(ModelClass theClass) {
+		PaneBox changedBox = this.boxes.get(theClass);
+		if(changedBox != null) {
+			changedBox.setColor(theClass.getColor());
+		}
+	}
+	
+	private void adaptBoxCoordinates(ModelClass theClass) {
+		PaneBox changedBox = this.boxes.get(theClass);
+		if(changedBox != null) {
+			changedBox.setTranslateXYZ(theClass.getCoordinates());
+		}
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
 		//TODO: Provisorisch
-		if(o instanceof ClassManager && arg instanceof ModelClass) { // a new class was created
+		if(o instanceof ModelManager && arg instanceof ModelClass) { // a new class was created
 			ModelClass theClass = (ModelClass) arg;
 			if(!this.boxes.containsKey(theClass)) { // class is new
 				addClassToSubScene(theClass);
@@ -218,9 +255,28 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 				removeFromSubScene(toDelete.getSelection().get());
 			}
 		}
-		else if(o instanceof ModelClass) {
+		else if(o instanceof ModelClass && arg instanceof ModelBoxChange) {
 			ModelClass theClass = (ModelClass) o;
-			adaptClassBoxSettings(theClass);
+			ModelBoxChange modelBoxChange = (ModelBoxChange) arg;
+			switch(modelBoxChange) {
+			case COLOR:
+				adaptBoxColor(theClass);
+				break;
+			case COORDINATES:
+				adaptBoxCoordinates(theClass);
+				break;
+			case HEIGHT:
+				adaptBoxHeight(theClass);
+				break;
+			case NAME:
+				adaptBoxName(theClass);
+				break;
+			case WIDTH:
+				adaptBoxWidth(theClass);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 	

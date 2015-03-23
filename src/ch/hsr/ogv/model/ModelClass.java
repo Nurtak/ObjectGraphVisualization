@@ -9,33 +9,16 @@ import javafx.scene.paint.Color;
 
 /**
  * 
- * @author arieser
+ * @author Adrian Rieser
  *
  */
 public class ModelClass extends ModelBox {
 
-	private String name;
 	private LinkedHashSet<Attribute> attributes = new LinkedHashSet<Attribute>();
 	private List<Instance> instances = new ArrayList<Instance>();
 
-	public ModelClass(String name, Point3D coordinates) {
-		super(coordinates);
-		this.name = name;
-	}
-
 	public ModelClass(String name, Point3D coordinates, double width, double heigth, Color color) {
-		super(coordinates, width, heigth, color);
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-		setChanged();
-		notifyObservers(name);
+		super(name, coordinates, width, heigth, color);
 	}
 
 	public LinkedHashSet<Attribute> getAttributes() {
@@ -81,35 +64,12 @@ public class ModelClass extends ModelBox {
 		addAttribute(attribute);
 	}
 
-	public void createInstance(String name, Point3D coordinates) {
-		Instance instance = new Instance(name, coordinates);
+	public void createInstance() {
+		//TODO
+		Instance instance = new Instance(this.name, this.coordinates, this.width, this.height, this.color);
 		addInstance(instance);
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof ModelClass))
-			return false;
-		ModelClass other = (ModelClass) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
 
 	public boolean hasSuperClass() {
 		for (Endpoint endpoint : this.getEndpoints()) {
@@ -123,7 +83,7 @@ public class ModelClass extends ModelBox {
 	public ModelClass getSuperClass() {
 		for (Endpoint endpoint : this.getEndpoints()) {
 			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
-				return (ModelClass) endpoint.getTarget();
+				return (ModelClass) endpoint.getAppendant();
 			}
 		}
 		return null;

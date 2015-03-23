@@ -4,7 +4,7 @@ import javafx.geometry.Point3D;
 
 /**
  * 
- * @author arieser
+ * @author Adrian Rieser
  *
  */
 public class ModelCamera {

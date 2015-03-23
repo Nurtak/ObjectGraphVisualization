@@ -2,7 +2,7 @@ package ch.hsr.ogv.model;
 
 /**
  * 
- * @author arieser
+ * @author Adrian Rieser
  *
  */
 public enum EndpointType {

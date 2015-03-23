@@ -4,7 +4,7 @@ import javafx.geometry.Point3D;
 
 /**
  * 
- * @author arieser
+ * @author Adrian Rieser
  *
  */
 public class Endpoint {
@@ -14,15 +14,13 @@ public class Endpoint {
 	private String roleName;
 	private String multiplicity;
 	private Relation relation;
-	private ModelBox target;
+	private ModelBox appendant;
 
-	public Endpoint(EndpointType type, Point3D coordinates, String roleName, String multiplicity, ModelBox target) {
+	public Endpoint(EndpointType type, Point3D coordinates, Relation relation, ModelBox appendant) {
 		this.type = type;
 		this.coordinates = coordinates;
-		this.roleName = roleName;
-		this.multiplicity = multiplicity;
-		this.relation = null;
-		this.target = target;
+		this.relation = relation;
+		this.appendant = appendant;
 	}
 
 	public EndpointType getType() {
@@ -65,12 +63,12 @@ public class Endpoint {
 		this.relation = relation;
 	}
 	
-	public ModelBox getTarget() {
-		return target;
+	public ModelBox getAppendant() {
+		return appendant;
 	}
 
-	public void setTarget(ModelBox target) {
-		this.target = target;
+	public void setAppendant(ModelBox appendant) {
+		this.appendant = appendant;
 	}
 
 	public Endpoint getFriend() {

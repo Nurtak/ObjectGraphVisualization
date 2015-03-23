@@ -2,25 +2,24 @@ package ch.hsr.ogv.model;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
 /**
  * 
- * @author arieser
+ * @author Adrian Rieser
  *
  */
-public class ClassManager extends Observable {
+public class ModelManager extends Observable {
 
-	private Map<String, ModelClass> classes;
-
-	public ClassManager() {
-		classes = new HashMap<String, ModelClass>();
-	}
-
+	private Map<String, ModelClass> classes = new HashMap<String, ModelClass>();
+	private Set<Relation> relations = new HashSet<Relation>();
+	
 	public Collection<ModelClass> getClasses() {
 		return classes.values();
 	}
@@ -32,14 +31,10 @@ public class ClassManager extends Observable {
 	}
 
 	public void createClass(String name, Point3D coordinates, double width, double heigth, Color color) {
-		if (!classes.containsKey(name)) {
+		if (!isNameTaken(name)) {
 			ModelClass theClass = new ModelClass(name, coordinates, width, heigth, color);
 			addClass(theClass);
 		}
-	}
-
-	public void createClass(String name, Point3D coordinates) {
-		createClass(name, coordinates, ModelBox.DEFAULT_WIDTH, ModelBox.DEFAULT_HEIGHT, ModelBox.DEFAULT_COLOR);
 	}
 
 	public ModelClass getClass(String name) {
@@ -49,8 +44,13 @@ public class ClassManager extends Observable {
 	public boolean isNameTaken(String name) {
 		return classes.containsKey(name);
 	}
-	
-	public void deleteClass(ModelClass theClass){
-		classes.remove(theClass.getName());
+
+	public ModelClass deleteClass(ModelClass theClass) {
+		return classes.remove(theClass.getName());
 	}
+
+	public void createRelation(ModelClass start, Point3D endpointCoords, RelationType relationType) {
+		//TODO
+	}
+	
 }

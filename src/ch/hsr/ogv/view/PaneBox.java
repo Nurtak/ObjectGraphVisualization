@@ -38,6 +38,8 @@ public class PaneBox {
 	public final static int MAX_WIDTH = 500;
 	public final static int MAX_HEIGHT = 500;
 	
+	public final static Color DEFAULT_COLOR = Color.WHEAT;
+	
 	private Group paneBox = new Group();
 	private Selection selection = null;
 	private BorderPane borderPane = null;
@@ -67,7 +69,7 @@ public class PaneBox {
 	}
 	
 	public PaneBox() {
-		this(Color.WHITE);
+		this(DEFAULT_COLOR);
 	}
 	
 	public PaneBox(Color color) {
