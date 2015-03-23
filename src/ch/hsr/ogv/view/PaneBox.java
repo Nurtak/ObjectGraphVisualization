@@ -93,7 +93,7 @@ public class PaneBox {
         
         //this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection.getNode());
         this.paneBox.getChildren().addAll(this.borderPane, this.box);
-        this.selection.get().setVisible(false);
+        this.selection.setVisible(false);
         
         // position the whole group so, that the center is at scene's origin (0, 0, 0)
         setTranslateY(INIT_DEPTH / 2);
@@ -161,7 +161,7 @@ public class PaneBox {
 	}
 	
 	public void setSelected(boolean value) {
-		this.selection.get().setVisible(value);
+		this.selection.setVisible(value);
 		getTop().setEditable(value);
 		getTop().setDisable(!value);
 	}
@@ -264,7 +264,7 @@ public class PaneBox {
 	
 	public void setTranslateY(double y) {
 		this.paneBox.setTranslateY(y);
-		this.selection.get().setTranslateY(y);
+		this.selection.setTranslateY(y);
 	}
 	
 	public void setTranslateXYZ(Point3D point) {
@@ -279,12 +279,12 @@ public class PaneBox {
 	
 	public void setTranslateX(double x) {
 		this.paneBox.setTranslateX(x);
-		this.selection.get().setTranslateX(x);
+		this.selection.setTranslateX(x);
 	}
 	
 	public void setTranslateZ(double z) {
 		this.paneBox.setTranslateZ(z);
-		this.selection.get().setTranslateZ(z);
+		this.selection.setTranslateZ(z);
 	}
 	
 	public double getTranslateY() {

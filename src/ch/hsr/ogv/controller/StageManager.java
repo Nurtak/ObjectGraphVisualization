@@ -113,10 +113,20 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
         
         //TODO: Remove everything below this line:
         ModelClass mcA = this.modelManager.createClass("A", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-        ModelClass mcB = this.modelManager.createClass("B", new Point3D(500, PaneBox.INIT_DEPTH / 2, 500), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+        ModelClass mcB = this.modelManager.createClass("B", new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+        ModelClass mcC = this.modelManager.createClass("C", new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
         
         Relation rAB = this.modelManager.createRelation(mcA, mcB, RelationType.DIRECTED_ASSOZIATION);
         System.out.println(rAB);
+        
+        Relation rCB = this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_ASSOZIATION);
+        System.out.println(rCB);
+        
+        Relation rCA = this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_ASSOZIATION);
+        System.out.println(rCA);
+        
+        Relation rAC = this.modelManager.createRelation(mcA, mcC, RelationType.DIRECTED_ASSOZIATION);
+        System.out.println(rAC);
 	}
 	
 	public void handle2DClassView() {
@@ -216,7 +226,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		PaneBox paneBox = new PaneBox();
 		addPaneBoxControls(theClass, paneBox);
 		addToSubScene(paneBox.get());
-		addToSubScene(paneBox.getSelection().get());
+		addToSubScene(paneBox.getSelection());
 		this.boxes.put(theClass, paneBox);
 	}
 	
@@ -290,7 +300,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 			else {
 				PaneBox toDelete = this.boxes.remove(theClass);
 				removeFromSubScene(toDelete.get());
-				removeFromSubScene(toDelete.getSelection().get());
+				removeFromSubScene(toDelete.getSelection());
 			}
 		}
 		else if(o instanceof ModelManager && arg instanceof Relation) {
