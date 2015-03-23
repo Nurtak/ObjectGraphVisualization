@@ -38,7 +38,7 @@ public class ModelClass extends ModelBox {
 	}
 
 	public boolean addAttribute(Attribute attribute) {
-		if (!attributes.contains(attribute)) {
+		if(!attributes.contains(attribute)) {
 			return attributes.add(attribute);
 		}
 		return false;
@@ -49,7 +49,7 @@ public class ModelClass extends ModelBox {
 	}
 
 	public boolean addInstance(Instance instance) {
-		if (!instances.contains(instance)) {
+		if(!instances.contains(instance)) {
 			return instances.add(instance);
 		}
 		return false;
@@ -72,7 +72,7 @@ public class ModelClass extends ModelBox {
 
 
 	public boolean hasSuperClass() {
-		for (Endpoint endpoint : this.getEndpoints()) {
+		for(Endpoint endpoint : this.getEndpoints()) {
 			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
 				return true;
 			}
@@ -81,8 +81,8 @@ public class ModelClass extends ModelBox {
 	}
 	
 	public ModelClass getSuperClass() {
-		for (Endpoint endpoint : this.getEndpoints()) {
-			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
+		for(Endpoint endpoint : this.getEndpoints()) {
+			if(endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
 				return (ModelClass) endpoint.getAppendant();
 			}
 		}

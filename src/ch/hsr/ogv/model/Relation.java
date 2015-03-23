@@ -17,6 +17,8 @@ public class Relation extends Observable {
 		this.start = start;
 		this.end = end;
 		this.type = type;
+		this.start.setRelation(this);
+		this.end.setRelation(this);
 	}
 
 	public Endpoint getStart() {
@@ -44,7 +46,7 @@ public class Relation extends Observable {
 	}
 
 	public Endpoint getFriend(Endpoint other) {
-		if (other.equals(start)) {
+		if(other.equals(start)) {
 			return end;
 		}
 		return start;

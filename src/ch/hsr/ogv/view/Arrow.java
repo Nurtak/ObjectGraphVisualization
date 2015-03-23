@@ -1,8 +1,5 @@
 package ch.hsr.ogv.view;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -11,7 +8,6 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-import ch.hsr.ogv.controller.DragController;
 import ch.hsr.ogv.util.GeometryUtil;
 import ch.hsr.ogv.view.ArrowHead.ArrowHeadType;
 
@@ -20,7 +16,7 @@ import ch.hsr.ogv.view.ArrowHead.ArrowHeadType;
  * @author Simon Gwerder, Adrian Rieser
  *
  */
-public class Arrow extends Group implements Observer {
+public class Arrow extends Group {
 
 	private static final int INIT_WIDTH = 2;
 	private double width = INIT_WIDTH;
@@ -29,42 +25,47 @@ public class Arrow extends Group implements Observer {
 
 	private double gap = 3;
 
-	private PaneBox startBox;
-	private PaneBox endBox;
+	private Point3D startPoint;
+	private Point3D endPoint;
 
 	private Box line;
 	private ArrowHead head;
 	private Color color = Color.BLACK;
-
-	public Arrow(PaneBox startBox, PaneBox endBox) {
-		this.startBox = startBox;
-		this.endBox = endBox;
+	
+	public Arrow(Point3D startPoint, Point3D endPoint) {
+		this.startPoint = startPoint;
+		this.endPoint = endPoint;
 		this.line = new Box(this.width, this.width, this.length);
 		drawArrow();
 	}
+	
+	public void drawBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
+		this.startPoint = startBox.getCenterPoint();
+		this.endPoint = endBox.getCenterPoint();
+		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox);
+		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox);
+		if(startIntersection != null) this.startPoint = new Point3D(startIntersection.getX(), this.startPoint.getY(), startIntersection.getY());
+		if(endIntersection != null) this.endPoint = new Point3D(endIntersection.getX(), endPoint.getY(), endIntersection.getY());
+		drawArrow();
+	}
 
+	public Arrow(PaneBox startBox, PaneBox endBox) {
+		this.line = new Box(this.width, this.width, this.length);
+		drawBasedOnBoxes(startBox, endBox);
+	}
+	
 	private void drawArrow() {
 		getTransforms().clear();
-		Point3D startPoint = this.startBox.getCenterPoint();
-		Point3D endPoint = this.endBox.getCenterPoint();
-
-		Point2D arrowEndPoint2D = lineBoxIntersection(startPoint, this.endBox);
-		Point2D arrowStartPoint2D = lineBoxIntersection(endPoint, this.startBox);
-		Point3D arrowEndPoint3D = endPoint;
-		Point3D arrowStartPoint3D = startPoint;
-		if(arrowEndPoint2D != null) arrowEndPoint3D = new Point3D(arrowEndPoint2D.getX(), endPoint.getY(), arrowEndPoint2D.getY());
-		if(arrowStartPoint2D != null) arrowStartPoint3D = new Point3D(arrowStartPoint2D.getX(), startPoint.getY(), arrowStartPoint2D.getY());
-		
-		this.length = arrowStartPoint3D.distance(arrowEndPoint3D);
+		this.length = this.startPoint.distance(this.endPoint);
 		this.line.setDepth(this.length);
 		
 		setArrowHeadType(ArrowHeadType.OPEN);
 		setColor(this.color);
 		
-		Point3D midPoint = arrowStartPoint3D.midpoint(arrowEndPoint3D);
+		Point3D midPoint = this.startPoint.midpoint(this.endPoint);
 		setTranslateXYZ(midPoint);
 		
-		double angle = GeometryUtil.getAngleBetweenXandZ(startPoint, endPoint);
+		double angle = GeometryUtil.getAngleBetweenXandZ(this.startPoint, this.endPoint);
 		addRotate(angle);
 	}
 
@@ -134,14 +135,6 @@ public class Arrow extends Group implements Observer {
 
 	public double getAngle() {
 		return this.angle;
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		if(o instanceof DragController) {
-			drawArrow();
-		}
-		
 	}
 
 }
