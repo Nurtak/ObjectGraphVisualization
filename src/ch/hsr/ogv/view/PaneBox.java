@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
 import javafx.scene.CacheHint;
+import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -49,7 +50,7 @@ public class PaneBox {
 	public Group get() {
 		return this.paneBox;
 	}
-
+	
 	public Cuboid getBox() {
 		return this.box;
 	}
@@ -76,6 +77,7 @@ public class PaneBox {
 		initLayout();
         this.borderPane.setCache(true);
         this.borderPane.setCacheHint(CacheHint.SCALE_AND_ROTATE);
+        this.borderPane.setDepthTest(DepthTest.ENABLE);
         
         // rotate the pane correctly
         this.borderPane.getTransforms().add(new Rotate(180, Rotate.Y_AXIS));

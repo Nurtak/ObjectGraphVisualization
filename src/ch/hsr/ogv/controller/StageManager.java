@@ -200,7 +200,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 		PaneBox changedBox = this.boxes.get(theClass);
 		for(Endpoint endpoint : theClass.getEndpoints()) {
 			Relation relation = endpoint.getRelation();
-			Endpoint friendEndpoint = relation.getFriend(endpoint);
+			Endpoint friendEndpoint = endpoint.getFriend();
 			if(friendEndpoint != null && friendEndpoint.getAppendant() != null) {
 				PaneBox friendChangedBox = this.boxes.get(friendEndpoint.getAppendant());
 				Arrow changedArrow = this.arrows.get(relation);
@@ -231,7 +231,7 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	}
 	
 	private void addPaneBoxControls(ModelClass theClass, PaneBox paneBox) {
-		this.selectionController.enableSelection(paneBox);
+		this.selectionController.enableSelection(paneBox, this.subSceneAdpater);
 		this.textInputController.enableTextInput(theClass, paneBox);
 		this.dragMoveController.enableDragMove(theClass, paneBox, this.subSceneAdpater);
 		this.dragResizeController.enableDragResize(theClass, paneBox, this.subSceneAdpater);
