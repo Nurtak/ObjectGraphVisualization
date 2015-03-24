@@ -15,8 +15,9 @@ public class Instance extends ModelBox {
 
 	private Map<Attribute, String> attributeValues = new HashMap<Attribute, String>();
 
-	public Instance(String name, Point3D coordinates, double width, double heigth, Color color) {
-		super(name, coordinates, width, heigth, color);
+	public Instance(ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
+		super(modelClass.getName(), coordinates, width, heigth, color);
+		this.name = "object" + hashCode() + ':' + this.name;
 	}
 
 	public Map<Attribute, String> getAttributeValues() {

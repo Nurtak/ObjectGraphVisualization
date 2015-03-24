@@ -64,10 +64,9 @@ public class ModelClass extends ModelBox {
 		addAttribute(attribute);
 	}
 
-	public void createInstance() {
-		// TODO
-		Instance instance = new Instance(this.name + "Obj", new Point3D(coordinates.getX(), coordinates.getY() + 100.0, coordinates.getZ()), this.width, this.height, this.color);
-		addInstance(instance);
+	public Instance createInstance(ModelClass theClass) {
+		Instance instance = new Instance(theClass, new Point3D(theClass.getX(), theClass.getY() + 100.0, theClass.getZ()), theClass.getHeight(), theClass.getWidth(), theClass.getColor().brighter());
+		return instance;
 	}
 
 	public boolean hasSuperClass() {

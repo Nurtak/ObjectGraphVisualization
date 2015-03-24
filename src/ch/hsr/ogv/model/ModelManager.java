@@ -24,10 +24,10 @@ public class ModelManager extends Observable {
 		return classes.values();
 	}
 
-	public ModelClass createClass(String name, Point3D coordinates, double width, double heigth, Color color) {
+	public ModelClass createClass(String classname, Point3D coordinates, double width, double heigth, Color color) {
 		ModelClass theClass = null;
-		if(!isNameTaken(name)) {
-			theClass = new ModelClass(name, coordinates, width, heigth, color);
+		if(!isNameTaken(classname)) {
+			theClass = new ModelClass(classname, coordinates, width, heigth, color);
 			classes.put(theClass.getName(), theClass);
 			setChanged();
 			notifyObservers(theClass);
@@ -35,16 +35,12 @@ public class ModelManager extends Observable {
 		return theClass;
 	}
 	
-//	public void createInstance(ModelClass modelClass) {
-//		ModelClass theClass = null;
-//		if(!isNameTaken(name)) {
-//			theClass = new ModelClass(name, coordinates, width, heigth, color);
-//			classes.put(theClass.getName(), theClass);
-//			setChanged();
-//			notifyObservers(theClass);
-//		}
-//		return theClass;
-//	}
+	public Instance createInstance(ModelClass theClass) {
+		Instance instance = theClass.createInstance(theClass);
+		setChanged();
+		notifyObservers(theClass);
+		return instance;
+	}
 
 	public ModelClass getClass(String name) {
 		return classes.get(name);

@@ -30,7 +30,7 @@ public class ModelBox extends Observable {
 		this.height = heigth;
 		this.color = color;
 	}
-
+	
 	public String getName() {
 		return name;
 	}
