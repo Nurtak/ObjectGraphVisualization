@@ -204,9 +204,9 @@ public class StageManager extends Observable implements Observer {
 		}
 	}
 
-	private void adaptArrowAtClassChanges(ModelClass theClass) {
-		PaneBox changedBox = this.boxes.get(theClass);
-		Map<Endpoint, Endpoint> endpointMap = theClass.getFriends();
+	private void adaptArrowAtBoxChanges(ModelBox modelBox) {
+		PaneBox changedBox = this.boxes.get(modelBox);
+		Map<Endpoint, Endpoint> endpointMap = modelBox.getFriends();
 		Iterator<Endpoint> it = endpointMap.keySet().iterator();
 		while(it.hasNext()) {
 			Endpoint endpoint = it.next();
@@ -238,6 +238,15 @@ public class StageManager extends Observable implements Observer {
 		addToSubScene(paneBox.getSelection());
 		this.boxes.put(theClass, paneBox);
 	}
+	
+	private void addInstanceToSubScene(Instance instance) {
+		instance.addObserver(this);
+		PaneBox paneBox = new PaneBox();
+		//addPaneBoxControls(instance, paneBox);
+		addToSubScene(paneBox.get());
+		addToSubScene(paneBox.getSelection());
+		this.boxes.put(instance, paneBox);
+	}
 
 	private void addPaneBoxControls(ModelClass theClass, PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox, this.subSceneAdpater);
@@ -246,55 +255,75 @@ public class StageManager extends Observable implements Observer {
 		this.dragResizeController.enableDragResize(theClass, paneBox, this.subSceneAdpater);
 	}
 
-	private void adaptClassBoxSettings(ModelClass theClass) {
-		PaneBox changedBox = this.boxes.get(theClass);
+	private void adaptBoxSettings(ModelBox modelBox) {
+		PaneBox changedBox = this.boxes.get(modelBox);
 		if (changedBox != null) {
-			changedBox.setTopText(theClass.getName());
-			changedBox.setColor(theClass.getColor());
-			changedBox.setWidth(theClass.getWidth());
-			changedBox.setHeight(theClass.getHeight());
-			changedBox.setTranslateXYZ(theClass.getCoordinates());
+			changedBox.setTopText(modelBox.getName());
+			changedBox.setColor(modelBox.getColor());
+			changedBox.setWidth(modelBox.getWidth());
+			changedBox.setHeight(modelBox.getHeight());
+			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 		}
-		adaptArrowAtClassChanges(theClass);
+		adaptArrowAtBoxChanges(modelBox);
+	}
+	
+	private void adaptInstanceBoxSettings(Instance instance) {
+		//TODO
+		PaneBox changedBox = this.boxes.get(instance);
+		if (changedBox != null) {
+			changedBox.setTopText(instance.getName());
+			changedBox.setColor(instance.getColor());
+			changedBox.setWidth(instance.getWidth());
+			changedBox.setHeight(instance.getHeight());
+			changedBox.setTranslateXYZ(instance.getCoordinates());
+		}
+		//adaptArrowAtClassChanges(instance);
 	}
 
-	private void adaptBoxName(ModelClass theClass) {
-		PaneBox changedBox = this.boxes.get(theClass);
+	private void adaptBoxName(ModelBox modelBox) {
+		PaneBox changedBox = this.boxes.get(modelBox);
 		if (changedBox != null) {
-			changedBox.setTopText(theClass.getName());
-			theClass.setWidth(changedBox.getMinWidth());
-		}
-	}
-
-	private void adaptBoxWidth(ModelClass theClass) {
-		PaneBox changedBox = this.boxes.get(theClass);
-		if (changedBox != null) {
-			changedBox.setWidth(theClass.getWidth());
-		}
-		adaptArrowAtClassChanges(theClass);
-	}
-
-	private void adaptBoxHeight(ModelClass theClass) {
-		PaneBox changedBox = this.boxes.get(theClass);
-		if (changedBox != null) {
-			changedBox.setHeight(theClass.getHeight());
-		}
-		adaptArrowAtClassChanges(theClass);
-	}
-
-	private void adaptBoxColor(ModelClass theClass) {
-		PaneBox changedBox = this.boxes.get(theClass);
-		if (changedBox != null) {
-			changedBox.setColor(theClass.getColor());
+			changedBox.setTopText(modelBox.getName());
+			modelBox.setWidth(changedBox.getMinWidth());
 		}
 	}
 
-	private void adaptBoxCoordinates(ModelClass theClass) {
-		PaneBox changedBox = this.boxes.get(theClass);
+	private void adaptBoxWidth(ModelBox modelBox) {
+		PaneBox changedBox = this.boxes.get(modelBox);
 		if (changedBox != null) {
-			changedBox.setTranslateXYZ(theClass.getCoordinates());
+			changedBox.setWidth(modelBox.getWidth());
 		}
-		adaptArrowAtClassChanges(theClass);
+		adaptArrowAtBoxChanges(modelBox);
+	}
+
+	private void adaptBoxHeight(ModelBox modelBox) {
+		PaneBox changedBox = this.boxes.get(modelBox);
+		if (changedBox != null) {
+			changedBox.setHeight(modelBox.getHeight());
+		}
+		adaptArrowAtBoxChanges(modelBox);
+	}
+
+	private void adaptBoxColor(ModelBox modelBox) {
+		PaneBox changedBox = this.boxes.get(modelBox);
+		if (changedBox != null) {
+			changedBox.setColor(modelBox.getColor());
+		}
+	}
+
+	private void adaptBoxCoordinates(ModelBox modelBox) {
+		PaneBox changedBox = this.boxes.get(modelBox);
+		if (changedBox != null) {
+			changedBox.setTranslateXYZ(modelBox.getCoordinates());
+		}
+		adaptArrowAtBoxChanges(modelBox);
+		if(modelBox instanceof ModelClass) {
+			ModelClass mc = (ModelClass) modelBox;
+			for(Instance instance : mc.getInstances()) {
+				instance.setX(mc.getX());
+				instance.setZ(mc.getZ());
+			}
+		}
 	}
 
 	@Override
@@ -304,7 +333,7 @@ public class StageManager extends Observable implements Observer {
 			ModelClass theClass = (ModelClass) arg;
 			if (!this.boxes.containsKey(theClass)) { // class is new
 				addClassToSubScene(theClass);
-				adaptClassBoxSettings(theClass);
+				adaptBoxSettings(theClass);
 			} else {
 				PaneBox toDelete = this.boxes.remove(theClass);
 				removeFromSubScene(toDelete.get());
@@ -319,24 +348,34 @@ public class StageManager extends Observable implements Observer {
 				Arrow toDelete = this.arrows.remove(relation);
 				removeFromSubScene(toDelete);
 			}
-		} else if (o instanceof ModelClass && arg instanceof ModelBoxChange) {
-			ModelClass theClass = (ModelClass) o;
+		} else if (o instanceof ModelManager && arg instanceof Instance) {
+			Instance instance = (Instance) arg;
+			if (!this.boxes.containsKey(instance)) { // instance is new			
+				addInstanceToSubScene(instance);
+				adaptInstanceBoxSettings(instance);
+			} else {
+				PaneBox toDelete = this.boxes.remove(instance);
+				removeFromSubScene(toDelete.get());
+				removeFromSubScene(toDelete.getSelection());
+			}
+		} else if (o instanceof ModelBox && arg instanceof ModelBoxChange) {
+			ModelBox modelBox = (ModelBox) o;
 			ModelBoxChange modelBoxChange = (ModelBoxChange) arg;
 			switch (modelBoxChange) {
 			case COLOR:
-				adaptBoxColor(theClass);
+				adaptBoxColor(modelBox);
 				break;
 			case COORDINATES:
-				adaptBoxCoordinates(theClass);
+				adaptBoxCoordinates(modelBox);
 				break;
 			case HEIGHT:
-				adaptBoxHeight(theClass);
+				adaptBoxHeight(modelBox);
 				break;
 			case NAME:
-				adaptBoxName(theClass);
+				adaptBoxName(modelBox);
 				break;
 			case WIDTH:
-				adaptBoxWidth(theClass);
+				adaptBoxWidth(modelBox);
 				break;
 			default:
 				break;
