@@ -19,6 +19,7 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
+import ch.hsr.ogv.util.ColorUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
@@ -118,7 +119,8 @@ public class StageManager extends Observable implements Observer {
         ModelClass mcA = this.modelManager.createClass("A", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
         ModelClass mcB = this.modelManager.createClass("B", new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
         ModelClass mcC = this.modelManager.createClass("C", new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-        //Instance iA = this.modelManager.createInstance(mcA);
+        Instance iA = this.modelManager.createInstance(mcA);
+        System.out.println(iA);
         
         Relation rAB = this.modelManager.createRelation(mcA, mcB, RelationType.DIRECTED_ASSOZIATION);
         System.out.println(rAB);
@@ -242,6 +244,8 @@ public class StageManager extends Observable implements Observer {
 	private void addInstanceToSubScene(Instance instance) {
 		instance.addObserver(this);
 		PaneBox paneBox = new PaneBox();
+		paneBox.setDepth(20);
+		paneBox.setColor(instance.getColor());
 		//addPaneBoxControls(instance, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
@@ -293,6 +297,12 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setWidth(modelBox.getWidth());
 		}
+		if(modelBox instanceof ModelClass) {
+			ModelClass modelClass = (ModelClass) modelBox;
+			for(Instance instance : modelClass.getInstances()) {
+				instance.setWidth(modelClass.getWidth());
+			}
+		}
 		adaptArrowAtBoxChanges(modelBox);
 	}
 
@@ -301,6 +311,12 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setHeight(modelBox.getHeight());
 		}
+		if(modelBox instanceof ModelClass) {
+			ModelClass modelClass = (ModelClass) modelBox;
+			for(Instance instance : modelClass.getInstances()) {
+				instance.setHeight(modelClass.getHeight());
+			}
+		}
 		adaptArrowAtBoxChanges(modelBox);
 	}
 
@@ -308,6 +324,12 @@ public class StageManager extends Observable implements Observer {
 		PaneBox changedBox = this.boxes.get(modelBox);
 		if (changedBox != null) {
 			changedBox.setColor(modelBox.getColor());
+		}
+		if(modelBox instanceof ModelClass) {
+			ModelClass modelClass = (ModelClass) modelBox;
+			for(Instance instance : modelClass.getInstances()) {
+				instance.setColor(ColorUtil.brighten(modelClass.getColor(), 5));
+			}
 		}
 	}
 
@@ -318,17 +340,17 @@ public class StageManager extends Observable implements Observer {
 		}
 		adaptArrowAtBoxChanges(modelBox);
 		if(modelBox instanceof ModelClass) {
-			ModelClass mc = (ModelClass) modelBox;
-			for(Instance instance : mc.getInstances()) {
-				instance.setX(mc.getX());
-				instance.setZ(mc.getZ());
+			ModelClass modelClass = (ModelClass) modelBox;
+			for(Instance instance : modelClass.getInstances()) {
+				instance.setX(modelClass.getX());
+				instance.setZ(modelClass.getZ());
 			}
 		}
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO: Provisorisch
+		//TODO
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
 			ModelClass theClass = (ModelClass) arg;
 			if (!this.boxes.containsKey(theClass)) { // class is new

@@ -39,7 +39,7 @@ public class PaneBox {
 	public final static int MAX_WIDTH = 500;
 	public final static int MAX_HEIGHT = 500;
 	
-	public final static Color DEFAULT_COLOR = Color.WHEAT;
+	public final static Color DEFAULT_COLOR = Color.CORNSILK;
 	
 	private Group paneBox = new Group();
 	private Selection selection = null;

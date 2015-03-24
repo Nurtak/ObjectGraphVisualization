@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import ch.hsr.ogv.util.ColorUtil;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
@@ -48,7 +49,7 @@ public class ModelClass extends ModelBox {
 		return attributes.remove(attribute);
 	}
 
-	public boolean addInstance(Instance instance) {
+	private boolean addInstance(Instance instance) {
 		if (!instances.contains(instance)) {
 			return instances.add(instance);
 		}
@@ -65,8 +66,10 @@ public class ModelClass extends ModelBox {
 	}
 
 	public Instance createInstance(ModelClass theClass) {
-		Point3D instanceCoordinates = new Point3D(theClass.getX(), theClass.getY() + 100.0, theClass.getZ());
-		Instance instance = new Instance(theClass, instanceCoordinates, theClass.getHeight(), theClass.getWidth(), theClass.getColor().brighter());
+		int levelPlus = (theClass.getInstances().size() + 1) * 100;
+		Point3D instanceCoordinates = new Point3D(theClass.getX(), theClass.getY() + levelPlus, theClass.getZ());
+		Instance instance = new Instance(theClass, instanceCoordinates, theClass.getHeight(), theClass.getWidth(), ColorUtil.brighten(theClass.getColor(), 2));
+		addInstance(instance);
 		return instance;
 	}
 
