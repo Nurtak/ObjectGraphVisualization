@@ -8,11 +8,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="500.0" maxWidth="500.0" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="500.0" maxWidth="500.0" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" snapToPixel="false" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" style="-fx-border-color: transparent transparent black transparent;" BorderPane.alignment="CENTER">
          <children>
-            <TextField alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" prefHeight="28.0" prefWidth="126.0" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="ClassName">
+            <TextField alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" prefHeight="28.0" prefWidth="126.0" promptText="Class" snapToPixel="false" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="Class">
                <font>
                   <Font size="16.0" />
                </font>
@@ -30,26 +30,33 @@
       </VBox>
    </top>
    <center>
-      <Pane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <GridPane alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" gridLinesVisible="true" layoutX="9.0" layoutY="3.0" prefHeight="30.0" prefWidth="140.0" snapToPixel="false" BorderPane.alignment="CENTER">
+         <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
          <children>
-            <GridPane layoutX="9.0" layoutY="3.0" prefHeight="30.0" prefWidth="140.0">
-               <columnConstraints>
-                  <ColumnConstraints />
-                  <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints />
-                  <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <Text cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" layoutX="14.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="field" wrappingWidth="140.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="15.0" />
-                     </font>
-                  </Text>
-               </children>
-            </GridPane>
+            <TextField cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" minHeight="-Infinity" prefHeight="25.0" prefWidth="126.0" promptText="attribute" snapToPixel="false" style="-fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="attribute">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </TextField>
          </children>
-      </Pane>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+      </GridPane>
    </center>
 </BorderPane>

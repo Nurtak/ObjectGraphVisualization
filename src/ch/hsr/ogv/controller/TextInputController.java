@@ -37,7 +37,6 @@ public class TextInputController {
 //            		newValue = newValue + "...";
 //            	}
             	theClass.setName(newValue);
-           		//paneBox.adaptWidthByText(topTextField.getFont(), newValue);
             }
         });
 		

@@ -162,10 +162,14 @@ public class PaneBox {
 		}
 	}
 	
-	public void setSelected(boolean value) {
-		this.selection.setVisible(value);
+	public void allowTextInput(boolean value) {
 		getTop().setEditable(value);
 		getTop().setDisable(!value);
+	}
+	
+	public void setSelected(boolean value) {
+		this.selection.setVisible(value);
+		allowTextInput(value);
 	}
 	
 	private double restrictedWidth(double width) {
