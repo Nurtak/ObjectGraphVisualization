@@ -2,6 +2,7 @@ package ch.hsr.ogv.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -199,25 +200,26 @@ private final static Logger logger = LoggerFactory.getLogger(StageManager.class)
 	
 	private void adaptArrowAtClassChanges(ModelClass theClass) {
 		PaneBox changedBox = this.boxes.get(theClass);
-		for(Endpoint endpoint : theClass.getEndpoints()) {
+		Map<Endpoint, Endpoint> endpointMap = theClass.getFriends();
+		Iterator<Endpoint> it = endpointMap.keySet().iterator();
+		while(it.hasNext()) {
+			Endpoint endpoint = it.next();
+			Endpoint friendEndpoint = endpointMap.get(endpoint);
+			PaneBox friendChangedBox = this.boxes.get(friendEndpoint.getAppendant());
 			Relation relation = endpoint.getRelation();
-			Endpoint friendEndpoint = endpoint.getFriend();
-			if(friendEndpoint != null && friendEndpoint.getAppendant() != null) {
-				PaneBox friendChangedBox = this.boxes.get(friendEndpoint.getAppendant());
-				Arrow changedArrow = this.arrows.get(relation);
-				if(changedArrow != null && changedBox != null && friendChangedBox != null) {
-					if(endpoint.equals(relation.getStart())) {
-						changedArrow.setPointsBasedOnBoxes(changedBox, friendChangedBox);
-						endpoint.setCoordinates(changedArrow.getStartPoint());
-						friendEndpoint.setCoordinates(changedArrow.getEndPoint());
-					}
-					else {
-						changedArrow.setPointsBasedOnBoxes(friendChangedBox, changedBox);
-						friendEndpoint.setCoordinates(changedArrow.getStartPoint());
-						endpoint.setCoordinates(changedArrow.getEndPoint());
-					}
-					changedArrow.drawArrow();
+			Arrow changedArrow = this.arrows.get(relation);
+			if(changedArrow != null && changedBox != null && friendChangedBox != null) {
+				if(endpoint.isStart()) {
+					changedArrow.setPointsBasedOnBoxes(changedBox, friendChangedBox);
+					endpoint.setCoordinates(changedArrow.getStartPoint());
+					friendEndpoint.setCoordinates(changedArrow.getEndPoint());
 				}
+				else {
+					changedArrow.setPointsBasedOnBoxes(friendChangedBox, changedBox);
+					friendEndpoint.setCoordinates(changedArrow.getStartPoint());
+					endpoint.setCoordinates(changedArrow.getEndPoint());
+				}
+				changedArrow.drawArrow();
 			}
 		}
 	}

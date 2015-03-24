@@ -123,7 +123,10 @@ public class ModelBox extends Observable {
 	public Map<Endpoint, Endpoint> getFriends(){
 		Map<Endpoint, Endpoint> result = new HashMap<Endpoint, Endpoint>(endpoints.size());
 		for (Endpoint endpoint : endpoints) {
-			result.put(endpoint, endpoint.getFriend());
+			Endpoint friend = endpoint.getFriend();
+			if(friend != null) {
+				result.put(endpoint, endpoint.getFriend());
+			}
 		}
 		return result;
 	}
