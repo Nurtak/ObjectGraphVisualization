@@ -65,7 +65,8 @@ public class ModelClass extends ModelBox {
 	}
 
 	public Instance createInstance(ModelClass theClass) {
-		Instance instance = new Instance(theClass, new Point3D(theClass.getX(), theClass.getY() + 100.0, theClass.getZ()), theClass.getHeight(), theClass.getWidth(), theClass.getColor().brighter());
+		Point3D instanceCoordinates = new Point3D(theClass.getX(), theClass.getY() + 100.0, theClass.getZ());
+		Instance instance = new Instance(theClass, instanceCoordinates, theClass.getHeight(), theClass.getWidth(), theClass.getColor().brighter());
 		return instance;
 	}
 

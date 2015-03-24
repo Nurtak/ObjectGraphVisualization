@@ -38,7 +38,7 @@ public class ModelManager extends Observable {
 	public Instance createInstance(ModelClass theClass) {
 		Instance instance = theClass.createInstance(theClass);
 		setChanged();
-		notifyObservers(theClass);
+		notifyObservers(instance);
 		return instance;
 	}
 
