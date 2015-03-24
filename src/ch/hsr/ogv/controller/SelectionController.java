@@ -5,6 +5,7 @@ import java.util.Observable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.SubSceneAdapter;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -24,26 +25,27 @@ public class SelectionController extends Observable {
 		return this.selectedBox;
 	}
 	
-	public void enableSelection(PaneBox paneBox) {
-		focusOnClick(paneBox);
-		selectOnFocus(paneBox);
+	public void enableSelection(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		focusOnClick(paneBox, subSceneAdapter);
+		selectOnFocus(paneBox, subSceneAdapter);
 	}
 	
-	private void focusOnClick(PaneBox paneBox) {
+	private void focusOnClick(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		paneBox.get().setOnMouseClicked((MouseEvent me) -> {
 			paneBox.get().requestFocus();
 		});
 		
 		paneBox.getSelection().setOnMouseClicked((MouseEvent me) -> {
-			setSelected(paneBox, true);
+			setSelected(paneBox, true, subSceneAdapter);
 			paneBox.getSelection().requestFocus();
         });
 	}
 	
-	private void setSelected(PaneBox paneBox, boolean selected) {
+	private void setSelected(PaneBox paneBox, boolean selected, SubSceneAdapter subSceneAdapter) {
 		if(selected) {
 			this.selectedBox = paneBox;
 			paneBox.get().toFront();
+			subSceneAdapter.getFloor().toFront();
 			setChanged();
 			notifyObservers(paneBox);
 		}
@@ -55,15 +57,15 @@ public class SelectionController extends Observable {
 		paneBox.setSelected(selected);
 	}
 	
-	private void selectOnFocus(PaneBox paneBox) {
+	private void selectOnFocus(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		paneBox.get().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
             	if(paneBox.get().focusedProperty().get()) {
-            		setSelected(paneBox, true);
+            		setSelected(paneBox, true, subSceneAdapter);
 				}
 				else {
-					setSelected(paneBox, false);
+					setSelected(paneBox, false, subSceneAdapter);
             	}
             }
         });
@@ -72,10 +74,10 @@ public class SelectionController extends Observable {
 			@Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
             	if(paneBox.getTop().focusedProperty().get()) {
-            		setSelected(paneBox, true);
+            		setSelected(paneBox, true, subSceneAdapter);
 				}
 				else {
-					setSelected(paneBox, false);
+					setSelected(paneBox, false, subSceneAdapter);
             	}
             }
         });
@@ -84,10 +86,10 @@ public class SelectionController extends Observable {
 			@Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
             	if(paneBox.getBox().focusedProperty().get()) {
-            		setSelected(paneBox, true);
+            		setSelected(paneBox, true, subSceneAdapter);
 				}
 				else {
-					setSelected(paneBox, false);
+					setSelected(paneBox, false, subSceneAdapter);
             	}
             }
         });
@@ -96,10 +98,10 @@ public class SelectionController extends Observable {
 			@Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
             	if(paneBox.getSelection().focusedProperty().get()) {
-            		setSelected(paneBox, true);
+            		setSelected(paneBox, true, subSceneAdapter);
 				}
 				else {
-					setSelected(paneBox, false);
+					setSelected(paneBox, false, subSceneAdapter);
             	}
             }
         });
