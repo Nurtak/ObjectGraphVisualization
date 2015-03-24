@@ -144,7 +144,11 @@ public class PaneBox {
 	public void adaptWidthByText(Font font, String text) {
 		// + 50px for some additional space to compensate insets, borders etc.
 		double newWidth = TextUtil.computeTextWidth(font, text, 0.0D) + 50;
+		//double origWidth = getWidth();
 		setMinWidth(newWidth);
+		//if(newWidth < origWidth) {
+		//	setWidth(origWidth);
+		//}
 	}
 	
 	public void setTopText(String text) {
