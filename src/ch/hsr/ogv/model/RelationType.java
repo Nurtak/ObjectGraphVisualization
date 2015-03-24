@@ -1,5 +1,10 @@
 package ch.hsr.ogv.model;
 
+/**
+ * 
+ * @author Adrian Rieser
+ *
+ */
 public enum RelationType {
 	
 	GENERALIZATION(EndpointType.NONE, EndpointType.EMPTY_ARROW, LineType.CONTINUOUS_LINE),

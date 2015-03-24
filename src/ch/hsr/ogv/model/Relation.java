@@ -45,11 +45,24 @@ public class Relation extends Observable {
 		this.type = type;
 	}
 
-	public Endpoint getFriend(Endpoint other) {
-		if(other.equals(start)) {
+	public Endpoint getFriend(Endpoint endpoint) {
+		if (endpoint.equals(start)) {
 			return end;
 		}
 		return start;
 	}
 
+	public boolean isStart(Endpoint endpoint) {
+		if (start.equals(endpoint)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isEnd(Endpoint endpoint) {
+		if (end.equals(endpoint)) {
+			return true;
+		}
+		return false;
+	}
 }

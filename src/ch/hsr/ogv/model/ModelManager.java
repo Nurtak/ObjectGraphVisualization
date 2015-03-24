@@ -34,6 +34,17 @@ public class ModelManager extends Observable {
 		}
 		return theClass;
 	}
+	
+//	public void createInstance(ModelClass modelClass) {
+//		ModelClass theClass = null;
+//		if(!isNameTaken(name)) {
+//			theClass = new ModelClass(name, coordinates, width, heigth, color);
+//			classes.put(theClass.getName(), theClass);
+//			setChanged();
+//			notifyObservers(theClass);
+//		}
+//		return theClass;
+//	}
 
 	public ModelClass getClass(String name) {
 		return classes.get(name);

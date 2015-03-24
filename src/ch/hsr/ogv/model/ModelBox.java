@@ -1,7 +1,9 @@
 package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 
 import javafx.geometry.Point3D;
@@ -113,9 +115,16 @@ public class ModelBox extends Observable {
 	public void setEndpoints(List<Endpoint> endpoints) {
 		this.endpoints = endpoints;
 	}
-	
+
 	public enum ModelBoxChange {
 		COORDINATES, HEIGHT, WIDTH, NAME, COLOR;
 	}
-	
+
+	public Map<Endpoint, Endpoint> getFriends(){
+		Map<Endpoint, Endpoint> result = new HashMap<Endpoint, Endpoint>(endpoints.size());
+		for (Endpoint endpoint : endpoints) {
+			result.put(endpoint, endpoint.getFriend());
+		}
+		return result;
+	}
 }

@@ -38,7 +38,7 @@ public class ModelClass extends ModelBox {
 	}
 
 	public boolean addAttribute(Attribute attribute) {
-		if(!attributes.contains(attribute)) {
+		if (!attributes.contains(attribute)) {
 			return attributes.add(attribute);
 		}
 		return false;
@@ -49,7 +49,7 @@ public class ModelClass extends ModelBox {
 	}
 
 	public boolean addInstance(Instance instance) {
-		if(!instances.contains(instance)) {
+		if (!instances.contains(instance)) {
 			return instances.add(instance);
 		}
 		return false;
@@ -65,24 +65,23 @@ public class ModelClass extends ModelBox {
 	}
 
 	public void createInstance() {
-		//TODO
-		Instance instance = new Instance(this.name, this.coordinates, this.width, this.height, this.color);
+		// TODO
+		Instance instance = new Instance(this.name + "Obj", new Point3D(coordinates.getX(), coordinates.getY() + 100.0, coordinates.getZ()), this.width, this.height, this.color);
 		addInstance(instance);
 	}
 
-
 	public boolean hasSuperClass() {
-		for(Endpoint endpoint : this.getEndpoints()) {
+		for (Endpoint endpoint : this.getEndpoints()) {
 			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	public ModelClass getSuperClass() {
-		for(Endpoint endpoint : this.getEndpoints()) {
-			if(endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
+		for (Endpoint endpoint : this.getEndpoints()) {
+			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
 				return (ModelClass) endpoint.getAppendant();
 			}
 		}

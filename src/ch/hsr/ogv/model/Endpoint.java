@@ -71,7 +71,16 @@ public class Endpoint {
 	}
 
 	public Endpoint getFriend() {
-		return relation.getFriend(this);
+		if (relation != null) {
+			return relation.getFriend(this);			
+		}
+		return null;
 	}
 	
+	public boolean isStart(){
+		if (relation != null) {
+			return relation.isStart(this);			
+		}
+		return false;
+	}
 }
