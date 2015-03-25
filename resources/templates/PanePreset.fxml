@@ -30,7 +30,7 @@
       </VBox>
    </top>
    <center>
-      <GridPane alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" gridLinesVisible="true" layoutX="9.0" layoutY="3.0" prefHeight="30.0" prefWidth="140.0" snapToPixel="false" BorderPane.alignment="CENTER">
+      <GridPane alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" layoutX="9.0" layoutY="3.0" prefHeight="30.0" prefWidth="140.0" snapToPixel="false" BorderPane.alignment="CENTER">
          <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
          </columnConstraints>

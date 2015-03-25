@@ -10,66 +10,75 @@
 
 <BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../css/LightTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.ogv.controller.RootLayoutController">
 	<top>
-		<MenuBar id="menubar" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER">
-			<menus>
-				<Menu id="menu_file" mnemonicParsing="false" text="File">
-					<items>
-						<MenuItem id="menuitem_new" mnemonicParsing="false" onAction="#handleNew" text="New">
-							<accelerator>
-								<KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-							</accelerator>
-						</MenuItem>
-						<MenuItem id="menuitem_open" mnemonicParsing="false" onAction="#handleOpen" text="Open...">
-							<accelerator>
-								<KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-							</accelerator>
-						</MenuItem>
-						<MenuItem id="menuitem_save" mnemonicParsing="false" onAction="#handleSave" text="Save">
-							<accelerator>
-								<KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-							</accelerator>
-						</MenuItem>
-						<MenuItem id="menuitem_saveas" mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
-							<accelerator>
-								<KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
-							</accelerator>
-						</MenuItem>
-						<MenuItem id="menuitem_exit" mnemonicParsing="false" onAction="#handleExit" text="Exit">
-							<accelerator>
-								<KeyCodeCombination alt="DOWN" code="F4" control="UP" meta="UP" shift="UP" shortcut="UP" />
-							</accelerator>
-						</MenuItem>
-					</items>
-				</Menu>
-				<Menu id="menu_edit" mnemonicParsing="false" text="Edit">
-					<items>
-						<MenuItem mnemonicParsing="false" text="Delete" />
-					</items>
-				</Menu>
-            <Menu id="menu_view" mnemonicParsing="false" text="View">
-              <items>
-                  <CheckMenuItem id="checkmenuitem_classview" mnemonicParsing="false" onAction="#handle2DClassView" selected="true" text="2D Class View" />
-                  <CheckMenuItem id="checkmenuitem_objectview" mnemonicParsing="false" text="3D Object View" />
-              </items>
-            </Menu>
-            <Menu id="menu_window" mnemonicParsing="false" text="Window">
-              <items>
-                  <Menu id="menu_theme" mnemonicParsing="false" text="Theme">
-                     <items>
-                        <CheckMenuItem id="cmenuitem_modena" fx:id="modena" mnemonicParsing="false" onAction="#handleSetModena" selected="true" text="Modena" />
-                        <CheckMenuItem id="cmenuitem_caspian" fx:id="caspian" mnemonicParsing="false" onAction="#handleSetCaspian" text="Caspian Dark" />
-                        <CheckMenuItem id="cmenuitem_aqua" fx:id="aqua" mnemonicParsing="false" onAction="#handleSetAqua" text="Aqua" />
-                     </items>
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL">
+         <items>
+      		<MenuBar id="menubar" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER">
+      			<menus>
+      				<Menu id="menu_file" mnemonicParsing="false" text="File">
+      					<items>
+      						<MenuItem id="menuitem_new" mnemonicParsing="false" onAction="#handleNew" text="New">
+      							<accelerator>
+      								<KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+      							</accelerator>
+      						</MenuItem>
+      						<MenuItem id="menuitem_open" mnemonicParsing="false" onAction="#handleOpen" text="Open...">
+      							<accelerator>
+      								<KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+      							</accelerator>
+      						</MenuItem>
+      						<MenuItem id="menuitem_save" mnemonicParsing="false" onAction="#handleSave" text="Save">
+      							<accelerator>
+      								<KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+      							</accelerator>
+      						</MenuItem>
+      						<MenuItem id="menuitem_saveas" mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
+      							<accelerator>
+      								<KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+      							</accelerator>
+      						</MenuItem>
+      						<MenuItem id="menuitem_exit" mnemonicParsing="false" onAction="#handleExit" text="Exit">
+      							<accelerator>
+      								<KeyCodeCombination alt="DOWN" code="F4" control="UP" meta="UP" shift="UP" shortcut="UP" />
+      							</accelerator>
+      						</MenuItem>
+      					</items>
+      				</Menu>
+      				<Menu id="menu_edit" mnemonicParsing="false" text="Edit">
+      					<items>
+      						<MenuItem mnemonicParsing="false" text="Delete" />
+      					</items>
+      				</Menu>
+                  <Menu id="menu_view" mnemonicParsing="false" text="View">
+                    <items>
+                        <CheckMenuItem id="checkmenuitem_classview" mnemonicParsing="false" onAction="#handle2DClassView" selected="true" text="2D Class View" />
+                        <CheckMenuItem id="checkmenuitem_objectview" mnemonicParsing="false" text="3D Object View" />
+                    </items>
                   </Menu>
+                  <Menu id="menu_window" mnemonicParsing="false" text="Window">
+                    <items>
+                        <Menu id="menu_theme" mnemonicParsing="false" text="Theme">
+                           <items>
+                              <CheckMenuItem id="cmenuitem_modena" fx:id="modena" mnemonicParsing="false" onAction="#handleSetModena" selected="true" text="Modena" />
+                              <CheckMenuItem id="cmenuitem_caspian" fx:id="caspian" mnemonicParsing="false" onAction="#handleSetCaspian" text="Caspian Dark" />
+                              <CheckMenuItem id="cmenuitem_aqua" fx:id="aqua" mnemonicParsing="false" onAction="#handleSetAqua" text="Aqua" />
+                           </items>
+                        </Menu>
+                    </items>
+                  </Menu>
+      				<Menu id="menu_help" mnemonicParsing="false" text="Help">
+      					<items>
+      						<MenuItem id="menuitem_about" mnemonicParsing="false" onAction="#handleAbout" text="About" />
+      					</items>
+      				</Menu>
+      			</menus>
+      		</MenuBar>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+              <items>
+                <Button mnemonicParsing="false" style="-fx-graphic: url(\'icon-2.png\');" text="New Class" />
               </items>
-            </Menu>
-				<Menu id="menu_help" mnemonicParsing="false" text="Help">
-					<items>
-						<MenuItem id="menuitem_about" mnemonicParsing="false" onAction="#handleAbout" text="About" />
-					</items>
-				</Menu>
-			</menus>
-		</MenuBar>
+            </ToolBar>
+         </items>
+      </SplitPane>
 	</top>
 	<center>
 		<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />
