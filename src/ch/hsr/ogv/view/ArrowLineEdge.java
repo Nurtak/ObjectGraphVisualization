@@ -13,54 +13,62 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
+import ch.hsr.ogv.model.EndpointType;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 
-public class ArrowHead extends Group {
+public class ArrowLineEdge extends Group {
 	
-	private final static Logger logger = LoggerFactory.getLogger(ArrowHead.class);
+	private final static Logger logger = LoggerFactory.getLogger(ArrowLineEdge.class);
 	
 	private Color color = Color.BLACK;
 	private List<MeshView> meshViews = new ArrayList<MeshView>();
 	
-	public ArrowHead(Color color) {
-		this(ArrowHeadType.OPEN, color);
+	public ArrowLineEdge(Color color) {
+		this(EndpointType.NONE, color);
 	}
 	
-	public ArrowHead(ArrowHeadType arrowHeadType, Color color) {
+	public ArrowLineEdge(EndpointType endpointType, Color color) {
 		ObjModelImporter tdsImporter = new ObjModelImporter();
 		
-		URL modelUrl;
-		switch(arrowHeadType) {
-		case BORDER:
-			modelUrl = ResourceLocator.getResourcePath(Resource.BORDER_OBJ);
+		URL modelUrl = null;
+		switch(endpointType) {
+		case EMPTY_ARROW:
+			modelUrl = ResourceLocator.getResourcePath(Resource.EMPTY_ARROW_OBJ);
 			break;
-		case FILLED:
-			modelUrl = ResourceLocator.getResourcePath(Resource.FILLED_OBJ);
+		case EMPTY_DIAMOND:
 			break;
-		case OPEN:
-			modelUrl = ResourceLocator.getResourcePath(Resource.OPEN_OBJ);
+		case FILLED_ARROW:
+			modelUrl = ResourceLocator.getResourcePath(Resource.FILLED_ARROW_OBJ);
+			break;
+		case FILLED_DIAMOND:
+			break;
+		case NONE:
+			break;
+		case OPEN_ARROW:
+			modelUrl = ResourceLocator.getResourcePath(Resource.OPEN_ARROW_OBJ);
 			break;
 		default:
-			modelUrl = ResourceLocator.getResourcePath(Resource.OPEN_OBJ);
 			break;
 		}
-		
-		try {
-		    tdsImporter.read(modelUrl);            
-		}
-		catch (ImportException e) {
-		    e.printStackTrace();
-		    logger.debug(e.getMessage());
-		}
-		Node[] rootNodes = tdsImporter.getImport();
-		
-		for(Node n : rootNodes) {
-			MeshView  mv = (MeshView) n;
-			this.meshViews.add(mv);
+		Node[] rootNodes = {};
+		if(modelUrl != null) {
+			try {
+			    tdsImporter.read(modelUrl);            
+			}
+			catch (ImportException e) {
+			    e.printStackTrace();
+			    logger.debug(e.getMessage());
+			}
+			rootNodes = tdsImporter.getImport();
+			
+			for(Node n : rootNodes) {
+				MeshView  mv = (MeshView) n;
+				this.meshViews.add(mv);
+			}
 		}
 		setColor(color);
 		getChildren().addAll(Arrays.asList(rootNodes));
@@ -81,8 +89,4 @@ public class ArrowHead extends Group {
 		}
 	}
 	
-	public enum ArrowHeadType {
-		OPEN, FILLED, BORDER
-	}
-
 }

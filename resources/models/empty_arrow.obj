@@ -2,7 +2,7 @@
 # Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
 # File units = meters
 
-mtllib arrow_border.mtl
+mtllib empty_arrow.mtl
 
 g Mesh1 skpD895_1 Model
 

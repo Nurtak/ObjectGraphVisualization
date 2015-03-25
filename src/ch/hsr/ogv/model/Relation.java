@@ -11,12 +11,12 @@ public class Relation extends Observable {
 
 	private Endpoint start;
 	private Endpoint end;
-	private LineType type;
+	private RelationType type;
 
-	public Relation(Endpoint start, Endpoint end, LineType type) {
-		this.start = start;
-		this.end = end;
-		this.type = type;
+	public Relation(ModelClass startClass, ModelClass endClass, RelationType relationType) {
+		this.start = new Endpoint(relationType.getStartType(), startClass);
+		this.end = new Endpoint(relationType.getEndType(), endClass);
+		this.type = relationType;
 		this.start.setRelation(this);
 		this.end.setRelation(this);
 	}
@@ -37,11 +37,11 @@ public class Relation extends Observable {
 		this.end = end;
 	}
 
-	public LineType getType() {
+	public RelationType getType() {
 		return type;
 	}
 
-	public void setType(LineType type) {
+	public void setType(RelationType type) {
 		this.type = type;
 	}
 

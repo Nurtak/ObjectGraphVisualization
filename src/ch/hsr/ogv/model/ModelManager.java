@@ -73,11 +73,9 @@ public class ModelManager extends Observable {
 	}
 
 	public Relation createRelation(ModelClass startClass, ModelClass endClass, RelationType relationType) {
-		Endpoint start = new Endpoint(relationType.getStartType(), startClass);
-		Endpoint end = new Endpoint(relationType.getEndType(), endClass);
-		startClass.getEndpoints().add(start);
-		endClass.getEndpoints().add(end);
-		Relation relation = new Relation(start, end, relationType.getLineType());
+		Relation relation = new Relation(startClass, endClass, relationType);
+		startClass.getEndpoints().add(relation.getStart());
+		endClass.getEndpoints().add(relation.getEnd());
 		relations.add(relation);
 		setChanged();
 		notifyObservers(relation);

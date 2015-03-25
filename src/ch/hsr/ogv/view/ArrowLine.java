@@ -8,15 +8,15 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.GeometryUtil;
-import ch.hsr.ogv.view.ArrowHead.ArrowHeadType;
 
 /**
  * 
  * @author Simon Gwerder, Adrian Rieser
  *
  */
-public class Arrow extends Group {
+public class ArrowLine extends Group {
 
 	private static final int INIT_WIDTH = 2;
 	private double width = INIT_WIDTH;
@@ -28,8 +28,9 @@ public class Arrow extends Group {
 	private Point3D startPoint;
 	private Point3D endPoint;
 	
+	private RelationType type = RelationType.BIDIRECTED_ASSOZIATION;
+	
 	private Box line;
-	private ArrowHead head;
 	private Color color = Color.BLACK;
 	
 	public Point3D getStartPoint() {
@@ -48,14 +49,24 @@ public class Arrow extends Group {
 		this.endPoint = endPoint;
 	}
 	
-	public Arrow(Point3D startPoint, Point3D endPoint) {
+	public RelationType getType() {
+		return type;
+	}
+
+	public void setType(RelationType type) {
+		this.type = type;
+	}
+	
+	public ArrowLine(Point3D startPoint, Point3D endPoint, RelationType type) {
 		this.startPoint = startPoint;
 		this.endPoint = endPoint;
+		this.type = type;
 		this.line = new Box(this.width, this.width, this.length);
 		drawArrow();
 	}
 	
-	public Arrow(PaneBox startBox, PaneBox endBox) {
+	public ArrowLine(PaneBox startBox, PaneBox endBox, RelationType type) {
+		this.type = type;
 		this.line = new Box(this.width, this.width, this.length);
 		setPointsBasedOnBoxes(startBox, endBox);
 		drawArrow();
@@ -72,10 +83,10 @@ public class Arrow extends Group {
 	
 	public void drawArrow() {
 		getTransforms().clear();
-		this.length = this.startPoint.distance(this.endPoint) - 2; // -2, the shorten line length a little bit and arrow not inside box
+		this.length = this.startPoint.distance(this.endPoint);
 		this.line.setDepth(this.length);
 		
-		setArrowHeadType(ArrowHeadType.OPEN);
+		addArrowLineEdge();
 		setColor(this.color);
 		
 		Point3D midPoint = this.startPoint.midpoint(this.endPoint);
@@ -121,12 +132,15 @@ public class Arrow extends Group {
 		return this.color;
 	}
 
-	public void setArrowHeadType(ArrowHeadType type) {
+	private void addArrowLineEdge() {
 		getChildren().clear();
 		getChildren().add(this.line);
-		this.head = new ArrowHead(type, this.color);
-		this.head.setTranslateZ(this.length / 2 + this.gap);
-		getChildren().add(this.head);
+		ArrowLineEdge arrowStart = new ArrowLineEdge(this.type.getStartType(), this.color);
+		arrowStart.getTransforms().add(new Rotate(180, arrowStart.getTranslateX(), arrowStart.getTranslateY(), arrowStart.getTranslateZ(), Rotate.Y_AXIS));
+		arrowStart.setTranslateZ(- this.length / 2 - this.gap);
+		ArrowLineEdge arrowEnd = new ArrowLineEdge(this.type.getEndType(), this.color);
+		arrowEnd.setTranslateZ(this.length / 2 + this.gap);
+		getChildren().addAll(arrowStart, arrowEnd);
 	}
 
 	public void setTranslateXYZ(Point3D point) {

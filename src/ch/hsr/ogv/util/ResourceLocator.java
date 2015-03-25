@@ -21,9 +21,9 @@ public class ResourceLocator {
 		LIGHTHEME_CSS("css/LightTheme.css"),
 		DARKTHEME_CSS("css/DarkTheme.css"),
 		TEXTFIELD_CSS("css/TextField.css"),
-		OPEN_OBJ("models/arrow_open.obj"),
-		FILLED_OBJ("models/arrow_filled.obj"),
-		BORDER_OBJ("models/arrow_border.obj");
+		OPEN_ARROW_OBJ("models/open_arrow.obj"),
+		FILLED_ARROW_OBJ("models/filled_arrow.obj"),
+		EMPTY_ARROW_OBJ("models/empty_arrow.obj");
 		
 		private String relativePath = "./";
 		

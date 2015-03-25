@@ -31,7 +31,11 @@ public class PaneBox {
 	
 	private final static Logger logger = LoggerFactory.getLogger(PaneBox.class);
 	
+	public final static int CLASSBOX_DEPTH = 10;
+	public final static int INSTANCEBOX_DEPTH = 20;
 	public final static int INIT_DEPTH = 10;
+
+	public final static Color DEFAULT_COLOR = Color.CORNSILK;
 	
 	public final static int MIN_WIDTH = 100;
 	public final static int MIN_HEIGHT = 100;
@@ -39,7 +43,6 @@ public class PaneBox {
 	public final static int MAX_WIDTH = 500;
 	public final static int MAX_HEIGHT = 500;
 	
-	public final static Color DEFAULT_COLOR = Color.CORNSILK;
 	
 	private Group paneBox = new Group();
 	private Selection selection = null;

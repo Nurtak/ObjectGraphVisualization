@@ -21,7 +21,7 @@ import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
-import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.ArrowLine;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 import ch.hsr.ogv.view.SubSceneCamera;
@@ -53,7 +53,7 @@ public class StageManager extends Observable implements Observer {
 
 	private ModelManager modelManager;
 	private Map<ModelBox, PaneBox> boxes = new HashMap<ModelBox, PaneBox>();
-	private Map<Relation, Arrow> arrows = new HashMap<Relation, Arrow>();
+	private Map<Relation, ArrowLine> arrows = new HashMap<Relation, ArrowLine>();
 
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
@@ -119,22 +119,14 @@ public class StageManager extends Observable implements Observer {
         ModelClass mcA = this.modelManager.createClass("A", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
         ModelClass mcB = this.modelManager.createClass("B", new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
         ModelClass mcC = this.modelManager.createClass("C", new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-        Instance iA = this.modelManager.createInstance(mcA);
-        System.out.println(iA);
+        
+        this.modelManager.createInstance(mcA);
         this.modelManager.createInstance(mcB);
         this.modelManager.createInstance(mcB);
         
-        Relation rAB = this.modelManager.createRelation(mcA, mcB, RelationType.DIRECTED_ASSOZIATION);
-        System.out.println(rAB);
-        
-        Relation rCB = this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_ASSOZIATION);
-        System.out.println(rCB);
-        
-        Relation rCA = this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_ASSOZIATION);
-        System.out.println(rCA);
-        
-        Relation rAC = this.modelManager.createRelation(mcA, mcC, RelationType.DIRECTED_ASSOZIATION);
-        System.out.println(rAC);
+        this.modelManager.createRelation(mcA, mcB, RelationType.OBJGRAPH);
+        this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_ASSOZIATION);
+        this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_ASSOZIATION);
 	}
 
 	public void handle2DClassView() {
@@ -202,7 +194,7 @@ public class StageManager extends Observable implements Observer {
 		PaneBox startViewBox = this.boxes.get(startModelBox);
 		PaneBox endViewBox = this.boxes.get(endModelBox);
 		if (startViewBox != null && endViewBox != null) {
-			Arrow arrow = new Arrow(startViewBox, endViewBox);
+			ArrowLine arrow = new ArrowLine(startViewBox, endViewBox, relation.getType());
 			addToSubScene(arrow);
 			this.arrows.put(relation, arrow);
 		}
@@ -217,7 +209,7 @@ public class StageManager extends Observable implements Observer {
 			Endpoint friendEndpoint = endpointMap.get(endpoint);
 			PaneBox friendChangedBox = this.boxes.get(friendEndpoint.getAppendant());
 			Relation relation = endpoint.getRelation();
-			Arrow changedArrow = this.arrows.get(relation);
+			ArrowLine changedArrow = this.arrows.get(relation);
 			if(changedArrow != null && changedBox != null && friendChangedBox != null) {
 				if(endpoint.isStart()) {
 					changedArrow.setPointsBasedOnBoxes(changedBox, friendChangedBox);
@@ -237,6 +229,8 @@ public class StageManager extends Observable implements Observer {
 	private void addClassToSubScene(ModelClass theClass) {
 		theClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
+		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
+		paneBox.setColor(PaneBox.DEFAULT_COLOR);
 		addPaneBoxControls(theClass, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
@@ -246,7 +240,7 @@ public class StageManager extends Observable implements Observer {
 	private void addInstanceToSubScene(Instance instance) {
 		instance.addObserver(this);
 		PaneBox paneBox = new PaneBox();
-		paneBox.setDepth(20);
+		paneBox.setDepth(PaneBox.INSTANCEBOX_DEPTH);
 		paneBox.setColor(instance.getColor());
 		//addPaneBoxControls(instance, paneBox);
 		addToSubScene(paneBox.get());
@@ -358,7 +352,7 @@ public class StageManager extends Observable implements Observer {
 				addRelationToSubScene(relation);
 				// adaptRelation(relation);
 			} else {
-				Arrow toDelete = this.arrows.remove(relation);
+				ArrowLine toDelete = this.arrows.remove(relation);
 				removeFromSubScene(toDelete);
 			}
 		} else if (o instanceof ModelManager && arg instanceof Instance) {
