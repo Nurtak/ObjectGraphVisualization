@@ -18,7 +18,7 @@ public class Instance extends ModelBox {
 
 	private ModelClass modelClass;
 	
-	private static volatile AtomicInteger instanceCounter = new AtomicInteger(0);
+	public static volatile AtomicInteger instanceCounter = new AtomicInteger(0);
 	
 	public Instance(ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
 		super(modelClass.getName(), coordinates, width, heigth, color);
@@ -42,6 +42,10 @@ public class Instance extends ModelBox {
 		attributeValues.put(attribute, attributeValue);
 		return true;
 	}
+	
+	public String removeAttributeValue(Attribute attribute) {
+		return attributeValues.remove(attribute);
+	}
 
 	public ModelClass getModelClass() {
 		return modelClass;
@@ -54,4 +58,5 @@ public class Instance extends ModelBox {
 	public void updateAttribute(Attribute attribute, String value) {
 		attributeValues.replace(attribute, value);
 	}
+	
 }

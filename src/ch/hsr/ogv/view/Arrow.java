@@ -72,7 +72,7 @@ public class Arrow extends Group {
 	
 	public void drawArrow() {
 		getTransforms().clear();
-		this.length = this.startPoint.distance(this.endPoint);
+		this.length = this.startPoint.distance(this.endPoint) - 2; // -2, the shorten line length a little bit and arrow not inside box
 		this.line.setDepth(this.length);
 		
 		setArrowHeadType(ArrowHeadType.OPEN);

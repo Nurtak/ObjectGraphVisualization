@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
-import ch.hsr.ogv.util.ColorUtil;
+import jfxtras.labs.util.Util;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.TextUtil;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
@@ -103,7 +103,7 @@ public class PaneBox {
 	}
 	
 	private String getPaneStyle() {
-		return "-fx-background-color: " + ColorUtil.toRGBCode(this.color) + ";\n"
+		return "-fx-background-color: " + Util.colorToCssColor(getColor()) + ";\n"
 		+ "-fx-border-color: black;\n"
 		+ "-fx-border-width: 2;";
 	}

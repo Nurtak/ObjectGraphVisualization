@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import ch.hsr.ogv.util.ColorUtil;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import jfxtras.labs.util.Util;
 
 /**
  * 
@@ -40,12 +40,19 @@ public class ModelClass extends ModelBox {
 
 	public boolean addAttribute(Attribute attribute) {
 		if (!attributes.contains(attribute)) {
-			return attributes.add(attribute);
+			if(attributes.add(attribute)) {
+				for(Instance instance : getInstances()) {
+					instance.addAttributeValue(attribute, "");
+				}	
+			}
 		}
 		return false;
 	}
 
 	public boolean deleteAttribute(Attribute attribute) {
+		for(Instance instance : getInstances()) {
+			instance.removeAttributeValue(attribute);
+		}
 		return attributes.remove(attribute);
 	}
 
@@ -68,9 +75,15 @@ public class ModelClass extends ModelBox {
 	public Instance createInstance(ModelClass theClass) {
 		int levelPlus = (theClass.getInstances().size() + 1) * 100;
 		Point3D instanceCoordinates = new Point3D(theClass.getX(), theClass.getY() + levelPlus, theClass.getZ());
-		Instance instance = new Instance(theClass, instanceCoordinates, theClass.getHeight(), theClass.getWidth(), ColorUtil.brighten(theClass.getColor(), 2));
-		addInstance(instance);
-		return instance;
+		Instance instance = new Instance(theClass, instanceCoordinates, theClass.getWidth(), theClass.getHeight(), Util.brighter(theClass.getColor(), 0.1));
+		for(Attribute attribute : getAttributes()) {
+			instance.addAttributeValue(attribute, "");
+		}
+		boolean added = addInstance(instance);
+		if(added) {
+			return instance;
+		}
+		return null;
 	}
 
 	public boolean hasSuperClass() {

@@ -1,10 +1,10 @@
 package ch.hsr.ogv.view;
 
-import ch.hsr.ogv.util.ColorUtil;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import jfxtras.labs.util.Util;
 
 /**
  * 
@@ -17,7 +17,7 @@ public class Axis extends Group {
 	private static final int WIDTH = 2;
 	
 	private Color getBrighterColor(Color c) {
-    	return ColorUtil.brighten(c, 4);
+    	return Util.brighter(c, 0.9);
     }
     
 	public Axis() {
