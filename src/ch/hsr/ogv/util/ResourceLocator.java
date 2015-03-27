@@ -23,7 +23,9 @@ public class ResourceLocator {
 		TEXTFIELD_CSS("css/TextField.css"),
 		OPEN_ARROW_OBJ("models/open_arrow.obj"),
 		FILLED_ARROW_OBJ("models/filled_arrow.obj"),
-		EMPTY_ARROW_OBJ("models/empty_arrow.obj");
+		EMPTY_ARROW_OBJ("models/empty_arrow.obj"),
+		FILLED_DIAMOND_OBJ("models/filled_diamond.obj"),
+		EMPTY_DIAMOND_OBJ("models/empty_diamond.obj");
 		
 		private String relativePath = "./";
 		

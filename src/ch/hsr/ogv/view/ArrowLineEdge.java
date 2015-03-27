@@ -40,16 +40,18 @@ public class ArrowLineEdge extends Group {
 			modelUrl = ResourceLocator.getResourcePath(Resource.EMPTY_ARROW_OBJ);
 			break;
 		case EMPTY_DIAMOND:
+			modelUrl = ResourceLocator.getResourcePath(Resource.EMPTY_DIAMOND_OBJ);
 			break;
 		case FILLED_ARROW:
 			modelUrl = ResourceLocator.getResourcePath(Resource.FILLED_ARROW_OBJ);
 			break;
 		case FILLED_DIAMOND:
-			break;
-		case NONE:
+			modelUrl = ResourceLocator.getResourcePath(Resource.FILLED_DIAMOND_OBJ);
 			break;
 		case OPEN_ARROW:
 			modelUrl = ResourceLocator.getResourcePath(Resource.OPEN_ARROW_OBJ);
+			break;
+		case NONE:
 			break;
 		default:
 			break;
