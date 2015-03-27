@@ -74,7 +74,7 @@
       		</MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
                <items>
-                  <Button id="btn-new-class" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="New Class" />
+                  <Button id="btn-new-class" mnemonicParsing="false" onAction="#handleCreateNewClass" stylesheets="@../css/ButtonIcon.css" text="New Class" />
                   <Separator orientation="VERTICAL" />
                   <SplitMenuButton mnemonicParsing="false" text="New Association">
                     <items>
