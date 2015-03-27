@@ -158,4 +158,9 @@ public class RootLayoutController implements Observer {
 			this.stageManager = stageManager;
 		}
 	}
+	
+	@FXML
+	private void handleNewClass() {
+		
+	}
 }

@@ -73,9 +73,22 @@
       			</menus>
       		</MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
-              <items>
-                <Button mnemonicParsing="false" style="-fx-graphic: url(\'icon-2.png\');" text="New Class" />
-              </items>
+               <items>
+                  <Button id="btn-new-class" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="New Class" />
+                  <Separator orientation="VERTICAL" />
+                  <SplitMenuButton mnemonicParsing="false" text="New Association">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Action 2">
+                           <graphic>
+                              <Button mnemonicParsing="false" text="Button" />
+                           </graphic></MenuItem>
+                    </items>
+                  </SplitMenuButton>
+                  <Button mnemonicParsing="false" text="New Generalization" />
+                  <Button mnemonicParsing="false" text="New Dependency" />
+                  <ComboBox prefWidth="150.0" promptText="test" />
+               </items>
             </ToolBar>
          </items>
       </SplitPane>

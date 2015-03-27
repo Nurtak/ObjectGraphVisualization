@@ -1,0 +1,18 @@
+#btn-new-class {          
+	-fx-background-image: url("../images/class.png");
+    -fx-background-position:left; 
+	-fx-background-size: 100% 100%;
+    -fx-size: 100pt 100pt;
+ }
+
+#btn-new-association {          
+    -fx-background-image: url("C:/Users/Nurtak/git/ObjectGraphVisualization/resources/images/class.png");  
+}
+
+#btn-new-generalization {          
+    -fx-background-image: url("C:/Users/Nurtak/git/ObjectGraphVisualization/resources/images/class.png");  
+}
+
+#btn-new-dependency {          
+    -fx-background-image: url("C:/Users/Nurtak/git/ObjectGraphVisualization/resources/images/class.png");  
+}
