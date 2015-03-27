@@ -30,13 +30,14 @@
       </VBox>
    </top>
    <center>
-      <GridPane alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" layoutX="9.0" layoutY="3.0" prefHeight="30.0" prefWidth="140.0" snapToPixel="false" BorderPane.alignment="CENTER">
+      <GridPane alignment="TOP_CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" layoutX="9.0" layoutY="3.0" minHeight="25.0" prefHeight="25.0" prefWidth="126.0" snapToPixel="false" BorderPane.alignment="CENTER">
          <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints />
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" />
+            <RowConstraints />
          </rowConstraints>
          <children>
             <TextField cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" minHeight="-Infinity" prefHeight="25.0" prefWidth="126.0" promptText="attribute" snapToPixel="false" style="-fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="attribute">
