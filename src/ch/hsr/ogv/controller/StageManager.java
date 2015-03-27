@@ -7,6 +7,18 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point3D;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.SubScene;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import jfxtras.labs.util.Util;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,17 +37,6 @@ import ch.hsr.ogv.view.ArrowLine;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 import ch.hsr.ogv.view.SubSceneCamera;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point3D;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.SubScene;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import jfxtras.labs.util.Util;
 
 /**
  * 
@@ -96,37 +97,43 @@ public class StageManager extends Observable implements Observer {
 
 	private void setupStage() {
 		this.setAppTitle(this.appTitle);
-        this.primaryStage.setMinWidth(MIN_WIDTH);
-        this.primaryStage.setMinHeight(MIN_HEIGHT);
-        this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_PNG).toExternalForm())); // set the application icon
-        
-        Pane canvas = (Pane) this.rootLayout.getCenter();
-        this.subSceneAdpater = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());
-        SubScene subScene = this.subSceneAdpater.getSubScene();
-        canvas.getChildren().add(subScene);
-        subScene.widthProperty().bind(canvas.widthProperty());
-        subScene.heightProperty().bind(canvas.heightProperty());
-        
-        Scene scene = new Scene(this.rootLayout);
-        this.primaryStage.setScene(scene);
-        this.primaryStage.show();
-        this.subSceneAdpater.getSubScene().requestFocus();
-        
-        setChanged();
-        notifyObservers(this); // pass StageManager to RootLayoutController
-        
-        //TODO: Remove everything below this line:
-        ModelClass mcA = this.modelManager.createClass("A", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-        ModelClass mcB = this.modelManager.createClass("B", new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-        ModelClass mcC = this.modelManager.createClass("C", new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-        
-        this.modelManager.createInstance(mcA);
-        this.modelManager.createInstance(mcB);
-        this.modelManager.createInstance(mcB);
-        
-        this.modelManager.createRelation(mcA, mcB, RelationType.DIRECTED_COMPOSITION);
-        this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
-        this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
+		this.primaryStage.setMinWidth(MIN_WIDTH);
+		this.primaryStage.setMinHeight(MIN_HEIGHT);
+		this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_PNG).toExternalForm())); // set
+																															// the
+																															// application
+																															// icon
+
+		Pane canvas = (Pane) this.rootLayout.getCenter();
+		this.subSceneAdpater = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());
+		SubScene subScene = this.subSceneAdpater.getSubScene();
+		canvas.getChildren().add(subScene);
+		subScene.widthProperty().bind(canvas.widthProperty());
+		subScene.heightProperty().bind(canvas.heightProperty());
+
+		Scene scene = new Scene(this.rootLayout);
+		this.primaryStage.setScene(scene);
+		this.primaryStage.show();
+		this.subSceneAdpater.getSubScene().requestFocus();
+
+		setChanged();
+		notifyObservers(this); // pass StageManager to RootLayoutController
+
+		// TODO: Remove everything below this line:
+		ModelClass mcA = this.modelManager.createClass("A", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT,
+				PaneBox.DEFAULT_COLOR);
+		ModelClass mcB = this.modelManager.createClass("B", new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT,
+				PaneBox.DEFAULT_COLOR);
+		ModelClass mcC = this.modelManager.createClass("C", new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT,
+				PaneBox.DEFAULT_COLOR);
+
+		this.modelManager.createInstance(mcA);
+		this.modelManager.createInstance(mcB);
+		this.modelManager.createInstance(mcB);
+
+		this.modelManager.createRelation(mcA, mcB, RelationType.DIRECTED_COMPOSITION);
+		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
+		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
 	}
 
 	public void handle2DClassView() {
@@ -204,19 +211,18 @@ public class StageManager extends Observable implements Observer {
 		PaneBox changedBox = this.boxes.get(modelBox);
 		Map<Endpoint, Endpoint> endpointMap = modelBox.getFriends();
 		Iterator<Endpoint> it = endpointMap.keySet().iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			Endpoint endpoint = it.next();
 			Endpoint friendEndpoint = endpointMap.get(endpoint);
 			PaneBox friendChangedBox = this.boxes.get(friendEndpoint.getAppendant());
 			Relation relation = endpoint.getRelation();
 			ArrowLine changedArrow = this.arrows.get(relation);
-			if(changedArrow != null && changedBox != null && friendChangedBox != null) {
-				if(endpoint.isStart()) {
+			if (changedArrow != null && changedBox != null && friendChangedBox != null) {
+				if (endpoint.isStart()) {
 					changedArrow.setPointsBasedOnBoxes(changedBox, friendChangedBox);
 					endpoint.setCoordinates(changedArrow.getStartPoint());
 					friendEndpoint.setCoordinates(changedArrow.getEndPoint());
-				}
-				else {
+				} else {
 					changedArrow.setPointsBasedOnBoxes(friendChangedBox, changedBox);
 					friendEndpoint.setCoordinates(changedArrow.getStartPoint());
 					endpoint.setCoordinates(changedArrow.getEndPoint());
@@ -236,13 +242,13 @@ public class StageManager extends Observable implements Observer {
 		addToSubScene(paneBox.getSelection());
 		this.boxes.put(theClass, paneBox);
 	}
-	
+
 	private void addInstanceToSubScene(Instance instance) {
 		instance.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.INSTANCEBOX_DEPTH);
 		paneBox.setColor(instance.getColor());
-		//addPaneBoxControls(instance, paneBox);
+		// addPaneBoxControls(instance, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
 		this.boxes.put(instance, paneBox);
@@ -282,9 +288,9 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setWidth(modelBox.getWidth());
 		}
-		if(modelBox instanceof ModelClass) {
+		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for(Instance instance : modelClass.getInstances()) {
+			for (Instance instance : modelClass.getInstances()) {
 				instance.setWidth(modelClass.getWidth());
 			}
 		}
@@ -296,9 +302,9 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setHeight(modelBox.getHeight());
 		}
-		if(modelBox instanceof ModelClass) {
+		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for(Instance instance : modelClass.getInstances()) {
+			for (Instance instance : modelClass.getInstances()) {
 				instance.setHeight(modelClass.getHeight());
 			}
 		}
@@ -310,9 +316,9 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setColor(modelBox.getColor());
 		}
-		if(modelBox instanceof ModelClass) {
+		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for(Instance instance : modelClass.getInstances()) {
+			for (Instance instance : modelClass.getInstances()) {
 				instance.setColor(Util.brighter(modelClass.getColor(), 0.1));
 			}
 		}
@@ -324,9 +330,9 @@ public class StageManager extends Observable implements Observer {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 		}
 		adaptArrowAtBoxChanges(modelBox);
-		if(modelBox instanceof ModelClass) {
+		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for(Instance instance : modelClass.getInstances()) {
+			for (Instance instance : modelClass.getInstances()) {
 				instance.setX(modelClass.getX());
 				instance.setZ(modelClass.getZ());
 			}
@@ -335,7 +341,7 @@ public class StageManager extends Observable implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		//TODO
+		// TODO
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
 			ModelClass theClass = (ModelClass) arg;
 			if (!this.boxes.containsKey(theClass)) { // class is new
@@ -357,7 +363,7 @@ public class StageManager extends Observable implements Observer {
 			}
 		} else if (o instanceof ModelManager && arg instanceof Instance) {
 			Instance instance = (Instance) arg;
-			if (!this.boxes.containsKey(instance)) { // instance is new			
+			if (!this.boxes.containsKey(instance)) { // instance is new
 				addInstanceToSubScene(instance);
 				adaptBoxSettings(instance);
 			} else {
@@ -388,6 +394,10 @@ public class StageManager extends Observable implements Observer {
 				break;
 			}
 		}
+	}
+
+	public void handleCreateNewClass() {
+		this.modelManager.createClass("D", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 	}
 
 }

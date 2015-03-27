@@ -160,7 +160,7 @@ public class RootLayoutController implements Observer {
 	}
 	
 	@FXML
-	private void handleNewClass() {
-		
+	private void handleCreateNewClass() {
+		this.stageManager.handleCreateNewClass();
 	}
 }
