@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 import javafx.geometry.Point3D;
@@ -81,5 +82,5 @@ public class ModelManager extends Observable {
 		notifyObservers(relation);
 		return relation;
 	}
-	
+
 }
