@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.input.*?>
 <?import java.net.*?>
@@ -10,8 +11,15 @@
 
 <BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../css/LightTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.ogv.controller.RootLayoutController">
 	<top>
-      <SplitPane dividerPositions="0.5" orientation="VERTICAL">
-         <items>
+      <GridPane>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
       		<MenuBar id="menubar" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER">
       			<menus>
       				<Menu id="menu_file" mnemonicParsing="false" text="File">
@@ -72,7 +80,7 @@
       				</Menu>
       			</menus>
       		</MenuBar>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <ToolBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
                <items>
                   <ToggleButton fx:id="createNewClass" mnemonicParsing="false" onAction="#handleToggleButton" stylesheets="@../css/ButtonIcon.css" text="Class" />
                   <ToggleButton mnemonicParsing="false" text="Instance" />
@@ -87,8 +95,8 @@
                   <ToggleButton mnemonicParsing="false" text="Dependency" />
                </items>
             </ToolBar>
-         </items>
-      </SplitPane>
+         </children>
+      </GridPane>
 	</top>
 	<center>
 		<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />

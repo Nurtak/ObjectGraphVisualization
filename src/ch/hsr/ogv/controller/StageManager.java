@@ -134,7 +134,7 @@ public class StageManager extends Observable implements Observer {
 		ModelClass mcA = this.modelManager.createClass(new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		ModelClass mcC = this.modelManager.createClass(new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-
+		mcA.setName("A");
 		this.modelManager.createInstance(mcA);
 		this.modelManager.createInstance(mcB);
 		this.modelManager.createInstance(mcB);
