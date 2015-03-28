@@ -74,20 +74,17 @@
       		</MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0">
                <items>
-                  <Button id="btn-new-class" mnemonicParsing="false" onAction="#handleCreateNewClass" stylesheets="@../css/ButtonIcon.css" text="New Class" />
+                  <ToggleButton fx:id="createNewClass" mnemonicParsing="false" onAction="#handleToggleButton" stylesheets="@../css/ButtonIcon.css" text="Class" />
+                  <ToggleButton mnemonicParsing="false" text="Instance" />
                   <Separator orientation="VERTICAL" />
-                  <SplitMenuButton mnemonicParsing="false" text="New Association">
+                  <SplitMenuButton mnemonicParsing="false" text="Association">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Action 1" />
-                      <MenuItem mnemonicParsing="false" text="Action 2">
-                           <graphic>
-                              <Button mnemonicParsing="false" text="Button" />
-                           </graphic></MenuItem>
+                      <MenuItem mnemonicParsing="false" text="Action 2" />
                     </items>
                   </SplitMenuButton>
-                  <Button mnemonicParsing="false" text="New Generalization" />
-                  <Button mnemonicParsing="false" text="New Dependency" />
-                  <ComboBox prefWidth="150.0" promptText="test" />
+                  <ToggleButton mnemonicParsing="false" text="Generalization" />
+                  <ToggleButton mnemonicParsing="false" text="Dependency" />
                </items>
             </ToolBar>
          </items>

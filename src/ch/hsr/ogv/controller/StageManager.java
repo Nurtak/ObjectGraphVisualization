@@ -53,12 +53,14 @@ public class StageManager extends Observable implements Observer {
 	private SubSceneAdapter subSceneAdpater;
 
 	private ModelManager modelManager;
+
 	private Map<ModelBox, PaneBox> boxes = new HashMap<ModelBox, PaneBox>();
 	private Map<Relation, ArrowLine> arrows = new HashMap<Relation, ArrowLine>();
 
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
 	private SubSceneController subSceneController = new SubSceneController();
+
 	private SelectionController selectionController = new SelectionController();
 	private TextInputController textInputController = new TextInputController();
 	private DragMoveController dragMoveController = new DragMoveController();
@@ -78,6 +80,18 @@ public class StageManager extends Observable implements Observer {
 	public void setAppTitle(String appTitle) {
 		this.appTitle = appTitle;
 		this.getPrimaryStage().setTitle(this.appTitle);
+	}
+	
+	public SubSceneController getSubSceneController() {
+		return subSceneController;
+	}
+	
+	public SubSceneAdapter getSubSceneAdpater() {
+		return subSceneAdpater;
+	}
+
+	public ModelManager getModelManager() {
+		return modelManager;
 	}
 
 	public StageManager(Stage primaryStage) {
@@ -99,10 +113,7 @@ public class StageManager extends Observable implements Observer {
 		this.setAppTitle(this.appTitle);
 		this.primaryStage.setMinWidth(MIN_WIDTH);
 		this.primaryStage.setMinHeight(MIN_HEIGHT);
-		this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_PNG).toExternalForm())); // set
-																															// the
-																															// application
-																															// icon
+		this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_PNG).toExternalForm())); // set the application icon
 
 		Pane canvas = (Pane) this.rootLayout.getCenter();
 		this.subSceneAdpater = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());
@@ -120,12 +131,9 @@ public class StageManager extends Observable implements Observer {
 		notifyObservers(this); // pass StageManager to RootLayoutController
 
 		// TODO: Remove everything below this line:
-		ModelClass mcA = this.modelManager.createClass("A", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT,
-				PaneBox.DEFAULT_COLOR);
-		ModelClass mcB = this.modelManager.createClass("B", new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT,
-				PaneBox.DEFAULT_COLOR);
-		ModelClass mcC = this.modelManager.createClass("C", new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT,
-				PaneBox.DEFAULT_COLOR);
+		ModelClass mcA = this.modelManager.createClass("A", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass mcB = this.modelManager.createClass("B", new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass mcC = this.modelManager.createClass("C", new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 
 		this.modelManager.createInstance(mcA);
 		this.modelManager.createInstance(mcB);
@@ -150,7 +158,7 @@ public class StageManager extends Observable implements Observer {
 		loader.setLocation(ResourceLocator.getResourcePath(Resource.ROOTLAYOUT_FXML));
 		try {
 			this.rootLayout = (BorderPane) loader.load();
-			addObserver(loader.getController()); // its the RootLayoutController
+			addObserver(loader.getController());
 		} catch (IOException e) {
 			logger.debug(e.getMessage());
 			e.printStackTrace();
@@ -163,7 +171,7 @@ public class StageManager extends Observable implements Observer {
 	}
 
 	private void initSubSceneController() {
-		this.subSceneController.handleMouse(this.subSceneAdpater);
+		this.subSceneController.handleSubSceneMouse(this, this.subSceneAdpater);
 	}
 
 	private void initPaneBoxController() {
@@ -385,6 +393,7 @@ public class StageManager extends Observable implements Observer {
 				adaptBoxHeight(modelBox);
 				break;
 			case NAME:
+				ModelClass theClass = this.modelManager.getClass(modelBox.getName());
 				adaptBoxName(modelBox);
 				break;
 			case WIDTH:
@@ -394,10 +403,6 @@ public class StageManager extends Observable implements Observer {
 				break;
 			}
 		}
-	}
-
-	public void handleCreateNewClass() {
-		this.modelManager.createClass("D", new Point3D(100, PaneBox.INIT_DEPTH / 2, 100), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 	}
 
 }

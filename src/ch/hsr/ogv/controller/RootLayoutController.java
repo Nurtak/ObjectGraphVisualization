@@ -6,14 +6,17 @@ import java.util.Observer;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Point3D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.dataaccess.UserPreferences;
+import ch.hsr.ogv.view.PaneBox;
 
 /**
  * The controller for the root layout. The root layout provides the basic
@@ -151,16 +154,35 @@ public class RootLayoutController implements Observer {
 		this.stageManager.handleSetTheme(this.aqua, Style.AQUA);
 	}
 
+	@FXML
+	private ToggleButton createNewClass;
+	
+	@FXML
+	private void handleToggleButton() {
+		this.stageManager.getSubSceneAdpater().onlyFloorMouseEvent(this.createNewClass.isSelected());
+	}
+	
+	private void handleCreateNewClass(Point3D mouseCoords) {
+		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
+		this.stageManager.getModelManager().createClass("D", boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		this.stageManager.getSubSceneAdpater().onlyFloorMouseEvent(false);
+		createNewClass.setSelected(false);
+	}
+	
 	@Override
 	public void update(Observable o, Object arg) {
 		if(o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
 			StageManager stageManager = (StageManager) arg;
 			this.stageManager = stageManager;
+			this.stageManager.getSubSceneController().addObserver(this);
 		}
-	}
-	
-	@FXML
-	private void handleCreateNewClass() {
-		this.stageManager.handleCreateNewClass();
+		
+		if(o instanceof SubSceneController && arg instanceof Point3D) {
+			Point3D mouseCoords = (Point3D) arg;
+			if(createNewClass != null && createNewClass.isSelected()) {
+				handleCreateNewClass(mouseCoords);
+			}
+		}
+		
 	}
 }
