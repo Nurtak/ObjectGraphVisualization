@@ -13,6 +13,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -172,6 +173,14 @@ public class PaneBox {
 	public void allowTopTextInput(boolean value) {
 		getTop().setEditable(value);
 		getTop().setDisable(!value);
+	}
+	
+	public GridPane getCenter() {
+		Node centerNode = this.borderPane.getCenter();
+		if(centerNode instanceof GridPane) {
+			return (GridPane) centerNode;
+		}
+		return null;
 	}
 	
 	public void setSelected(boolean value) {
