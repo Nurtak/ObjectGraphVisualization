@@ -169,14 +169,14 @@ public class PaneBox {
 		}
 	}
 	
-	public void allowTextInput(boolean value) {
+	public void allowTopTextInput(boolean value) {
 		getTop().setEditable(value);
 		getTop().setDisable(!value);
 	}
 	
 	public void setSelected(boolean value) {
 		this.selection.setVisible(value);
-		allowTextInput(value);
+		allowTopTextInput(value);
 	}
 	
 	private double restrictedWidth(double width) {

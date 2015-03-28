@@ -27,6 +27,7 @@ public class SelectionController extends Observable {
 	
 	public void enableSelection(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		focusOnClick(paneBox, subSceneAdapter);
+		focusOnDragDetected(paneBox, subSceneAdapter);
 		selectOnFocus(paneBox, subSceneAdapter);
 	}
 	
@@ -38,6 +39,21 @@ public class SelectionController extends Observable {
 		});
 		
 		paneBox.getSelection().setOnMouseClicked((MouseEvent me) -> {
+			setSelected(paneBox, true, subSceneAdapter);
+			paneBox.getSelection().requestFocus();
+        });
+
+		
+	}
+	
+	private void focusOnDragDetected(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		paneBox.get().setOnDragDetected((MouseEvent me) -> {
+			if(!paneBox.get().focusedProperty().get()) { // if not already focused
+				paneBox.get().requestFocus();
+			}
+		});
+		
+		paneBox.getSelection().setOnDragDetected((MouseEvent me) -> {
 			setSelected(paneBox, true, subSceneAdapter);
 			paneBox.getSelection().requestFocus();
         });

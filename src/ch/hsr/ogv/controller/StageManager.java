@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
@@ -86,14 +87,6 @@ public class StageManager extends Observable implements Observer {
 		return subSceneController;
 	}
 	
-	public SubSceneAdapter getSubSceneAdpater() {
-		return subSceneAdpater;
-	}
-
-	public ModelManager getModelManager() {
-		return modelManager;
-	}
-
 	public StageManager(Stage primaryStage) {
 		if (primaryStage == null)
 			throw new IllegalArgumentException("The primaryStage argument can not be null!");
@@ -143,6 +136,23 @@ public class StageManager extends Observable implements Observer {
 		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
 	}
+	
+	public void onlyFloorMouseEvent(boolean value) {
+		this.subSceneAdpater.onlyFloorMouseEvent(value);
+	}
+	
+	public void handleCreateNewClass(Point3D mouseCoords) {
+		onlyFloorMouseEvent(false);
+		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
+		ModelClass newClass = this.modelManager.createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		PaneBox newBox = this.boxes.get(newClass);
+		newBox.allowTopTextInput(true);
+		Platform.runLater(() -> {
+			newBox.getTop().requestFocus();
+			newBox.getTop().selectAll();
+			newBox.getTop().applyCss();
+		});
+	}
 
 	public void handle2DClassView() {
 		SubSceneCamera ssCamera = this.subSceneAdpater.getSubSceneCamera();
@@ -171,7 +181,7 @@ public class StageManager extends Observable implements Observer {
 	}
 
 	private void initSubSceneController() {
-		this.subSceneController.handleSubSceneMouse(this, this.subSceneAdpater);
+		this.subSceneController.handleSubSceneMouse(this.subSceneAdpater);
 	}
 
 	private void initPaneBoxController() {

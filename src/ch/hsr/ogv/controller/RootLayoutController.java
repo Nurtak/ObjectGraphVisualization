@@ -16,7 +16,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.dataaccess.UserPreferences;
-import ch.hsr.ogv.view.PaneBox;
 
 /**
  * The controller for the root layout. The root layout provides the basic
@@ -159,14 +158,7 @@ public class RootLayoutController implements Observer {
 	
 	@FXML
 	private void handleToggleButton() {
-		this.stageManager.getSubSceneAdpater().onlyFloorMouseEvent(this.createNewClass.isSelected());
-	}
-	
-	private void handleCreateNewClass(Point3D mouseCoords) {
-		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
-		this.stageManager.getModelManager().createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-		this.stageManager.getSubSceneAdpater().onlyFloorMouseEvent(false);
-		createNewClass.setSelected(false);
+		this.stageManager.onlyFloorMouseEvent(this.createNewClass.isSelected());
 	}
 	
 	@Override
@@ -180,7 +172,8 @@ public class RootLayoutController implements Observer {
 		if(o instanceof SubSceneController && arg instanceof Point3D) {
 			Point3D mouseCoords = (Point3D) arg;
 			if(createNewClass != null && createNewClass.isSelected()) {
-				handleCreateNewClass(mouseCoords);
+				this.stageManager.handleCreateNewClass(mouseCoords);
+				this.createNewClass.setSelected(false);
 			}
 		}
 		

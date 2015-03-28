@@ -10,7 +10,7 @@ import ch.hsr.ogv.view.SubSceneAdapter;
 
 public class SubSceneController extends Observable {
 	
-	public void handleSubSceneMouse(StageManager stageManager, SubSceneAdapter subSceneAdapter) {
+	public void handleSubSceneMouse(SubSceneAdapter subSceneAdapter) {
 		subSceneAdapter.getSubScene().setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent me) {
