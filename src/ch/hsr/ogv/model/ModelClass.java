@@ -3,6 +3,7 @@ package ch.hsr.ogv.model;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
@@ -17,9 +18,11 @@ public class ModelClass extends ModelBox {
 
 	private LinkedHashSet<Attribute> attributes = new LinkedHashSet<Attribute>();
 	private List<Instance> instances = new ArrayList<Instance>();
+	
+	public static volatile AtomicInteger classCounter = new AtomicInteger(0);
 
-	public ModelClass(String name, Point3D coordinates, double width, double heigth, Color color) {
-		super(name, coordinates, width, heigth, color);
+	public ModelClass(Point3D coordinates, double width, double heigth, Color color) {
+		super("Class" + classCounter.addAndGet(1), coordinates, width, heigth, color);
 	}
 
 	public LinkedHashSet<Attribute> getAttributes() {
@@ -64,6 +67,7 @@ public class ModelClass extends ModelBox {
 	}
 
 	public boolean deleteInstance(Instance instance) {
+		Instance.instanceCounter.decrementAndGet();
 		return instances.remove(instance);
 	}
 

@@ -1,11 +1,8 @@
 package ch.hsr.ogv.model;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Set;
 
 import javafx.geometry.Point3D;
@@ -18,21 +15,19 @@ import javafx.scene.paint.Color;
  */
 public class ModelManager extends Observable {
 
-	private Map<String, ModelClass> classes = new HashMap<String, ModelClass>();
+	private Set<ModelClass> classes = new HashSet<ModelClass>();
 	private Set<Relation> relations = new HashSet<Relation>();
 	
 	public Collection<ModelClass> getClasses() {
-		return classes.values();
+		return this.classes;
 	}
 
-	public ModelClass createClass(String classname, Point3D coordinates, double width, double heigth, Color color) {
+	public ModelClass createClass(Point3D coordinates, double width, double heigth, Color color) {
 		ModelClass theClass = null;
-		if(!isNameTaken(classname)) {
-			theClass = new ModelClass(classname, coordinates, width, heigth, color);
-			classes.put(theClass.getName(), theClass);
-			setChanged();
-			notifyObservers(theClass);
-		}
+		theClass = new ModelClass(coordinates, width, heigth, color);
+		classes.add(theClass);
+		setChanged();
+		notifyObservers(theClass);
 		return theClass;
 	}
 	
@@ -44,19 +39,31 @@ public class ModelManager extends Observable {
 	}
 
 	public ModelClass getClass(String name) {
-		return classes.get(name);
+		if(name == null) return null;
+		for(ModelClass theClass : this.classes) {
+			if(name.equals(theClass.getName())) {
+				return theClass;
+			}
+		}
+		return null;
 	}
 
 	public boolean isNameTaken(String name) {
-		return classes.containsKey(name);
+		for(ModelClass theClass : this.classes) {
+			if(name != null && name.equals(theClass.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	public ModelClass deleteClass(ModelClass theClass) {
-		ModelClass deletedClass = classes.remove(theClass.getName());
-		if(deletedClass != null) {
+	public boolean deleteClass(ModelClass theClass) {
+		boolean deletedClass = classes.remove(theClass);
+		if(deletedClass) {
 			setChanged();
 			notifyObservers(deletedClass);
 		}
+		ModelClass.classCounter.decrementAndGet();
 		return deletedClass;
 	}
 	

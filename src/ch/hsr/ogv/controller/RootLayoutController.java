@@ -164,7 +164,7 @@ public class RootLayoutController implements Observer {
 	
 	private void handleCreateNewClass(Point3D mouseCoords) {
 		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
-		this.stageManager.getModelManager().createClass("D", boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		this.stageManager.getModelManager().createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		this.stageManager.getSubSceneAdpater().onlyFloorMouseEvent(false);
 		createNewClass.setSelected(false);
 	}

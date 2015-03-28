@@ -21,10 +21,8 @@ public class Instance extends ModelBox {
 	public static volatile AtomicInteger instanceCounter = new AtomicInteger(0);
 	
 	public Instance(ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
-		super(modelClass.getName(), coordinates, width, heigth, color);
-		instanceCounter.addAndGet(1);
+		super("obj" + instanceCounter.addAndGet(1) + ':' + modelClass.getName(), coordinates, width, heigth, color);
 		this.modelClass = modelClass;
-		this.name = "obj" + instanceCounter + ':' + this.name;
 	}
 
 	public Map<Attribute, String> getAttributeValues() {
