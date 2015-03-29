@@ -1,7 +1,6 @@
 package ch.hsr.ogv.controller;
 
 import java.io.File;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -12,7 +11,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
