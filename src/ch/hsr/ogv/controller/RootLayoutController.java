@@ -1,6 +1,7 @@
 package ch.hsr.ogv.controller;
 
 import java.io.File;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -11,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -154,11 +156,35 @@ public class RootLayoutController implements Observer {
 	}
 
 	@FXML
-	private ToggleButton createNewClass;
+	private ToggleButton createClass;
 	
 	@FXML
-	private void handleToggleButton() {
-		this.stageManager.onlyFloorMouseEvent(this.createNewClass.isSelected());
+	private ToggleButton createInstance;
+	
+	@FXML
+	private ToggleButton createGeneralization;
+	
+	@FXML
+	private ToggleButton createDependency;
+
+	@FXML
+	private void handleCreateClass() {	
+		this.stageManager.onlyFloorMouseEvent(this.createClass.isSelected());
+	}
+	
+	@FXML
+	private void handleCreateInstance() {	
+		//TODO
+		}
+	
+	@FXML
+	private void handleCreateGeneralization() {	
+		//TODO
+	}
+	
+	@FXML
+	private void handleCreateDependency() {	
+		//TODO
 	}
 	
 	@Override
@@ -171,9 +197,9 @@ public class RootLayoutController implements Observer {
 		
 		if(o instanceof SubSceneController && arg instanceof Point3D) {
 			Point3D mouseCoords = (Point3D) arg;
-			if(createNewClass != null && createNewClass.isSelected()) {
+			if(createClass != null && createClass.isSelected()) {
 				this.stageManager.handleCreateNewClass(mouseCoords);
-				this.createNewClass.setSelected(false);
+				this.createClass.setSelected(false);
 			}
 		}
 		
