@@ -82,26 +82,26 @@
       		</MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
                <items>
-                  <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" stylesheets="@../css/ButtonIcon.css" text="Class">
+                  <ToggleButton id="btn-create-class" fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" stylesheets="@../css/ButtonIcon.css" text="Class">
                      <toggleGroup>
                         <ToggleGroup fx:id="createToolbar" />
                      </toggleGroup></ToggleButton>
-                  <ToggleButton fx:id="createInstance" mnemonicParsing="false" onAction="#handleCreateInstance" text="Instance" toggleGroup="$createToolbar" />
+                  <ToggleButton id="btn-create-instance" fx:id="createInstance" mnemonicParsing="false" onAction="#handleCreateInstance" stylesheets="@../css/ButtonIcon.css" text="Instance" toggleGroup="$createToolbar" />
                   <Separator orientation="VERTICAL" />
-                  <SplitMenuButton mnemonicParsing="false" text="Association">
+                  <SplitMenuButton id="btn-create-undirected-association" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Association">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Action 1" />
                       <MenuItem mnemonicParsing="false" text="Action 2" />
                     </items>
                   </SplitMenuButton>
-                  <ToggleButton fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization" toggleGroup="$createToolbar" />
-                  <ToggleButton fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar" />
+                  <ToggleButton id="btn-create-generalization" fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" stylesheets="@../css/ButtonIcon.css" text="Generalization" toggleGroup="$createToolbar" />
+                  <ToggleButton id="btn-create-dependency" fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" stylesheets="@../css/ButtonIcon.css" text="Dependency" toggleGroup="$createToolbar" />
                </items>
             </ToolBar>
          </children>
       </GridPane>
 	</top>
-	<center>
+   <left>
 		<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />
-	</center>
+   </left>
 </BorderPane>
