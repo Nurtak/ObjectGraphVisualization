@@ -26,22 +26,22 @@
       					<items>
       						<MenuItem id="menuitem_new" mnemonicParsing="false" onAction="#handleNew" text="New">
       							<accelerator>
-      								<KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+      								<KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
       						</MenuItem>
       						<MenuItem id="menuitem_open" mnemonicParsing="false" onAction="#handleOpen" text="Open...">
       							<accelerator>
-      								<KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+      								<KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
       						</MenuItem>
       						<MenuItem id="menuitem_save" mnemonicParsing="false" onAction="#handleSave" text="Save">
       							<accelerator>
-      								<KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+      								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
       						</MenuItem>
       						<MenuItem id="menuitem_saveas" mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
       							<accelerator>
-      								<KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="DOWN" shortcut="UP" />
+      								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
       							</accelerator>
       						</MenuItem>
       						<MenuItem id="menuitem_exit" mnemonicParsing="false" onAction="#handleExit" text="Exit">
