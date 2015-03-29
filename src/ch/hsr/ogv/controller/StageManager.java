@@ -2,7 +2,6 @@ package ch.hsr.ogv.controller;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -148,9 +147,9 @@ public class StageManager extends Observable implements Observer {
 		PaneBox newBox = this.boxes.get(newClass);
 		newBox.allowTopTextInput(true);
 		Platform.runLater(() -> {
-			newBox.getTop().requestFocus();
-			newBox.getTop().selectAll();
-			newBox.getTop().applyCss();
+			newBox.getTopTextField().requestFocus();
+			newBox.getTopTextField().selectAll();
+			newBox.getTopTextField().applyCss();
 		});
 	}
 
@@ -228,9 +227,7 @@ public class StageManager extends Observable implements Observer {
 	private void adaptArrowAtBoxChanges(ModelBox modelBox) {
 		PaneBox changedBox = this.boxes.get(modelBox);
 		Map<Endpoint, Endpoint> endpointMap = modelBox.getFriends();
-		Iterator<Endpoint> it = endpointMap.keySet().iterator();
-		while (it.hasNext()) {
-			Endpoint endpoint = it.next();
+		for(Endpoint endpoint : endpointMap.keySet()) {
 			Endpoint friendEndpoint = endpointMap.get(endpoint);
 			PaneBox friendChangedBox = this.boxes.get(friendEndpoint.getAppendant());
 			Relation relation = endpoint.getRelation();
@@ -255,6 +252,7 @@ public class StageManager extends Observable implements Observer {
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
 		paneBox.setColor(PaneBox.DEFAULT_COLOR);
+		paneBox.setTopUnderline(false);
 		addPaneBoxControls(theClass, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
@@ -266,6 +264,7 @@ public class StageManager extends Observable implements Observer {
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.INSTANCEBOX_DEPTH);
 		paneBox.setColor(instance.getColor());
+		paneBox.setTopUnderline(true);
 		// addPaneBoxControls(instance, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
@@ -299,6 +298,15 @@ public class StageManager extends Observable implements Observer {
 			changedBox.setTopText(modelBox.getName());
 			modelBox.setWidth(changedBox.getMinWidth());
 		}
+		
+		if(modelBox instanceof ModelClass) {
+			ModelClass theClass = (ModelClass) modelBox;
+			for(Instance instance : theClass.getInstances()) {
+				//TODO Replace this workaround with actual methods in Instance for classpart of the name
+				String classPart = instance.getName().substring(instance.getName().lastIndexOf(":"));
+				instance.setName(instance.getName().replaceAll(classPart, ":" + theClass.getName()));
+			}
+		}
 	}
 
 	private void adaptBoxWidth(ModelBox modelBox) {
@@ -312,7 +320,7 @@ public class StageManager extends Observable implements Observer {
 				instance.setWidth(modelClass.getWidth());
 			}
 		}
-		adaptArrowAtBoxChanges(modelBox);
+		//adaptArrowAtBoxChanges(modelBox);
 	}
 
 	private void adaptBoxHeight(ModelBox modelBox) {
@@ -326,7 +334,7 @@ public class StageManager extends Observable implements Observer {
 				instance.setHeight(modelClass.getHeight());
 			}
 		}
-		adaptArrowAtBoxChanges(modelBox);
+		//adaptArrowAtBoxChanges(modelBox);
 	}
 
 	private void adaptBoxColor(ModelBox modelBox) {

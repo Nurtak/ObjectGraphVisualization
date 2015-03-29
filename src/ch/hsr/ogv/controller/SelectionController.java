@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -33,30 +34,34 @@ public class SelectionController extends Observable {
 	
 	private void focusOnClick(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		paneBox.get().setOnMouseClicked((MouseEvent me) -> {
-			if(!paneBox.get().focusedProperty().get()) { // if not already focused
+			if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.get().focusedProperty().get()) { // if not already focused
 				paneBox.get().requestFocus();
 			}
 		});
 		
-		paneBox.getSelection().setOnMouseClicked((MouseEvent me) -> {
-			setSelected(paneBox, true, subSceneAdapter);
-			paneBox.getSelection().requestFocus();
-        });
+//		paneBox.getSelection().setOnMouseClicked((MouseEvent me) -> {
+//			if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect()) {
+//				setSelected(paneBox, true, subSceneAdapter);
+//				paneBox.get().requestFocus();
+//			}
+//        });
 
 		
 	}
 	
 	private void focusOnDragDetected(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		paneBox.get().setOnDragDetected((MouseEvent me) -> {
-			if(!paneBox.get().focusedProperty().get()) { // if not already focused
+			if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.get().focusedProperty().get()) { // if not already focused
 				paneBox.get().requestFocus();
 			}
 		});
 		
-		paneBox.getSelection().setOnDragDetected((MouseEvent me) -> {
-			setSelected(paneBox, true, subSceneAdapter);
-			paneBox.getSelection().requestFocus();
-        });
+//		paneBox.getSelection().setOnDragDetected((MouseEvent me) -> {
+//			if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect()) {
+//				setSelected(paneBox, true, subSceneAdapter);
+//				paneBox.get().requestFocus();
+//			}
+//        });
 	}
 	
 	private void setSelected(PaneBox paneBox, boolean selected, SubSceneAdapter subSceneAdapter) {
@@ -88,10 +93,10 @@ public class SelectionController extends Observable {
             }
         });
 		
-		paneBox.getTop().focusedProperty().addListener(new ChangeListener<Boolean>() {
+		paneBox.getTopLabel().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-            	if(paneBox.getTop().focusedProperty().get()) {
+            	if(paneBox.getTopLabel().focusedProperty().get()) {
             		setSelected(paneBox, true, subSceneAdapter);
 				}
 				else {
@@ -100,29 +105,41 @@ public class SelectionController extends Observable {
             }
         });
 		
-//		paneBox.getBox().focusedProperty().addListener(new ChangeListener<Boolean>() {
-//			@Override
-//            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-//            	if(paneBox.getBox().focusedProperty().get()) {
-//            		setSelected(paneBox, true, subSceneAdapter);
-//				}
-//				else {
-//					setSelected(paneBox, false, subSceneAdapter);
-//            	}
-//            }
-//        });
-//	
-//		paneBox.getSelection().focusedProperty().addListener(new ChangeListener<Boolean>() {
-//			@Override
-//            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-//            	if(paneBox.getSelection().focusedProperty().get()) {
-//            		setSelected(paneBox, true, subSceneAdapter);
-//				}
-//				else {
-//					setSelected(paneBox, false, subSceneAdapter);
-//            	}
-//            }
-//        });
+		paneBox.getTopTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+            	if(paneBox.getTopTextField().focusedProperty().get()) {
+            		setSelected(paneBox, true, subSceneAdapter);
+				}
+				else {
+					setSelected(paneBox, false, subSceneAdapter);
+            	}
+            }
+        });
+		
+		paneBox.getBox().focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+            	if(paneBox.getBox().focusedProperty().get()) {
+            		setSelected(paneBox, true, subSceneAdapter);
+				}
+				else {
+					setSelected(paneBox, false, subSceneAdapter);
+            	}
+            }
+        });
+	
+		paneBox.getSelection().focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+            	if(paneBox.getSelection().focusedProperty().get()) {
+            		setSelected(paneBox, true, subSceneAdapter);
+				}
+				else {
+					setSelected(paneBox, false, subSceneAdapter);
+            	}
+            }
+        });
 		
 	}
 

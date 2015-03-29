@@ -16,8 +16,9 @@ public class ResourceLocator {
 	public enum Resource {
 
 		ICON_PNG("images/dummy_icon.png"),
-		PANEPRESET_FXML("templates/PanePreset.fxml"),
 		ROOTLAYOUT_FXML("templates/RootLayout.fxml"),
+		PANEPRESET_FXML("templates/PanePreset.fxml"),
+		TEXTFIELDPRESET_FXML("templates/TextFieldPreset.fxml"),
 		LIGHTHEME_CSS("css/LightTheme.css"),
 		DARKTHEME_CSS("css/DarkTheme.css"),
 		TEXTFIELD_CSS("css/TextField.css"),

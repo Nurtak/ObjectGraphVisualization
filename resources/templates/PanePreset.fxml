@@ -8,24 +8,21 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="500.0" maxWidth="500.0" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="500.0" maxWidth="500.0" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white; -fx-font-smoothing-type: gray;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" style="-fx-border-color: transparent transparent black transparent;" BorderPane.alignment="CENTER">
          <children>
-            <TextField alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" prefHeight="28.0" prefWidth="126.0" promptText="Class" snapToPixel="false" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="Class">
+            <Label alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" prefHeight="28.0" prefWidth="120.0" snapToPixel="false" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" text="Class">
                <font>
                   <Font size="16.0" />
                </font>
-               <HBox.margin>
-                  <Insets top="-1.0" />
-               </HBox.margin>
-               <padding>
-                  <Insets left="1.0" right="1.0" />
-               </padding>
                <VBox.margin>
                   <Insets left="-1.0" right="-1.0" top="-1.0" />
                </VBox.margin>
-            </TextField>
+               <padding>
+                  <Insets left="1.0" right="1.0" />
+               </padding>
+            </Label>
          </children>
       </VBox>
    </top>
@@ -39,7 +36,7 @@
             <RowConstraints />
          </rowConstraints>
          <children>
-            <TextField cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" minHeight="-Infinity" prefHeight="25.0" prefWidth="126.0" promptText="attribute" snapToPixel="false" style="-fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="attribute">
+            <TextField cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" focusTraversable="false" minHeight="-Infinity" prefHeight="25.0" prefWidth="126.0" promptText="attribute" snapToPixel="false" style="-fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="attribute">
                <font>
                   <Font size="16.0" />
                </font>
