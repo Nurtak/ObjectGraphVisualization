@@ -298,6 +298,15 @@ public class StageManager extends Observable implements Observer {
 			changedBox.setTopText(modelBox.getName());
 			modelBox.setWidth(changedBox.getMinWidth());
 		}
+		
+		if(modelBox instanceof ModelClass) {
+			ModelClass theClass = (ModelClass) modelBox;
+			for(Instance instance : theClass.getInstances()) {
+				//TODO Replace this workaround with actual methods in Instance for classpart of the name
+				String classPart = instance.getName().substring(instance.getName().lastIndexOf(":"));
+				instance.setName(instance.getName().replaceAll(classPart, ":" + theClass.getName()));
+			}
+		}
 	}
 
 	private void adaptBoxWidth(ModelBox modelBox) {
