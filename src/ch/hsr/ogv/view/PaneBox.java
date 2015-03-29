@@ -6,11 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
 import javafx.scene.CacheHint;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -44,15 +46,21 @@ public class PaneBox {
 	public final static int MAX_WIDTH = 500;
 	public final static int MAX_HEIGHT = 500;
 	
-	
 	private Group paneBox = new Group();
 	private Selection selection = null;
 	private BorderPane borderPane = null;
+
+	private Label topLabel = null;
+	private TextField topTextField = null;
 	private Color color;
 	private Cuboid box;
 	
 	public Group get() {
 		return this.paneBox;
+	}
+	
+	public BorderPane getBorderPane() {
+		return borderPane;
 	}
 	
 	public Cuboid getBox() {
@@ -113,13 +121,32 @@ public class PaneBox {
 	}
 	
 	private void initLayout() {
-		FXMLLoader loader = new FXMLLoader(); // load class preset from fxml file
+		FXMLLoader loader = new FXMLLoader(); // load pane preset from fxml file
         loader.setLocation(ResourceLocator.getResourcePath(Resource.PANEPRESET_FXML));
         try {
 			this.borderPane = (BorderPane) loader.load();
 		} catch (IOException e) {
 			logger.debug(e.getMessage());
             e.printStackTrace();
+		}
+        
+		loader = new FXMLLoader(); // load textfield preset from fxml file
+        loader.setLocation(ResourceLocator.getResourcePath(Resource.TEXTFIELDPRESET_FXML));
+        try {
+			this.topTextField = (TextField) loader.load();
+		} catch (IOException e) {
+			logger.debug(e.getMessage());
+            e.printStackTrace();
+		}
+        
+        Node topNode = this.borderPane.getTop();
+		if((topNode instanceof VBox)) {
+			VBox topVBox = (VBox) topNode;
+			if(!topVBox.getChildren().isEmpty() && topVBox.getChildren().get(0) instanceof Label) {
+				this.topLabel = (Label) topVBox.getChildren().get(0);
+			}
+			VBox.setMargin(this.topTextField, new Insets(-1, -1, 0, -1));
+			VBox.setMargin(this.topLabel, new Insets(-1, -1, 0, -1));
 		}
 	}
 	
@@ -134,15 +161,21 @@ public class PaneBox {
 		this.box.translateYProperty().bind(this.borderPane.translateYProperty().subtract(INIT_DEPTH / 2));
 	}
 	
-	public TextField getTop() {
+	public TextField getTopTextField() {
+		return this.topTextField;
+	}
+	
+	public Label getTopLabel() {
+		return this.topLabel;
+	}
+	
+	private void swapTop(Node labelOrField) {
 		Node topNode = this.borderPane.getTop();
 		if((topNode instanceof VBox)) {
 			VBox topVBox = (VBox) topNode;
-			if(!topVBox.getChildren().isEmpty() && topVBox.getChildren().get(0) instanceof TextField) {
-				return (TextField) topVBox.getChildren().get(0);
-			}
+			topVBox.getChildren().clear();
+			topVBox.getChildren().add(labelOrField);
 		}
-		return null;
 	}
 	
 	public void adaptWidthByText(Font font, String text) {
@@ -150,29 +183,39 @@ public class PaneBox {
 		double newWidth = TextUtil.computeTextWidth(font, text, 0.0D) + 50;
 		//double origWidth = getWidth();
 		setMinWidth(newWidth);
+		this.topLabel.setPrefWidth(newWidth);
 		//if(newWidth < origWidth) {
 		//	setWidth(origWidth);
 		//}
 	}
 	
 	public void setTopText(String text) {
-		TextField topTextField = getTop();
-		if(topTextField == null) return;
-		adaptWidthByText(topTextField.getFont(), text);
-		topTextField.setText(text);
+		if(this.topTextField == null || this.topLabel == null) return;
+		this.topTextField.setText(text);
+		this.topLabel.setText(text);
+		adaptWidthByText(this.topLabel.getFont(), text);
 	}
 	
 	public void setTopFont(Font font) {
-		TextField topTextField = getTop();
-		if(topTextField != null) {
-			topTextField.setFont(font);
-			adaptWidthByText(topTextField.getFont(), topTextField.getText());
-		}
+		if(this.topTextField == null || this.topLabel == null) return;
+		this.topTextField.setFont(font);
+		this.topLabel.setFont(font);
+		adaptWidthByText(this.topLabel.getFont(), this.topTextField.getText());
+	}
+	
+	public void setTopUnderline(boolean underline) {
+		this.topLabel.setUnderline(underline);
 	}
 	
 	public void allowTopTextInput(boolean value) {
-		getTop().setEditable(value);
-		getTop().setDisable(!value);
+		if(value) {
+			swapTop(this.topTextField);
+		}
+		else {
+			swapTop(this.topLabel);
+		}
+		this.topTextField.setEditable(value);
+		this.topTextField.setDisable(!value);
 	}
 	
 	public GridPane getCenter() {
@@ -183,9 +226,11 @@ public class PaneBox {
 		return null;
 	}
 	
-	public void setSelected(boolean value) {
-		this.selection.setVisible(value);
-		allowTopTextInput(value);
+	public void setSelected(boolean selected) {
+		this.selection.setVisible(selected);
+		if(!selected) {
+			allowTopTextInput(false);
+		}
 	}
 	
 	private double restrictedWidth(double width) {

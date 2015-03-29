@@ -4,6 +4,7 @@ import java.util.Observable;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
+import javafx.scene.SubScene;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import ch.hsr.ogv.view.SubSceneAdapter;
@@ -15,7 +16,7 @@ public class SubSceneController extends Observable {
 			@Override
 			public void handle(MouseEvent me) {
 				// only request focus when left mouse button was clicked on the subscene
-				if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect()) {
+				if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && me.getPickResult().getIntersectedNode() instanceof SubScene) {
 					subSceneAdapter.getSubScene().requestFocus();
 				}
 			}
@@ -24,7 +25,7 @@ public class SubSceneController extends Observable {
 		subSceneAdapter.getFloor().setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent me) {
-				if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect()) {
+				if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect()) {
 					Point3D mouseCoords = new Point3D(me.getX(), me.getY(), me.getZ());
 					setChanged();
 					notifyObservers(mouseCoords);

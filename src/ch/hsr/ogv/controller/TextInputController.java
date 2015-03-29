@@ -1,7 +1,9 @@
 package ch.hsr.ogv.controller;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -20,10 +22,17 @@ public class TextInputController {
 	//private final int MAX_CHAR_COUNT = 32;
 
 	public void enableTextInput(ModelClass theClass, PaneBox paneBox) {
-		TextField topTextField = paneBox.getTop();
+		Label topLabel = paneBox.getTopLabel();
+		TextField topTextField = paneBox.getTopTextField();
 		
-		topTextField.setOnMouseClicked((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton()) && me.getClickCount() >= 2) {
+		topLabel.setOnMouseClicked((MouseEvent me) -> {
+			if(MouseButton.PRIMARY.equals(me.getButton()) && me.getClickCount() >= 1) {
+				paneBox.allowTopTextInput(true);
+				Platform.runLater(() -> {
+					paneBox.getTopTextField().requestFocus();
+					paneBox.getTopTextField().selectAll();
+					paneBox.getTopTextField().applyCss();
+				});
 	        }
 		});
 		
