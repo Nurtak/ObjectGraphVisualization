@@ -23,10 +23,13 @@ public class ArrowLine extends Group {
 	private double length;
 	private double angle;
 
-	private double gap = 3;
+	private static final double EDGE_SPACING = 3;
 
 	private Point3D startPoint;
 	private Point3D endPoint;
+	
+	private ArrowLineEdge arrowStart;
+	private ArrowLineEdge arrowEnd;
 	
 	private RelationType type = RelationType.BIDIRECTED_ASSOZIATION;
 	
@@ -55,6 +58,7 @@ public class ArrowLine extends Group {
 
 	public void setType(RelationType type) {
 		this.type = type;
+		drawArrow();
 	}
 	
 	public ArrowLine(Point3D startPoint, Point3D endPoint, RelationType type) {
@@ -84,15 +88,23 @@ public class ArrowLine extends Group {
 	public void drawArrow() {
 		getTransforms().clear();
 		this.length = this.startPoint.distance(this.endPoint);
+		
+		setArrowLineEdge();
+
+		double endGap = arrowEnd.getAdditionalGap();
+		double startGap = arrowStart.getAdditionalGap();
+		
+		this.length -= (endGap + startGap) / 2;
+		
 		this.line.setDepth(this.length);
 		
-		addArrowLineEdge();
 		setColor(this.color);
 		
-		Point3D midPoint = this.startPoint.midpoint(this.endPoint);
-		setTranslateXYZ(midPoint);
-		
 		double angle = GeometryUtil.getAngleBetweenXandZ(this.startPoint, this.endPoint);
+		Point3D midPoint = this.startPoint.midpoint(this.endPoint);
+		
+		this.line.setTranslateZ((-endGap + startGap) / 4);
+		setTranslateXYZ(midPoint);
 		addRotate(angle);
 	}
 
@@ -132,14 +144,14 @@ public class ArrowLine extends Group {
 		return this.color;
 	}
 
-	private void addArrowLineEdge() {
+	private void setArrowLineEdge() {
 		getChildren().clear();
 		getChildren().add(this.line);
-		ArrowLineEdge arrowStart = new ArrowLineEdge(this.type.getStartType(), this.color);
+		this.arrowStart = new ArrowLineEdge(this.type.getStartType(), this.color);
+		this.arrowEnd = new ArrowLineEdge(this.type.getEndType(), this.color);
 		arrowStart.getTransforms().add(new Rotate(180, arrowStart.getTranslateX(), arrowStart.getTranslateY(), arrowStart.getTranslateZ(), Rotate.Y_AXIS));
-		arrowStart.setTranslateZ(- this.length / 2 - this.gap);
-		ArrowLineEdge arrowEnd = new ArrowLineEdge(this.type.getEndType(), this.color);
-		arrowEnd.setTranslateZ(this.length / 2 + this.gap);
+		arrowStart.setTranslateZ(- this.length / 2 - EDGE_SPACING);
+		arrowEnd.setTranslateZ(this.length / 2 + EDGE_SPACING);
 		getChildren().addAll(arrowStart, arrowEnd);
 	}
 

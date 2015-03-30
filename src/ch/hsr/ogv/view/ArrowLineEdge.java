@@ -26,7 +26,12 @@ public class ArrowLineEdge extends Group {
 	
 	private Color color = Color.BLACK;
 	private List<MeshView> meshViews = new ArrayList<MeshView>();
+	private double additionalGap;
 	
+	public double getAdditionalGap() {
+		return this.additionalGap;
+	}
+
 	public ArrowLineEdge(Color color) {
 		this(EndpointType.NONE, color);
 	}
@@ -38,9 +43,11 @@ public class ArrowLineEdge extends Group {
 		switch(endpointType) {
 		case EMPTY_ARROW:
 			modelUrl = ResourceLocator.getResourcePath(Resource.EMPTY_ARROW_OBJ);
+			this.additionalGap = 30;
 			break;
 		case EMPTY_DIAMOND:
 			modelUrl = ResourceLocator.getResourcePath(Resource.EMPTY_DIAMOND_OBJ);
+			this.additionalGap = 50;
 			break;
 		case FILLED_ARROW:
 			modelUrl = ResourceLocator.getResourcePath(Resource.FILLED_ARROW_OBJ);
