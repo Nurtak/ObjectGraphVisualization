@@ -90,8 +90,34 @@
                   <Separator orientation="VERTICAL" />
                   <SplitMenuButton id="btn-create-undirected-association" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Association">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Action 1" />
-                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                      <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <ToggleButton id="btn-create-directed-association" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Directed Association" />
+                           </graphic></MenuItem>
+                      <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <ToggleButton id="btn-bidirected-association" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Bidirected Association" />
+                           </graphic></MenuItem>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <ToggleButton id="btn-create-undirected-aggregation" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Aggregation" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <ToggleButton id="btn-create-directed-aggregation" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Directed Aggregation" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <ToggleButton id="btn-create-undirected-composition" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Composition" />
+                           </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false">
+                           <graphic>
+                              <ToggleButton id="btn-create-directed-composition" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Directed Composition" />
+                           </graphic>
+                        </MenuItem>
                     </items>
                   </SplitMenuButton>
                   <ToggleButton id="btn-create-generalization" fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" stylesheets="@../css/ButtonIcon.css" text="Generalization" toggleGroup="$createToolbar" />
