@@ -114,7 +114,7 @@ public class RootLayoutController implements Observer {
 		alert.setHeaderText("About");
 		alert.setContentText("Authors: Simon Gwerder, Adrian Rieser");
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image("file:resources/images/ClassDiagram.gif")); // add a custom icon
+		stage.getIcons().add(new Image("file:resources/images/application_icon.gif")); // add a custom icon
 		alert.initOwner(this.stageManager.getPrimaryStage());
 		alert.showAndWait();
 	}
