@@ -96,7 +96,7 @@
                            </graphic></MenuItem>
                       <MenuItem mnemonicParsing="false">
                            <graphic>
-                              <ToggleButton id="btn-bidirected-association" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Bidirected Association" />
+                              <ToggleButton id="btn-create-bidirected-association" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Bidirected Association" />
                            </graphic></MenuItem>
                         <MenuItem mnemonicParsing="false">
                            <graphic>
@@ -128,6 +128,6 @@
       </GridPane>
 	</top>
    <center>
-		<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />
+		<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>
