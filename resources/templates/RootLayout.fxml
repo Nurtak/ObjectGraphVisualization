@@ -127,7 +127,7 @@
          </children>
       </GridPane>
 	</top>
-   <left>
+   <center>
 		<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" BorderPane.alignment="CENTER" />
-   </left>
+   </center>
 </BorderPane>
