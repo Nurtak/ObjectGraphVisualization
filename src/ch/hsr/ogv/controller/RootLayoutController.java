@@ -10,6 +10,8 @@ import javafx.geometry.Point3D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
@@ -111,7 +113,7 @@ public class RootLayoutController implements Observer {
 		alert.setHeaderText("About");
 		alert.setContentText("Authors: Simon Gwerder, Adrian Rieser");
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image("file:resources/images/dummy_icon.png")); // add a custom icon
+		stage.getIcons().add(new Image("file:resources/images/ClassDiagram.gif")); // add a custom icon
 		alert.initOwner(this.stageManager.getPrimaryStage());
 		alert.showAndWait();
 	}
@@ -183,6 +185,35 @@ public class RootLayoutController implements Observer {
 	@FXML
 	private void handleCreateDependency() {	
 		//TODO
+	}
+	
+	@FXML
+	private SplitMenuButton createAssociation;
+	
+	@FXML
+	private MenuItem createUndirectedAssociation;
+	
+	@FXML
+	private MenuItem createDirectedAssociation;
+	
+	@FXML
+	private MenuItem createBidirectedAssociation;
+	
+	@FXML
+	private MenuItem createUndirectedAggrigation;
+	
+	@FXML
+	private MenuItem createDirectedAggrigation;
+	
+	@FXML
+	private MenuItem createUndirectedComposition;
+	
+	@FXML
+	private MenuItem createDirectedComposition;
+	
+	@FXML
+	private void handleCreateAssociation() {	
+		
 	}
 	
 	@Override

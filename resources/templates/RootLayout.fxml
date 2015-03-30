@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.input.*?>
@@ -82,46 +83,100 @@
       		</MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
                <items>
-                  <ToggleButton id="btn-create-class" fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" stylesheets="@../css/ButtonIcon.css" text="Class">
+                  <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" text="Class">
                      <toggleGroup>
                         <ToggleGroup fx:id="createToolbar" />
-                     </toggleGroup></ToggleButton>
-                  <ToggleButton id="btn-create-instance" fx:id="createInstance" mnemonicParsing="false" onAction="#handleCreateInstance" stylesheets="@../css/ButtonIcon.css" text="Instance" toggleGroup="$createToolbar" />
+                     </toggleGroup>
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/structureclass.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic></ToggleButton>
+                  <ToggleButton fx:id="createInstance" mnemonicParsing="false" onAction="#handleCreateInstance" text="Instance" toggleGroup="$createToolbar">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/instance.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic></ToggleButton>
                   <Separator orientation="VERTICAL" />
-                  <SplitMenuButton id="btn-create-undirected-association" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Association">
+                  <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" text="Association">
                     <items>
-                      <MenuItem mnemonicParsing="false">
+                      <MenuItem mnemonicParsing="false" text="Directed Association">
                            <graphic>
-                              <ToggleButton id="btn-create-directed-association" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Directed Association" />
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/assoWithNav.gif" />
+                                 </image>
+                              </ImageView>
                            </graphic></MenuItem>
-                      <MenuItem mnemonicParsing="false">
+                      <MenuItem mnemonicParsing="false" text="Bidirected Association">
                            <graphic>
-                              <ToggleButton id="btn-create-bidirected-association" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Bidirected Association" />
-                           </graphic></MenuItem>
-                        <MenuItem mnemonicParsing="false">
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/assoNavToNav.gif" />
+                                 </image>
+                              </ImageView>                           </graphic></MenuItem>
+                        <MenuItem mnemonicParsing="false" text="Aggregation">
                            <graphic>
-                              <ToggleButton id="btn-create-undirected-aggregation" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Aggregation" />
-                           </graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/aggregation.gif" />
+                                 </image>
+                              </ImageView>                           </graphic>
                         </MenuItem>
-                        <MenuItem mnemonicParsing="false">
+                        <MenuItem mnemonicParsing="false" text="Directed Aggregation">
                            <graphic>
-                              <ToggleButton id="btn-create-directed-aggregation" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Directed Aggregation" />
-                           </graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/aggregationToNavi.gif" />
+                                 </image>
+                              </ImageView>                           </graphic>
                         </MenuItem>
-                        <MenuItem mnemonicParsing="false">
+                        <MenuItem mnemonicParsing="false" text="Composition">
                            <graphic>
-                              <ToggleButton id="btn-create-undirected-composition" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Composition" />
-                           </graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/composite.gif" />
+                                 </image>
+                              </ImageView>                           </graphic>
                         </MenuItem>
-                        <MenuItem mnemonicParsing="false">
+                        <MenuItem mnemonicParsing="false" text="Directed Composition">
                            <graphic>
-                              <ToggleButton id="btn-create-directed-composition" mnemonicParsing="false" stylesheets="@../css/ButtonIcon.css" text="Directed Composition" />
-                           </graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/compositeToNavi.gif" />
+                                 </image>
+                              </ImageView>                           </graphic>
                         </MenuItem>
                     </items>
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/assoc.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic>
                   </SplitMenuButton>
-                  <ToggleButton id="btn-create-generalization" fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" stylesheets="@../css/ButtonIcon.css" text="Generalization" toggleGroup="$createToolbar" />
-                  <ToggleButton id="btn-create-dependency" fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" stylesheets="@../css/ButtonIcon.css" text="Dependency" toggleGroup="$createToolbar" />
+                  <ToggleButton fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization" toggleGroup="$createToolbar">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/general.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic></ToggleButton>
+                  <ToggleButton fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/depend.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic></ToggleButton>
                </items>
             </ToolBar>
          </children>
