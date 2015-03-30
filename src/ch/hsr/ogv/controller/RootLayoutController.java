@@ -7,6 +7,7 @@ import java.util.Observer;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Point3D;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckMenuItem;
@@ -178,21 +179,11 @@ public class RootLayoutController implements Observer {
 		}
 	
 	@FXML
-	private void handleCreateGeneralization() {	
-		//TODO
-	}
-	
-	@FXML
-	private void handleCreateDependency() {	
-		//TODO
-	}
-	
-	@FXML
 	private SplitMenuButton createAssociation;
 	
 	@FXML
 	private MenuItem createUndirectedAssociation;
-	
+		
 	@FXML
 	private MenuItem createDirectedAssociation;
 	
@@ -200,10 +191,10 @@ public class RootLayoutController implements Observer {
 	private MenuItem createBidirectedAssociation;
 	
 	@FXML
-	private MenuItem createUndirectedAggrigation;
+	private MenuItem createUndirectedAggregation;
 	
 	@FXML
-	private MenuItem createDirectedAggrigation;
+	private MenuItem createDirectedAggregation;
 	
 	@FXML
 	private MenuItem createUndirectedComposition;
@@ -213,7 +204,58 @@ public class RootLayoutController implements Observer {
 	
 	@FXML
 	private void handleCreateAssociation() {	
+
+	}
+	
+	@FXML
+	private void handleCreateUndirectedAssociation() {	
+		Node graphic = createUndirectedAssociation.getGraphic();
+		createAssociation.setGraphic(graphic);
+		String title = createUndirectedAssociation.getText();
+		createAssociation.setText(title);
+	}
+	
+	@FXML
+	private void handleCreateDirectedAssociation() {	
+		Node graphic = createDirectedAssociation.getGraphic().getClip();
+		createAssociation.setGraphic(graphic);
+		String title = createDirectedAssociation.getText();
+		createAssociation.setText(title);
+	}
+	
+	@FXML
+	private void handleCreateBidirectedAssociation() {	
 		
+	}
+	
+	@FXML
+	private void handleCreateUndirectedAggregation() {	
+		
+	}
+	
+	@FXML
+	private void handleCreateDirectedAggregation() {	
+		
+	}
+	
+	@FXML
+	private void handleCreateUndirectedComposition() {	
+		
+	}
+	
+	@FXML
+	private void handleCreateDirectedComposition() {	
+		
+	}
+	
+	@FXML
+	private void handleCreateGeneralization() {	
+		//TODO
+	}
+	
+	@FXML
+	private void handleCreateDependency() {	
+		//TODO
 	}
 	
 	@Override

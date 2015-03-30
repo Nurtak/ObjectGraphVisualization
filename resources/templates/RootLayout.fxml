@@ -105,7 +105,16 @@
                   <Separator orientation="VERTICAL" />
                   <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" text="Association">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Directed Association">
+                        <MenuItem fx:id="createUndirectedAssociation1" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association" visible="false">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/assoc.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
+                      <MenuItem fx:id="createDirectedAssociation" mnemonicParsing="false" onAction="#handleCreateDirectedAssociation" text="Directed Association">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -113,14 +122,14 @@
                                  </image>
                               </ImageView>
                            </graphic></MenuItem>
-                      <MenuItem mnemonicParsing="false" text="Bidirected Association">
+                      <MenuItem fx:id="createBidirectedAssociation" mnemonicParsing="false" onAction="#handleCreateBidirectedAssociation" text="Bidirected Association">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/toolbar/assoNavToNav.gif" />
                                  </image>
                               </ImageView>                           </graphic></MenuItem>
-                        <MenuItem mnemonicParsing="false" text="Aggregation">
+                        <MenuItem fx:id="createUndirectedAggregation" mnemonicParsing="false" onAction="#handleCreateUndirectedAggregation" text="Aggregation">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -128,7 +137,7 @@
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
-                        <MenuItem mnemonicParsing="false" text="Directed Aggregation">
+                        <MenuItem fx:id="createDirectedAggregation" mnemonicParsing="false" onAction="#handleCreateDirectedAggregation" text="Directed Aggregation">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -136,7 +145,7 @@
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
-                        <MenuItem mnemonicParsing="false" text="Composition">
+                        <MenuItem fx:id="createUndirectedComposition" mnemonicParsing="false" onAction="#handleCreateUndirectedComposition" text="Composition">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -144,7 +153,7 @@
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
-                        <MenuItem mnemonicParsing="false" text="Directed Composition">
+                        <MenuItem fx:id="createDirectedComposition" mnemonicParsing="false" onAction="#handleCreateDirectedComposition" text="Directed Composition">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
