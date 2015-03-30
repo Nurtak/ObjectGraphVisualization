@@ -80,6 +80,12 @@ public abstract class DragController extends Observable implements Observer {
 		if(o instanceof SelectionController) {
 			SelectionController selectionController = (SelectionController) o;
 			this.selected = selectionController.getSelected();
+			Point3D selectionCoodinates = selectionController.getSelectionCoordinates();
+			if(selectionController.getSelectionCoordinates() != null) {
+				origRelMouseX = selectionCoodinates.getX();
+				origRelMouseY = selectionCoodinates.getY();
+				origRelMouseZ = selectionCoodinates.getZ();
+			}
 		}
 	}
 	

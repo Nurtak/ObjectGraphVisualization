@@ -4,6 +4,7 @@ import java.util.Observable;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Point3D;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 import javafx.scene.input.MouseButton;
@@ -18,12 +19,22 @@ public class SelectionController extends Observable {
 	
 	private volatile PaneBox selectedBox = null;
 	
+	private Point3D selectionCoordinates;
+	
+	public Point3D getSelectionCoordinates() {
+		return selectionCoordinates;
+	}
+	
 	public boolean hasSelection() {
 		return this.selectedBox != null;
 	}
 
 	public PaneBox getSelected() {
 		return this.selectedBox;
+	}
+	
+	public boolean isSelected(PaneBox paneBox) {
+		return this.selectedBox != null && this.selectedBox.equals(paneBox);
 	}
 	
 	public void enableSelection(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
@@ -35,6 +46,7 @@ public class SelectionController extends Observable {
 	private void focusOnClick(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		paneBox.get().setOnMouseClicked((MouseEvent me) -> {
 			if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.get().focusedProperty().get()) { // if not already focused
+				this.selectionCoordinates = new Point3D(me.getX(), me.getY(), me.getZ());
 				paneBox.get().requestFocus();
 			}
 		});
@@ -45,13 +57,12 @@ public class SelectionController extends Observable {
 //				paneBox.get().requestFocus();
 //			}
 //        });
-
-		
 	}
 	
 	private void focusOnDragDetected(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		paneBox.get().setOnDragDetected((MouseEvent me) -> {
 			if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.get().focusedProperty().get()) { // if not already focused
+				this.selectionCoordinates = new Point3D(me.getX(), me.getY(), me.getZ());
 				paneBox.get().requestFocus();
 			}
 		});

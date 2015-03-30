@@ -228,9 +228,9 @@ public class PaneBox {
 	
 	public void setSelected(boolean selected) {
 		this.selection.setVisible(selected);
-		if(!selected) {
-			allowTopTextInput(false);
-		}
+//		if(!selected) {
+//			allowTopTextInput(false);
+//		}
 	}
 	
 	private double restrictedWidth(double width) {
