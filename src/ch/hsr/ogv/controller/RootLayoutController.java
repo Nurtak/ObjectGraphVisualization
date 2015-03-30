@@ -8,8 +8,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Point3D;
 import javafx.scene.control.Alert;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
@@ -47,7 +47,7 @@ public class RootLayoutController implements Observer {
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("OGV (*.ogv)", "*.ogv");
 		fileChooser.getExtensionFilters().add(extFilter);
 		File previousFile = UserPreferences.getSavedFile();
-		if(previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
+		if (previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show open file dialog
@@ -84,7 +84,7 @@ public class RootLayoutController implements Observer {
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("OGV (*.ogv)", "*.ogv");
 		fileChooser.getExtensionFilters().add(extFilter);
 		File previousFile = UserPreferences.getSavedFile();
-		if(previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
+		if (previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show save file dialog
@@ -187,13 +187,13 @@ public class RootLayoutController implements Observer {
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		if(o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
+		if (o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
 			StageManager stageManager = (StageManager) arg;
 			this.stageManager = stageManager;
 			this.stageManager.getSubSceneController().addObserver(this);
 		}
 		
-		if(o instanceof SubSceneController && arg instanceof Point3D) {
+		if (o instanceof SubSceneController && arg instanceof Point3D) {
 			Point3D mouseCoords = (Point3D) arg;
 			if(createClass != null && createClass.isSelected()) {
 				this.stageManager.handleCreateNewClass(mouseCoords);
