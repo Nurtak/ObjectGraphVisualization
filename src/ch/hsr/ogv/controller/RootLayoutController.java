@@ -204,7 +204,7 @@ public class RootLayoutController implements Observer {
 	
 	@FXML
 	private void handleCreateAssociation() {	
-
+		//createAssociation.
 	}
 	
 	@FXML
@@ -217,10 +217,10 @@ public class RootLayoutController implements Observer {
 	
 	@FXML
 	private void handleCreateDirectedAssociation() {	
-		Node graphic = createDirectedAssociation.getGraphic().getClip();
-		createAssociation.setGraphic(graphic);
 		String title = createDirectedAssociation.getText();
 		createAssociation.setText(title);
+		Node graphic = createDirectedAssociation.getGraphic().getClip();
+		createAssociation.setGraphic(graphic);
 	}
 	
 	@FXML
@@ -264,15 +264,13 @@ public class RootLayoutController implements Observer {
 			StageManager stageManager = (StageManager) arg;
 			this.stageManager = stageManager;
 			this.stageManager.getSubSceneController().addObserver(this);
-		}
-		
-		if (o instanceof SubSceneController && arg instanceof Point3D) {
+		} else if (o instanceof SubSceneController && arg instanceof Point3D) {
 			Point3D mouseCoords = (Point3D) arg;
-			if(createClass != null && createClass.isSelected()) {
+			if (createClass != null && createClass.isSelected()) {
 				this.stageManager.handleCreateNewClass(mouseCoords);
 				this.createClass.setSelected(false);
 			}
 		}
-		
 	}
+	
 }
