@@ -55,12 +55,6 @@
 
 /* ====   SELECTED TOGGLE SplitMenuButton ================================================= */
 
-.tsplit-menu-button {
-    -fx-background-color: -fx-faint-focus-color, -fx-focus-color;
-    -fx-background-insets: -2, -0.3;
-    -fx-background-radius: 7, 6;
-}
-
 .tsplit-menu-button > .label {
 	-fx-background-color:
             linear-gradient(to bottom, derive(-fx-outer-border, -20%), -fx-outer-border),

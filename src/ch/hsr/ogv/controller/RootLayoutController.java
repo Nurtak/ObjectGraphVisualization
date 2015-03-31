@@ -208,22 +208,6 @@ public class RootLayoutController implements Observer, Initializable {
 	private ToggleButton createObject;
 	
 	@FXML
-	private ToggleButton createGeneralization;
-	
-	@FXML
-	private ToggleButton createDependency;
-
-	@FXML
-	private void handleCreateClass() {	
-		this.stageManager.onlyFloorMouseEvent(this.createClass.isSelected());
-	}
-	
-	@FXML
-	private void handleCreateObject() {	
-		
-	}
-	
-	@FXML
 	private SplitMenuButton createAssociation;
 	private TSplitMenuButton tSplitMenuButton;
 	
@@ -247,6 +231,22 @@ public class RootLayoutController implements Observer, Initializable {
 	
 	@FXML
 	private MenuItem createDirectedComposition;
+	
+	@FXML
+	private ToggleButton createGeneralization;
+	
+	@FXML
+	private ToggleButton createDependency;
+	
+	@FXML
+	private void handleCreateClass() {	
+		this.stageManager.onlyFloorMouseEvent(this.createClass.isSelected());
+	}
+	
+	@FXML
+	private void handleCreateObject() {	
+		
+	}
 	
 	@FXML
 	private void handleCreateAssociation() {	
@@ -318,7 +318,6 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
-		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation);
-		this.tSplitMenuButton.setChoice(this.createUndirectedAssociation);
+		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation);
 	}
 }
