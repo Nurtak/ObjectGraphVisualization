@@ -6,7 +6,6 @@ import java.util.Observer;
 import ch.hsr.ogv.view.SubSceneAdapter;
 import ch.hsr.ogv.view.SubSceneCamera;
 import ch.hsr.ogv.view.Xform;
-import javafx.scene.Group;
 import javafx.scene.SubScene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -31,13 +30,31 @@ public class CameraController implements Observer {
 	private double mouseDeltaY;
 	
 	private volatile boolean moveCamera = true;
+	private volatile boolean lockedTopView = false;
 	
-	public void handle2DClassView(SubSceneCamera ssCamera) {
+	public void handleCenterView(SubSceneCamera ssCamera) {
 		Xform cameraXform = ssCamera.getCameraXform();
-        cameraXform.ry.setAngle(0.0); // 320
-        cameraXform.rx.setAngle(90.0); // 40
+		Xform cameraXform2 = ssCamera.getCameraXform2();
+		cameraXform.ry.setAngle(0.0);
+        cameraXform.rx.setAngle(90.0);
+		cameraXform2.t.setX(0.0);
+		cameraXform2.t.setY(0.0);
+		ssCamera.get().setTranslateZ(-SubSceneCamera.CAMERA_DISTANCE);
 	}
-
+	
+	public void handleLockedTopView(SubSceneCamera ssCamera, boolean isLockedTopView) {
+		Xform cameraXform = ssCamera.getCameraXform();
+		if(isLockedTopView) {
+	        cameraXform.ry.setAngle(0.0);
+	        cameraXform.rx.setAngle(90.0);
+		}
+		else {
+	        cameraXform.ry.setAngle(320.0);
+	        cameraXform.rx.setAngle(40.0);
+		}
+		this.lockedTopView = isLockedTopView;
+	}
+	
     public void handleMouse(SubSceneAdapter subSceneAdapter) {
     	SubScene subScene = subSceneAdapter.getSubScene();
     	SubSceneCamera ssCamera = subSceneAdapter.getSubSceneCamera();
@@ -73,7 +90,7 @@ public class CameraController implements Observer {
             if (me.isPrimaryButtonDown()) {
             	cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX * MODIFIER_FACTOR * modifier * 2.0);
             	cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * MODIFIER_FACTOR * modifier * 2.0);
-            } else if (me.isSecondaryButtonDown()) {
+            } else if (me.isSecondaryButtonDown() && !lockedTopView) {
             	cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MODIFIER_FACTOR * modifier);
             	cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MODIFIER_FACTOR * modifier);
             } else if (me.isMiddleButtonDown()) {
@@ -98,42 +115,25 @@ public class CameraController implements Observer {
 
     	subScene.setOnKeyPressed((KeyEvent ke) -> {
         	if(!moveCamera) return;
-        	
-            Xform cameraXform2 = ssCamera.getCameraXform2();
-        	
             switch (ke.getCode()) {
-                case Z:
-                	handle2DClassView(ssCamera);
-                    ssCamera.get().setTranslateZ(-SubSceneCamera.CAMERA_DISTANCE);
-                    cameraXform2.t.setX(0.0);
-                    cameraXform2.t.setY(0.0);
-                    break;
-                case X:
-                	Group axis = subSceneAdapter.getAxis();
-                	if (axis.isVisible()) {
-                		axis.setVisible(false);
-                    } else {
-                    	axis.setVisible(true);
-                    }
-                    break;
                 case UP:
                     double oldY_UP = ssCamera.get().getTranslateY();
-                    double newY_UP = oldY_UP + MODIFIER * 7;
+                    double newY_UP = oldY_UP - MODIFIER * 7;
                     ssCamera.get().setTranslateY(newY_UP);
                     break;
                 case DOWN:
                 	double oldY_DOWN = ssCamera.get().getTranslateY();
-                    double newY_DOWN = oldY_DOWN - MODIFIER * 7;
+                    double newY_DOWN = oldY_DOWN + MODIFIER * 7;
                     ssCamera.get().setTranslateY(newY_DOWN);
                     break;
                 case RIGHT:
                 	double oldX_RIGHT = ssCamera.get().getTranslateX();
-                    double newX_RIGHT = oldX_RIGHT - MODIFIER * 7;
+                    double newX_RIGHT = oldX_RIGHT + MODIFIER * 7;
                     ssCamera.get().setTranslateX(newX_RIGHT);
                     break;
                 case LEFT:
                 	double oldX_LEFT = ssCamera.get().getTranslateX();
-                    double newX_LEFT = oldX_LEFT + MODIFIER * 7;
+                    double newX_LEFT = oldX_LEFT - MODIFIER * 7;
                     ssCamera.get().setTranslateX(newX_LEFT);
                     break;
                 default:

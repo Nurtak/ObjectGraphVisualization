@@ -59,8 +59,25 @@
       				</Menu>
                   <Menu id="menu_view" mnemonicParsing="false" text="View">
                     <items>
-                        <CheckMenuItem id="checkmenuitem_classview" mnemonicParsing="false" onAction="#handle2DClassView" selected="true" text="2D Class View" />
-                        <CheckMenuItem id="checkmenuitem_objectview" mnemonicParsing="false" text="3D Object View" />
+                        <MenuItem fx:id="centerView" mnemonicParsing="false" onAction="#handleCenterView" text="Center View">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Z" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <CheckMenuItem fx:id="lockedTopView" mnemonicParsing="false" onAction="#handleLockedTopView" text="Locked Top View">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="T" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </CheckMenuItem>
+                        <CheckMenuItem id="checkmenuitem_objectview" fx:id="showObjects" mnemonicParsing="false" onAction="#handleShowObjects" selected="true" text="Show Objects">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="O" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                           </accelerator></CheckMenuItem>
+                        <CheckMenuItem fx:id="showModelAxis" mnemonicParsing="false" onAction="#handleShowModelAxis" selected="true" text="Show Model Axis">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="X" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </CheckMenuItem>
                     </items>
                   </Menu>
                   <Menu id="menu_window" mnemonicParsing="false" text="Window">

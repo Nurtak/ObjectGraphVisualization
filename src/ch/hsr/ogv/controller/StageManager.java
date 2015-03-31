@@ -9,10 +9,10 @@ import java.util.Observer;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -50,7 +50,7 @@ public class StageManager extends Observable implements Observer {
 	private String appTitle = "Object Graph Visualizer";
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	private SubSceneAdapter subSceneAdpater;
+	private SubSceneAdapter subSceneAdapter;
 
 	private ModelManager modelManager;
 
@@ -108,8 +108,8 @@ public class StageManager extends Observable implements Observer {
 		this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_PNG).toExternalForm())); // set the application icon
 
 		Pane canvas = (Pane) this.rootLayout.getCenter();
-		this.subSceneAdpater = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());
-		SubScene subScene = this.subSceneAdpater.getSubScene();
+		this.subSceneAdapter = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());
+		SubScene subScene = this.subSceneAdapter.getSubScene();
 		canvas.getChildren().add(subScene);
 		subScene.widthProperty().bind(canvas.widthProperty());
 		subScene.heightProperty().bind(canvas.heightProperty());
@@ -117,7 +117,7 @@ public class StageManager extends Observable implements Observer {
 		Scene scene = new Scene(this.rootLayout);
 		this.primaryStage.setScene(scene);
 		this.primaryStage.show();
-		this.subSceneAdpater.getSubScene().requestFocus();
+		this.subSceneAdapter.getSubScene().requestFocus();
 
 		setChanged();
 		notifyObservers(this); // pass StageManager to RootLayoutController
@@ -137,7 +137,7 @@ public class StageManager extends Observable implements Observer {
 	}
 	
 	public void onlyFloorMouseEvent(boolean value) {
-		this.subSceneAdpater.onlyFloorMouseEvent(value);
+		this.subSceneAdapter.onlyFloorMouseEvent(value);
 	}
 	
 	public void handleCreateNewClass(Point3D mouseCoords) {
@@ -152,14 +152,42 @@ public class StageManager extends Observable implements Observer {
 			newBox.getTopTextField().applyCss();
 		});
 	}
-
-	public void handle2DClassView() {
-		SubSceneCamera ssCamera = this.subSceneAdpater.getSubSceneCamera();
-		this.cameraController.handle2DClassView(ssCamera);
+	
+	public void handleCenterView() {
+		SubSceneCamera ssCamera = this.subSceneAdapter.getSubSceneCamera();
+		this.cameraController.handleCenterView(ssCamera);
 	}
 
-	public void handleSetTheme(CheckMenuItem choosenMenu, Style style) {
-		this.themeMenuController.handleSetTheme(this.rootLayout, choosenMenu, style);
+	public void handleLockedTopView(boolean isLockedTopView) {
+		SubSceneCamera ssCamera = this.subSceneAdapter.getSubSceneCamera();
+		this.cameraController.handleLockedTopView(ssCamera, isLockedTopView);
+	}
+	
+	public void handleShowObjects(boolean showObjects) {
+		for(ModelBox modelBox : this.boxes.keySet()) {
+			if(modelBox instanceof Instance) {
+				PaneBox paneBox = this.boxes.get(modelBox);
+				paneBox.setVisible(showObjects);
+				for(Endpoint endpoint : modelBox.getEndpoints()) {
+					ArrowLine arrowLine = this.arrows.get(endpoint.getRelation());
+					arrowLine.setVisible(showObjects);
+				}
+			}
+		}
+	}
+	
+	public void handleShowModelAxis(boolean showModelAxis) {
+    	Group axis = this.subSceneAdapter.getAxis();
+    	if (showModelAxis) {
+    		axis.setVisible(true);
+        } else {
+        	axis.setVisible(false);
+        }
+	}
+
+
+	public void handleSetTheme(Style style) {
+		this.themeMenuController.handleSetTheme(this.rootLayout, style);
 	}
 
 	private void initRootLayoutController() {
@@ -175,12 +203,12 @@ public class StageManager extends Observable implements Observer {
 	}
 
 	private void initCameraController() {
-		this.cameraController.handleMouse(this.subSceneAdpater);
-		this.cameraController.handleKeyboard(this.subSceneAdpater);
+		this.cameraController.handleMouse(this.subSceneAdapter);
+		this.cameraController.handleKeyboard(this.subSceneAdapter);
 	}
 
 	private void initSubSceneController() {
-		this.subSceneController.handleSubSceneMouse(this.subSceneAdpater);
+		this.subSceneController.handleSubSceneMouse(this.subSceneAdapter);
 	}
 
 	private void initPaneBoxController() {
@@ -197,7 +225,7 @@ public class StageManager extends Observable implements Observer {
 	 *            node.
 	 */
 	private void addToSubScene(Node node) {
-		this.subSceneAdpater.add(node);
+		this.subSceneAdapter.add(node);
 		this.rootLayout.applyCss();
 	}
 
@@ -208,7 +236,7 @@ public class StageManager extends Observable implements Observer {
 	 *            node.
 	 */
 	private void removeFromSubScene(Node node) {
-		this.subSceneAdpater.remove(node);
+		this.subSceneAdapter.remove(node);
 		this.rootLayout.applyCss();
 	}
 
@@ -272,10 +300,10 @@ public class StageManager extends Observable implements Observer {
 	}
 
 	private void addPaneBoxControls(ModelClass theClass, PaneBox paneBox) {
-		this.selectionController.enableSelection(paneBox, this.subSceneAdpater);
+		this.selectionController.enableSelection(paneBox, this.subSceneAdapter);
 		this.textInputController.enableTextInput(theClass, paneBox);
-		this.dragMoveController.enableDragMove(theClass, paneBox, this.subSceneAdpater);
-		this.dragResizeController.enableDragResize(theClass, paneBox, this.subSceneAdpater);
+		this.dragMoveController.enableDragMove(theClass, paneBox, this.subSceneAdapter);
+		this.dragResizeController.enableDragResize(theClass, paneBox, this.subSceneAdapter);
 	}
 
 	private void adaptBoxSettings(ModelBox modelBox) {

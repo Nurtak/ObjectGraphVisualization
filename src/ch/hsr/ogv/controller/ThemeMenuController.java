@@ -5,9 +5,6 @@ import com.aquafx_project.AquaFx;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import javafx.application.Application;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -17,17 +14,8 @@ import javafx.scene.layout.BorderPane;
  */
 public class ThemeMenuController {
 
-	public void handleSetTheme(BorderPane rootLayout, CheckMenuItem choosenMenu, Style style) {
+	public void handleSetTheme(BorderPane rootLayout, Style style) {
 		setStyle(rootLayout, style);
-		if(choosenMenu == null) return;
-		Menu theme = choosenMenu.getParentMenu();
-		for(MenuItem menuItem : theme.getItems()) {
-			if(menuItem instanceof CheckMenuItem) {
-				CheckMenuItem cMenuItem = (CheckMenuItem) menuItem;
-				cMenuItem.setSelected(false);
-			}
-		}
-		choosenMenu.setSelected(true);
 	}
 
 	private void setStyle(BorderPane rootLayout, Style style) {

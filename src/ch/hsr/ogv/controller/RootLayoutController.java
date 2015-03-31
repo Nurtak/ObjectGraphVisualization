@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.ToggleButton;
@@ -128,8 +129,35 @@ public class RootLayoutController implements Observer {
 	}
 	
 	@FXML
-	private void handle2DClassView() {
-		this.stageManager.handle2DClassView();
+	MenuItem centerView;
+	
+	@FXML
+	CheckMenuItem lockedTopView;
+	
+	@FXML
+	CheckMenuItem showObjects;
+	
+	@FXML
+	CheckMenuItem showModelAxis;
+	
+	@FXML
+	private void handleCenterView() {
+		this.stageManager.handleCenterView();
+	}
+	
+	@FXML
+	private void handleLockedTopView() {
+		this.stageManager.handleLockedTopView(this.lockedTopView.isSelected());
+	}
+	
+	@FXML
+	private void handleShowObjects() {
+		this.stageManager.handleShowObjects(this.showObjects.isSelected());
+	}
+	
+	@FXML
+	private void handleShowModelAxis() {
+		this.stageManager.handleShowModelAxis(this.showModelAxis.isSelected());
 	}
 	
 	@FXML
@@ -140,20 +168,34 @@ public class RootLayoutController implements Observer {
 	
 	@FXML
 	private CheckMenuItem aqua;
-		
+	
+	private void setMenuSelection(CheckMenuItem choosenMenu) {
+		Menu theme = choosenMenu.getParentMenu();
+		for(MenuItem menuItem : theme.getItems()) {
+			if(menuItem instanceof CheckMenuItem) {
+				CheckMenuItem cMenuItem = (CheckMenuItem) menuItem;
+				cMenuItem.setSelected(false);
+			}
+		}
+		choosenMenu.setSelected(true);
+	}
+	
 	@FXML
 	private void handleSetModena() {
-		this.stageManager.handleSetTheme(this.modena, Style.MODENA);
+		setMenuSelection(this.modena);
+		this.stageManager.handleSetTheme(Style.MODENA);
 	}
 	
 	@FXML
 	private void handleSetCaspian() {
-		this.stageManager.handleSetTheme(this.caspian, Style.CASPIANDARK);
+		setMenuSelection(this.caspian);
+		this.stageManager.handleSetTheme(Style.CASPIANDARK);
 	}
 	
 	@FXML
 	private void handleSetAqua() {
-		this.stageManager.handleSetTheme(this.aqua, Style.AQUA);
+		setMenuSelection(this.aqua);
+		this.stageManager.handleSetTheme(Style.AQUA);
 	}
 
 	@FXML
@@ -176,7 +218,7 @@ public class RootLayoutController implements Observer {
 	@FXML
 	private void handleCreateInstance() {	
 		//TODO
-		}
+	}
 	
 	@FXML
 	private SplitMenuButton createAssociation;
