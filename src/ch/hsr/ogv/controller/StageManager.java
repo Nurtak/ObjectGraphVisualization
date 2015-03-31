@@ -130,6 +130,10 @@ public class StageManager extends Observable implements Observer {
 		this.modelManager.createInstance(mcA);
 		this.modelManager.createInstance(mcB);
 		this.modelManager.createInstance(mcB);
+		this.modelManager.createInstance(mcB);
+		this.modelManager.createInstance(mcB);
+		this.modelManager.createInstance(mcB);
+	
 
 		this.modelManager.createRelation(mcA, mcB, RelationType.GENERALIZATION);
 		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
@@ -324,16 +328,6 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setTopText(modelBox.getName());
 			modelBox.setWidth(changedBox.getMinWidth());
-		}
-
-		if (modelBox instanceof ModelClass) {
-			ModelClass theClass = (ModelClass) modelBox;
-			for (ModelObject instance : theClass.getModelObjects()) {
-				// TODO Replace this workaround with actual methods in Instance
-				// for classpart of the name
-				String classPart = instance.getName().substring(instance.getName().lastIndexOf(":"));
-				instance.setName(instance.getName().replaceAll(classPart, ":" + theClass.getName()));
-			}
 		}
 	}
 
