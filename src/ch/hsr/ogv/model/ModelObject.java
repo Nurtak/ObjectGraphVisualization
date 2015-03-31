@@ -12,16 +12,16 @@ import javafx.scene.paint.Color;
  * @author Adrian Rieser
  *
  */
-public class Instance extends ModelBox {
+public class ModelObject extends ModelBox {
 
 	private Map<Attribute, String> attributeValues = new HashMap<Attribute, String>();
 
 	private ModelClass modelClass;
 	
-	public static volatile AtomicInteger instanceCounter = new AtomicInteger(0);
+	public static volatile AtomicInteger modelObjectCounter = new AtomicInteger(0);
 	
-	public Instance(ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
-		super("obj" + instanceCounter.addAndGet(1) + ':' + modelClass.getName(), coordinates, width, heigth, color);
+	public ModelObject(ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
+		super("obj" + modelObjectCounter.addAndGet(1) + ':' + modelClass.getName(), coordinates, width, heigth, color);
 		this.modelClass = modelClass;
 	}
 

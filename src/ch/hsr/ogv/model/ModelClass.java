@@ -16,12 +16,12 @@ import jfxtras.labs.util.Util;
 public class ModelClass extends ModelBox {
 
 	private List<Attribute> attributes = new ArrayList<Attribute>();
-	private List<Instance> instances = new ArrayList<Instance>();
+	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
 	
-	public static volatile AtomicInteger classCounter = new AtomicInteger(0);
+	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
 
 	public ModelClass(Point3D coordinates, double width, double heigth, Color color) {
-		super("Class" + classCounter.addAndGet(1), coordinates, width, heigth, color);
+		super("Class" + modelClassCounter.addAndGet(1), coordinates, width, heigth, color);
 	}
 
 	public List<Attribute> getAttributes() {
@@ -32,19 +32,19 @@ public class ModelClass extends ModelBox {
 		this.attributes = attributes;
 	}
 
-	public List<Instance> getInstances() {
-		return instances;
+	public List<ModelObject> getModelObjects() {
+		return modelObjects;
 	}
 
-	public void setInstances(List<Instance> instances) {
-		this.instances = instances;
+	public void setModelObjects(List<ModelObject> modelObjects) {
+		this.modelObjects = modelObjects;
 	}
 
 	public boolean addAttribute(Attribute attribute) {
 		if (!attributes.contains(attribute)) {
 			if(attributes.add(attribute)) {
-				for(Instance instance : getInstances()) {
-					instance.addAttributeValue(attribute, "");
+				for(ModelObject modelObject : getModelObjects()) {
+					modelObject.addAttributeValue(attribute, "");
 				}	
 			}
 		}
@@ -52,22 +52,22 @@ public class ModelClass extends ModelBox {
 	}
 
 	public boolean deleteAttribute(Attribute attribute) {
-		for(Instance instance : getInstances()) {
-			instance.removeAttributeValue(attribute);
+		for(ModelObject modelObject : getModelObjects()) {
+			modelObject.removeAttributeValue(attribute);
 		}
 		return attributes.remove(attribute);
 	}
 
-	private boolean addInstance(Instance instance) {
-		if (!instances.contains(instance)) {
-			return instances.add(instance);
+	private boolean addModelObject(ModelObject modelObject) {
+		if (!modelObjects.contains(modelObject)) {
+			return modelObjects.add(modelObject);
 		}
 		return false;
 	}
 
-	public boolean deleteInstance(Instance instance) {
-		Instance.instanceCounter.decrementAndGet();
-		return instances.remove(instance);
+	public boolean deleteModelObject(ModelObject modelObject) {
+		ModelObject.modelObjectCounter.decrementAndGet();
+		return modelObjects.remove(modelObject);
 	}
 
 	public void createAttribute(String name) {
@@ -75,16 +75,16 @@ public class ModelClass extends ModelBox {
 		addAttribute(attribute);
 	}
 
-	public Instance createInstance(ModelClass theClass) {
-		int levelPlus = (theClass.getInstances().size() + 1) * 100;
-		Point3D instanceCoordinates = new Point3D(theClass.getX(), theClass.getY() + levelPlus, theClass.getZ());
-		Instance instance = new Instance(theClass, instanceCoordinates, theClass.getWidth(), theClass.getHeight(), Util.brighter(theClass.getColor(), 0.1));
+	public ModelObject createModelObject(ModelClass modelClass) {
+		int levelPlus = (modelClass.getModelObjects().size() + 1) * 100;
+		Point3D modelObjectCoordinates = new Point3D(modelClass.getX(), modelClass.getY() + levelPlus, modelClass.getZ());
+		ModelObject modelObject = new ModelObject(modelClass, modelObjectCoordinates, modelClass.getWidth(), modelClass.getHeight(), Util.brighter(modelClass.getColor(), 0.1));
 		for(Attribute attribute : getAttributes()) {
-			instance.addAttributeValue(attribute, "");
+			modelObject.addAttributeValue(attribute, "");
 		}
-		boolean added = addInstance(instance);
+		boolean added = addModelObject(modelObject);
 		if(added) {
-			return instance;
+			return modelObject;
 		}
 		return null;
 	}

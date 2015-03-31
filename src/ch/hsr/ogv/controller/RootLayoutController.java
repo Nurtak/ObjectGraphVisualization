@@ -127,71 +127,71 @@ public class RootLayoutController implements Observer {
 	private void handleExit() {
 		Platform.exit();
 	}
-	
+
 	@FXML
 	MenuItem centerView;
-	
+
 	@FXML
 	CheckMenuItem lockedTopView;
-	
+
 	@FXML
 	CheckMenuItem showObjects;
-	
+
 	@FXML
 	CheckMenuItem showModelAxis;
-	
+
 	@FXML
 	private void handleCenterView() {
 		this.stageManager.handleCenterView();
 	}
-	
+
 	@FXML
 	private void handleLockedTopView() {
 		this.stageManager.handleLockedTopView(this.lockedTopView.isSelected());
 	}
-	
+
 	@FXML
 	private void handleShowObjects() {
 		this.stageManager.handleShowObjects(this.showObjects.isSelected());
 	}
-	
+
 	@FXML
 	private void handleShowModelAxis() {
 		this.stageManager.handleShowModelAxis(this.showModelAxis.isSelected());
 	}
-	
+
 	@FXML
 	private CheckMenuItem modena;
-	
+
 	@FXML
 	private CheckMenuItem caspian;
-	
+
 	@FXML
 	private CheckMenuItem aqua;
-	
+
 	private void setMenuSelection(CheckMenuItem choosenMenu) {
 		Menu theme = choosenMenu.getParentMenu();
-		for(MenuItem menuItem : theme.getItems()) {
-			if(menuItem instanceof CheckMenuItem) {
+		for (MenuItem menuItem : theme.getItems()) {
+			if (menuItem instanceof CheckMenuItem) {
 				CheckMenuItem cMenuItem = (CheckMenuItem) menuItem;
 				cMenuItem.setSelected(false);
 			}
 		}
 		choosenMenu.setSelected(true);
 	}
-	
+
 	@FXML
 	private void handleSetModena() {
 		setMenuSelection(this.modena);
 		this.stageManager.handleSetTheme(Style.MODENA);
 	}
-	
+
 	@FXML
 	private void handleSetCaspian() {
 		setMenuSelection(this.caspian);
 		this.stageManager.handleSetTheme(Style.CASPIANDARK);
 	}
-	
+
 	@FXML
 	private void handleSetAqua() {
 		setMenuSelection(this.aqua);
@@ -200,109 +200,115 @@ public class RootLayoutController implements Observer {
 
 	@FXML
 	private ToggleButton createClass;
-	
+
 	@FXML
 	private ToggleButton createInstance;
-	
+
 	@FXML
 	private ToggleButton createGeneralization;
-	
+
 	@FXML
 	private ToggleButton createDependency;
 
 	@FXML
-	private void handleCreateClass() {	
+	private void handleCreateClass() {
 		this.stageManager.onlyFloorMouseEvent(this.createClass.isSelected());
 	}
-	
+
 	@FXML
-	private void handleCreateInstance() {	
-		//TODO
+	private void handleCreateInstance() {
+		// TODO
 	}
-	
+
 	@FXML
 	private SplitMenuButton createAssociation;
-	
+
 	@FXML
 	private MenuItem createUndirectedAssociation;
-		
+
 	@FXML
 	private MenuItem createDirectedAssociation;
-	
+
 	@FXML
 	private MenuItem createBidirectedAssociation;
-	
+
 	@FXML
 	private MenuItem createUndirectedAggregation;
-	
+
 	@FXML
 	private MenuItem createDirectedAggregation;
-	
+
 	@FXML
 	private MenuItem createUndirectedComposition;
-	
+
 	@FXML
 	private MenuItem createDirectedComposition;
-	
+
 	@FXML
-	private void handleCreateAssociation() {	
-		//createAssociation.
+	private void handleCreateAssociation() {
+		// createAssociation.
 	}
-	
+
 	@FXML
-	private void handleCreateUndirectedAssociation() {	
+	private void handleCreateUndirectedAssociation() {
 		Node graphic = createUndirectedAssociation.getGraphic();
 		createAssociation.setGraphic(graphic);
 		String title = createUndirectedAssociation.getText();
 		createAssociation.setText(title);
 	}
-	
+
 	@FXML
-	private void handleCreateDirectedAssociation() {	
+	private void handleCreateDirectedAssociation() {
 		String title = createDirectedAssociation.getText();
 		createAssociation.setText(title);
 		Node graphic = createDirectedAssociation.getGraphic().getClip();
 		createAssociation.setGraphic(graphic);
 	}
-	
+
 	@FXML
-	private void handleCreateBidirectedAssociation() {	
-		
+	private void handleCreateBidirectedAssociation() {
+
 	}
-	
+
 	@FXML
-	private void handleCreateUndirectedAggregation() {	
-		
+	private void handleCreateUndirectedAggregation() {
+
 	}
-	
+
 	@FXML
-	private void handleCreateDirectedAggregation() {	
-		
+	private void handleCreateDirectedAggregation() {
+
 	}
-	
+
 	@FXML
-	private void handleCreateUndirectedComposition() {	
-		
+	private void handleCreateUndirectedComposition() {
+
 	}
-	
+
 	@FXML
-	private void handleCreateDirectedComposition() {	
-		
+	private void handleCreateDirectedComposition() {
+
 	}
-	
+
 	@FXML
-	private void handleCreateGeneralization() {	
-		//TODO
+	private void handleCreateGeneralization() {
+		// TODO
 	}
-	
+
 	@FXML
-	private void handleCreateDependency() {	
-		//TODO
+	private void handleCreateDependency() {
+		// TODO
 	}
-	
+
 	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
+		if (o instanceof StageManager && arg instanceof StageManager) { // give
+																		// a
+																		// reference
+																		// back
+																		// to
+																		// the
+																		// StageManager.
 			StageManager stageManager = (StageManager) arg;
 			this.stageManager = stageManager;
 			this.stageManager.getSubSceneController().addObserver(this);
@@ -314,5 +320,5 @@ public class RootLayoutController implements Observer {
 			}
 		}
 	}
-	
+
 }
