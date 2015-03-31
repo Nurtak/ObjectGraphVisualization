@@ -202,23 +202,7 @@ public class RootLayoutController implements Observer {
 	private ToggleButton createClass;
 
 	@FXML
-	private ToggleButton createInstance;
-
-	@FXML
-	private ToggleButton createGeneralization;
-
-	@FXML
-	private ToggleButton createDependency;
-
-	@FXML
-	private void handleCreateClass() {
-		this.stageManager.onlyFloorMouseEvent(this.createClass.isSelected());
-	}
-
-	@FXML
-	private void handleCreateInstance() {
-		// TODO
-	}
+	private ToggleButton createObject;
 
 	@FXML
 	private SplitMenuButton createAssociation;
@@ -243,10 +227,26 @@ public class RootLayoutController implements Observer {
 
 	@FXML
 	private MenuItem createDirectedComposition;
+	
+	@FXML
+	private ToggleButton createGeneralization;
+	
+	@FXML
+	private ToggleButton createDependency;
 
 	@FXML
 	private void handleCreateAssociation() {
 		// createAssociation.
+	}
+	
+	@FXML
+	private void handleCreateClass() {
+		this.stageManager.onlyFloorMouseEvent(this.createClass.isSelected());
+	}
+	
+	@FXML
+	private void handleCreateObject() {
+		// TODO
 	}
 
 	@FXML
@@ -302,13 +302,7 @@ public class RootLayoutController implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof StageManager && arg instanceof StageManager) { // give
-																		// a
-																		// reference
-																		// back
-																		// to
-																		// the
-																		// StageManager.
+		if (o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
 			StageManager stageManager = (StageManager) arg;
 			this.stageManager = stageManager;
 			this.stageManager.getSubSceneController().addObserver(this);
