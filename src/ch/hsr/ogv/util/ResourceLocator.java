@@ -19,6 +19,7 @@ public class ResourceLocator {
 		ROOTLAYOUT_FXML("templates/RootLayout.fxml"),
 		PANEPRESET_FXML("templates/PanePreset.fxml"),
 		TEXTFIELDPRESET_FXML("templates/TextFieldPreset.fxml"),
+		TSPLITMENUBUTTON_CSS("css/TSplitMenuButton.css"),
 		LIGHTHEME_CSS("css/LightTheme.css"),
 		DARKTHEME_CSS("css/DarkTheme.css"),
 		TEXTFIELD_CSS("css/TextField.css"),

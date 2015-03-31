@@ -1,13 +1,15 @@
 package ch.hsr.ogv.controller;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.ResourceBundle;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.geometry.Point3D;
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckMenuItem;
@@ -20,6 +22,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.dataaccess.UserPreferences;
+import ch.hsr.ogv.view.TSplitMenuButton;
 
 /**
  * The controller for the root layout. The root layout provides the basic
@@ -28,7 +31,7 @@ import ch.hsr.ogv.dataaccess.UserPreferences;
  * 
  * @author Simon Gwerder
  */
-public class RootLayoutController implements Observer {
+public class RootLayoutController implements Observer, Initializable {
 	
 	private StageManager stageManager; // reference back to the stage manager
 	
@@ -217,11 +220,12 @@ public class RootLayoutController implements Observer {
 	
 	@FXML
 	private void handleCreateInstance() {	
-		//TODO
+		
 	}
 	
 	@FXML
 	private SplitMenuButton createAssociation;
+	private TSplitMenuButton tSplitMenuButton;
 	
 	@FXML
 	private MenuItem createUndirectedAssociation;
@@ -246,48 +250,42 @@ public class RootLayoutController implements Observer {
 	
 	@FXML
 	private void handleCreateAssociation() {	
-
+		this.tSplitMenuButton.setSelected(!this.tSplitMenuButton.isSelected());
 	}
 	
 	@FXML
 	private void handleCreateUndirectedAssociation() {	
-		Node graphic = createUndirectedAssociation.getGraphic();
-		createAssociation.setGraphic(graphic);
-		String title = createUndirectedAssociation.getText();
-		createAssociation.setText(title);
+		this.tSplitMenuButton.setChoice(this.createUndirectedAssociation);
 	}
 	
 	@FXML
 	private void handleCreateDirectedAssociation() {	
-		Node graphic = createDirectedAssociation.getGraphic().getClip();
-		createAssociation.setGraphic(graphic);
-		String title = createDirectedAssociation.getText();
-		createAssociation.setText(title);
+		this.tSplitMenuButton.setChoice(this.createDirectedAssociation);
 	}
 	
 	@FXML
 	private void handleCreateBidirectedAssociation() {	
-		
+		this.tSplitMenuButton.setChoice(this.createBidirectedAssociation);
 	}
 	
 	@FXML
 	private void handleCreateUndirectedAggregation() {	
-		
+		this.tSplitMenuButton.setChoice(this.createUndirectedAggregation);
 	}
 	
 	@FXML
 	private void handleCreateDirectedAggregation() {	
-		
+		this.tSplitMenuButton.setChoice(this.createDirectedAggregation);
 	}
 	
 	@FXML
 	private void handleCreateUndirectedComposition() {	
-		
+		this.tSplitMenuButton.setChoice(this.createUndirectedComposition);
 	}
 	
 	@FXML
 	private void handleCreateDirectedComposition() {	
-		
+		this.tSplitMenuButton.setChoice(this.createDirectedComposition);
 	}
 	
 	@FXML
@@ -316,5 +314,11 @@ public class RootLayoutController implements Observer {
 			}
 		}
 		
+	}
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
+		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation);
+		this.tSplitMenuButton.setChoice(this.createUndirectedAssociation);
 	}
 }

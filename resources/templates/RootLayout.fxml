@@ -122,7 +122,7 @@
                   <Separator orientation="VERTICAL" />
                   <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" text="Association">
                     <items>
-                        <MenuItem fx:id="createUndirectedAssociation1" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association" visible="false">
+                        <MenuItem fx:id="createUndirectedAssociation" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association" visible="false">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
