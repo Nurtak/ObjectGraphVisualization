@@ -17,6 +17,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -202,100 +203,114 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 
 	@FXML
+	private ToggleGroup createToolbar;
+
+	@FXML
 	private ToggleButton createClass;
-	
+
 	@FXML
 	private ToggleButton createObject;
-	
+
 	@FXML
 	private SplitMenuButton createAssociation;
 	private TSplitMenuButton tSplitMenuButton;
-	
+
 	@FXML
 	private MenuItem createUndirectedAssociation;
-		
+
 	@FXML
 	private MenuItem createDirectedAssociation;
-	
+
 	@FXML
 	private MenuItem createBidirectedAssociation;
-	
+
 	@FXML
 	private MenuItem createUndirectedAggregation;
-	
+
 	@FXML
 	private MenuItem createDirectedAggregation;
-	
+
 	@FXML
 	private MenuItem createUndirectedComposition;
-	
+
 	@FXML
 	private MenuItem createDirectedComposition;
-	
+
 	@FXML
 	private ToggleButton createGeneralization;
-	
+
 	@FXML
 	private ToggleButton createDependency;
-	
+
 	@FXML
-	private void handleCreateClass() {	
+	private void handleCreateClass() {
 		this.stageManager.onlyFloorMouseEvent(this.createClass.isSelected());
 	}
-	
+
 	@FXML
-	private void handleCreateObject() {	
-		
+	private void handleCreateObject() {
+
 	}
-	
+
 	@FXML
-	private void handleCreateAssociation() {	
-		this.tSplitMenuButton.setSelected(!this.tSplitMenuButton.isSelected());
+	private void handleCreateAssociation() {
+		if (tSplitMenuButton.isSelected()) {
+			this.createToolbar.selectToggle(null);
+		} else {
+			this.createToolbar.selectToggle(this.tSplitMenuButton);
+		}
 	}
-	
+
 	@FXML
-	private void handleCreateUndirectedAssociation() {	
+	private void handleCreateUndirectedAssociation() {
 		this.tSplitMenuButton.setChoice(this.createUndirectedAssociation);
+		this.createToolbar.selectToggle(this.tSplitMenuButton);
 	}
-	
+
 	@FXML
-	private void handleCreateDirectedAssociation() {	
+	private void handleCreateDirectedAssociation() {
 		this.tSplitMenuButton.setChoice(this.createDirectedAssociation);
+		this.createToolbar.selectToggle(this.tSplitMenuButton);
 	}
-	
+
 	@FXML
-	private void handleCreateBidirectedAssociation() {	
+	private void handleCreateBidirectedAssociation() {
 		this.tSplitMenuButton.setChoice(this.createBidirectedAssociation);
+		this.createToolbar.selectToggle(this.tSplitMenuButton);
 	}
-	
+
 	@FXML
-	private void handleCreateUndirectedAggregation() {	
+	private void handleCreateUndirectedAggregation() {
 		this.tSplitMenuButton.setChoice(this.createUndirectedAggregation);
+		this.createToolbar.selectToggle(this.tSplitMenuButton);
 	}
-	
+
 	@FXML
-	private void handleCreateDirectedAggregation() {	
+	private void handleCreateDirectedAggregation() {
 		this.tSplitMenuButton.setChoice(this.createDirectedAggregation);
+		this.createToolbar.selectToggle(this.tSplitMenuButton);
 	}
-	
+
 	@FXML
-	private void handleCreateUndirectedComposition() {	
+	private void handleCreateUndirectedComposition() {
 		this.tSplitMenuButton.setChoice(this.createUndirectedComposition);
+		this.createToolbar.selectToggle(this.tSplitMenuButton);
 	}
-	
+
 	@FXML
-	private void handleCreateDirectedComposition() {	
+	private void handleCreateDirectedComposition() {
 		this.tSplitMenuButton.setChoice(this.createDirectedComposition);
+		this.createToolbar.selectToggle(this.tSplitMenuButton);
 	}
-	
+
 	@FXML
-	private void handleCreateGeneralization() {	
-		//TODO
+	private void handleCreateGeneralization() {
+		// TODO
 	}
-	
+
 	@FXML
-	private void handleCreateDependency() {	
-		//TODO
+	private void handleCreateDependency() {
+		// TODO
 	}
 	
 	@Override
@@ -304,20 +319,17 @@ public class RootLayoutController implements Observer, Initializable {
 			StageManager stageManager = (StageManager) arg;
 			this.stageManager = stageManager;
 			this.stageManager.getSubSceneController().addObserver(this);
-		}
-		
-		if (o instanceof SubSceneController && arg instanceof Point3D) {
+		} else if (o instanceof SubSceneController && arg instanceof Point3D) {
 			Point3D mouseCoords = (Point3D) arg;
-			if(createClass != null && createClass.isSelected()) {
+			if (createClass != null && createClass.isSelected()) {
 				this.stageManager.handleCreateNewClass(mouseCoords);
 				this.createClass.setSelected(false);
 			}
 		}
-		
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
-		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation);
+		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, createToolbar);
 	}
 }
