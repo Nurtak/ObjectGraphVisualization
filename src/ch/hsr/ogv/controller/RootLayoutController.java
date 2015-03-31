@@ -304,16 +304,13 @@ public class RootLayoutController implements Observer, Initializable {
 			StageManager stageManager = (StageManager) arg;
 			this.stageManager = stageManager;
 			this.stageManager.getSubSceneController().addObserver(this);
-		}
-		
-		if (o instanceof SubSceneController && arg instanceof Point3D) {
+		} else if (o instanceof SubSceneController && arg instanceof Point3D) {
 			Point3D mouseCoords = (Point3D) arg;
-			if(createClass != null && createClass.isSelected()) {
+			if (createClass != null && createClass.isSelected()) {
 				this.stageManager.handleCreateNewClass(mouseCoords);
 				this.createClass.setSelected(false);
 			}
 		}
-		
 	}
 
 	@Override
