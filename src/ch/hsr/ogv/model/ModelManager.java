@@ -17,7 +17,7 @@ public class ModelManager extends Observable {
 
 	private Set<ModelClass> classes = new HashSet<ModelClass>();
 	private Set<Relation> relations = new HashSet<Relation>();
-	
+
 	public Collection<ModelClass> getClasses() {
 		return this.classes;
 	}
@@ -30,18 +30,19 @@ public class ModelManager extends Observable {
 		notifyObservers(theClass);
 		return theClass;
 	}
-	
-	public Instance createInstance(ModelClass theClass) {
-		Instance instance = theClass.createInstance(theClass);
+
+	public ModelObject createInstance(ModelClass theClass) {
+		ModelObject modelObject = theClass.createModelObject(theClass);
 		setChanged();
-		notifyObservers(instance);
-		return instance;
+		notifyObservers(modelObject);
+		return modelObject;
 	}
 
 	public ModelClass getClass(String name) {
-		if(name == null) return null;
-		for(ModelClass theClass : this.classes) {
-			if(name.equals(theClass.getName())) {
+		if (name == null)
+			return null;
+		for (ModelClass theClass : this.classes) {
+			if (name.equals(theClass.getName())) {
 				return theClass;
 			}
 		}
@@ -49,8 +50,8 @@ public class ModelManager extends Observable {
 	}
 
 	public boolean isNameTaken(String name) {
-		for(ModelClass theClass : this.classes) {
-			if(name != null && name.equals(theClass.getName())) {
+		for (ModelClass theClass : this.classes) {
+			if (name != null && name.equals(theClass.getName())) {
 				return true;
 			}
 		}
@@ -59,17 +60,17 @@ public class ModelManager extends Observable {
 
 	public boolean deleteClass(ModelClass theClass) {
 		boolean deletedClass = classes.remove(theClass);
-		if(deletedClass) {
+		if (deletedClass) {
 			setChanged();
 			notifyObservers(deletedClass);
 		}
-		ModelClass.classCounter.decrementAndGet();
+		ModelClass.modelClassCounter.decrementAndGet();
 		return deletedClass;
 	}
-	
+
 	public boolean deleteRelation(Relation relation) {
 		boolean deletedRelation = relations.remove(relation);
-		if(deletedRelation) {
+		if (deletedRelation) {
 			Endpoint start = relation.getStart();
 			Endpoint end = relation.getEnd();
 			start.getAppendant().getEndpoints().remove(start);

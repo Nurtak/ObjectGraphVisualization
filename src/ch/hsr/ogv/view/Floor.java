@@ -10,25 +10,25 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 
 public class Floor extends Group {
-	
+
 	private HashSet<Rectangle> tiles = new HashSet<Rectangle>();
 	private final double TILE_SIZE = 1000;
 	private final int TILE_DIMENSION = 10;
 	private Color color = Color.WHITESMOKE;
-	
+
 	public Floor() {
-		for(int x = 0; x < TILE_DIMENSION; x++) {
-			for(int z = 0; z < TILE_DIMENSION; z++) {
+		for (int x = 0; x < TILE_DIMENSION; x++) {
+			for (int z = 0; z < TILE_DIMENSION; z++) {
 				buildFloorTile(x, z);
 			}
 		}
-		
-		for(Rectangle tile : this.tiles) {
+
+		for (Rectangle tile : this.tiles) {
 			getChildren().add(tile);
 		}
 		setMouseTransparent(true);
 	}
-	
+
 	private void buildFloorTile(int x, int z) {
 		Rectangle tile = new Rectangle(TILE_SIZE, TILE_SIZE, color);
 		tile.setDepthTest(DepthTest.ENABLE);
@@ -38,32 +38,32 @@ public class Floor extends Group {
 		tile.setOpacity(0.6);
 		this.tiles.add(tile);
 	}
-	
+
 	public void setSeeable(boolean value) {
-		for(Rectangle tile : this.tiles) {
-			if(value) {
+		for (Rectangle tile : this.tiles) {
+			if (value) {
 				tile.setFill(getColor());
-			}
-			else {
+			} else {
 				tile.setFill(Color.TRANSPARENT);
 			}
 		}
 
 	}
-	
+
 	public void setColor(Color color) {
-		for(Rectangle tile : this.tiles) {
+		for (Rectangle tile : this.tiles) {
 			tile.setFill(color);
 		}
 		this.color = color;
 	}
-	
+
 	public Color getColor() {
 		return this.color;
 	}
 
 	public boolean hasTile(Node node) {
-		if(node == null || !(node instanceof Rectangle)) return false;
+		if (node == null || !(node instanceof Rectangle))
+			return false;
 		Rectangle rect = (Rectangle) node;
 		return this.tiles.contains(rect);
 	}

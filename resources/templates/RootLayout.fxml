@@ -111,7 +111,7 @@
                            </image>
                         </ImageView>
                      </graphic></ToggleButton>
-                  <ToggleButton fx:id="createInstance" mnemonicParsing="false" onAction="#handleCreateInstance" text="Instance" toggleGroup="$createToolbar">
+                  <ToggleButton fx:id="createObject" mnemonicParsing="false" onAction="#handleCreateObject" text="Object" toggleGroup="$createToolbar">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>

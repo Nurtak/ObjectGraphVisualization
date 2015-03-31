@@ -205,7 +205,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private ToggleButton createClass;
 	
 	@FXML
-	private ToggleButton createInstance;
+	private ToggleButton createObject;
 	
 	@FXML
 	private ToggleButton createGeneralization;
@@ -219,7 +219,7 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 	
 	@FXML
-	private void handleCreateInstance() {	
+	private void handleCreateObject() {	
 		
 	}
 	

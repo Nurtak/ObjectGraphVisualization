@@ -24,11 +24,11 @@ import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.model.Endpoint;
-import ch.hsr.ogv.model.Instance;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
+import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.ResourceLocator;
@@ -135,11 +135,11 @@ public class StageManager extends Observable implements Observer {
 		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
 	}
-	
+
 	public void onlyFloorMouseEvent(boolean value) {
 		this.subSceneAdapter.onlyFloorMouseEvent(value);
 	}
-	
+
 	public void handleCreateNewClass(Point3D mouseCoords) {
 		onlyFloorMouseEvent(false);
 		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
@@ -152,7 +152,7 @@ public class StageManager extends Observable implements Observer {
 			newBox.getTopTextField().applyCss();
 		});
 	}
-	
+
 	public void handleCenterView() {
 		SubSceneCamera ssCamera = this.subSceneAdapter.getSubSceneCamera();
 		this.cameraController.handleCenterView(ssCamera);
@@ -162,29 +162,28 @@ public class StageManager extends Observable implements Observer {
 		SubSceneCamera ssCamera = this.subSceneAdapter.getSubSceneCamera();
 		this.cameraController.handleLockedTopView(ssCamera, isLockedTopView);
 	}
-	
+
 	public void handleShowObjects(boolean showObjects) {
-		for(ModelBox modelBox : this.boxes.keySet()) {
-			if(modelBox instanceof Instance) {
+		for (ModelBox modelBox : this.boxes.keySet()) {
+			if (modelBox instanceof ModelObject) {
 				PaneBox paneBox = this.boxes.get(modelBox);
 				paneBox.setVisible(showObjects);
-				for(Endpoint endpoint : modelBox.getEndpoints()) {
+				for (Endpoint endpoint : modelBox.getEndpoints()) {
 					ArrowLine arrowLine = this.arrows.get(endpoint.getRelation());
 					arrowLine.setVisible(showObjects);
 				}
 			}
 		}
 	}
-	
-	public void handleShowModelAxis(boolean showModelAxis) {
-    	Group axis = this.subSceneAdapter.getAxis();
-    	if (showModelAxis) {
-    		axis.setVisible(true);
-        } else {
-        	axis.setVisible(false);
-        }
-	}
 
+	public void handleShowModelAxis(boolean showModelAxis) {
+		Group axis = this.subSceneAdapter.getAxis();
+		if (showModelAxis) {
+			axis.setVisible(true);
+		} else {
+			axis.setVisible(false);
+		}
+	}
 
 	public void handleSetTheme(Style style) {
 		this.themeMenuController.handleSetTheme(this.rootLayout, style);
@@ -255,7 +254,7 @@ public class StageManager extends Observable implements Observer {
 	private void adaptArrowAtBoxChanges(ModelBox modelBox) {
 		PaneBox changedBox = this.boxes.get(modelBox);
 		Map<Endpoint, Endpoint> endpointMap = modelBox.getFriends();
-		for(Endpoint endpoint : endpointMap.keySet()) {
+		for (Endpoint endpoint : endpointMap.keySet()) {
 			Endpoint friendEndpoint = endpointMap.get(endpoint);
 			PaneBox friendChangedBox = this.boxes.get(friendEndpoint.getAppendant());
 			Relation relation = endpoint.getRelation();
@@ -287,10 +286,10 @@ public class StageManager extends Observable implements Observer {
 		this.boxes.put(theClass, paneBox);
 	}
 
-	private void addInstanceToSubScene(Instance instance) {
+	private void addInstanceToSubScene(ModelObject instance) {
 		instance.addObserver(this);
 		PaneBox paneBox = new PaneBox();
-		paneBox.setDepth(PaneBox.INSTANCEBOX_DEPTH);
+		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
 		paneBox.setColor(instance.getColor());
 		paneBox.setTopUnderline(true);
 		// addPaneBoxControls(instance, paneBox);
@@ -326,11 +325,12 @@ public class StageManager extends Observable implements Observer {
 			changedBox.setTopText(modelBox.getName());
 			modelBox.setWidth(changedBox.getMinWidth());
 		}
-		
-		if(modelBox instanceof ModelClass) {
+
+		if (modelBox instanceof ModelClass) {
 			ModelClass theClass = (ModelClass) modelBox;
-			for(Instance instance : theClass.getInstances()) {
-				//TODO Replace this workaround with actual methods in Instance for classpart of the name
+			for (ModelObject instance : theClass.getModelObjects()) {
+				// TODO Replace this workaround with actual methods in Instance
+				// for classpart of the name
 				String classPart = instance.getName().substring(instance.getName().lastIndexOf(":"));
 				instance.setName(instance.getName().replaceAll(classPart, ":" + theClass.getName()));
 			}
@@ -344,11 +344,11 @@ public class StageManager extends Observable implements Observer {
 		}
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for (Instance instance : modelClass.getInstances()) {
+			for (ModelObject instance : modelClass.getModelObjects()) {
 				instance.setWidth(modelClass.getWidth());
 			}
 		}
-		//adaptArrowAtBoxChanges(modelBox);
+		// adaptArrowAtBoxChanges(modelBox);
 	}
 
 	private void adaptBoxHeight(ModelBox modelBox) {
@@ -358,11 +358,11 @@ public class StageManager extends Observable implements Observer {
 		}
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for (Instance instance : modelClass.getInstances()) {
+			for (ModelObject instance : modelClass.getModelObjects()) {
 				instance.setHeight(modelClass.getHeight());
 			}
 		}
-		//adaptArrowAtBoxChanges(modelBox);
+		// adaptArrowAtBoxChanges(modelBox);
 	}
 
 	private void adaptBoxColor(ModelBox modelBox) {
@@ -372,7 +372,7 @@ public class StageManager extends Observable implements Observer {
 		}
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for (Instance instance : modelClass.getInstances()) {
+			for (ModelObject instance : modelClass.getModelObjects()) {
 				instance.setColor(Util.brighter(modelClass.getColor(), 0.1));
 			}
 		}
@@ -386,7 +386,7 @@ public class StageManager extends Observable implements Observer {
 		adaptArrowAtBoxChanges(modelBox);
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for (Instance instance : modelClass.getInstances()) {
+			for (ModelObject instance : modelClass.getModelObjects()) {
 				instance.setX(modelClass.getX());
 				instance.setZ(modelClass.getZ());
 			}
@@ -415,8 +415,8 @@ public class StageManager extends Observable implements Observer {
 				ArrowLine toDelete = this.arrows.remove(relation);
 				removeFromSubScene(toDelete);
 			}
-		} else if (o instanceof ModelManager && arg instanceof Instance) {
-			Instance instance = (Instance) arg;
+		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
+			ModelObject instance = (ModelObject) arg;
 			if (!this.boxes.containsKey(instance)) { // instance is new
 				addInstanceToSubScene(instance);
 				adaptBoxSettings(instance);
