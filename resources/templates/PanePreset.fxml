@@ -27,7 +27,7 @@
       </VBox>
    </top>
    <center>
-      <GridPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" gridLinesVisible="true" layoutX="9.0" layoutY="3.0" minHeight="25.0" prefHeight="25.0" prefWidth="126.0" snapToPixel="false" BorderPane.alignment="CENTER">
+      <GridPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" layoutX="9.0" layoutY="3.0" minHeight="25.0" prefHeight="25.0" prefWidth="126.0" snapToPixel="false" BorderPane.alignment="CENTER">
          <columnConstraints>
             <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
          </columnConstraints>

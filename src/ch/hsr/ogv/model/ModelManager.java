@@ -81,10 +81,10 @@ public class ModelManager extends Observable {
 		return deletedRelation;
 	}
 
-	public Relation createRelation(ModelClass startClass, ModelClass endClass, RelationType relationType) {
-		Relation relation = new Relation(startClass, endClass, relationType);
-		startClass.getEndpoints().add(relation.getStart());
-		endClass.getEndpoints().add(relation.getEnd());
+	public Relation createRelation(ModelBox startBox, ModelBox endBox, RelationType relationType) {
+		Relation relation = new Relation(startBox, endBox, relationType);
+		startBox.getEndpoints().add(relation.getStart());
+		endBox.getEndpoints().add(relation.getEnd());
 		relations.add(relation);
 		setChanged();
 		notifyObservers(relation);

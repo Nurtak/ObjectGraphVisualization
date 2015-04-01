@@ -190,16 +190,14 @@ public class PaneBox {
 	}
 	
 	public void setTopText(String text) {
-		if (this.topTextField == null || this.topLabel == null)
-			return;
+		if (this.topTextField == null || this.topLabel == null) return;
 		this.topTextField.setText(text);
 		this.topLabel.setText(text);
 		adaptWidthByText(this.topLabel.getFont(), text);
 	}
 
 	public void setTopFont(Font font) {
-		if (this.topTextField == null || this.topLabel == null)
-			return;
+		if (this.topTextField == null || this.topLabel == null) return;
 		this.topTextField.setFont(font);
 		this.topLabel.setFont(font);
 		adaptWidthByText(this.topLabel.getFont(), this.topTextField.getText());
@@ -225,6 +223,19 @@ public class PaneBox {
 			return (GridPane) centerNode;
 		}
 		return null;
+	}
+	
+	public void setCenterText(int rowIndex, String text) {
+		Node node = null;
+		try {
+			node = getCenter().getChildren().get(rowIndex);
+		}
+		catch(IndexOutOfBoundsException iobe) {
+		}
+		if(node != null && node instanceof TextField) {
+			TextField centerTextField = (TextField) node;
+			centerTextField.setText(text);
+		}
 	}
 	
 	public void setSelected(boolean selected) {
@@ -386,7 +397,7 @@ public class PaneBox {
 	}
 
 	public Point3D getCenterPoint() {
-		double y = (this.paneBox.getTranslateY() + this.box.getTranslateY()) / 2;
+		double y = this.paneBox.getTranslateY() - (this.box.getDepth() / 2);
 		return new Point3D(this.paneBox.getTranslateX(), y, this.paneBox.getTranslateZ());
 	}
 

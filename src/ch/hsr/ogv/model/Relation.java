@@ -13,9 +13,9 @@ public class Relation extends Observable {
 	private Endpoint end;
 	private RelationType type;
 
-	public Relation(ModelClass startClass, ModelClass endClass, RelationType relationType) {
-		this.start = new Endpoint(relationType.getStartType(), startClass);
-		this.end = new Endpoint(relationType.getEndType(), endClass);
+	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType) {
+		this.start = new Endpoint(relationType.getStartType(), startBox);
+		this.end = new Endpoint(relationType.getEndType(), endBox);
 		this.type = relationType;
 		this.start.setRelation(this);
 		this.end.setRelation(this);

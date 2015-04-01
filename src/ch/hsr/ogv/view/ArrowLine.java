@@ -100,12 +100,15 @@ public class ArrowLine extends Group {
 		
 		setColor(this.color);
 		
-		double angle = GeometryUtil.getAngleBetweenXandZ(this.startPoint, this.endPoint);
+		double rotateZAngle = GeometryUtil.rotateZAngle(this.startPoint, this.endPoint);
+		double rotateXAngle = GeometryUtil.rotateXAngle(this.startPoint, this.endPoint);
+		
 		Point3D midPoint = this.startPoint.midpoint(this.endPoint);
 		
 		this.line.setTranslateZ((-endGap + startGap) / 4);
 		setTranslateXYZ(midPoint);
-		addRotate(angle);
+		addRotateYAxis(rotateZAngle);
+		addRotateXAxis(-rotateXAngle);
 	}
 
 	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box) {
@@ -131,7 +134,7 @@ public class ArrowLine extends Group {
 		if(interSouthWidth != null) return interSouthWidth;
 		return null;
 	}
-	
+		
 	public void setColor(Color color) {
 		this.color = color;
 		PhongMaterial material = new PhongMaterial();
@@ -163,8 +166,16 @@ public class ArrowLine extends Group {
 		getTransforms().add(new Translate(x, y, z));
 	}
 
-	public void addRotate(double degree) {
+	public void addRotateYAxis(double degree) {
 		getTransforms().add(new Rotate(degree, getTranslateX(), getTranslateY(), getTranslateZ(), Rotate.Y_AXIS));
+	}
+	
+	public void addRotateZAxis(double degree) {
+		getTransforms().add(new Rotate(degree, getTranslateX(), getTranslateY(), getTranslateZ(), Rotate.Z_AXIS));
+	}
+	
+	public void addRotateXAxis(double degree) {
+		getTransforms().add(new Rotate(degree, getTranslateX(), getTranslateY(), getTranslateZ(), Rotate.X_AXIS));
 	}
 
 	public double getWidth() {

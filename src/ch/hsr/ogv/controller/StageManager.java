@@ -127,17 +127,15 @@ public class StageManager extends Observable implements Observer {
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		ModelClass mcC = this.modelManager.createClass(new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcA.setName("A");
-		this.modelManager.createInstance(mcA);
+		ModelObject moA = this.modelManager.createInstance(mcA);
 		this.modelManager.createInstance(mcB);
 		this.modelManager.createInstance(mcB);
-		this.modelManager.createInstance(mcB);
-		this.modelManager.createInstance(mcB);
-		this.modelManager.createInstance(mcB);
-	
+		ModelObject moB = this.modelManager.createInstance(mcB);
 
 		this.modelManager.createRelation(mcA, mcB, RelationType.GENERALIZATION);
 		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
+		this.modelManager.createRelation(moA, moB, RelationType.GENERALIZATION);
 	}
 
 	public void onlyFloorMouseEvent(boolean value) {
@@ -281,6 +279,7 @@ public class StageManager extends Observable implements Observer {
 	private void addClassToSubScene(ModelClass theClass) {
 		theClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
+		paneBox.setCenterText(0, "TEST");
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
 		paneBox.setColor(PaneBox.DEFAULT_COLOR);
 		paneBox.setTopUnderline(false);
