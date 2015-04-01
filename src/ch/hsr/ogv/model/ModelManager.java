@@ -31,8 +31,8 @@ public class ModelManager extends Observable {
 		return theClass;
 	}
 
-	public ModelObject createInstance(ModelClass theClass) {
-		ModelObject modelObject = theClass.createModelObject(theClass);
+	public ModelObject createObject(ModelClass modelClass) {
+		ModelObject modelObject = modelClass.createModelObject();
 		setChanged();
 		notifyObservers(modelObject);
 		return modelObject;

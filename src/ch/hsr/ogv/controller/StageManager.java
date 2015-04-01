@@ -3,6 +3,7 @@ package ch.hsr.ogv.controller;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -53,14 +54,13 @@ public class StageManager extends Observable implements Observer {
 	private SubSceneAdapter subSceneAdapter;
 
 	private ModelManager modelManager;
-
+	
 	private Map<ModelBox, PaneBox> boxes = new HashMap<ModelBox, PaneBox>();
 	private Map<Relation, ArrowLine> arrows = new HashMap<Relation, ArrowLine>();
 
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
 	private SubSceneController subSceneController = new SubSceneController();
-
 	private SelectionController selectionController = new SelectionController();
 	private TextInputController textInputController = new TextInputController();
 	private DragMoveController dragMoveController = new DragMoveController();
@@ -84,6 +84,10 @@ public class StageManager extends Observable implements Observer {
 	
 	public SubSceneController getSubSceneController() {
 		return subSceneController;
+	}
+	
+	public SelectionController getSelectionController() {
+		return selectionController;
 	}
 	
 	public StageManager(Stage primaryStage) {
@@ -127,12 +131,12 @@ public class StageManager extends Observable implements Observer {
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		ModelClass mcC = this.modelManager.createClass(new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcA.setName("A");
-		this.modelManager.createInstance(mcA);
-		this.modelManager.createInstance(mcB);
-		this.modelManager.createInstance(mcB);
-		this.modelManager.createInstance(mcB);
-		this.modelManager.createInstance(mcB);
-		this.modelManager.createInstance(mcB);
+		this.modelManager.createObject(mcA);
+		this.modelManager.createObject(mcB);
+		this.modelManager.createObject(mcB);
+		this.modelManager.createObject(mcB);
+		this.modelManager.createObject(mcB);
+		this.modelManager.createObject(mcB);
 	
 
 		this.modelManager.createRelation(mcA, mcB, RelationType.GENERALIZATION);
@@ -155,6 +159,29 @@ public class StageManager extends Observable implements Observer {
 			newBox.getTopTextField().selectAll();
 			newBox.getTopTextField().applyCss();
 		});
+	}
+	
+	public void handleCreateNewObject(PaneBox selectedPaneBox) {
+		ModelBox selectedModelBox = this.getModelBoxByPaneBox(selectedPaneBox);
+		ModelClass selectedModelClass = (ModelClass) selectedModelBox;
+		ModelObject newObject = this.modelManager.createObject(selectedModelClass);
+		//TODO
+//		PaneBox newBox = this.boxes.get(newObject);
+//		newBox.allowTopTextInput(true);
+//		Platform.runLater(() -> {
+//			newBox.getTopTextField().requestFocus();
+//			newBox.getTopTextField().selectAll();
+//			newBox.getTopTextField().applyCss();
+//		});
+	}
+	
+	private ModelBox getModelBoxByPaneBox(PaneBox value) {
+	    for (Entry<ModelBox, PaneBox> entry : boxes.entrySet()) {
+	        if (entry.getValue().equals(value)) {
+	            return entry.getKey();
+	        }
+	    }
+	    return null;
 	}
 
 	public void handleCenterView() {

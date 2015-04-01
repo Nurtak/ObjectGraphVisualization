@@ -23,6 +23,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.dataaccess.UserPreferences;
+import ch.hsr.ogv.model.ModelClass;
+import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.TSplitMenuButton;
 
 /**
@@ -319,11 +321,18 @@ public class RootLayoutController implements Observer, Initializable {
 			StageManager stageManager = (StageManager) arg;
 			this.stageManager = stageManager;
 			this.stageManager.getSubSceneController().addObserver(this);
+			this.stageManager.getSelectionController().addObserver(this);
 		} else if (o instanceof SubSceneController && arg instanceof Point3D) {
 			Point3D mouseCoords = (Point3D) arg;
 			if (createClass != null && createClass.isSelected()) {
 				this.stageManager.handleCreateNewClass(mouseCoords);
 				this.createClass.setSelected(false);
+			}
+		} else if (o instanceof SelectionController && arg instanceof PaneBox) {
+			SelectionController selectionController = (SelectionController) o;
+			if (selectionController.hasSelection() && createObject != null && createObject.isSelected()) {
+				this.stageManager.handleCreateNewObject(selectionController.getSelected());
+				this.createObject.setSelected(false);
 			}
 		}
 	}
