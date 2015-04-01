@@ -75,10 +75,10 @@ public class ModelClass extends ModelBox {
 		addAttribute(attribute);
 	}
 
-	public ModelObject createModelObject(ModelClass modelClass) {
-		int levelPlus = (modelClass.getModelObjects().size() + 1) * 100;
-		Point3D modelObjectCoordinates = new Point3D(modelClass.getX(), modelClass.getY() + levelPlus, modelClass.getZ());
-		ModelObject modelObject = new ModelObject(modelClass, modelObjectCoordinates, modelClass.getWidth(), modelClass.getHeight(), Util.brighter(modelClass.getColor(), 0.1));
+	public ModelObject createModelObject() {
+		int levelPlus = (this.getModelObjects().size() + 1) * 100;
+		Point3D modelObjectCoordinates = new Point3D(this.getX(), this.getY() + levelPlus, this.getZ());
+		ModelObject modelObject = new ModelObject(this, modelObjectCoordinates, this.getWidth(), this.getHeight(), Util.brighter(this.getColor(), 0.1));
 		for(Attribute attribute : getAttributes()) {
 			modelObject.addAttributeValue(attribute, "");
 		}

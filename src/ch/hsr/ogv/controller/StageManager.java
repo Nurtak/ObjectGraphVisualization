@@ -3,6 +3,7 @@ package ch.hsr.ogv.controller;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -53,14 +54,13 @@ public class StageManager extends Observable implements Observer {
 	private SubSceneAdapter subSceneAdapter;
 
 	private ModelManager modelManager;
-
+	
 	private Map<ModelBox, PaneBox> boxes = new HashMap<ModelBox, PaneBox>();
 	private Map<Relation, ArrowLine> arrows = new HashMap<Relation, ArrowLine>();
 
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
 	private SubSceneController subSceneController = new SubSceneController();
-
 	private SelectionController selectionController = new SelectionController();
 	private TextInputController textInputController = new TextInputController();
 	private DragMoveController dragMoveController = new DragMoveController();
@@ -84,6 +84,10 @@ public class StageManager extends Observable implements Observer {
 	
 	public SubSceneController getSubSceneController() {
 		return subSceneController;
+	}
+	
+	public SelectionController getSelectionController() {
+		return selectionController;
 	}
 	
 	public StageManager(Stage primaryStage) {
@@ -127,15 +131,15 @@ public class StageManager extends Observable implements Observer {
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		ModelClass mcC = this.modelManager.createClass(new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcA.setName("A");
-		ModelObject moA = this.modelManager.createInstance(mcA);
-		this.modelManager.createInstance(mcB);
-		this.modelManager.createInstance(mcB);
-		ModelObject moB = this.modelManager.createInstance(mcB);
-
+		ModelObject moA = this.modelManager.createObject(mcA);
+		this.modelManager.createObject(mcB);
+		ModelObject moB = this.modelManager.createObject(mcB);
+		this.modelManager.createObject(mcB);
+	
 		this.modelManager.createRelation(mcA, mcB, RelationType.GENERALIZATION);
 		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
-		this.modelManager.createRelation(moA, moB, RelationType.GENERALIZATION);
+		this.modelManager.createRelation(moA, moB, RelationType.DIRECTED_AGGREGATION);
 	}
 
 	public void onlyFloorMouseEvent(boolean value) {
@@ -153,6 +157,30 @@ public class StageManager extends Observable implements Observer {
 			newBox.getTopTextField().selectAll();
 			newBox.getTopTextField().applyCss();
 		});
+	}
+	
+	public void handleCreateNewObject(PaneBox selectedPaneBox) {
+		ModelBox selectedModelBox = this.getModelBoxByPaneBox(selectedPaneBox);
+		ModelClass selectedModelClass = (ModelClass) selectedModelBox;
+		this.modelManager.createObject(selectedModelClass);
+		//TODO
+		//		ModelObject newObject = 
+		//		PaneBox newBox = this.boxes.get(newObject);
+		//		newBox.allowTopTextInput(true);
+		//		Platform.runLater(() -> {
+		//			newBox.getTopTextField().requestFocus();
+		//			newBox.getTopTextField().selectAll();
+		//			newBox.getTopTextField().applyCss();
+		//		});
+	}
+	
+	private ModelBox getModelBoxByPaneBox(PaneBox value) {
+	    for (Entry<ModelBox, PaneBox> entry : boxes.entrySet()) {
+	        if (entry.getValue().equals(value)) {
+	            return entry.getKey();
+	        }
+	    }
+	    return null;
 	}
 
 	public void handleCenterView() {
@@ -276,36 +304,36 @@ public class StageManager extends Observable implements Observer {
 		}
 	}
 
-	private void addClassToSubScene(ModelClass theClass) {
-		theClass.addObserver(this);
+	private void addClassToSubScene(ModelClass modelClass) {
+		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setCenterText(0, "TEST");
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
 		paneBox.setColor(PaneBox.DEFAULT_COLOR);
 		paneBox.setTopUnderline(false);
-		addPaneBoxControls(theClass, paneBox);
+		addPaneBoxControls(modelClass, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
-		this.boxes.put(theClass, paneBox);
+		this.boxes.put(modelClass, paneBox);
 	}
 
-	private void addInstanceToSubScene(ModelObject instance) {
-		instance.addObserver(this);
+	private void addObjectToSubScene(ModelObject modelObject) {
+		modelObject.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
-		paneBox.setColor(instance.getColor());
+		paneBox.setColor(modelObject.getColor());
 		paneBox.setTopUnderline(true);
-		// addPaneBoxControls(instance, paneBox);
+		// addPaneBoxControls(modelObject, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
-		this.boxes.put(instance, paneBox);
+		this.boxes.put(modelObject, paneBox);
 	}
 
-	private void addPaneBoxControls(ModelClass theClass, PaneBox paneBox) {
+	private void addPaneBoxControls(ModelClass modelClass, PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox, this.subSceneAdapter);
-		this.textInputController.enableTextInput(theClass, paneBox);
-		this.dragMoveController.enableDragMove(theClass, paneBox, this.subSceneAdapter);
-		this.dragResizeController.enableDragResize(theClass, paneBox, this.subSceneAdapter);
+		this.textInputController.enableTextInput(modelClass, paneBox);
+		this.dragMoveController.enableDragMove(modelClass, paneBox, this.subSceneAdapter);
+		this.dragResizeController.enableDragResize(modelClass, paneBox, this.subSceneAdapter);
 	}
 
 	private void adaptBoxSettings(ModelBox modelBox) {
@@ -390,12 +418,12 @@ public class StageManager extends Observable implements Observer {
 	public void update(Observable o, Object arg) {
 		// TODO
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
-			ModelClass theClass = (ModelClass) arg;
-			if (!this.boxes.containsKey(theClass)) { // class is new
-				addClassToSubScene(theClass);
-				adaptBoxSettings(theClass);
+			ModelClass modelClass = (ModelClass) arg;
+			if (!this.boxes.containsKey(modelClass)) { // class is new
+				addClassToSubScene(modelClass);
+				adaptBoxSettings(modelClass);
 			} else {
-				PaneBox toDelete = this.boxes.remove(theClass);
+				PaneBox toDelete = this.boxes.remove(modelClass);
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
 			}
@@ -411,7 +439,7 @@ public class StageManager extends Observable implements Observer {
 		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
 			ModelObject instance = (ModelObject) arg;
 			if (!this.boxes.containsKey(instance)) { // instance is new
-				addInstanceToSubScene(instance);
+				addObjectToSubScene(instance);
 				adaptBoxSettings(instance);
 			} else {
 				PaneBox toDelete = this.boxes.remove(instance);
