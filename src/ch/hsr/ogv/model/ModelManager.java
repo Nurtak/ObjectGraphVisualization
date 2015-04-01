@@ -23,12 +23,11 @@ public class ModelManager extends Observable {
 	}
 
 	public ModelClass createClass(Point3D coordinates, double width, double heigth, Color color) {
-		ModelClass theClass = null;
-		theClass = new ModelClass(coordinates, width, heigth, color);
-		classes.add(theClass);
+		ModelClass modelClass = new ModelClass(coordinates, width, heigth, color);
+		classes.add(modelClass);
 		setChanged();
-		notifyObservers(theClass);
-		return theClass;
+		notifyObservers(modelClass);
+		return modelClass;
 	}
 
 	public ModelObject createObject(ModelClass modelClass) {
@@ -41,25 +40,25 @@ public class ModelManager extends Observable {
 	public ModelClass getClass(String name) {
 		if (name == null)
 			return null;
-		for (ModelClass theClass : this.classes) {
-			if (name.equals(theClass.getName())) {
-				return theClass;
+		for (ModelClass modelClass : this.classes) {
+			if (name.equals(modelClass.getName())) {
+				return modelClass;
 			}
 		}
 		return null;
 	}
 
 	public boolean isNameTaken(String name) {
-		for (ModelClass theClass : this.classes) {
-			if (name != null && name.equals(theClass.getName())) {
+		for (ModelClass modelClass : this.classes) {
+			if (name != null && name.equals(modelClass.getName())) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public boolean deleteClass(ModelClass theClass) {
-		boolean deletedClass = classes.remove(theClass);
+	public boolean deleteClass(ModelClass modelClass) {
+		boolean deletedClass = classes.remove(modelClass);
 		if (deletedClass) {
 			setChanged();
 			notifyObservers(deletedClass);

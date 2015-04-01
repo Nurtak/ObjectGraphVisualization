@@ -18,14 +18,14 @@ import javafx.scene.Cursor;
  */
 public class DragMoveController extends DragController {
 	
-	public void enableDragMove(ModelClass theClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	public void enableDragMove(ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		Group paneBoxGroup = paneBox.get();
-		setOnMousePressed(paneBoxGroup, theClass, paneBox, subSceneAdapter);
-		setOnMouseDragged(paneBoxGroup, theClass, paneBox, subSceneAdapter);
+		setOnMousePressed(paneBoxGroup, modelClass, paneBox, subSceneAdapter);
+		setOnMouseDragged(paneBoxGroup, modelClass, paneBox, subSceneAdapter);
 		setOnMouseReleased(paneBoxGroup, subSceneAdapter);
 	}
 
-	protected void setOnMouseDragged(Group g, ModelClass theClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	protected void setOnMouseDragged(Group g, ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		Floor floor = subSceneAdapter.getFloor();
 		g.setOnMouseDragged((MouseEvent me) -> {
 			setDragInProgress(subSceneAdapter, true);
@@ -34,8 +34,8 @@ public class DragMoveController extends DragController {
 				PickResult pick = me.getPickResult();
 				if(pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
 					Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
-					Point3D classCoordinates = new Point3D(coords.getX() - origRelMouseX, theClass.getY(), coords.getZ() - origRelMouseZ); // only x and z is changeable
-					theClass.setCoordinates(classCoordinates);
+					Point3D classCoordinates = new Point3D(coords.getX() - origRelMouseX, modelClass.getY(), coords.getZ() - origRelMouseZ); // only x and z is changeable
+					modelClass.setCoordinates(classCoordinates);
 				}
 			}
 		});

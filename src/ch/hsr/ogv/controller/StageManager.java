@@ -437,12 +437,12 @@ public class StageManager extends Observable implements Observer {
 				removeFromSubScene(toDelete);
 			}
 		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
-			ModelObject instance = (ModelObject) arg;
-			if (!this.boxes.containsKey(instance)) { // instance is new
-				addObjectToSubScene(instance);
-				adaptBoxSettings(instance);
+			ModelObject modelObject = (ModelObject) arg;
+			if (!this.boxes.containsKey(modelObject)) { // instance is new
+				addObjectToSubScene(modelObject);
+				adaptBoxSettings(modelObject);
 			} else {
-				PaneBox toDelete = this.boxes.remove(instance);
+				PaneBox toDelete = this.boxes.remove(modelObject);
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
 			}

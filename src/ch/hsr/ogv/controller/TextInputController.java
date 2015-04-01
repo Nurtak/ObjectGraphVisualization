@@ -17,7 +17,7 @@ public class TextInputController {
 	
 	//private final int MAX_CHAR_COUNT = 32;
 
-	public void enableTextInput(ModelClass theClass, PaneBox paneBox) {
+	public void enableTextInput(ModelClass modelClass, PaneBox paneBox) {
 		TextField topTextField = paneBox.getTopTextField();
 
 		topTextField.textProperty().addListener(new ChangeListener<String>() {
@@ -29,7 +29,7 @@ public class TextInputController {
 //            		newValue = newValue.substring(0, newValue.length() - overflow);
 //            		newValue = newValue + "...";
 //            	}
-            	theClass.setName(newValue);
+            	modelClass.setName(newValue);
             }
         });
 		

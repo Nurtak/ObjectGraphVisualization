@@ -39,19 +39,19 @@ public abstract class DragController extends Observable implements Observer {
 		return this.selected != null && this.selected.equals(paneBox);
 	}
 
-	protected void setOnMousePressed(Group g, ModelClass theClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	protected void setOnMousePressed(Group g, ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		g.setOnMousePressed((MouseEvent me) -> {
 			if (isSelected(paneBox) && MouseButton.PRIMARY.equals(me.getButton())) {
 				setDragInProgress(subSceneAdapter, true);
 				origRelMouseX = me.getX();
 				origRelMouseY = me.getY();
 				origRelMouseZ = me.getZ();
-				Point3D origCoords = theClass.getCoordinates();
+				Point3D origCoords = modelClass.getCoordinates();
 				origTranslateX = origCoords.getX();
 				origTranslateY = origCoords.getY();
 				origTranslateZ = origCoords.getZ();
-				origWidth = theClass.getWidth();
-				origHeight = theClass.getHeight();
+				origWidth = modelClass.getWidth();
+				origHeight = modelClass.getHeight();
 				// origDepth = paneBox.getDepth();
 			}
 		});
