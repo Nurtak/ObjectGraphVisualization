@@ -278,35 +278,35 @@ public class StageManager extends Observable implements Observer {
 		}
 	}
 
-	private void addClassToSubScene(ModelClass theClass) {
-		theClass.addObserver(this);
+	private void addClassToSubScene(ModelClass modelClass) {
+		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
 		paneBox.setColor(PaneBox.DEFAULT_COLOR);
 		paneBox.setTopUnderline(false);
-		addPaneBoxControls(theClass, paneBox);
+		addPaneBoxControls(modelClass, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
-		this.boxes.put(theClass, paneBox);
+		this.boxes.put(modelClass, paneBox);
 	}
 
-	private void addInstanceToSubScene(ModelObject instance) {
-		instance.addObserver(this);
+	private void addObjectToSubScene(ModelObject modelObject) {
+		modelObject.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
-		paneBox.setColor(instance.getColor());
+		paneBox.setColor(modelObject.getColor());
 		paneBox.setTopUnderline(true);
-		// addPaneBoxControls(instance, paneBox);
+		// addPaneBoxControls(modelObject, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
-		this.boxes.put(instance, paneBox);
+		this.boxes.put(modelObject, paneBox);
 	}
 
-	private void addPaneBoxControls(ModelClass theClass, PaneBox paneBox) {
+	private void addPaneBoxControls(ModelClass modelClass, PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox, this.subSceneAdapter);
-		this.textInputController.enableTextInput(theClass, paneBox);
-		this.dragMoveController.enableDragMove(theClass, paneBox, this.subSceneAdapter);
-		this.dragResizeController.enableDragResize(theClass, paneBox, this.subSceneAdapter);
+		this.textInputController.enableTextInput(modelClass, paneBox);
+		this.dragMoveController.enableDragMove(modelClass, paneBox, this.subSceneAdapter);
+		this.dragResizeController.enableDragResize(modelClass, paneBox, this.subSceneAdapter);
 	}
 
 	private void adaptBoxSettings(ModelBox modelBox) {
@@ -391,12 +391,12 @@ public class StageManager extends Observable implements Observer {
 	public void update(Observable o, Object arg) {
 		// TODO
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
-			ModelClass theClass = (ModelClass) arg;
-			if (!this.boxes.containsKey(theClass)) { // class is new
-				addClassToSubScene(theClass);
-				adaptBoxSettings(theClass);
+			ModelClass modelClass = (ModelClass) arg;
+			if (!this.boxes.containsKey(modelClass)) { // class is new
+				addClassToSubScene(modelClass);
+				adaptBoxSettings(modelClass);
 			} else {
-				PaneBox toDelete = this.boxes.remove(theClass);
+				PaneBox toDelete = this.boxes.remove(modelClass);
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
 			}
@@ -412,7 +412,7 @@ public class StageManager extends Observable implements Observer {
 		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
 			ModelObject instance = (ModelObject) arg;
 			if (!this.boxes.containsKey(instance)) { // instance is new
-				addInstanceToSubScene(instance);
+				addObjectToSubScene(instance);
 				adaptBoxSettings(instance);
 			} else {
 				PaneBox toDelete = this.boxes.remove(instance);
