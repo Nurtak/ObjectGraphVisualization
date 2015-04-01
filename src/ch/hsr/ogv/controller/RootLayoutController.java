@@ -23,7 +23,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.dataaccess.UserPreferences;
-import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.TSplitMenuButton;
 
