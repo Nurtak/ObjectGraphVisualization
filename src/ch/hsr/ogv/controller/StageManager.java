@@ -252,8 +252,6 @@ public class StageManager extends Observable implements Observer {
 	private void initPaneBoxController() {
 		this.dragMoveController.addObserver(this.cameraController);
 		this.dragResizeController.addObserver(this.cameraController);
-		this.selectionController.addObserver(this.dragMoveController);
-		this.selectionController.addObserver(this.dragResizeController);
 	}
 
 	/**

@@ -18,6 +18,13 @@ import javafx.scene.Cursor;
  */
 public class DragResizeController extends DragController {
 	
+	protected volatile double origTranslateX;
+	protected volatile double origTranslateY;
+	protected volatile double origTranslateZ;
+
+	protected volatile double origWidth;
+	protected volatile double origHeight;
+	
 	public void enableDragResize(ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		enableDirection(paneBox.getSelection().getLineN(),   Cursor.N_RESIZE, modelClass, paneBox, subSceneAdapter);
 		enableDirection(paneBox.getSelection().getPointNE(), Cursor.NE_RESIZE, modelClass, paneBox, subSceneAdapter);
@@ -38,14 +45,23 @@ public class DragResizeController extends DragController {
 			subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 	    });
 		
-		setOnMouseMoved(modelClass, paneBox, subSceneAdapter);
 		setOnMouseDragged(g, modelClass, paneBox, subSceneAdapter, direction);
 		setOnMouseReleased(g, subSceneAdapter);
 	}
 	
-	protected void setOnMouseDragged(Group g, ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter, Cursor direction) {
+	private void setOriginals(ModelClass modelClass) {
+		Point3D origCoords = modelClass.getCoordinates();
+		origTranslateX = origCoords.getX();
+		origTranslateY = origCoords.getY();
+		origTranslateZ = origCoords.getZ();
+		origWidth = modelClass.getWidth();
+		origHeight = modelClass.getHeight();
+	}
+		
+	private void setOnMouseDragged(Group g, ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter, Cursor direction) {
 		Floor floor = subSceneAdapter.getFloor();
 		g.setOnMouseDragged((MouseEvent me) -> {
+			setOriginals(modelClass);
 			setDragInProgress(subSceneAdapter, true);
 			if(MouseButton.PRIMARY.equals(me.getButton())) {
 				subSceneAdapter.getSubScene().setCursor(direction);
