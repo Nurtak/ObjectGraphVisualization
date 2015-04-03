@@ -128,18 +128,23 @@ public class StageManager extends Observable implements Observer {
 
 		// TODO: Remove everything below this line:
 		ModelClass mcA = this.modelManager.createClass(new Point3D(0, PaneBox.INIT_DEPTH / 2, 0), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		mcA.setName("A");		
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		mcB.setName("B");		
 		ModelClass mcC = this.modelManager.createClass(new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-		mcA.setName("A");
-		ModelObject moA = this.modelManager.createObject(mcA);
-		this.modelManager.createObject(mcB);
-		ModelObject moB = this.modelManager.createObject(mcB);
-		this.modelManager.createObject(mcB);
+		mcC.setName("C");
+		
+		ModelObject moA1 = this.modelManager.createObject(mcA);
+		ModelObject moB1 = this.modelManager.createObject(mcB);		
+		ModelObject moB2 = this.modelManager.createObject(mcB);
+		ModelObject moB3 = this.modelManager.createObject(mcB);
 	
 		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
-		this.modelManager.createRelation(moA, moB, RelationType.DIRECTED_AGGREGATION);
+		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM);
+		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM);
+		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM);
 	}
 	
 	private void initRootLayoutController() {
@@ -190,6 +195,18 @@ public class StageManager extends Observable implements Observer {
 		if(newBox != null) {
 			newBox.allowTopTextInput(true);
 		}
+	}
+
+	public void handleCreateNewGeneralization(PaneBox child, PaneBox parent) {
+		ModelBox modelBoxChild = this.getModelBoxByPaneBox(child);		
+		ModelBox modelBoxParent = this.getModelBoxByPaneBox(parent);
+		this.modelManager.createRelation(modelBoxChild, modelBoxParent, RelationType.GENERALIZATION);
+	}
+	
+	public void handleCreateNewDependency(PaneBox dependent, PaneBox supplier) {
+		ModelBox modelBoxDependet = this.getModelBoxByPaneBox(dependent);
+		ModelBox modelBoxSupplier = this.getModelBoxByPaneBox(supplier);
+		this.modelManager.createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY);
 	}
 	
 	private ModelBox getModelBoxByPaneBox(PaneBox value) {

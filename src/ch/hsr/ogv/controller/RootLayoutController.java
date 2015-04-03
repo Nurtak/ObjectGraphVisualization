@@ -258,7 +258,7 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateObject() {
-
+		// Nothing
 	}
 	
 	private void splitMenuButtonSelect(MenuItem choosenItem) {
