@@ -136,7 +136,7 @@ public class StageManager extends Observable implements Observer {
 		ModelObject moB = this.modelManager.createObject(mcB);
 		this.modelManager.createObject(mcB);
 	
-		this.modelManager.createRelation(mcA, mcB, RelationType.GENERALIZATION);
+		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
 		this.modelManager.createRelation(moA, moB, RelationType.DIRECTED_AGGREGATION);
