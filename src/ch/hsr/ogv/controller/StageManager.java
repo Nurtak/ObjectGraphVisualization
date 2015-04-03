@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -153,11 +152,6 @@ public class StageManager extends Observable implements Observer {
 		PaneBox newBox = this.boxes.get(newClass);
 		if(newBox != null) {
 			newBox.allowTopTextInput(true);
-			Platform.runLater(() -> {
-				newBox.getTopTextField().requestFocus();
-				newBox.getTopTextField().selectAll();
-				newBox.getTopTextField().applyCss();
-			});
 		}
 	}
 	

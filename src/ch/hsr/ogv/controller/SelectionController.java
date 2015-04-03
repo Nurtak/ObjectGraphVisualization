@@ -2,7 +2,6 @@ package ch.hsr.ogv.controller;
 
 import java.util.Observable;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point3D;
@@ -51,15 +50,9 @@ public class SelectionController extends Observable {
 				this.selectionCoordinates = new Point3D(me.getX(), me.getY(), me.getZ());
 				paneBox.getTopLabel().requestFocus();
 			}
-//			if(MouseButton.PRIMARY.equals(me.getButton()) && paneBox.getTopLabel().focusedProperty().get() && me.getClickCount() >= 2) {
-//				System.out.println("TopLabel doubleclicked");
-//				paneBox.allowTopTextInput(true);
-//				Platform.runLater(() -> {
-//					paneBox.getTopTextField().requestFocus();
-//					paneBox.getTopTextField().selectAll();
-//					paneBox.getTopTextField().applyCss();
-//				});
-//			}
+			if(MouseButton.PRIMARY.equals(me.getButton()) && paneBox.getTopLabel().focusedProperty().get() && me.getClickCount() >= 2) {
+				paneBox.allowTopTextInput(true);
+			}
 		});
 		
 		paneBox.getCenter().setOnMouseClicked((MouseEvent me) -> {

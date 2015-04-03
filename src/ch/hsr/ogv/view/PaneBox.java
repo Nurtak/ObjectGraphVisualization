@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
@@ -17,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
@@ -137,12 +139,14 @@ public class PaneBox implements Selectable {
 
 		Node topNode = this.borderPane.getTop();
 		if ((topNode instanceof HBox)) {
-			HBox topVBox = (HBox) topNode;
-			if (!topVBox.getChildren().isEmpty() && topVBox.getChildren().get(0) instanceof Label) {
-				this.topLabel = (Label) topVBox.getChildren().get(0);
+			HBox topHBox = (HBox) topNode;
+			if (!topHBox.getChildren().isEmpty() && topHBox.getChildren().get(0) instanceof Label) {
+				this.topLabel = (Label) topHBox.getChildren().get(0);
 			}
 			HBox.setMargin(this.topTextField, new Insets(-1, -1, 0, -1));
+			HBox.setHgrow(this.topTextField, Priority.ALWAYS);
 			HBox.setMargin(this.topLabel, new Insets(-1, -1, 0, -1));
+			HBox.setHgrow(this.topLabel, Priority.ALWAYS);
 		}
 	}
 	
@@ -168,9 +172,9 @@ public class PaneBox implements Selectable {
 	private void swapTop(Node labelOrField) {
 		Node topNode = this.borderPane.getTop();
 		if ((topNode instanceof HBox)) {
-			HBox topVBox = (HBox) topNode;
-			topVBox.getChildren().clear();
-			topVBox.getChildren().add(labelOrField);
+			HBox topHBox = (HBox) topNode;
+			topHBox.getChildren().clear();
+			topHBox.getChildren().add(labelOrField);
 		}
 	}
 	
@@ -206,6 +210,11 @@ public class PaneBox implements Selectable {
 	public void allowTopTextInput(boolean value) {
 		if (value) {
 			swapTop(this.topTextField);
+			Platform.runLater(() -> {
+				this.topTextField.requestFocus();
+				this.topTextField.selectAll();
+				this.topTextField.applyCss();
+			});
 		} else {
 			swapTop(this.topLabel);
 		}
