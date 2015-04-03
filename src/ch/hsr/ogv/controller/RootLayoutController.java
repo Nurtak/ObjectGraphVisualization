@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.dataaccess.UserPreferences;
 import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.TSplitMenuButton;
 
 /**
@@ -157,6 +158,13 @@ public class RootLayoutController implements Observer, Initializable {
 	
 	@FXML
 	private void handleShowObjects() {
+		if(this.showObjects.isSelected()) {
+			this.createObject.setDisable(false);
+		}
+		else {
+			this.createObject.setSelected(false);
+			this.createObject.setDisable(true);
+		}
 		this.stageManager.handleShowObjects(this.showObjects.isSelected());
 	}
 	
@@ -252,6 +260,11 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateObject() {
 
 	}
+	
+	private void splitMenuButtonSelect(MenuItem choosenItem) {
+		this.tSplitMenuButton.setChoice(choosenItem);
+		this.createToolbar.selectToggle(this.tSplitMenuButton);
+	}
 
 	@FXML
 	private void handleCreateAssociation() {
@@ -264,44 +277,37 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateUndirectedAssociation() {
-		this.tSplitMenuButton.setChoice(this.createUndirectedAssociation);
-		this.createToolbar.selectToggle(this.tSplitMenuButton);
+		splitMenuButtonSelect(this.createUndirectedAssociation);
 	}
 
 	@FXML
 	private void handleCreateDirectedAssociation() {
-		this.tSplitMenuButton.setChoice(this.createDirectedAssociation);
-		this.createToolbar.selectToggle(this.tSplitMenuButton);
+		splitMenuButtonSelect(this.createDirectedAssociation);
 	}
 
 	@FXML
 	private void handleCreateBidirectedAssociation() {
-		this.tSplitMenuButton.setChoice(this.createBidirectedAssociation);
-		this.createToolbar.selectToggle(this.tSplitMenuButton);
+		splitMenuButtonSelect(this.createBidirectedAssociation);
 	}
 
 	@FXML
 	private void handleCreateUndirectedAggregation() {
-		this.tSplitMenuButton.setChoice(this.createUndirectedAggregation);
-		this.createToolbar.selectToggle(this.tSplitMenuButton);
+		splitMenuButtonSelect(this.createUndirectedAggregation);
 	}
 
 	@FXML
 	private void handleCreateDirectedAggregation() {
-		this.tSplitMenuButton.setChoice(this.createDirectedAggregation);
-		this.createToolbar.selectToggle(this.tSplitMenuButton);
+		splitMenuButtonSelect(this.createDirectedAggregation);
 	}
 
 	@FXML
 	private void handleCreateUndirectedComposition() {
-		this.tSplitMenuButton.setChoice(this.createUndirectedComposition);
-		this.createToolbar.selectToggle(this.tSplitMenuButton);
+		splitMenuButtonSelect(this.createUndirectedComposition);
 	}
 
 	@FXML
 	private void handleCreateDirectedComposition() {
-		this.tSplitMenuButton.setChoice(this.createDirectedComposition);
-		this.createToolbar.selectToggle(this.tSplitMenuButton);
+		splitMenuButtonSelect(this.createDirectedComposition);
 	}
 
 	@FXML
@@ -329,8 +335,9 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 		} else if (o instanceof SelectionController && arg instanceof PaneBox) {
 			SelectionController selectionController = (SelectionController) o;
-			if (selectionController.hasSelection() && createObject != null && createObject.isSelected()) {
-				this.stageManager.handleCreateNewObject(selectionController.getSelected());
+			Selectable selected = selectionController.getSelected();
+			if (selectionController.hasSelection() && selected instanceof PaneBox && createObject != null && createObject.isSelected()) {
+				this.stageManager.handleCreateNewObject((PaneBox) selected);
 				this.createObject.setSelected(false);
 			}
 		}
@@ -338,6 +345,6 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
-		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, createToolbar);
+		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
 	}
 }

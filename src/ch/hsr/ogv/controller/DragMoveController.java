@@ -1,7 +1,6 @@
 package ch.hsr.ogv.controller;
 
 import javafx.geometry.Point3D;
-import javafx.scene.Group;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
@@ -19,26 +18,45 @@ import javafx.scene.Cursor;
 public class DragMoveController extends DragController {
 	
 	public void enableDragMove(ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
-		Group paneBoxGroup = paneBox.get();
-		setOnMousePressed(paneBoxGroup, modelClass, paneBox, subSceneAdapter);
-		setOnMouseDragged(paneBoxGroup, modelClass, paneBox, subSceneAdapter);
-		setOnMouseReleased(paneBoxGroup, subSceneAdapter);
+		setOnMouseMoved(modelClass, paneBox, subSceneAdapter);
+		setOnMouseDragged(modelClass, paneBox, subSceneAdapter);
+		setOnMouseReleased(paneBox.get(), subSceneAdapter);
 	}
 
-	protected void setOnMouseDragged(Group g, ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	private void dragProcess(MouseEvent me, ModelClass modelClass, SubSceneAdapter subSceneAdapter) {
 		Floor floor = subSceneAdapter.getFloor();
-		g.setOnMouseDragged((MouseEvent me) -> {
+		subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
+		PickResult pick = me.getPickResult();
+		if(pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
+			Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
+			System.out.println("Rel Mouse X: " + origRelMouseX + " .. Rel Mouse Z: " + origRelMouseZ);
+			System.out.println("Pick Coords X: " + coords.getX() + " .. Pick Coords Z: " + coords.getZ());
+			Point3D classCoordinates = new Point3D(coords.getX() - origRelMouseX, modelClass.getY(), coords.getZ() - origRelMouseZ); // only x and z is changeable
+			modelClass.setCoordinates(classCoordinates);
+		}
+	}
+	
+	protected void setOnMouseDragged(ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		paneBox.get().setOnMouseDragged((MouseEvent me) -> {
 			setDragInProgress(subSceneAdapter, true);
-			if(g.focusedProperty().get() && MouseButton.PRIMARY.equals(me.getButton())) {
-				subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
-				PickResult pick = me.getPickResult();
-				if(pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
-					Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
-					Point3D classCoordinates = new Point3D(coords.getX() - origRelMouseX, modelClass.getY(), coords.getZ() - origRelMouseZ); // only x and z is changeable
-					modelClass.setCoordinates(classCoordinates);
-				}
+			if(paneBox.isSelected() && MouseButton.PRIMARY.equals(me.getButton())) {
+				dragProcess(me, modelClass, subSceneAdapter);
 			}
 		});
+//		
+//		paneBox.getCenter().setOnMouseDragged((MouseEvent me) -> {
+//			setDragInProgress(subSceneAdapter, true);
+//			if(paneBox.isSelected() && MouseButton.PRIMARY.equals(me.getButton())) {
+//				dragProcess(me, modelClass, subSceneAdapter);
+//			}
+//		});
+//		
+//		paneBox.getBox().setOnMouseDragged((MouseEvent me) -> {
+//			setDragInProgress(subSceneAdapter, true);
+//			if(paneBox.isSelected() && MouseButton.PRIMARY.equals(me.getButton())) {
+//				dragProcess(me, modelClass, subSceneAdapter);
+//			}
+//		});
 	}
 	
 }

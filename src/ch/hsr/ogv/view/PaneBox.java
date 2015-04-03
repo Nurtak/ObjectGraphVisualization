@@ -16,7 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
@@ -30,7 +30,7 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
  * @author Simon Gwerder
  *
  */
-public class PaneBox {
+public class PaneBox implements Selectable {
 	
 	private final static Logger logger = LoggerFactory.getLogger(PaneBox.class);
 	
@@ -47,7 +47,7 @@ public class PaneBox {
 	public final static int MAX_HEIGHT = 500;
 	
 	private Group paneBox = new Group();
-	private Selection selection = null;
+	private BoxSelection selection = null;
 	private BorderPane borderPane = null;
 
 	private Label topLabel = null;
@@ -59,15 +59,11 @@ public class PaneBox {
 		return this.paneBox;
 	}
 	
-	public BorderPane getBorderPane() {
-		return borderPane;
-	}
-	
 	public Cuboid getBox() {
 		return this.box;
 	}
 
-	public Selection getSelection() {
+	public BoxSelection getSelection() {
 		return this.selection;
 	}
 	
@@ -103,11 +99,11 @@ public class PaneBox {
         buildBox();
         
         // create the selection objects that stays with this box
-        this.selection = new Selection(getBox());
+        this.selection = new BoxSelection(getBox());
+        this.selection.setVisible(false);
         
         //this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection.getNode());
         this.paneBox.getChildren().addAll(this.borderPane, this.box);
-        this.selection.setVisible(false);
         
         // position the whole group so, that the center is at scene's origin (0, 0, 0)
         setTranslateY(INIT_DEPTH / 2);
@@ -140,13 +136,13 @@ public class PaneBox {
 		}
 
 		Node topNode = this.borderPane.getTop();
-		if ((topNode instanceof VBox)) {
-			VBox topVBox = (VBox) topNode;
+		if ((topNode instanceof HBox)) {
+			HBox topVBox = (HBox) topNode;
 			if (!topVBox.getChildren().isEmpty() && topVBox.getChildren().get(0) instanceof Label) {
 				this.topLabel = (Label) topVBox.getChildren().get(0);
 			}
-			VBox.setMargin(this.topTextField, new Insets(-1, -1, 0, -1));
-			VBox.setMargin(this.topLabel, new Insets(-1, -1, 0, -1));
+			HBox.setMargin(this.topTextField, new Insets(-1, -1, 0, -1));
+			HBox.setMargin(this.topLabel, new Insets(-1, -1, 0, -1));
 		}
 	}
 	
@@ -171,8 +167,8 @@ public class PaneBox {
 	
 	private void swapTop(Node labelOrField) {
 		Node topNode = this.borderPane.getTop();
-		if ((topNode instanceof VBox)) {
-			VBox topVBox = (VBox) topNode;
+		if ((topNode instanceof HBox)) {
+			HBox topVBox = (HBox) topNode;
 			topVBox.getChildren().clear();
 			topVBox.getChildren().add(labelOrField);
 		}
@@ -243,6 +239,10 @@ public class PaneBox {
 		if (!selected) {
 			allowTopTextInput(false);
 		}
+	}
+	
+	public boolean isSelected() {
+		return this.selection.isVisible();
 	}
 	
 	private double restrictedWidth(double width) {

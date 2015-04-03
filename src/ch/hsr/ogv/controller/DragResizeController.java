@@ -38,7 +38,7 @@ public class DragResizeController extends DragController {
 			subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 	    });
 		
-		setOnMousePressed(g, modelClass, paneBox, subSceneAdapter);
+		setOnMouseMoved(modelClass, paneBox, subSceneAdapter);
 		setOnMouseDragged(g, modelClass, paneBox, subSceneAdapter, direction);
 		setOnMouseReleased(g, subSceneAdapter);
 	}

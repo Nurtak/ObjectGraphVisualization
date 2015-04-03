@@ -9,7 +9,7 @@ import javafx.scene.transform.Rotate;
  * @author Simon Gwerder
  *
  */
-public class Selection extends Group {
+public class BoxSelection extends Group {
 	
 	private final static int INIT_SELECT_SIZE = 4;
 	private final static Color SELECTION_COLOR = Color.DODGERBLUE;
@@ -59,7 +59,7 @@ public class Selection extends Group {
 		return this.lineW;
 	}
 
-	public Selection(Cuboid box) {
+	public BoxSelection(Cuboid box) {
 		this.box = box;
 		buildSelection();
 		getChildren().add(selection);

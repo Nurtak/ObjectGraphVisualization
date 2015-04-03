@@ -10,9 +10,9 @@
 
 <BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="500.0" maxWidth="500.0" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white; -fx-font-smoothing-type: gray;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <top>
-      <VBox alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" style="-fx-border-color: transparent transparent black transparent;" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" prefHeight="30.0" style="-fx-border-color: transparent transparent black transparent;" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" prefHeight="28.0" prefWidth="120.0" snapToPixel="false" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" text="Class">
+            <Label alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" snapToPixel="false" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" text="Class" textAlignment="CENTER" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="16.0" />
                </font>
@@ -24,7 +24,7 @@
                </padding>
             </Label>
          </children>
-      </VBox>
+      </HBox>
    </top>
    <center>
       <GridPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" layoutX="9.0" layoutY="3.0" minHeight="25.0" prefHeight="25.0" prefWidth="126.0" snapToPixel="false" BorderPane.alignment="CENTER">

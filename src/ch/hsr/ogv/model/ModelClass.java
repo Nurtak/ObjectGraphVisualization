@@ -31,7 +31,7 @@ public class ModelClass extends ModelBox {
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
-
+	
 	public List<ModelObject> getModelObjects() {
 		return modelObjects;
 	}

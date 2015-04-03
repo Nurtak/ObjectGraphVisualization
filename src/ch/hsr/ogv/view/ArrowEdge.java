@@ -20,27 +20,33 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 
-public class ArrowLineEdge extends Group {
+public class ArrowEdge extends Group {
 	
-	private final static Logger logger = LoggerFactory.getLogger(ArrowLineEdge.class);
+	private final static Logger logger = LoggerFactory.getLogger(ArrowEdge.class);
 	
 	private Color color = Color.BLACK;
 	private List<MeshView> meshViews = new ArrayList<MeshView>();
 	private double additionalGap;
 	
+	private EndpointType endpointType;
+	
 	public double getAdditionalGap() {
 		return this.additionalGap;
 	}
 
-	public ArrowLineEdge(Color color) {
+	public ArrowEdge(Color color) {
 		this(EndpointType.NONE, color);
 	}
 	
-	public ArrowLineEdge(EndpointType endpointType, Color color) {
-		ObjModelImporter tdsImporter = new ObjModelImporter();
-		
+	public ArrowEdge(EndpointType endpointType, Color color) {
+		this.endpointType = endpointType;
+		this.color = color;
+		loadModel();
+	}
+	
+	private void loadModel() {
 		URL modelUrl = null;
-		switch(endpointType) {
+		switch(this.endpointType) {
 		case EMPTY_ARROW:
 			modelUrl = ResourceLocator.getResourcePath(Resource.EMPTY_ARROW_OBJ);
 			this.additionalGap = 30;
@@ -51,18 +57,28 @@ public class ArrowLineEdge extends Group {
 			break;
 		case FILLED_ARROW:
 			modelUrl = ResourceLocator.getResourcePath(Resource.FILLED_ARROW_OBJ);
+			this.additionalGap = 0;
 			break;
 		case FILLED_DIAMOND:
 			modelUrl = ResourceLocator.getResourcePath(Resource.FILLED_DIAMOND_OBJ);
+			this.additionalGap = 0;
 			break;
 		case OPEN_ARROW:
 			modelUrl = ResourceLocator.getResourcePath(Resource.OPEN_ARROW_OBJ);
+			this.additionalGap = 0;
 			break;
 		case NONE:
+			this.additionalGap = 0;
 			break;
 		default:
+			this.additionalGap = 0;
 			break;
 		}
+		loadModel(modelUrl);
+	}
+	
+	private void loadModel(URL modelUrl) {
+		ObjModelImporter tdsImporter = new ObjModelImporter();
 		Node[] rootNodes = {};
 		if(modelUrl != null) {
 			try {
@@ -79,7 +95,8 @@ public class ArrowLineEdge extends Group {
 				this.meshViews.add(mv);
 			}
 		}
-		setColor(color);
+		setColor(this.color);
+		getChildren().clear();
 		getChildren().addAll(Arrays.asList(rootNodes));
 	}
 	
@@ -96,6 +113,15 @@ public class ArrowLineEdge extends Group {
 		for(MeshView mv : this.meshViews) {
 			mv.setMaterial(material);
 		}
+	}
+	
+	public EndpointType getEndpointType() {
+		return endpointType;
+	}
+
+	public void setEndpointType(EndpointType endpointType) {
+		this.endpointType = endpointType;
+		loadModel();
 	}
 	
 }

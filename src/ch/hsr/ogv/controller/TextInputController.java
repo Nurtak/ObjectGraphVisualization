@@ -19,6 +19,12 @@ public class TextInputController {
 
 	public void enableTextInput(ModelClass modelClass, PaneBox paneBox) {
 		TextField topTextField = paneBox.getTopTextField();
+		
+//		paneBox.getTopLabel().setOnMousePressed((MouseEvent me) -> {
+//			if(MouseButton.PRIMARY.equals(me.getButton()) && paneBox.get().focusedProperty().get() && me.getClickCount() >= 2) {
+//
+//			}
+//		});
 
 		topTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override

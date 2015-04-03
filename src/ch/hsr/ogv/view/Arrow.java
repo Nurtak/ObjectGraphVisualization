@@ -16,20 +16,24 @@ import ch.hsr.ogv.util.GeometryUtil;
  * @author Simon Gwerder, Adrian Rieser
  *
  */
-public class ArrowLine extends Group {
+public class Arrow extends Group implements Selectable {
 
 	private static final int INIT_WIDTH = 2;
 	private double width = INIT_WIDTH;
+	private static final Color SELECTION_COLOR = Color.DODGERBLUE;
 	private double length;
-	private double angle;
+	private double rotateZAngle;
+	private double rotateXAngle;
 
 	private static final double EDGE_SPACING = 3;
 
 	private Point3D startPoint;
 	private Point3D endPoint;
 	
-	private ArrowLineEdge arrowStart;
-	private ArrowLineEdge arrowEnd;
+	private ArrowEdge arrowStart;
+	private ArrowEdge arrowEnd;
+	
+	private ArrowSelection selection = null;
 	
 	private RelationType type = RelationType.BIDIRECTED_ASSOZIATION;
 	
@@ -52,37 +56,56 @@ public class ArrowLine extends Group {
 		this.endPoint = endPoint;
 	}
 	
+	public ArrowEdge getArrowStart() {
+		return arrowStart;
+	}
+
+	public ArrowEdge getArrowEnd() {
+		return arrowEnd;
+	}
+	
+	public ArrowSelection getSelection() {
+		return this.selection;
+	}
+	
 	public RelationType getType() {
 		return type;
 	}
 
 	public void setType(RelationType type) {
 		this.type = type;
+		this.arrowStart.setEndpointType(type.getStartType());
+		this.arrowEnd.setEndpointType(type.getEndType());
 		drawArrow();
 	}
 	
-	public ArrowLine(Point3D startPoint, Point3D endPoint, RelationType type) {
+	public Arrow(Point3D startPoint, Point3D endPoint, RelationType type) {
 		this.startPoint = startPoint;
 		this.endPoint = endPoint;
 		this.type = type;
 		this.line = new Box(this.width, this.width, this.length);
+		this.arrowStart = new ArrowEdge(this.type.getStartType(), this.color);
+		this.arrowEnd = new ArrowEdge(this.type.getEndType(), this.color);
+		this.selection = new ArrowSelection();
+		this.selection.setVisible(false);
+		setColor(this.color);
 		drawArrow();
+		getChildren().addAll(this.line, this.arrowStart, this.arrowEnd);
 	}
 	
-	public ArrowLine(PaneBox startBox, PaneBox endBox, RelationType type) {
-		this.type = type;
-		this.line = new Box(this.width, this.width, this.length);
+	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
+		this(startBox.getCenterPoint(), endBox.getCenterPoint(), type);
 		setPointsBasedOnBoxes(startBox, endBox);
 		drawArrow();
 	}
 	
 	public void setPointsBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
-		this.startPoint = startBox.getCenterPoint();
-		this.endPoint = endBox.getCenterPoint();
+		setStartPoint(startBox.getCenterPoint());
+		setEndPoint(endBox.getCenterPoint());
 		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox);
 		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox);
-		if(startIntersection != null) this.startPoint = new Point3D(startIntersection.getX(), this.startPoint.getY(), startIntersection.getY());
-		if(endIntersection != null) this.endPoint = new Point3D(endIntersection.getX(), endPoint.getY(), endIntersection.getY());
+		if(startIntersection != null) setStartPoint(new Point3D(startIntersection.getX(), this.startPoint.getY(), startIntersection.getY()));
+		if(endIntersection != null) setEndPoint(new Point3D(endIntersection.getX(), endPoint.getY(), endIntersection.getY()));
 	}
 	
 	public void drawArrow() {
@@ -91,24 +114,23 @@ public class ArrowLine extends Group {
 		
 		setArrowLineEdge();
 
-		double endGap = arrowEnd.getAdditionalGap();
-		double startGap = arrowStart.getAdditionalGap();
+		double endGap = this.arrowEnd.getAdditionalGap();
+		double startGap = this.arrowStart.getAdditionalGap();
 		
 		this.length -= (endGap + startGap) / 2;
 		
 		this.line.setDepth(this.length);
 		
-		setColor(this.color);
-		
-		double rotateZAngle = GeometryUtil.rotateZAngle(this.startPoint, this.endPoint);
-		double rotateXAngle = GeometryUtil.rotateXAngle(this.startPoint, this.endPoint);
+		this.rotateZAngle =  GeometryUtil.rotateZAngle(this.startPoint, this.endPoint);
+		this.rotateXAngle = -GeometryUtil.rotateXAngle(this.startPoint, this.endPoint);
 		
 		Point3D midPoint = this.startPoint.midpoint(this.endPoint);
 		
 		this.line.setTranslateZ((-endGap + startGap) / 4);
 		setTranslateXYZ(midPoint);
-		addRotateYAxis(rotateZAngle);
-		addRotateXAxis(-rotateXAngle);
+		addRotateYAxis(this.rotateZAngle);
+		addRotateXAxis(this.rotateXAngle);
+		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 
 	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box) {
@@ -134,28 +156,47 @@ public class ArrowLine extends Group {
 		if(interSouthWidth != null) return interSouthWidth;
 		return null;
 	}
-		
+	
+	private void setArrowLineEdge() {
+		this.arrowStart.setTranslateX(0);
+		this.arrowStart.setTranslateY(0);
+		this.arrowStart.setTranslateZ(0);
+		this.arrowStart.getTransforms().clear();
+		this.arrowStart.getTransforms().add(new Rotate(180, arrowStart.getTranslateX(), arrowStart.getTranslateY(), arrowStart.getTranslateZ(), Rotate.Y_AXIS));
+		this.arrowStart.setTranslateZ(- this.length / 2 - EDGE_SPACING);
+		this.arrowEnd.setTranslateZ(this.length / 2 + EDGE_SPACING);
+	}
+	
 	public void setColor(Color color) {
 		this.color = color;
+		applyColor(this.color);
+	}
+	
+	private void applyColor(Color color) {
 		PhongMaterial material = new PhongMaterial();
-		material.setDiffuseColor(this.color);
-		material.setSpecularColor(this.color.brighter());
+		material.setDiffuseColor(color);
+		material.setSpecularColor(color.brighter());
 		this.line.setMaterial(material);
+		this.arrowStart.setColor(color);
+		this.arrowEnd.setColor(color);
 	}
 
 	public Color getColor() {
 		return this.color;
 	}
-
-	private void setArrowLineEdge() {
-		getChildren().clear();
-		getChildren().add(this.line);
-		this.arrowStart = new ArrowLineEdge(this.type.getStartType(), this.color);
-		this.arrowEnd = new ArrowLineEdge(this.type.getEndType(), this.color);
-		arrowStart.getTransforms().add(new Rotate(180, arrowStart.getTranslateX(), arrowStart.getTranslateY(), arrowStart.getTranslateZ(), Rotate.Y_AXIS));
-		arrowStart.setTranslateZ(- this.length / 2 - EDGE_SPACING);
-		arrowEnd.setTranslateZ(this.length / 2 + EDGE_SPACING);
-		getChildren().addAll(arrowStart, arrowEnd);
+	
+	public void setSelected(boolean selected) {
+		this.selection.setVisible(selected);
+		if(selected) {
+			applyColor(SELECTION_COLOR);
+		}
+		else {
+			applyColor(getColor());
+		}
+	}
+	
+	public boolean isSelected() {
+		return this.selection.isVisible();
 	}
 
 	public void setTranslateXYZ(Point3D point) {
@@ -186,8 +227,12 @@ public class ArrowLine extends Group {
 		return this.length;
 	}
 
-	public double getAngle() {
-		return this.angle;
+	public double getRotateZAngle() {
+		return this.rotateZAngle;
+	}
+	
+	public double getRotateXAngle() {
+		return this.rotateXAngle;
 	}
 
 }

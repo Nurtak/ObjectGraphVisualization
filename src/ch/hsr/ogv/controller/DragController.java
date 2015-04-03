@@ -6,7 +6,6 @@ import java.util.Observer;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.view.PaneBox;
@@ -38,23 +37,38 @@ public abstract class DragController extends Observable implements Observer {
 	protected boolean isSelected(PaneBox paneBox) {
 		return this.selected != null && this.selected.equals(paneBox);
 	}
-
-	protected void setOnMousePressed(Group g, ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
-		g.setOnMousePressed((MouseEvent me) -> {
-			if (isSelected(paneBox) && MouseButton.PRIMARY.equals(me.getButton())) {
-				setDragInProgress(subSceneAdapter, true);
-				origRelMouseX = me.getX();
-				origRelMouseY = me.getY();
-				origRelMouseZ = me.getZ();
-				Point3D origCoords = modelClass.getCoordinates();
-				origTranslateX = origCoords.getX();
-				origTranslateY = origCoords.getY();
-				origTranslateZ = origCoords.getZ();
-				origWidth = modelClass.getWidth();
-				origHeight = modelClass.getHeight();
-				// origDepth = paneBox.getDepth();
+	
+	private void moveProcess(MouseEvent me, ModelClass modelClass) {
+		origRelMouseX = me.getX();
+		origRelMouseY = me.getY();
+		origRelMouseZ = me.getZ();
+		Point3D origCoords = modelClass.getCoordinates();
+		origTranslateX = origCoords.getX();
+		origTranslateY = origCoords.getY();
+		origTranslateZ = origCoords.getZ();
+		origWidth = modelClass.getWidth();
+		origHeight = modelClass.getHeight();
+		// origDepth = paneBox.getDepth();
+	}
+	
+	protected void setOnMouseMoved(ModelClass modelClass, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		paneBox.get().setOnMouseMoved((MouseEvent me) -> {
+			if (paneBox.isSelected()) {
+				moveProcess(me, modelClass);
 			}
 		});
+		
+//		paneBox.getCenter().setOnMouseMoved((MouseEvent me) -> {
+//			if (paneBox.isSelected()) {
+//				moveProcess(me, modelClass);
+//			}
+//		});
+//		
+//		paneBox.getBox().setOnMouseMoved((MouseEvent me) -> {
+//			if (paneBox.isSelected()) {
+//				moveProcess(me, modelClass);
+//			}
+//		});
 	}
 
 	protected void setOnMouseReleased(Group g, SubSceneAdapter subSceneAdapter) {
@@ -77,16 +91,18 @@ public abstract class DragController extends Observable implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof SelectionController) {
-			SelectionController selectionController = (SelectionController) o;
-			this.selected = selectionController.getSelected();
-			Point3D selectionCoodinates = selectionController.getSelectionCoordinates();
-			if (selectionController.getSelectionCoordinates() != null) {
-				origRelMouseX = selectionCoodinates.getX();
-				origRelMouseY = selectionCoodinates.getY();
-				origRelMouseZ = selectionCoodinates.getZ();
-			}
-		}
+//		if (o instanceof SelectionController) {
+//			SelectionController selectionController = (SelectionController) o;
+//			if(selectionController.hasSelection() && selectionController.getSelected() instanceof PaneBox) {
+//				this.selected = (PaneBox) selectionController.getSelected();
+//				Point3D selectionCoodinates = selectionController.getSelectionCoordinates();
+//				if (selectionController.getSelectionCoordinates() != null) {
+//					origRelMouseX = selectionCoodinates.getX();
+//					origRelMouseY = selectionCoodinates.getY();
+//					origRelMouseZ = selectionCoodinates.getZ();
+//				}
+//			}
+//		}
 	}
 
 }
