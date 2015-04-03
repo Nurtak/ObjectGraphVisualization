@@ -20,6 +20,11 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class ArrowEdge extends Group {
 	
 	private final static Logger logger = LoggerFactory.getLogger(ArrowEdge.class);

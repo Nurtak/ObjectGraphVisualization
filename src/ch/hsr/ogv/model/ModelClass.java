@@ -14,6 +14,8 @@ import jfxtras.labs.util.Util;
  *
  */
 public class ModelClass extends ModelBox {
+	
+	private final static double OBJECT_LEVEL_DIFF = 100;
 
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
@@ -76,7 +78,7 @@ public class ModelClass extends ModelBox {
 	}
 
 	public ModelObject createModelObject() {
-		int levelPlus = (this.getModelObjects().size() + 1) * 100;
+		double levelPlus = (this.getModelObjects().size() + 1.0) * OBJECT_LEVEL_DIFF;
 		Point3D modelObjectCoordinates = new Point3D(this.getX(), this.getY() + levelPlus, this.getZ());
 		ModelObject modelObject = new ModelObject(this, modelObjectCoordinates, this.getWidth(), this.getHeight(), Util.brighter(this.getColor(), 0.1));
 		for(Attribute attribute : getAttributes()) {

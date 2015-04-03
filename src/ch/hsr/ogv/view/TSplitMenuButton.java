@@ -12,6 +12,11 @@ import javafx.scene.image.ImageView;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
+/**
+ * 
+ * @author Adrian Rieser
+ *
+ */
 public class TSplitMenuButton implements Toggle {
 
 	private SplitMenuButton splitMenuButton;

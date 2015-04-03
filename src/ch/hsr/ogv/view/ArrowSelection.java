@@ -4,6 +4,11 @@ import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class ArrowSelection extends Group {
 	
 	private final static int INIT_SELECT_SIZE = 4;

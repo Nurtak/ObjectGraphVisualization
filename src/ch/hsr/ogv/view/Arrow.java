@@ -19,6 +19,7 @@ import ch.hsr.ogv.util.GeometryUtil;
 public class Arrow extends Group implements Selectable {
 
 	private static final int INIT_WIDTH = 2;
+	private static final int SELECTION_HELPER_WIDTH = 20;
 	private double width = INIT_WIDTH;
 	private static final Color SELECTION_COLOR = Color.DODGERBLUE;
 	private double length;
@@ -33,12 +34,13 @@ public class Arrow extends Group implements Selectable {
 	private ArrowEdge arrowStart;
 	private ArrowEdge arrowEnd;
 	
-	private ArrowSelection selection = null;
 	
 	private RelationType type = RelationType.BIDIRECTED_ASSOZIATION;
 	
 	private Box line;
 	private Color color = Color.BLACK;
+	private ArrowSelection selection = null;
+	private Box selectionHelper;
 	
 	public Point3D getStartPoint() {
 		return startPoint;
@@ -68,6 +70,10 @@ public class Arrow extends Group implements Selectable {
 		return this.selection;
 	}
 	
+	public Box getSelectionHelper() {
+		return selectionHelper;
+	}
+	
 	public RelationType getType() {
 		return type;
 	}
@@ -86,11 +92,12 @@ public class Arrow extends Group implements Selectable {
 		this.line = new Box(this.width, this.width, this.length);
 		this.arrowStart = new ArrowEdge(this.type.getStartType(), this.color);
 		this.arrowEnd = new ArrowEdge(this.type.getEndType(), this.color);
+		buildSelectionHelper();
 		this.selection = new ArrowSelection();
 		this.selection.setVisible(false);
 		setColor(this.color);
 		drawArrow();
-		getChildren().addAll(this.line, this.arrowStart, this.arrowEnd);
+		getChildren().addAll(this.line, this.arrowStart, this.arrowEnd, this.selectionHelper);
 	}
 	
 	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
@@ -169,29 +176,43 @@ public class Arrow extends Group implements Selectable {
 	
 	public void setColor(Color color) {
 		this.color = color;
-		applyColor(this.color);
+		applyColor(this.line, this.color);
+		this.arrowStart.setColor(color);
+		this.arrowEnd.setColor(color);
 	}
 	
-	private void applyColor(Color color) {
+	private void applyColor(Box box, Color color) {
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(color);
 		material.setSpecularColor(color.brighter());
-		this.line.setMaterial(material);
-		this.arrowStart.setColor(color);
-		this.arrowEnd.setColor(color);
+		box.setMaterial(material);
 	}
 
 	public Color getColor() {
 		return this.color;
 	}
 	
+	private void buildSelectionHelper() {
+		this.selectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, this.length);
+		this.selectionHelper.depthProperty().bind(this.line.depthProperty());
+		this.selectionHelper.translateXProperty().bind(this.line.translateXProperty());
+		this.selectionHelper.translateYProperty().bind(this.line.translateYProperty());
+		this.selectionHelper.translateZProperty().bind(this.line.translateZProperty());
+		this.selectionHelper.rotateProperty().bind(this.line.rotateProperty());
+		this.selectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
+	}
+	
 	public void setSelected(boolean selected) {
 		this.selection.setVisible(selected);
 		if(selected) {
-			applyColor(SELECTION_COLOR);
+			applyColor(this.line, SELECTION_COLOR);
+			this.arrowStart.setColor(SELECTION_COLOR);
+			this.arrowEnd.setColor(SELECTION_COLOR);
 		}
 		else {
-			applyColor(getColor());
+			applyColor(this.line, getColor());
+			this.arrowStart.setColor(getColor());
+			this.arrowEnd.setColor(getColor());
 		}
 	}
 	
