@@ -63,7 +63,7 @@ public class ModelManager extends Observable {
 			setChanged();
 			notifyObservers(deletedClass);
 		}
-		ModelClass.modelClassCounter.decrementAndGet();
+		//ModelClass.modelClassCounter.decrementAndGet();
 		return deletedClass;
 	}
 

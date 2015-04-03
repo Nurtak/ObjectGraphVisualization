@@ -68,7 +68,7 @@ public class ModelClass extends ModelBox {
 	}
 
 	public boolean deleteModelObject(ModelObject modelObject) {
-		ModelObject.modelObjectCounter.decrementAndGet();
+		//ModelObject.modelObjectCounter.decrementAndGet();
 		return modelObjects.remove(modelObject);
 	}
 

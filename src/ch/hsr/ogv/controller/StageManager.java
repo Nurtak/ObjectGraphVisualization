@@ -188,8 +188,7 @@ public class StageManager extends Observable implements Observer {
 		ModelObject newObject = this.modelManager.createObject(selectedModelClass);
 		PaneBox newBox = this.boxes.get(newObject);
 		if(newBox != null) {
-			//TODO
-			//newBox.allowTopTextInput(true);
+			newBox.allowTopTextInput(true);
 		}
 	}
 	
@@ -365,14 +364,14 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null && modelBox instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) modelBox;
 			changedBox.getTopTextField().setText((modelObject.getName()));
-			changedBox.getTopLabel().setText(modelObject.getName() + ":" + modelObject.getModelClass().getName());
+			changedBox.getTopLabel().setText(modelObject.getName() + " : " + modelObject.getModelClass().getName());
 			modelBox.setWidth(modelObject.getModelClass().getWidth());
 		}
 		else if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
 			
-			// + 50px for some additional space to compensate insets, borders etc.
-			double newWidth = TextUtil.computeTextWidth(changedBox.getTopFont(), modelBox.getName(), 0.0D) + 50;
+			// + 70px for some additional space to compensate insets, borders etc.
+			double newWidth = TextUtil.computeTextWidth(changedBox.getTopFont(), modelBox.getName(), 0.0D) + 70;
 			changedBox.setMinWidth(newWidth);
 			//changedBox.getTopLabel().setPrefWidth(newWidth);
 			//changedBox.getTopTextField().setPrefWidth(newWidth);
