@@ -29,11 +29,6 @@ public class ModelObject extends ModelBox {
 		return attributeValues;
 	}
 
-	@Override
-	public String getName() {
-		return super.getName() + ':' + modelClass.getName();
-	}
-
 	public void setAttributeValues(Map<Attribute, String> attributeValues) {
 		this.attributeValues = attributeValues;
 	}

@@ -32,6 +32,7 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.ResourceLocator;
+import ch.hsr.ogv.util.TextUtil;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
@@ -318,18 +319,17 @@ public class StageManager extends Observable implements Observer {
 	private void adaptBoxSettings(ModelBox modelBox) {
 		PaneBox changedBox = this.boxes.get(modelBox);
 		if (changedBox != null) {
-			changedBox.setTopText(modelBox.getName());
-			changedBox.setColor(modelBox.getColor());
 			changedBox.setMinWidth(modelBox.getWidth());
-			changedBox.setWidth(modelBox.getWidth());
 			changedBox.setMinHeight(modelBox.getHeight());
-			changedBox.setHeight(modelBox.getHeight());
-			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 		}
-		adaptArrowAtBoxChanges(modelBox);
+		adaptBoxName(modelBox);
+		adaptBoxColor(modelBox);
+		adaptBoxWidth(modelBox);
+		adaptBoxHeight(modelBox);
+		adaptBoxCoordinates(modelBox);
 	}
 	
-	private void adaptArrowAtBoxChanges(ModelBox modelBox) {
+	private void adaptArrowToBox(ModelBox modelBox) {
 		PaneBox changedBox = this.boxes.get(modelBox);
 		Map<Endpoint, Endpoint> endpointMap = modelBox.getFriends();
 		for (Endpoint endpoint : endpointMap.keySet()) {
@@ -354,9 +354,25 @@ public class StageManager extends Observable implements Observer {
 
 	private void adaptBoxName(ModelBox modelBox) {
 		PaneBox changedBox = this.boxes.get(modelBox);
-		if (changedBox != null) {
+		if (changedBox != null && modelBox instanceof ModelObject) {
+			ModelObject modelObject = (ModelObject) modelBox;
+			changedBox.setTopText(modelObject.getName() + ":" + modelObject.getModelClass().getName());
+			modelBox.setWidth(modelObject.getModelClass().getWidth());
+		}
+		else if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
+			
+			// + 50px for some additional space to compensate insets, borders etc.
+			double newWidth = TextUtil.computeTextWidth(changedBox.getTopFont(), modelBox.getName(), 0.0D) + 50;
+			changedBox.setMinWidth(newWidth);
+			//changedBox.getTopLabel().setPrefWidth(newWidth);
+			//changedBox.getTopTextField().setPrefWidth(newWidth);
 			modelBox.setWidth(changedBox.getMinWidth());
+			
+			ModelClass modelClass = (ModelClass) modelBox;
+			for (ModelObject modelObject : modelClass.getModelObjects()) {
+				modelObject.setName(modelObject.getName());
+			}
 		}
 	}
 
@@ -367,11 +383,10 @@ public class StageManager extends Observable implements Observer {
 		}
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for (ModelObject instance : modelClass.getModelObjects()) {
-				instance.setWidth(modelClass.getWidth());
+			for (ModelObject modelObject : modelClass.getModelObjects()) {
+				modelObject.setWidth(modelClass.getWidth());
 			}
 		}
-		adaptArrowAtBoxChanges(modelBox);
 	}
 
 	private void adaptBoxHeight(ModelBox modelBox) {
@@ -381,11 +396,10 @@ public class StageManager extends Observable implements Observer {
 		}
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for (ModelObject instance : modelClass.getModelObjects()) {
-				instance.setHeight(modelClass.getHeight());
+			for (ModelObject modelObject : modelClass.getModelObjects()) {
+				modelObject.setHeight(modelClass.getHeight());
 			}
 		}
-		adaptArrowAtBoxChanges(modelBox);
 	}
 
 	private void adaptBoxColor(ModelBox modelBox) {
@@ -395,8 +409,8 @@ public class StageManager extends Observable implements Observer {
 		}
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for (ModelObject instance : modelClass.getModelObjects()) {
-				instance.setColor(Util.brighter(modelClass.getColor(), 0.1));
+			for (ModelObject modelObject : modelClass.getModelObjects()) {
+				modelObject.setColor(Util.brighter(modelClass.getColor(), 0.1));
 			}
 		}
 	}
@@ -406,12 +420,11 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 		}
-		adaptArrowAtBoxChanges(modelBox);
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
-			for (ModelObject instance : modelClass.getModelObjects()) {
-				instance.setX(modelClass.getX());
-				instance.setZ(modelClass.getZ());
+			for (ModelObject modelObject : modelClass.getModelObjects()) {
+				modelObject.setX(modelClass.getX());
+				modelObject.setZ(modelClass.getZ());
 			}
 		}
 	}
@@ -424,6 +437,7 @@ public class StageManager extends Observable implements Observer {
 			if (!this.boxes.containsKey(modelClass)) { // class is new
 				addClassToSubScene(modelClass);
 				adaptBoxSettings(modelClass);
+				adaptArrowToBox(modelClass);
 			} else {
 				PaneBox toDelete = this.boxes.remove(modelClass);
 				removeFromSubScene(toDelete.get());
@@ -443,6 +457,7 @@ public class StageManager extends Observable implements Observer {
 			if (!this.boxes.containsKey(modelObject)) { // instance is new
 				addObjectToSubScene(modelObject);
 				adaptBoxSettings(modelObject);
+				adaptArrowToBox(modelObject);
 			} else {
 				PaneBox toDelete = this.boxes.remove(modelObject);
 				removeFromSubScene(toDelete.get());
@@ -454,18 +469,23 @@ public class StageManager extends Observable implements Observer {
 			switch (modelBoxChange) {
 			case COLOR:
 				adaptBoxColor(modelBox);
+				adaptArrowToBox(modelBox);
 				break;
 			case COORDINATES:
 				adaptBoxCoordinates(modelBox);
+				adaptArrowToBox(modelBox);
 				break;
 			case HEIGHT:
 				adaptBoxHeight(modelBox);
+				adaptArrowToBox(modelBox);
 				break;
 			case NAME:
 				adaptBoxName(modelBox);
+				adaptArrowToBox(modelBox);
 				break;
 			case WIDTH:
 				adaptBoxWidth(modelBox);
+				adaptArrowToBox(modelBox);
 				break;
 			default:
 				break;

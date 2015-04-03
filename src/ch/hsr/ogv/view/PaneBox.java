@@ -24,7 +24,6 @@ import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import jfxtras.labs.util.Util;
 import ch.hsr.ogv.util.ResourceLocator;
-import ch.hsr.ogv.util.TextUtil;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
 /**
@@ -178,29 +177,20 @@ public class PaneBox implements Selectable {
 		}
 	}
 	
-	public void adaptWidthByText(Font font, String text) {
-		// + 50px for some additional space to compensate insets, borders etc.
-		double newWidth = TextUtil.computeTextWidth(font, text, 0.0D) + 50;
-		//double origWidth = getWidth();
-		setMinWidth(newWidth);
-		this.topLabel.setPrefWidth(newWidth);
-		//if(newWidth < origWidth) {
-		//	setWidth(origWidth);
-		//}
-	}
-	
 	public void setTopText(String text) {
 		if (this.topTextField == null || this.topLabel == null) return;
 		this.topTextField.setText(text);
 		this.topLabel.setText(text);
-		adaptWidthByText(this.topLabel.getFont(), text);
 	}
 
 	public void setTopFont(Font font) {
 		if (this.topTextField == null || this.topLabel == null) return;
 		this.topTextField.setFont(font);
 		this.topLabel.setFont(font);
-		adaptWidthByText(this.topLabel.getFont(), this.topTextField.getText());
+	}
+	
+	public Font getTopFont() {
+		return this.topLabel.getFont(); // doesnt matter if Font is taken from topLabel or topTextField
 	}
 
 	public void setTopUnderline(boolean underline) {
