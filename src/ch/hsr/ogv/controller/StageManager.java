@@ -278,6 +278,7 @@ public class StageManager extends Observable implements Observer {
 		PaneBox endViewBox = this.boxes.get(endModelBox);
 		if (startViewBox != null && endViewBox != null) {
 			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getType());
+			addArrowControls(arrow);
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
 			this.arrows.put(relation, arrow);
@@ -314,6 +315,10 @@ public class StageManager extends Observable implements Observer {
 		this.textInputController.enableTextInput(modelClass, paneBox);
 		this.dragMoveController.enableDragMove(modelClass, paneBox, this.subSceneAdapter);
 		this.dragResizeController.enableDragResize(modelClass, paneBox, this.subSceneAdapter);
+	}
+	
+	private void addArrowControls(Arrow arrow) {
+		this.selectionController.enableSelection(arrow, this.subSceneAdapter);
 	}
 
 	private void adaptBoxSettings(ModelBox modelBox) {
