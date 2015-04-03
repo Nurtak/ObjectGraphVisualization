@@ -52,11 +52,6 @@
       						</MenuItem>
       					</items>
       				</Menu>
-      				<Menu id="menu_edit" mnemonicParsing="false" text="Edit">
-      					<items>
-      						<MenuItem mnemonicParsing="false" text="Delete" />
-      					</items>
-      				</Menu>
                   <Menu id="menu_view" mnemonicParsing="false" text="View">
                     <items>
                         <MenuItem fx:id="centerView" mnemonicParsing="false" onAction="#handleCenterView" text="Center View">

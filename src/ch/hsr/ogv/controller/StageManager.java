@@ -141,6 +141,32 @@ public class StageManager extends Observable implements Observer {
 		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
 		this.modelManager.createRelation(moA, moB, RelationType.DIRECTED_AGGREGATION);
 	}
+	
+	private void initRootLayoutController() {
+		FXMLLoader loader = new FXMLLoader(); // load rootlayout from fxml file
+		loader.setLocation(ResourceLocator.getResourcePath(Resource.ROOTLAYOUT_FXML));
+		try {
+			this.rootLayout = (BorderPane) loader.load();
+			addObserver(loader.getController());
+		} catch (IOException e) {
+			logger.debug(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void initCameraController() {
+		this.cameraController.handleMouse(this.subSceneAdapter);
+		this.cameraController.handleKeyboard(this.subSceneAdapter);
+	}
+
+	private void initSubSceneController() {
+		this.subSceneController.handleSubSceneMouse(this.subSceneAdapter);
+	}
+
+	private void initPaneBoxController() {
+		this.dragMoveController.addObserver(this.cameraController);
+		this.dragResizeController.addObserver(this.cameraController);
+	}
 
 	public void onlyFloorMouseEvent(boolean value) {
 		this.subSceneAdapter.onlyFloorMouseEvent(value);
@@ -164,11 +190,6 @@ public class StageManager extends Observable implements Observer {
 		if(newBox != null) {
 			//TODO
 			//newBox.allowTopTextInput(true);
-			//Platform.runLater(() -> {
-			//	newBox.getTopTextField().requestFocus();
-			//	newBox.getTopTextField().selectAll();
-			//	newBox.getTopTextField().applyCss();
-			//});
 		}
 	}
 	
@@ -202,9 +223,11 @@ public class StageManager extends Observable implements Observer {
 				}
 				
 				for (Endpoint endpoint : modelBox.getEndpoints()) {
-					Arrow arrowLine = this.arrows.get(endpoint.getRelation());
-					arrowLine.setVisible(showObjects);
-					//TODO if(!showObjects) arrowLine.setSelected(false);
+					Arrow arrow = this.arrows.get(endpoint.getRelation());
+					arrow.setVisible(showObjects);
+					if(this.selectionController.isSelected(arrow)) {
+						this.subSceneAdapter.getSubScene().requestFocus();
+					}
 				}
 			}
 		}
@@ -221,32 +244,6 @@ public class StageManager extends Observable implements Observer {
 
 	public void handleSetTheme(Style style) {
 		this.themeMenuController.handleSetTheme(this.rootLayout, style);
-	}
-
-	private void initRootLayoutController() {
-		FXMLLoader loader = new FXMLLoader(); // load rootlayout from fxml file
-		loader.setLocation(ResourceLocator.getResourcePath(Resource.ROOTLAYOUT_FXML));
-		try {
-			this.rootLayout = (BorderPane) loader.load();
-			addObserver(loader.getController());
-		} catch (IOException e) {
-			logger.debug(e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	private void initCameraController() {
-		this.cameraController.handleMouse(this.subSceneAdapter);
-		this.cameraController.handleKeyboard(this.subSceneAdapter);
-	}
-
-	private void initSubSceneController() {
-		this.subSceneController.handleSubSceneMouse(this.subSceneAdapter);
-	}
-
-	private void initPaneBoxController() {
-		this.dragMoveController.addObserver(this.cameraController);
-		this.dragResizeController.addObserver(this.cameraController);
 	}
 
 	/**
@@ -271,20 +268,6 @@ public class StageManager extends Observable implements Observer {
 		this.rootLayout.applyCss();
 	}
 
-	private void addRelationToSubScene(Relation relation) {
-		ModelBox startModelBox = relation.getStart().getAppendant();
-		ModelBox endModelBox = relation.getEnd().getAppendant();
-		PaneBox startViewBox = this.boxes.get(startModelBox);
-		PaneBox endViewBox = this.boxes.get(endModelBox);
-		if (startViewBox != null && endViewBox != null) {
-			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getType());
-			addArrowControls(arrow);
-			addToSubScene(arrow);
-			addToSubScene(arrow.getSelection());
-			this.arrows.put(relation, arrow);
-		}
-	}
-
 	private void addClassToSubScene(ModelClass modelClass) {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
@@ -304,17 +287,37 @@ public class StageManager extends Observable implements Observer {
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
 		paneBox.setColor(modelObject.getColor());
 		paneBox.setTopUnderline(true);
-		// addPaneBoxControls(modelObject, paneBox);
+		addPaneBoxControls(modelObject, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
 		this.boxes.put(modelObject, paneBox);
 	}
+	
+	private void addRelationToSubScene(Relation relation) {
+		ModelBox startModelBox = relation.getStart().getAppendant();
+		ModelBox endModelBox = relation.getEnd().getAppendant();
+		PaneBox startViewBox = this.boxes.get(startModelBox);
+		PaneBox endViewBox = this.boxes.get(endModelBox);
+		if (startViewBox != null && endViewBox != null) {
+			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getType());
+			addArrowControls(arrow);
+			addToSubScene(arrow);
+			addToSubScene(arrow.getSelection());
+			this.arrows.put(relation, arrow);
+		}
+	}
 
-	private void addPaneBoxControls(ModelClass modelClass, PaneBox paneBox) {
+	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
 		this.selectionController.enableSelection(paneBox, this.subSceneAdapter);
-		this.textInputController.enableTextInput(modelClass, paneBox);
-		this.dragMoveController.enableDragMove(modelClass, paneBox, this.subSceneAdapter);
-		this.dragResizeController.enableDragResize(modelClass, paneBox, this.subSceneAdapter);
+		this.textInputController.enableTextInput(modelBox, paneBox);
+		//TODO
+		if(modelBox instanceof ModelClass) {
+			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
+			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
+		}
+		else if(modelBox instanceof ModelObject) {
+			
+		}
 	}
 	
 	private void addArrowControls(Arrow arrow) {
@@ -361,7 +364,8 @@ public class StageManager extends Observable implements Observer {
 		PaneBox changedBox = this.boxes.get(modelBox);
 		if (changedBox != null && modelBox instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) modelBox;
-			changedBox.setTopText(modelObject.getName() + ":" + modelObject.getModelClass().getName());
+			changedBox.getTopTextField().setText((modelObject.getName()));
+			changedBox.getTopLabel().setText(modelObject.getName() + ":" + modelObject.getModelClass().getName());
 			modelBox.setWidth(modelObject.getModelClass().getWidth());
 		}
 		else if (changedBox != null && modelBox instanceof ModelClass) {

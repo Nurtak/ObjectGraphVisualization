@@ -5,7 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import ch.hsr.ogv.model.ModelClass;
+import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.view.PaneBox;
 
 /**
@@ -17,7 +17,7 @@ public class TextInputController {
 	
 	//private final int MAX_CHAR_COUNT = 32;
 
-	public void enableTextInput(ModelClass modelClass, PaneBox paneBox) {
+	public void enableTextInput(ModelBox modelBox, PaneBox paneBox) {
 		TextField topTextField = paneBox.getTopTextField();
 		
 		topTextField.textProperty().addListener(new ChangeListener<String>() {
@@ -29,7 +29,7 @@ public class TextInputController {
 //            		newValue = newValue.substring(0, newValue.length() - overflow);
 //            		newValue = newValue + "...";
 //            	}
-            	modelClass.setName(newValue);
+            	modelBox.setName(newValue);
             }
         });
 		
