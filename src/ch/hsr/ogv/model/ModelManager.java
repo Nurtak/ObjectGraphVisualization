@@ -80,14 +80,55 @@ public class ModelManager extends Observable {
 		return deletedRelation;
 	}
 
-	public Relation createRelation(ModelBox startBox, ModelBox endBox, RelationType relationType) {
-		Relation relation = new Relation(startBox, endBox, relationType);
-		startBox.getEndpoints().add(relation.getStart());
-		endBox.getEndpoints().add(relation.getEnd());
-		relations.add(relation);
-		setChanged();
-		notifyObservers(relation);
-		return relation;
+	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType) {
+		if (isRelationAllowed(start, end, relationType)) {			
+			Relation relation = new Relation(start, end, relationType);
+			start.getEndpoints().add(relation.getStart());
+			end.getEndpoints().add(relation.getEnd());
+			relations.add(relation);
+			setChanged();
+			notifyObservers(relation);
+			return relation;
+		}
+		return null;
+	}
+	
+	public boolean isClass(ModelBox modelBox){
+		return (modelBox instanceof ModelClass);
+	}
+	
+	public boolean isObject(ModelBox modelBox){
+		return (modelBox instanceof ModelObject);
+	}
+	
+	public boolean isRelationAllowed(ModelBox start, ModelBox end, RelationType relationType) {
+		switch (relationType) {
+		case GENERALIZATION:
+			if (isClass(start) && isClass(end) && !start.equals(end)) {
+				return true;
+			}
+			return false;
+		case UNDIRECTED_ASSOZIATION:
+		case DIRECTED_ASSOZIATION:
+		case BIDIRECTED_ASSOZIATION:
+		case UNDIRECTED_AGGREGATION:
+		case DIRECTED_AGGREGATION:
+		case UNDIRECTED_COMPOSITION:
+		case DIRECTED_COMPOSITION:
+		case DEPENDENCY:
+			if (isClass(start) && isClass(end)) {
+				return true;
+			}
+			return false;
+		case OBJDIAGRAM: 
+		case OBJGRAPH:
+			if (isObject(start) && isObject(end)) {
+				return true;
+			}
+			return false;
+		default:
+			return false;
+		}
 	}
 
 }
