@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+
+<Label cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="26.0" snapToPixel="false" style="-fx-font-smoothing-type: gray;" text="attribute" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <font>
+      <Font size="15.0" />
+   </font>
+   <padding>
+      <Insets left="5.0" right="5.0" />
+   </padding>
+</Label>

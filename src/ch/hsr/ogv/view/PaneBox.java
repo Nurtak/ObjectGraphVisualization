@@ -1,12 +1,11 @@
 package ch.hsr.ogv.view;
 
-import java.io.IOException;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
 import javafx.scene.CacheHint;
@@ -19,11 +18,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import jfxtras.labs.util.Util;
-import ch.hsr.ogv.util.ResourceLocator;
+import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
 /**
@@ -53,6 +53,10 @@ public class PaneBox implements Selectable {
 
 	private Label topLabel = null;
 	private TextField topTextField = null;
+	
+	private ArrayList<Label> centerLabels = new ArrayList<Label>();
+	private ArrayList<TextField> centerTextFields = new ArrayList<TextField>();
+	
 	private Color color;
 	private Cuboid box;
 	
@@ -118,23 +122,8 @@ public class PaneBox implements Selectable {
 	}
 	
 	private void initLayout() {
-		FXMLLoader loader = new FXMLLoader(); // load pane preset from fxml file
-        loader.setLocation(ResourceLocator.getResourcePath(Resource.PANEPRESET_FXML));
-        try {
-			this.borderPane = (BorderPane) loader.load();
-		} catch (IOException e) {
-			logger.debug(e.getMessage());
-            e.printStackTrace();
-		}
-        
-		loader = new FXMLLoader(); // load textfield preset from fxml file
-        loader.setLocation(ResourceLocator.getResourcePath(Resource.TEXTFIELDPRESET_FXML));
-		try {
-			this.topTextField = (TextField) loader.load();
-		} catch (IOException e) {
-			logger.debug(e.getMessage());
-			e.printStackTrace();
-		}
+		this.borderPane = loadBorderPane();
+        this.topTextField = loadTopTextField();
 
 		Node topNode = this.borderPane.getTop();
 		if ((topNode instanceof HBox)) {
@@ -147,6 +136,38 @@ public class PaneBox implements Selectable {
 			HBox.setMargin(this.topLabel, new Insets(-1, -1, 0, -1));
 			HBox.setHgrow(this.topLabel, Priority.ALWAYS);
 		}
+	}
+	
+	private BorderPane loadBorderPane() {
+		Object loadedPreset = FXMLResourceUtil.loadPreset(Resource.PANEPRESET_FXML); // load pane preset from fxml file
+		if(loadedPreset != null && loadedPreset instanceof BorderPane) {
+			return (BorderPane) loadedPreset;
+		}
+		return new BorderPane();
+	}
+	
+	private TextField loadTopTextField() {
+		Object loadedPreset = FXMLResourceUtil.loadPreset(Resource.TOPTEXTFIELD_FXML); // load top textfield preset from fxml file
+		if(loadedPreset != null && loadedPreset instanceof TextField) {
+			return (TextField) loadedPreset;
+		}
+		return new TextField();
+	}
+	
+	private TextField loadCenterTextField() {
+		Object loadedPreset = FXMLResourceUtil.loadPreset(Resource.CENTERTEXTFIELD_FXML); // load center textfield preset from fxml file
+		if(loadedPreset != null && loadedPreset instanceof TextField) {
+			return (TextField) loadedPreset;
+		}
+		return new TextField();
+	}
+	
+	private Label loadCenterLabel() {
+		Object loadedPreset = FXMLResourceUtil.loadPreset(Resource.CENTERLABEL_FXML); // load top label preset from fxml file
+		if(loadedPreset != null && loadedPreset instanceof Label) {
+			return (Label) loadedPreset;
+		}
+		return new Label();
 	}
 	
 	private void buildBox() {
@@ -220,15 +241,65 @@ public class PaneBox implements Selectable {
 		return null;
 	}
 	
-	public void setCenterText(int rowIndex, String text) {
-		Node node = null;
+	public void setCenterGridVisible(boolean visible) {
+		Node centerNode = this.borderPane.getCenter();
+		if (centerNode instanceof GridPane) {
+			((GridPane) centerNode).setGridLinesVisible(visible);
+		}
+	}
+	
+	public void appendNewCenterField(String text) {
+		addNewCenterField(this.centerLabels.size(), text);
+	}
+	
+	public void addNewCenterField(int rowIndex, String text) {
+		Label newCenterLabel = loadCenterLabel();
+		TextField newCenterTextField = loadCenterTextField();
+		newCenterLabel.setText(text);
+		newCenterTextField.setText(text);
 		try {
-			node = getCenter().getChildren().get(rowIndex);
+			this.centerLabels.add(newCenterLabel);
+			this.centerTextFields.add(newCenterTextField);
+			GridPane centerGridPane = getCenter();
+			if(centerGridPane != null && newCenterLabel != null && newCenterTextField != null) {
+				centerGridPane.add(newCenterTextField, 0, rowIndex);
+				RowConstraints rowConstraints = new RowConstraints();
+				rowConstraints.setPrefHeight(28);
+				rowConstraints.setFillHeight(true);
+				centerGridPane.getRowConstraints().add(rowConstraints);
+			}
 		}
 		catch(IndexOutOfBoundsException iobe) {
+			logger.debug("Adding new centerfield " + text + " failed. IndexOutOfBoundsException: " + iobe.getMessage());
 		}
-		if(node != null && node instanceof TextField) {
-			TextField centerTextField = (TextField) node;
+	}
+	
+	public void removeCenterField(int rowIndex) {
+		try {
+			this.centerLabels.remove(rowIndex);
+			this.centerTextFields.remove(rowIndex);
+			GridPane centerGridPane = getCenter();
+			if(centerGridPane != null) {
+				centerGridPane.getChildren().remove(rowIndex);
+			}
+		}
+		catch(IndexOutOfBoundsException iobe) {
+			logger.debug("Removing center field failed. IndexOutOfBoundsException: " + iobe.getMessage());
+		}
+	}
+	
+	public void setCenterText(int rowIndex, String text) {
+		Label centerLabel = null;
+		TextField centerTextField = null;
+		try {
+			centerLabel = this.centerLabels.get(rowIndex);
+			centerTextField = this.centerTextFields.get(rowIndex);
+		}
+		catch(IndexOutOfBoundsException iobe) {
+			logger.debug("Setting text: " + text + " failed. IndexOutOfBoundsException: " + iobe.getMessage());
+		}
+		if(centerLabel != null && centerTextField != null) {
+			centerLabel.setText(text);
 			centerTextField.setText(text);
 		}
 	}

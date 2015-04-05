@@ -8,9 +8,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="500.0" maxWidth="500.0" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white; -fx-font-smoothing-type: gray;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="500.0" maxWidth="500.0" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" snapToPixel="false" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white; -fx-font-smoothing-type: gray;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <top>
-      <HBox alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" prefHeight="30.0" style="-fx-border-color: transparent transparent black transparent;" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" prefHeight="30.0" snapToPixel="false" style="-fx-border-color: transparent transparent black transparent;" BorderPane.alignment="CENTER">
          <children>
             <Label alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" snapToPixel="false" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" text="Class" textAlignment="CENTER" HBox.hgrow="ALWAYS">
                <font>
@@ -30,33 +30,13 @@
       </HBox>
    </top>
    <center>
-      <GridPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" layoutX="9.0" layoutY="3.0" minHeight="25.0" prefHeight="25.0" prefWidth="126.0" snapToPixel="false" BorderPane.alignment="CENTER">
-         <columnConstraints>
-            <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
-         <children>
-            <TextField cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="26.0" promptText="attribute" snapToPixel="false" style="-fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="attribute" GridPane.hgrow="ALWAYS">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-            </TextField>
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-         <padding>
-            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-         </padding>
+      <GridPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" snapToPixel="false" BorderPane.alignment="TOP_LEFT">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
       </GridPane>
    </center>
 </BorderPane>

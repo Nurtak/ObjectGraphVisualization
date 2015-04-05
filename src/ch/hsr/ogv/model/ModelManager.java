@@ -93,12 +93,16 @@ public class ModelManager extends Observable {
 		return null;
 	}
 	
-	public boolean isClass(ModelBox modelBox){
-		return (modelBox instanceof ModelClass);
+	public boolean isClass(Object object){
+		return (object instanceof ModelClass);
 	}
 	
-	public boolean isObject(ModelBox modelBox){
-		return (modelBox instanceof ModelObject);
+	public boolean isObject(Object object){
+		return (object instanceof ModelObject);
+	}
+	
+	public boolean isRelation(Object object) {
+		return (object instanceof Relation);
 	}
 	
 	public boolean isRelationAllowed(ModelBox start, ModelBox end, RelationType relationType) {
