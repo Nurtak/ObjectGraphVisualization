@@ -14,7 +14,13 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -57,6 +63,8 @@ public class PaneBox implements Selectable {
 	
 	private ArrayList<HBox> centerLabels = new ArrayList<HBox>();
 	private ArrayList<TextField> centerTextFields = new ArrayList<TextField>();
+	
+	private volatile boolean showCenterGrid = false;
 	
 	private Color color;
 	private Cuboid box;
@@ -244,16 +252,19 @@ public class PaneBox implements Selectable {
 		return null;
 	}
 	
-	public void setCenterGridVisible(boolean visible) {
-		Node centerNode = this.borderPane.getCenter();
-		if (centerNode instanceof GridPane && !visible) {
-			((GridPane) centerNode).setGridLinesVisible(false);
+	public boolean show() {
+		return false;
+	}
+	
+	public void showCenterGrid(boolean value) {
+		Border border = null;
+		if(value) {
+			BorderStroke bs = new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1));
+			border = new Border(bs);
 		}
-		else if(visible && !this.centerLabels.isEmpty()) {
-			((GridPane) centerNode).setGridLinesVisible(true);
-		}
-		else {
-			((GridPane) centerNode).setGridLinesVisible(false);
+		for(HBox centerHBoxLabel : this.centerLabels) {
+			Label centerLabel = (Label) centerHBoxLabel.getChildren().get(0);
+			centerLabel.setBorder(border);
 		}
 	}
 	
@@ -280,17 +291,15 @@ public class PaneBox implements Selectable {
 			if(centerGridPane != null && newCenterHBoxLabel != null && newCenterTextField != null) {
 				this.centerLabels.add(newCenterHBoxLabel);
 				this.centerTextFields.add(newCenterTextField);
+				centerGridPane.add(newCenterLabel, 0, rowIndex);
+				ColumnConstraints columnConstraints = new ColumnConstraints();
+				columnConstraints.setFillWidth(true);
+				centerGridPane.getColumnConstraints().add(columnConstraints);
 				RowConstraints rowConstraints = new RowConstraints();
 				rowConstraints.setPrefHeight(28);
 				rowConstraints.setFillHeight(true);
 				centerGridPane.getRowConstraints().add(rowConstraints);
 				HBox.setHgrow(newCenterHBoxLabel, Priority.ALWAYS);
-				HBox.setHgrow(newCenterLabel, Priority.ALWAYS);
-				HBox.setHgrow(centerGridPane, Priority.ALWAYS);
-				VBox vBox = new VBox(newCenterLabel);
-				vBox.setFillWidth(true);
-				VBox.setVgrow(newCenterLabel, Priority.ALWAYS);
-				centerGridPane.add(vBox, 0, rowIndex);
 			}
 		}
 		catch(IndexOutOfBoundsException iobe) {
