@@ -38,11 +38,18 @@ public class ModelObject extends ModelBox {
 			return false;
 		}
 		attributeValues.put(attribute, attributeValue);
+		setChanged();
+		notifyObservers(attribute);
 		return true;
 	}
 	
-	public String removeAttributeValue(Attribute attribute) {
-		return attributeValues.remove(attribute);
+	public String deleteAttributeValue(Attribute attribute) {
+		String deleted = attributeValues.remove(attribute);
+		if(deleted != null) {
+			setChanged();
+			notifyObservers(attribute);
+		}
+		return deleted;
 	}
 
 	public ModelClass getModelClass() {

@@ -30,7 +30,7 @@
       </HBox>
    </top>
    <center>
-      <GridPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" snapToPixel="false" BorderPane.alignment="TOP_LEFT">
+      <GridPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" snapToPixel="false" BorderPane.alignment="TOP_LEFT">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>

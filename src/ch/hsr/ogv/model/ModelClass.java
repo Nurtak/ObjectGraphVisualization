@@ -41,25 +41,7 @@ public class ModelClass extends ModelBox {
 	public void setModelObjects(List<ModelObject> modelObjects) {
 		this.modelObjects = modelObjects;
 	}
-
-	public boolean addAttribute(Attribute attribute) {
-		if (!attributes.contains(attribute)) {
-			if(attributes.add(attribute)) {
-				for(ModelObject modelObject : getModelObjects()) {
-					modelObject.addAttributeValue(attribute, "");
-				}	
-			}
-		}
-		return false;
-	}
-
-	public boolean deleteAttribute(Attribute attribute) {
-		for(ModelObject modelObject : getModelObjects()) {
-			modelObject.removeAttributeValue(attribute);
-		}
-		return attributes.remove(attribute);
-	}
-
+	
 	private boolean addModelObject(ModelObject modelObject) {
 		if (!modelObjects.contains(modelObject)) {
 			return modelObjects.add(modelObject);
@@ -67,16 +49,16 @@ public class ModelClass extends ModelBox {
 		return false;
 	}
 
-	public boolean deleteModelObject(ModelObject modelObject) {
-		//ModelObject.modelObjectCounter.decrementAndGet();
-		return modelObjects.remove(modelObject);
+	private boolean addAttribute(Attribute attribute) {
+		if (!attributes.contains(attribute) && attributes.add(attribute)) {
+			for(ModelObject modelObject : getModelObjects()) {
+				modelObject.addAttributeValue(attribute, "");
+			}
+			return true;
+		}
+		return false;
 	}
-
-	public void createAttribute(String name) {
-		Attribute attribute = new Attribute(name);
-		addAttribute(attribute);
-	}
-
+	
 	public ModelObject createModelObject() {
 		double levelPlus = (this.getModelObjects().size() + 1.0) * OBJECT_LEVEL_DIFF;
 		Point3D modelObjectCoordinates = new Point3D(this.getX(), this.getY() + levelPlus, this.getZ());
@@ -89,6 +71,43 @@ public class ModelClass extends ModelBox {
 			return modelObject;
 		}
 		return null;
+	}
+
+	public Attribute createAttribute() {
+		Attribute attribute = new Attribute("field" + (this.attributes.size() + 1));
+		boolean added = addAttribute(attribute);
+		if(added) {
+			setChanged();
+			notifyObservers(attribute);
+			return attribute;
+		}
+		return null;
+	}
+
+	public boolean deleteModelObject(ModelObject modelObject) {
+		//ModelObject.modelObjectCounter.decrementAndGet();
+		return modelObjects.remove(modelObject);
+	}
+	
+	public boolean deleteAttribute(int index) {
+		if (getAttributes().isEmpty() || index < 0 || index >= getAttributes().size())
+			return false;
+		Attribute attribute = getAttributes().get(index);
+		boolean deletedObject = deleteAttribute(attribute);
+		
+		return deletedObject;
+	}
+
+	public boolean deleteAttribute(Attribute attribute) {
+		for(ModelObject modelObject : getModelObjects()) {
+			modelObject.deleteAttributeValue(attribute);
+		}
+		boolean deleted = attributes.remove(attribute);
+		if (deleted) {
+			setChanged();
+			notifyObservers(attribute);
+		}
+		return deleted;
 	}
 
 	public boolean hasSuperClass() {

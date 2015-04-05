@@ -1,5 +1,6 @@
 package ch.hsr.ogv.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Observable;
@@ -24,17 +25,70 @@ public class ModelManager extends Observable {
 
 	public ModelClass createClass(Point3D coordinates, double width, double heigth, Color color) {
 		ModelClass modelClass = new ModelClass(coordinates, width, heigth, color);
-		classes.add(modelClass);
+		this.classes.add(modelClass);
 		setChanged();
 		notifyObservers(modelClass);
 		return modelClass;
 	}
-
+	
 	public ModelObject createObject(ModelClass modelClass) {
 		ModelObject modelObject = modelClass.createModelObject();
 		setChanged();
 		notifyObservers(modelObject);
 		return modelObject;
+	}
+
+	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType) {
+		if (isRelationAllowed(start, end, relationType)) {
+			Relation relation = new Relation(start, end, relationType);
+			start.getEndpoints().add(relation.getStart());
+			end.getEndpoints().add(relation.getEnd());
+			relations.add(relation);
+			setChanged();
+			notifyObservers(relation);
+			return relation;
+		}
+		return null;
+	}
+
+	public boolean deleteClass(ModelClass modelClass) {
+		ArrayList<Endpoint> classesEndPoints = new ArrayList<Endpoint>(modelClass.getEndpoints());
+		for (Endpoint endPoint : classesEndPoints) {
+			deleteRelation(endPoint.getRelation());
+		}
+		boolean deletedClass = classes.remove(modelClass);
+		if (deletedClass) {
+			setChanged();
+			notifyObservers(modelClass);
+		}
+		// ModelClass.modelClassCounter.decrementAndGet();
+		return deletedClass;
+	}
+
+	public boolean deleteObject(ModelObject modelObject) {
+		ArrayList<Endpoint> objectsEndPoints = new ArrayList<Endpoint>(modelObject.getEndpoints());
+		for (Endpoint endPoint : objectsEndPoints) {
+			deleteRelation(endPoint.getRelation());
+		}
+		boolean deletedObject = modelObject.getModelClass().deleteModelObject(modelObject);
+		if (deletedObject) {
+			setChanged();
+			notifyObservers(modelObject);
+		}
+		return deletedObject;
+	}
+
+	public boolean deleteRelation(Relation relation) {
+		boolean deletedRelation = relations.remove(relation);
+		if (deletedRelation) {
+			Endpoint start = relation.getStart();
+			Endpoint end = relation.getEnd();
+			start.getAppendant().getEndpoints().remove(start);
+			end.getAppendant().getEndpoints().remove(end);
+			setChanged();
+			notifyObservers(relation);
+		}
+		return deletedRelation;
 	}
 
 	public ModelClass getClass(String name) {
@@ -57,54 +111,18 @@ public class ModelManager extends Observable {
 		return false;
 	}
 
-	public boolean deleteClass(ModelClass modelClass) {
-		boolean deletedClass = classes.remove(modelClass);
-		if (deletedClass) {
-			setChanged();
-			notifyObservers(deletedClass);
-		}
-		//ModelClass.modelClassCounter.decrementAndGet();
-		return deletedClass;
-	}
-
-	public boolean deleteRelation(Relation relation) {
-		boolean deletedRelation = relations.remove(relation);
-		if (deletedRelation) {
-			Endpoint start = relation.getStart();
-			Endpoint end = relation.getEnd();
-			start.getAppendant().getEndpoints().remove(start);
-			end.getAppendant().getEndpoints().remove(end);
-			setChanged();
-			notifyObservers(relation);
-		}
-		return deletedRelation;
-	}
-
-	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType) {
-		if (isRelationAllowed(start, end, relationType)) {			
-			Relation relation = new Relation(start, end, relationType);
-			start.getEndpoints().add(relation.getStart());
-			end.getEndpoints().add(relation.getEnd());
-			relations.add(relation);
-			setChanged();
-			notifyObservers(relation);
-			return relation;
-		}
-		return null;
-	}
-	
-	public boolean isClass(Object object){
+	public boolean isClass(Object object) {
 		return (object instanceof ModelClass);
 	}
-	
-	public boolean isObject(Object object){
+
+	public boolean isObject(Object object) {
 		return (object instanceof ModelObject);
 	}
-	
+
 	public boolean isRelation(Object object) {
 		return (object instanceof Relation);
 	}
-	
+
 	public boolean isRelationAllowed(ModelBox start, ModelBox end, RelationType relationType) {
 		switch (relationType) {
 		case GENERALIZATION:
@@ -124,7 +142,7 @@ public class ModelManager extends Observable {
 				return true;
 			}
 			return false;
-		case OBJDIAGRAM: 
+		case OBJDIAGRAM:
 		case OBJGRAPH:
 			if (isObject(start) && isObject(end)) {
 				return true;

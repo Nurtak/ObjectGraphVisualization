@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
+import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
@@ -146,6 +147,9 @@ public class StageManager extends Observable implements Observer {
 		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM);
 		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM);
 		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM);
+		
+		mcA.createAttribute();
+		//mcA.createAttribute();
 	}
 	
 	private void initRootLayoutController() {
@@ -287,10 +291,6 @@ public class StageManager extends Observable implements Observer {
 	private void addClassToSubScene(ModelClass modelClass) {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
-		//TODO
-		paneBox.appendNewCenterField("attribute1");
-		paneBox.appendNewCenterField("attribute2");
-		//paneBox.setCenterGridVisible(true);
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
 		paneBox.setColor(PaneBox.DEFAULT_COLOR);
 		paneBox.setTopUnderline(false);
@@ -490,6 +490,34 @@ public class StageManager extends Observable implements Observer {
 				PaneBox toDelete = this.boxes.remove(modelObject);
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
+			}
+		} else if (o instanceof ModelClass && arg instanceof Attribute) {
+			ModelClass modelClass = (ModelClass) o; 
+			PaneBox paneClassBox = this.boxes.get(modelClass);
+			if(paneClassBox != null) {
+				paneClassBox.clearCenterRows();
+				for(Attribute attribute : modelClass.getAttributes()) {
+					paneClassBox.appendNewCenterField(attribute.getName());
+				}
+				this.rootLayout.applyCss();
+			}
+		} else if (o instanceof ModelObject && arg instanceof Attribute) {
+			ModelObject modelObject = (ModelObject) o; 
+			PaneBox paneObjectBox = this.boxes.get(modelObject);
+			if(paneObjectBox != null) {
+				paneObjectBox.clearCenterRows();
+				for(Attribute attribute : modelObject.getModelClass().getAttributes()) { // using attribute list of this objects class, to get same order.
+					String attributeName = attribute.getName();
+					String attributeValue = modelObject.getAttributeValues().get(attribute);
+					if(attributeValue != null && !attributeValue.isEmpty()) {
+						paneObjectBox.appendNewCenterField(attributeName + " = " + attributeValue);
+					}
+					else {
+						paneObjectBox.appendNewCenterField(attributeName);
+					}
+				}
+				this.rootLayout.applyCss();
+				paneObjectBox.setCenterGridVisible(true);
 			}
 		} else if (o instanceof ModelBox && arg instanceof ModelBoxChange) {
 			ModelBox modelBox = (ModelBox) o;
