@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
+import javafx.geometry.VPos;
 import javafx.scene.CacheHint;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
@@ -25,7 +26,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
@@ -61,7 +61,7 @@ public class PaneBox implements Selectable {
 	private Label topLabel = null;
 	private TextField topTextField = null;
 	
-	private ArrayList<HBox> centerLabels = new ArrayList<HBox>();
+	private ArrayList<Label> centerLabels = new ArrayList<Label>();
 	private ArrayList<TextField> centerTextFields = new ArrayList<TextField>();
 	
 	private volatile boolean showCenterGrid = false;
@@ -252,20 +252,44 @@ public class PaneBox implements Selectable {
 		return null;
 	}
 	
-	public boolean show() {
-		return false;
+	public boolean isShowCenterGrid() {
+		return this.showCenterGrid;
 	}
 	
 	public void showCenterGrid(boolean value) {
+		this.showCenterGrid = value;
+		applyShowCenterGrid();
+	}
+	
+	private void applyShowCenterGrid() {
+		for(int i = 0; i < this.centerLabels.size(); i++) {
+			Label centerLabel = this.centerLabels.get(i);
+			if(i != this.centerLabels.size() - 1) {
+				showCenterGrid(centerLabel, false);
+			}
+			else {
+				showCenterGrid(centerLabel, true);
+			}
+		}
+	}
+	
+	private void showCenterGrid(Label centerLabel, boolean isLast) {
 		Border border = null;
-		if(value) {
-			BorderStroke bs = new BorderStroke(Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1));
-			border = new Border(bs);
+		if(isShowCenterGrid()) {
+			BorderStroke bsMiddle = new BorderStroke(Color.BLACK, Color.BLACK, Color.TRANSPARENT, Color.BLACK, 
+					BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+					CornerRadii.EMPTY, new BorderWidths(1), null);
+			BorderStroke bsLast = new BorderStroke(Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK, 
+					BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+					CornerRadii.EMPTY, new BorderWidths(1), null);
+			if(!isLast) {
+				border = new Border(bsMiddle);
+			}
+			else {
+				border = new Border(bsLast);
+			}
 		}
-		for(HBox centerHBoxLabel : this.centerLabels) {
-			Label centerLabel = (Label) centerHBoxLabel.getChildren().get(0);
-			centerLabel.setBorder(border);
-		}
+		centerLabel.setBorder(border);
 	}
 	
 	public void clearCenterRows() {
@@ -289,22 +313,28 @@ public class PaneBox implements Selectable {
 		try {
 			GridPane centerGridPane = getCenter();
 			if(centerGridPane != null && newCenterHBoxLabel != null && newCenterTextField != null) {
-				this.centerLabels.add(newCenterHBoxLabel);
+				this.centerLabels.add(newCenterLabel);
 				this.centerTextFields.add(newCenterTextField);
-				centerGridPane.add(newCenterLabel, 0, rowIndex);
+				newCenterLabel.setMaxWidth(Double.MAX_VALUE);
+				HBox.setHgrow(newCenterLabel, Priority.ALWAYS);
+				GridPane.setFillWidth(newCenterHBoxLabel, true);
+				GridPane.setFillWidth(newCenterLabel, true);
+				GridPane.setFillHeight(newCenterHBoxLabel, true);
+				GridPane.setFillHeight(newCenterLabel, true);
+				RowConstraints rowConstraints = new RowConstraints();
+				rowConstraints.setValignment(VPos.TOP);
+				centerGridPane.getRowConstraints().add(rowConstraints);
 				ColumnConstraints columnConstraints = new ColumnConstraints();
 				columnConstraints.setFillWidth(true);
 				centerGridPane.getColumnConstraints().add(columnConstraints);
-				RowConstraints rowConstraints = new RowConstraints();
-				rowConstraints.setPrefHeight(28);
 				rowConstraints.setFillHeight(true);
-				centerGridPane.getRowConstraints().add(rowConstraints);
-				HBox.setHgrow(newCenterHBoxLabel, Priority.ALWAYS);
+				centerGridPane.add(newCenterHBoxLabel, 0, rowIndex);
 			}
 		}
 		catch(IndexOutOfBoundsException iobe) {
 			logger.debug("Adding new centerfield " + text + " failed. IndexOutOfBoundsException: " + iobe.getMessage());
 		}
+		applyShowCenterGrid();
 	}
 	
 	public void removeCenterField(int rowIndex) {
@@ -325,8 +355,7 @@ public class PaneBox implements Selectable {
 		Label centerLabel = null;
 		TextField centerTextField = null;
 		try {
-			HBox newCenterHBoxLabel = this.centerLabels.get(rowIndex);
-			centerLabel = (Label) newCenterHBoxLabel.getChildren().get(0);
+			centerLabel = this.centerLabels.get(rowIndex);
 			centerTextField = this.centerTextFields.get(rowIndex);
 		}
 		catch(IndexOutOfBoundsException iobe) {

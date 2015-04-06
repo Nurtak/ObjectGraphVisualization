@@ -149,7 +149,7 @@ public class StageManager extends Observable implements Observer {
 		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM);
 		
 		mcA.createAttribute();
-		//mcA.createAttribute();
+		mcA.createAttribute();
 	}
 	
 	private void initRootLayoutController() {
@@ -501,7 +501,6 @@ public class StageManager extends Observable implements Observer {
 				for(Attribute attribute : modelClass.getAttributes()) {
 					paneClassBox.appendNewCenterField(attribute.getName());
 				}
-				this.rootLayout.applyCss();
 			}
 		} else if (o instanceof ModelObject && arg instanceof Attribute) {
 			ModelObject modelObject = (ModelObject) o; 
@@ -518,7 +517,6 @@ public class StageManager extends Observable implements Observer {
 						paneObjectBox.appendNewCenterField(attributeName);
 					}
 				}
-				this.rootLayout.applyCss();
 			}
 		} else if (o instanceof ModelBox && arg instanceof ModelBoxChange) {
 			ModelBox modelBox = (ModelBox) o;
@@ -548,6 +546,7 @@ public class StageManager extends Observable implements Observer {
 				break;
 			}
 		}
+		this.rootLayout.applyCss();
 	}
 
 }
