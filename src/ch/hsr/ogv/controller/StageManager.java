@@ -347,9 +347,20 @@ public class StageManager extends Observable implements Observer {
 
 	private void adaptBoxSettings(ModelBox modelBox) {
 		PaneBox changedBox = this.boxes.get(modelBox);
-		if (changedBox != null) {
+		if (changedBox != null && this.modelManager.isClass(modelBox)) {
 			changedBox.setMinWidth(modelBox.getWidth());
 			changedBox.setMinHeight(modelBox.getHeight());
+			adaptCenterFields((ModelClass) modelBox);
+		}
+		else if (changedBox != null && this.modelManager.isObject(modelBox)) {
+			ModelObject modelObject = (ModelObject) modelBox;
+			ModelClass modelClass = modelObject.getModelClass();
+			PaneBox paneClassBox = this.boxes.get(modelClass);
+			if(paneClassBox != null) {
+				changedBox.setMinWidth(paneClassBox.getMinWidth());
+				changedBox.setMinHeight(paneClassBox.getMinHeight());
+			}
+			adaptCenterFields((ModelObject) modelBox);
 		}
 		adaptBoxName(modelBox);
 		adaptBoxColor(modelBox);
@@ -458,6 +469,34 @@ public class StageManager extends Observable implements Observer {
 			}
 		}
 	}
+	
+	private void adaptCenterFields(ModelClass modelClass) {
+		PaneBox paneClassBox = this.boxes.get(modelClass);
+		if(paneClassBox != null) {
+			paneClassBox.clearCenterRows();
+			for(Attribute attribute : modelClass.getAttributes()) {
+				paneClassBox.appendNewCenterField(attribute.getName());
+			}
+		}
+	}
+	
+	private void adaptCenterFields(ModelObject modelObject) {
+		PaneBox paneObjectBox = this.boxes.get(modelObject);
+		if(paneObjectBox != null) {
+			paneObjectBox.clearCenterRows();
+			for(Attribute attribute : modelObject.getModelClass().getAttributes()) { // using attribute list of this objects class, to get same order.
+				String attributeName = attribute.getName();
+				String attributeValue = modelObject.getAttributeValues().get(attribute);
+				if(attributeValue != null && !attributeValue.isEmpty()) {
+					paneObjectBox.appendNewCenterField(attributeName + " = " + attributeValue);
+				}
+				else {
+					paneObjectBox.appendNewCenterField(attributeName);
+				}
+			}
+		}
+	}
+	
 
 	@Override
 	public void update(Observable o, Object arg) {
@@ -494,30 +533,11 @@ public class StageManager extends Observable implements Observer {
 				removeFromSubScene(toDelete.getSelection());
 			}
 		} else if (o instanceof ModelClass && arg instanceof Attribute) {
-			ModelClass modelClass = (ModelClass) o; 
-			PaneBox paneClassBox = this.boxes.get(modelClass);
-			if(paneClassBox != null) {
-				paneClassBox.clearCenterRows();
-				for(Attribute attribute : modelClass.getAttributes()) {
-					paneClassBox.appendNewCenterField(attribute.getName());
-				}
-			}
+			ModelClass modelClass = (ModelClass) o;
+			adaptCenterFields(modelClass);
 		} else if (o instanceof ModelObject && arg instanceof Attribute) {
 			ModelObject modelObject = (ModelObject) o; 
-			PaneBox paneObjectBox = this.boxes.get(modelObject);
-			if(paneObjectBox != null) {
-				paneObjectBox.clearCenterRows();
-				for(Attribute attribute : modelObject.getModelClass().getAttributes()) { // using attribute list of this objects class, to get same order.
-					String attributeName = attribute.getName();
-					String attributeValue = modelObject.getAttributeValues().get(attribute);
-					if(attributeValue != null && !attributeValue.isEmpty()) {
-						paneObjectBox.appendNewCenterField(attributeName + " = " + attributeValue);
-					}
-					else {
-						paneObjectBox.appendNewCenterField(attributeName);
-					}
-				}
-			}
+			adaptCenterFields(modelObject);
 		} else if (o instanceof ModelBox && arg instanceof ModelBoxChange) {
 			ModelBox modelBox = (ModelBox) o;
 			ModelBoxChange modelBoxChange = (ModelBoxChange) arg;
