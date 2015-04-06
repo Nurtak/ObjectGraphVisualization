@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.application.Platform;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
 import javafx.geometry.VPos;
@@ -51,8 +52,8 @@ public class PaneBox implements Selectable {
 	public final static int MIN_WIDTH = 100;
 	public final static int MIN_HEIGHT = 100;
 	
-	public final static int MAX_WIDTH = 500;
-	public final static int MAX_HEIGHT = 500;
+	public final static int MAX_WIDTH = 495;
+	public final static int MAX_HEIGHT = 495;
 	
 	private Group paneBox = new Group();
 	private BoxSelection selection = null;
@@ -145,6 +146,19 @@ public class PaneBox implements Selectable {
 			HBox.setMargin(this.topLabel, new Insets(-1, -1, 0, -1));
 			HBox.setHgrow(this.topLabel, Priority.ALWAYS);
 		}
+		
+		GridPane centerGridPane = getCenter();
+		if(centerGridPane != null) {
+			for(Node rowNode : centerGridPane.getChildren()) {
+				if(rowNode instanceof Label) {
+					Label centerLabel = (Label) rowNode;
+					TextField centerTextField = loadCenterTextField();
+					centerTextField.setText(centerLabel.getText());
+					this.centerLabels.add(centerLabel);
+					this.centerTextFields.add(centerTextField);
+				}
+			}
+		}
 	}
 	
 	private BorderPane loadBorderPane() {
@@ -155,6 +169,7 @@ public class PaneBox implements Selectable {
 		return new BorderPane();
 	}
 	
+	//TODO Move the loaders to code, to improve performance!
 	private TextField loadTopTextField() {
 		Object loadedPreset = FXMLResourceUtil.loadPreset(Resource.TOPTEXTFIELD_FXML); // load top textfield preset from fxml file
 		if(loadedPreset != null && loadedPreset instanceof TextField) {
@@ -170,17 +185,7 @@ public class PaneBox implements Selectable {
 		}
 		return new TextField();
 	}
-	
-	private HBox loadCenterHBoxLabel() {
-		Object loadedPreset = FXMLResourceUtil.loadPreset(Resource.CENTERLABEL_FXML); // load top label preset from fxml file
-		if(loadedPreset != null && loadedPreset instanceof HBox) {
-			return (HBox) loadedPreset;
-		}
-		HBox temp = new HBox();
-		temp.getChildren().add(new Label());
-		return temp;
-	}
-	
+		
 	private void buildBox() {
 		this.box = new Cuboid(INIT_DEPTH);
 		this.box.setDrawTopFace(false);
@@ -264,7 +269,12 @@ public class PaneBox implements Selectable {
 	private void applyShowCenterGrid() {
 		for(int i = 0; i < this.centerLabels.size(); i++) {
 			Label centerLabel = this.centerLabels.get(i);
-			if(i != this.centerLabels.size() - 1) {
+			boolean isLast = true;
+			if(i < this.centerLabels.size() - 1) {
+				Label nextCenterLabel = this.centerLabels.get(i + 1);
+				isLast = !nextCenterLabel.isVisible();
+			}
+			if(!isLast) {
 				showCenterGrid(centerLabel, false);
 			}
 			else {
@@ -293,48 +303,49 @@ public class PaneBox implements Selectable {
 	}
 	
 	public void clearCenterRows() {
-		for(int i = 0; i < this.centerLabels.size(); i++) {
-			getCenter().getChildren().remove(0);
-		}
-		this.centerLabels.clear();
-		this.centerTextFields.clear();
+//		for(int i = 0; i < this.centerLabels.size(); i++) {
+//			getCenter().getChildren().remove(0);
+//		}
+//		this.centerLabels.clear();
+//		this.centerTextFields.clear();
 	}
 	
 	public void appendNewCenterField(String text) {
 		addNewCenterField(this.centerLabels.size(), text);
 	}
 	
+	private void adaptCenterSize() {
+		GridPane centerGridPane = getCenter();
+		Insets padding = centerGridPane.getPadding();
+		//centerGridPane.setPrefSize(getWidth(), getHeight() - this.topLabel.getHeight());
+		for(Label centerLabel : this.centerLabels) {
+			centerLabel.setPrefWidth(getWidth() - padding.getLeft() - padding.getRight());
+			centerLabel.applyCss();
+		}
+	}
+	
 	public void addNewCenterField(int rowIndex, String text) {
-		HBox newCenterHBoxLabel = loadCenterHBoxLabel();
-		TextField newCenterTextField = loadCenterTextField();
-		Label newCenterLabel = (Label) newCenterHBoxLabel.getChildren().get(0);
-		newCenterLabel.setText(text);
-		newCenterTextField.setText(text);
-		try {
-			GridPane centerGridPane = getCenter();
-			if(centerGridPane != null && newCenterHBoxLabel != null && newCenterTextField != null) {
-				this.centerLabels.add(newCenterLabel);
-				this.centerTextFields.add(newCenterTextField);
-				newCenterLabel.setMaxWidth(Double.MAX_VALUE);
-				HBox.setHgrow(newCenterLabel, Priority.ALWAYS);
-				GridPane.setFillWidth(newCenterHBoxLabel, true);
-				GridPane.setFillWidth(newCenterLabel, true);
-				GridPane.setFillHeight(newCenterHBoxLabel, true);
-				GridPane.setFillHeight(newCenterLabel, true);
-				RowConstraints rowConstraints = new RowConstraints();
-				rowConstraints.setValignment(VPos.TOP);
-				centerGridPane.getRowConstraints().add(rowConstraints);
-				ColumnConstraints columnConstraints = new ColumnConstraints();
-				columnConstraints.setFillWidth(true);
-				centerGridPane.getColumnConstraints().add(columnConstraints);
-				rowConstraints.setFillHeight(true);
-				centerGridPane.add(newCenterHBoxLabel, 0, rowIndex);
-			}
-		}
-		catch(IndexOutOfBoundsException iobe) {
-			logger.debug("Adding new centerfield " + text + " failed. IndexOutOfBoundsException: " + iobe.getMessage());
-		}
-		applyShowCenterGrid();
+//		Label newCenterLabel = loadCenterLabel();
+//		TextField newCenterTextField = loadCenterTextField();
+//		newCenterLabel.setText(text);
+//		newCenterLabel.setMaxWidth(Double.MAX_VALUE);
+//		newCenterTextField.setText(text);
+//		try {
+//			GridPane centerGridPane = getCenter();
+//			if(centerGridPane != null && newCenterLabel != null && newCenterTextField != null) {
+//				this.centerLabels.add(newCenterLabel);
+//				this.centerTextFields.add(newCenterTextField);
+//				centerGridPane.add(newCenterLabel, 0, rowIndex);
+//				//GridPane.setVgrow(newCenterLabel, Priority.ALWAYS);
+//				//GridPane.setHgrow(newCenterLabel, Priority.NEVER);
+//				//GridPane.setHalignment(newCenterLabel, HPos.LEFT);
+//				//GridPane.setValignment(newCenterLabel, VPos.TOP);
+//			}
+//		}
+//		catch(IndexOutOfBoundsException iobe) {
+//			logger.debug("Adding new centerfield " + text + " failed. IndexOutOfBoundsException: " + iobe.getMessage());
+//		}
+//		applyShowCenterGrid();
 	}
 	
 	public void removeCenterField(int rowIndex) {
@@ -400,6 +411,7 @@ public class PaneBox implements Selectable {
 
 	public void setWidth(double witdh) {
 		this.borderPane.setPrefWidth(witdh);
+		adaptCenterSize();
 	}
 
 	public double getWidth() {
@@ -414,6 +426,7 @@ public class PaneBox implements Selectable {
 	 */
 	public void setMinWidth(double width) {
 		this.borderPane.setMinWidth(restrictedWidth(width));
+		adaptCenterSize();
 	}
 
 	public double getMinWidth() {
@@ -422,6 +435,7 @@ public class PaneBox implements Selectable {
 
 	public void setHeight(double height) {
 		this.borderPane.setPrefHeight(height);
+		adaptCenterSize();
 	}
 
 	public double getHeight() {
@@ -450,6 +464,7 @@ public class PaneBox implements Selectable {
 	 */
 	public void setMinHeight(double height) {
 		this.borderPane.setMinHeight(restrictedHeight(height));
+		adaptCenterSize();
 	}
 
 	public double getMinHeight() {
