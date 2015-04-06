@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.input.*?>
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../css/LightTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.ogv.controller.RootLayoutController">
+	<top>
+      <GridPane>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+      		<MenuBar id="menubar" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER">
+      			<menus>
+      				<Menu id="menu_file" mnemonicParsing="false" text="File">
+      					<items>
+      						<MenuItem id="menuitem_new" disable="true" mnemonicParsing="false" onAction="#handleNew" text="New">
+      							<accelerator>
+      								<KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+      							</accelerator>
+      						</MenuItem>
+      						<MenuItem id="menuitem_open" disable="true" mnemonicParsing="false" onAction="#handleOpen" text="Open...">
+      							<accelerator>
+      								<KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+      							</accelerator>
+      						</MenuItem>
+      						<MenuItem id="menuitem_save" disable="true" mnemonicParsing="false" onAction="#handleSave" text="Save">
+      							<accelerator>
+      								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+      							</accelerator>
+      						</MenuItem>
+      						<MenuItem id="menuitem_saveas" disable="true" mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
+      							<accelerator>
+      								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+      							</accelerator>
+      						</MenuItem>
+      						<MenuItem id="menuitem_exit" mnemonicParsing="false" onAction="#handleExit" text="Exit">
+      							<accelerator>
+      								<KeyCodeCombination alt="DOWN" code="F4" control="UP" meta="UP" shift="UP" shortcut="UP" />
+      							</accelerator>
+      						</MenuItem>
+      					</items>
+      				</Menu>
+                  <Menu id="menu_view" mnemonicParsing="false" text="View">
+                    <items>
+                        <MenuItem fx:id="centerView" mnemonicParsing="false" onAction="#handleCenterView" text="Center View">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Z" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <CheckMenuItem fx:id="lockedTopView" mnemonicParsing="false" onAction="#handleLockedTopView" text="Locked Top View">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="T" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </CheckMenuItem>
+                        <CheckMenuItem id="checkmenuitem_objectview" fx:id="showObjects" mnemonicParsing="false" onAction="#handleShowObjects" selected="true" text="Show Objects">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="O" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                           </accelerator></CheckMenuItem>
+                        <CheckMenuItem fx:id="showModelAxis" mnemonicParsing="false" onAction="#handleShowModelAxis" selected="true" text="Show Model Axis">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="X" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </CheckMenuItem>
+                    </items>
+                  </Menu>
+                  <Menu id="menu_window" disable="true" mnemonicParsing="false" text="Window">
+                    <items>
+                        <Menu id="menu_theme" mnemonicParsing="false" text="Theme">
+                           <items>
+                              <CheckMenuItem id="cmenuitem_modena" fx:id="modena" mnemonicParsing="false" onAction="#handleSetModena" selected="true" text="Modena" />
+                              <CheckMenuItem id="cmenuitem_caspian" fx:id="caspian" mnemonicParsing="false" onAction="#handleSetCaspian" text="Caspian Dark" />
+                              <CheckMenuItem id="cmenuitem_aqua" fx:id="aqua" mnemonicParsing="false" onAction="#handleSetAqua" text="Aqua" />
+                           </items>
+                        </Menu>
+                    </items>
+                  </Menu>
+      				<Menu id="menu_help" mnemonicParsing="false" text="Help">
+      					<items>
+      						<MenuItem id="menuitem_about" mnemonicParsing="false" onAction="#handleAbout" text="About" />
+      					</items>
+      				</Menu>
+      			</menus>
+      		</MenuBar>
+            <ToolBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
+               <items>
+                  <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" text="Class">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="createToolbar" />
+                     </toggleGroup>
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/structureclass.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic></ToggleButton>
+                  <ToggleButton fx:id="createObject" mnemonicParsing="false" onAction="#handleCreateObject" text="Object" toggleGroup="$createToolbar">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/instance.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic></ToggleButton>
+                  <Separator orientation="VERTICAL" />
+                  <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
+                    <items>
+                        <MenuItem fx:id="createUndirectedAssociation" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/assoc.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
+                      <MenuItem fx:id="createDirectedAssociation" mnemonicParsing="false" onAction="#handleCreateDirectedAssociation" text="Directed Association">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/assoWithNav.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
+                      <MenuItem fx:id="createBidirectedAssociation" mnemonicParsing="false" onAction="#handleCreateBidirectedAssociation" text="Bidirected Association">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/assoNavToNav.gif" />
+                                 </image>
+                              </ImageView>                           </graphic></MenuItem>
+                        <MenuItem fx:id="createUndirectedAggregation" mnemonicParsing="false" onAction="#handleCreateUndirectedAggregation" text="Aggregation">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/aggregation.gif" />
+                                 </image>
+                              </ImageView>                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="createDirectedAggregation" mnemonicParsing="false" onAction="#handleCreateDirectedAggregation" text="Directed Aggregation">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/aggregationToNavi.gif" />
+                                 </image>
+                              </ImageView>                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="createUndirectedComposition" mnemonicParsing="false" onAction="#handleCreateUndirectedComposition" text="Composition">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/composite.gif" />
+                                 </image>
+                              </ImageView>                           </graphic>
+                        </MenuItem>
+                        <MenuItem fx:id="createDirectedComposition" mnemonicParsing="false" onAction="#handleCreateDirectedComposition" text="Directed Composition">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/compositeToNavi.gif" />
+                                 </image>
+                              </ImageView>                           </graphic>
+                        </MenuItem>
+                    </items>
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/assoc.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </SplitMenuButton>
+                  <ToggleButton fx:id="createGeneralization" disable="true" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization" toggleGroup="$createToolbar">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/general.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic></ToggleButton>
+                  <ToggleButton fx:id="createDependency" disable="true" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/depend.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic></ToggleButton>
+               </items>
+            </ToolBar>
+         </children>
+      </GridPane>
+	</top>
+   <center>
+		<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>
