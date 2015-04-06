@@ -56,9 +56,9 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
          <children>
-            <Label maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field1" GridPane.hgrow="ALWAYS">
+            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field1" visible="false" GridPane.hgrow="ALWAYS">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <GridPane.margin>
                   <Insets />
@@ -67,9 +67,9 @@
                   <Insets left="5.0" right="5.0" />
                </padding>
             </Label>
-            <Label maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
+            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field2" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -77,7 +77,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field3" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -85,7 +85,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field4" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -93,7 +93,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field5" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -101,7 +101,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field6" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -109,7 +109,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field7" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -117,7 +117,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field8" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -125,7 +125,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field9" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -133,7 +133,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field10" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -141,7 +141,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field11" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="10">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -149,7 +149,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field12" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="11">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -157,7 +157,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field13" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="12">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -165,7 +165,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field14" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="13">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />
@@ -173,7 +173,7 @@
             </Label>
             <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field15" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="14">
                <font>
-                  <Font size="15.0" />
+                  <Font size="16.0" />
                </font>
                <padding>
                   <Insets left="5.0" right="5.0" />

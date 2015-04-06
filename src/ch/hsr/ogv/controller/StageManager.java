@@ -129,11 +129,13 @@ public class StageManager extends Observable implements Observer {
 		notifyObservers(this); // pass StageManager to RootLayoutController
 
 		// TODO: Remove everything below this line:
-		ModelClass mcA = this.modelManager.createClass(new Point3D(0, PaneBox.INIT_DEPTH / 2, 0), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		handleLockedTopView(false);
+		
+		ModelClass mcA = this.modelManager.createClass(new Point3D(-300, PaneBox.INIT_DEPTH / 2, 200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcA.setName("A");		
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcB.setName("B");		
-		ModelClass mcC = this.modelManager.createClass(new Point3D(400, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass mcC = this.modelManager.createClass(new Point3D(0, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcC.setName("C");
 		
 		ModelObject moA1 = this.modelManager.createObject(mcA);
@@ -142,7 +144,7 @@ public class StageManager extends Observable implements Observer {
 		ModelObject moB3 = this.modelManager.createObject(mcB);
 	
 		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_AGGREGATION);
-		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION);
+		this.modelManager.createRelation(mcC, mcB, RelationType.GENERALIZATION);
 		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
 		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM);
 		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM);
@@ -150,6 +152,8 @@ public class StageManager extends Observable implements Observer {
 		
 		mcA.createAttribute();
 		mcA.createAttribute();
+		
+		mcB.createAttribute();
 	}
 	
 	private void initRootLayoutController() {
@@ -473,9 +477,11 @@ public class StageManager extends Observable implements Observer {
 	private void adaptCenterFields(ModelClass modelClass) {
 		PaneBox paneClassBox = this.boxes.get(modelClass);
 		if(paneClassBox != null) {
-			paneClassBox.clearCenterRows();
-			for(Attribute attribute : modelClass.getAttributes()) {
-				paneClassBox.appendNewCenterField(attribute.getName());
+			paneClassBox.showAllCenterRows(false);
+			for(int i = 0; i < modelClass.getAttributes().size(); i++) {
+				Attribute attribute = modelClass.getAttributes().get(i);
+				paneClassBox.showCenterField(i, true);
+				paneClassBox.setCenterText(i, attribute.getName());
 			}
 		}
 	}
@@ -483,15 +489,17 @@ public class StageManager extends Observable implements Observer {
 	private void adaptCenterFields(ModelObject modelObject) {
 		PaneBox paneObjectBox = this.boxes.get(modelObject);
 		if(paneObjectBox != null) {
-			paneObjectBox.clearCenterRows();
-			for(Attribute attribute : modelObject.getModelClass().getAttributes()) { // using attribute list of this objects class, to get same order.
+			paneObjectBox.showAllCenterRows(false);
+			for(int i = 0; i < modelObject.getModelClass().getAttributes().size(); i++) { // using attribute list of this objects class, to get same order.
+				Attribute attribute = modelObject.getModelClass().getAttributes().get(i);
 				String attributeName = attribute.getName();
 				String attributeValue = modelObject.getAttributeValues().get(attribute);
+				paneObjectBox.showCenterField(i, true);
 				if(attributeValue != null && !attributeValue.isEmpty()) {
-					paneObjectBox.appendNewCenterField(attributeName + " = " + attributeValue);
+					paneObjectBox.setCenterText(i, attributeName + " = " + attributeValue);
 				}
 				else {
-					paneObjectBox.appendNewCenterField(attributeName);
+					paneObjectBox.setCenterText(i, attributeName);
 				}
 			}
 		}
