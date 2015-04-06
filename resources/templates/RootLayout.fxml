@@ -25,22 +25,22 @@
       			<menus>
       				<Menu id="menu_file" mnemonicParsing="false" text="File">
       					<items>
-      						<MenuItem id="menuitem_new" mnemonicParsing="false" onAction="#handleNew" text="New">
+      						<MenuItem id="menuitem_new" disable="true" mnemonicParsing="false" onAction="#handleNew" text="New">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
       						</MenuItem>
-      						<MenuItem id="menuitem_open" mnemonicParsing="false" onAction="#handleOpen" text="Open...">
+      						<MenuItem id="menuitem_open" disable="true" mnemonicParsing="false" onAction="#handleOpen" text="Open...">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
       						</MenuItem>
-      						<MenuItem id="menuitem_save" mnemonicParsing="false" onAction="#handleSave" text="Save">
+      						<MenuItem id="menuitem_save" disable="true" mnemonicParsing="false" onAction="#handleSave" text="Save">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
       						</MenuItem>
-      						<MenuItem id="menuitem_saveas" mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
+      						<MenuItem id="menuitem_saveas" disable="true" mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
       							</accelerator>
@@ -75,7 +75,7 @@
                         </CheckMenuItem>
                     </items>
                   </Menu>
-                  <Menu id="menu_window" mnemonicParsing="false" text="Window">
+                  <Menu id="menu_window" disable="true" mnemonicParsing="false" text="Window">
                     <items>
                         <Menu id="menu_theme" mnemonicParsing="false" text="Theme">
                            <items>
@@ -182,7 +182,7 @@
                         </ImageView>
                      </graphic>
                   </SplitMenuButton>
-                  <ToggleButton fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization" toggleGroup="$createToolbar">
+                  <ToggleButton fx:id="createGeneralization" disable="true" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization" toggleGroup="$createToolbar">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -190,7 +190,7 @@
                            </image>
                         </ImageView>
                      </graphic></ToggleButton>
-                  <ToggleButton fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar">
+                  <ToggleButton fx:id="createDependency" disable="true" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
