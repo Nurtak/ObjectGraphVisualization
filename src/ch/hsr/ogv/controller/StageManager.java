@@ -50,7 +50,7 @@ public class StageManager extends Observable implements Observer {
 
 	private final static Logger logger = LoggerFactory.getLogger(StageManager.class);
 
-	private String appTitle = "Object Graph Visualizer";
+	private String appTitle = "Object Graph Visualizer v.1.0";
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdapter;
@@ -100,7 +100,7 @@ public class StageManager extends Observable implements Observer {
 		this.modelManager = new ModelManager();
 		this.modelManager.addObserver(this);
 
-		initRootLayoutController();
+		loadRootLayoutController();
 		setupStage();
 		initSubSceneController();
 		initCameraController();
@@ -156,7 +156,7 @@ public class StageManager extends Observable implements Observer {
 		mcB.createAttribute();
 	}
 	
-	private void initRootLayoutController() {
+	private void loadRootLayoutController() {
 		FXMLLoader loader = FXMLResourceUtil.prepareLoader(Resource.ROOTLAYOUT_FXML); // load rootlayout from fxml file
 		try {
 			this.rootLayout = (BorderPane) loader.load();
