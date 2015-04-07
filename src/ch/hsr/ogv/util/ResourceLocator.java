@@ -21,6 +21,7 @@ public class ResourceLocator {
 		TOPTEXTFIELD_FXML("templates/TopTextField.fxml"),
 		CENTERLABEL_FXML("templates/CenterLabel.fxml"),
 		CENTERTEXTFIELD_FXML("templates/CenterTextField.fxml"),
+		CLASSCONTEXTMENU_FXML("templates/ClassContextMenu.fxml"),
 		TSPLITMENUBUTTON_CSS("css/TSplitMenuButton.css"),
 		LIGHTHEME_CSS("css/LightTheme.css"),
 		DARKTHEME_CSS("css/DarkTheme.css"),
