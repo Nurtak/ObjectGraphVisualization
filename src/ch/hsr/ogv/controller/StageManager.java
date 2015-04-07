@@ -67,6 +67,7 @@ public class StageManager extends Observable implements Observer {
 	private TextInputController textInputController = new TextInputController();
 	private DragMoveController dragMoveController = new DragMoveController();
 	private DragResizeController dragResizeController = new DragResizeController();
+	private ContextMenuController contextMenuController = new ContextMenuController();
 
 	private static final int MIN_WIDTH = 1024;
 	private static final int MIN_HEIGHT = 768;
@@ -339,6 +340,7 @@ public class StageManager extends Observable implements Observer {
 		if(this.modelManager.isClass(modelBox)) {
 			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
+			this.contextMenuController.enableContextMenu(paneBox, this.subSceneAdapter);
 		}
 		else if(this.modelManager.isObject(modelBox)) {
 			
