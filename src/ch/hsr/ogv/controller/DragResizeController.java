@@ -37,16 +37,16 @@ public class DragResizeController extends DragController {
 	}
 	
 	private void enableDirection(Group g, Cursor direction, ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
-		g.setOnMouseEntered((MouseEvent me) -> {
+		g.addEventHandler(MouseEvent.MOUSE_ENTERED, (MouseEvent me) -> {
 			subSceneAdapter.getSubScene().setCursor(direction);
 	    });
 		
-		g.setOnMouseExited((MouseEvent me) -> {
+		g.addEventHandler(MouseEvent.MOUSE_EXITED, (MouseEvent me) -> {
 			subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 	    });
 		
-		setOnMouseDragged(g, modelBox, paneBox, subSceneAdapter, direction);
-		setOnMouseReleased(g, subSceneAdapter);
+		resizeOnMouseDragged(g, modelBox, paneBox, subSceneAdapter, direction);
+		endOnMouseReleased(g, subSceneAdapter);
 	}
 	
 	private void setOriginals(ModelBox modelBox) {
@@ -58,9 +58,9 @@ public class DragResizeController extends DragController {
 		origHeight = modelBox.getHeight();
 	}
 		
-	private void setOnMouseDragged(Group g, ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter, Cursor direction) {
+	private void resizeOnMouseDragged(Group g, ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter, Cursor direction) {
 		Floor floor = subSceneAdapter.getFloor();
-		g.setOnMouseDragged((MouseEvent me) -> {
+		g.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
 			setOriginals(modelBox);
 			setDragInProgress(subSceneAdapter, true);
 			if(MouseButton.PRIMARY.equals(me.getButton())) {

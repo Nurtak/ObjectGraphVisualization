@@ -219,6 +219,7 @@ public class PaneBox implements Selectable {
 		if(centerGridPane != null) {
 			try {
 				centerGridPane.getChildren().set(rowIndex, labelOrField);
+				GridPane.setRowIndex(labelOrField, rowIndex);
 			}
 			catch(IndexOutOfBoundsException ioobe) {
 				logger.debug("Swapping center field failed. IndexOutOfBoundsException: " + ioobe.getMessage());
@@ -263,15 +264,14 @@ public class PaneBox implements Selectable {
 	
 	public void allowCenterFieldTextInput(Label centerLabel, boolean value) {
 		int rowIndex = this.centerLabels.indexOf(centerLabel);
-		if(rowIndex >= 0) {
-			allowCenterFieldTextInput(rowIndex, value);
+		if(rowIndex < 0) {
+			return;
 		}
-	}
-	
-	private void allowCenterFieldTextInput(int rowIndex, boolean value) {
 		try {
-			Label centerLabel = this.centerLabels.get(rowIndex);
 			TextField centerTextField = this.centerTextFields.get(rowIndex);
+			centerTextField.setDisable(!value);
+			centerTextField.setEditable(value);
+			centerTextField.setVisible(value);
 			if (value) {
 				swapCenterField(centerTextField, rowIndex);
 				Platform.runLater(() -> {
@@ -282,9 +282,6 @@ public class PaneBox implements Selectable {
 			} else {
 				swapCenterField(centerLabel, rowIndex);
 			}
-			centerTextField.setDisable(!value);
-			centerTextField.setEditable(value);
-			centerTextField.setVisible(value);
 		}
 		catch(IndexOutOfBoundsException ioobe) {
 			logger.debug("Allowing textinput failed for center field. IndexOutOfBoundsException: " + ioobe.getMessage());
@@ -382,12 +379,13 @@ public class PaneBox implements Selectable {
 	@Override
 	public void setSelected(boolean selected) {
 		this.selection.setVisible(selected);
-		if (!selected) {
-			allowTopTextInput(false);
+//TODO: Remove, should be done in TextFieldController now
+//		if (!selected) {
+//			allowTopTextInput(false);
 //			for(int i = 0; i < this.centerLabels.size(); i++) {
 //				allowCenterFieldTextInput(i, false);
 //			}
-		}
+//		}
 	}
 	
 	@Override

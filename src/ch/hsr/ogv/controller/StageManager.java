@@ -63,7 +63,7 @@ public class StageManager extends Observable implements Observer {
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
 	private SelectionController selectionController = new SelectionController();
-	private TextInputController textInputController = new TextInputController();
+	private TextFieldController textFieldController = new TextFieldController();
 	private DragMoveController dragMoveController = new DragMoveController();
 	private DragResizeController dragResizeController = new DragResizeController();
 	private ContextMenuController contextMenuController = new ContextMenuController();
@@ -119,7 +119,7 @@ public class StageManager extends Observable implements Observer {
 		this.primaryStage.setScene(scene);
 		this.primaryStage.show();
 		this.subSceneAdapter.getSubScene().requestFocus();
-		this.selectionController.enableSelection(this.subSceneAdapter, this.subSceneAdapter);
+		this.selectionController.enableSubSceneSelection(this.subSceneAdapter);
 
 		setChanged();
 		notifyObservers(this); // pass StageManager to RootLayoutController
@@ -325,8 +325,8 @@ public class StageManager extends Observable implements Observer {
 	}
 
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
-		this.selectionController.enableSelection(paneBox, this.subSceneAdapter);
-		this.textInputController.enableTextInput(modelBox, paneBox);
+		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
+		this.textFieldController.enableTextInput(modelBox, paneBox);
 		//TODO
 		if(this.modelManager.isClass(modelBox)) {
 			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
@@ -339,7 +339,7 @@ public class StageManager extends Observable implements Observer {
 	}
 	
 	private void addArrowControls(Arrow arrow) {
-		this.selectionController.enableSelection(arrow, this.subSceneAdapter);
+		this.selectionController.enableArrowSelection(arrow, this.subSceneAdapter);
 	}
 
 	private void adaptBoxSettings(ModelBox modelBox) {

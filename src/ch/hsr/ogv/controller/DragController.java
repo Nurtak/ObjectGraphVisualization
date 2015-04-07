@@ -18,7 +18,7 @@ public abstract class DragController extends Observable {
 	private volatile PaneBox selected = null;
 	private volatile boolean dragInProgress = false;
 	
-	protected void setOnMouseReleased(Group g, SubSceneAdapter subSceneAdapter) {
+	protected void endOnMouseReleased(Group g, SubSceneAdapter subSceneAdapter) {
 		g.setOnMouseReleased((MouseEvent me) -> {
 			setDragInProgress(subSceneAdapter, false);
 			subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);

@@ -8,6 +8,7 @@ import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.SubSceneAdapter;
 import javafx.scene.SubScene;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
@@ -17,15 +18,15 @@ import javafx.scene.input.MouseEvent;
  *
  */
 public class SelectionController extends Observable {
-	
+
 	private volatile Selectable selected = null;
-	
+
 	private Point3D selectionCoordinates;
-	
+
 	public Point3D getSelectionCoordinates() {
 		return selectionCoordinates;
 	}
-	
+
 	public boolean hasSelection() {
 		return this.selected != null;
 	}
@@ -33,117 +34,127 @@ public class SelectionController extends Observable {
 	public Selectable getSelected() {
 		return this.selected;
 	}
-	
+
 	public boolean isSelected(Selectable selectable) {
 		return this.selected != null && this.selected.equals(selectable);
 	}
-	
-	public void enableSelection(Selectable selectable, SubSceneAdapter subSceneAdapter) {
-		if(selectable instanceof PaneBox) {
-			PaneBox paneBox = (PaneBox) selectable;
-			setOnMouseOnClicked(paneBox, subSceneAdapter);
-			setOnDragDetected(paneBox, subSceneAdapter);
-		}
-		else if (selectable instanceof Arrow) {
-			Arrow arrow = (Arrow) selectable;
-			setOnMouseClicked(arrow, subSceneAdapter);
-		}
-		else if (selectable instanceof SubSceneAdapter) {
-			setOnMouseClicked(subSceneAdapter);
-		}
+
+	public void enableSubSceneSelection(SubSceneAdapter subSceneAdapter) {
+		selectOnMouseClicked(subSceneAdapter);
 	}
-	
-	private void setOnMouseClicked(SubSceneAdapter subSceneAdapter) {
-		subSceneAdapter.getSubScene().setOnMouseClicked((MouseEvent me) -> {
+
+	public void enablePaneBoxSelection(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		selectOnClicked(paneBox, subSceneAdapter);
+		selectOnDragDetected(paneBox, subSceneAdapter);
+	}
+
+	public void enableArrowSelection(Arrow arrow, SubSceneAdapter subSceneAdapter) {
+		selectOnMouseClicked(arrow, subSceneAdapter);
+	}
+
+	private void selectOnMouseClicked(SubSceneAdapter subSceneAdapter) {
+		subSceneAdapter.getSubScene().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && me.getPickResult().getIntersectedNode() instanceof SubScene) {
 				setSelected(me, subSceneAdapter, true, subSceneAdapter);
 			}
 		});
-		
-		subSceneAdapter.getFloor().setOnMouseReleased((MouseEvent me) -> {
+
+		subSceneAdapter.getFloor().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect()) {
 				setSelected(me, subSceneAdapter.getFloor(), true, subSceneAdapter);
 			}
 		});
 	}
-	
-	private void setOnMouseOnClicked(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
-		paneBox.getTopLabel().setOnMouseClicked((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton()) && !paneBox.isSelected()) {
+
+	private void selectOnClicked(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		paneBox.getTopLabel().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton()) && !paneBox.isSelected()) {
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
-			if(MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected() && me.getClickCount() >= 2) {
+			if (MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected() && me.getClickCount() >= 2) {
 				paneBox.allowTopTextInput(true);
 			}
 		});
-		
-		paneBox.getCenter().setOnMouseClicked((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton()) && !paneBox.isSelected()) {
+
+		paneBox.getCenter().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton())) {
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
-        });
+		});
 		
-		paneBox.getBox().setOnMouseClicked((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton()) && !paneBox.isSelected()) {
+		for(Label centerLabel : paneBox.getCenterLabels()) {
+			centerLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+				if (MouseButton.PRIMARY.equals(me.getButton())) {
+					setSelected(me, paneBox, true, subSceneAdapter);
+					me.consume();
+				}
+				if (MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected() && me.getClickCount() >= 2) {
+					paneBox.allowCenterFieldTextInput(centerLabel, true);
+					me.consume();
+				}
+			});
+		}
+
+		paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton())) {
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
-        });
+		});
 	}
-	
-	private void setOnMouseClicked(Arrow arrow, SubSceneAdapter subSceneAdapter) {
-		arrow.setOnMouseClicked((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton()) && !arrow.isSelected()) {
+
+	private void selectOnMouseClicked(Arrow arrow, SubSceneAdapter subSceneAdapter) {
+		arrow.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton()) && !arrow.isSelected()) {
 				setSelected(me, arrow, true, subSceneAdapter);
 			}
 		});
 	}
-	
-	private void setOnDragDetected(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
-		paneBox.getTopLabel().setOnDragDetected((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.isSelected()) {
+
+	private void selectOnDragDetected(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		paneBox.getTopLabel().addEventHandler(MouseEvent.DRAG_DETECTED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.isSelected()) {
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
 		});
 		
-		paneBox.getCenter().setOnDragDetected((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.isSelected()) {
+		paneBox.getCenter().addEventHandler(MouseEvent.DRAG_DETECTED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.isSelected()) {
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
-        });
-		
-		paneBox.getBox().setOnDragDetected((MouseEvent me) -> {
-			if(MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.isSelected()) {
+		});
+
+		paneBox.getBox().addEventHandler(MouseEvent.DRAG_DETECTED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.isSelected()) {
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
-        });
+		});
 	}
-	
+
 	private void setSelected(MouseEvent me, Selectable selectable, boolean selected, SubSceneAdapter subSceneAdapter) {
 		this.selectionCoordinates = new Point3D(me.getX(), me.getY(), me.getZ());
 		setSelected(selectable, selected, subSceneAdapter);
 	}
-	
+
 	private void setSelected(Selectable selectable, boolean selected, SubSceneAdapter subSceneAdapter) {
 		selectable.setSelected(selected);
 
-		if(selected) {
-			if(this.selected != null) {
+		if (selected) {
+			if (this.selected != null && selectable != this.selected) {
 				this.selected.setSelected(false); // deselect the old selected object
 			}
-			
+
 			this.selected = selectable;
-			
+
 			selectable.requestFocus();
-			
-			if(selectable instanceof PaneBox) {
+
+			if (selectable instanceof PaneBox) {
 				PaneBox paneBox = (PaneBox) selectable;
 				paneBox.get().toFront();
 				subSceneAdapter.getFloor().toFront();
 			}
 			setChanged();
 			notifyObservers(selectable);
-		}
-		else {
+		} else {
 			this.selected = null;
 			setChanged();
 			notifyObservers(selectable);
