@@ -1,0 +1,16 @@
+.text-input {
+	-fx-font-size: 15;
+    -fx-background-color: transparent;
+}
+
+.text-input:focused {
+    -fx-font-size: 15;
+    -fx-background-color: white;
+    -fx-border-color: dodgerblue;
+    -fx-background-insets: 1 1 1 1;
+}
+
+.text-input:disabled {
+	-fx-font-size: 15;
+	-fx-opacity: 1.0;
+}
