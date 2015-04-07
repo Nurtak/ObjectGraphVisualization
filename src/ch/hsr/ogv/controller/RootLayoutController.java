@@ -9,7 +9,6 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point3D;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckMenuItem;
@@ -23,6 +22,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.dataaccess.UserPreferences;
+import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.TSplitMenuButton;
@@ -325,12 +325,11 @@ public class RootLayoutController implements Observer, Initializable {
 		if (o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
 			StageManager stageManager = (StageManager) arg;
 			this.stageManager = stageManager;
-			this.stageManager.getSubSceneController().addObserver(this);
 			this.stageManager.getSelectionController().addObserver(this);
-		} else if (o instanceof SubSceneController && arg instanceof Point3D) {
-			Point3D mouseCoords = (Point3D) arg;
+		} else if (o instanceof SelectionController && arg instanceof Floor) {
+			SelectionController selectionController = (SelectionController) o;
 			if (createClass != null && createClass.isSelected()) {
-				this.stageManager.handleCreateNewClass(mouseCoords);
+				this.stageManager.handleCreateNewClass(selectionController.getSelectionCoordinates());
 				this.createClass.setSelected(false);
 			}
 		} else if (o instanceof SelectionController && arg instanceof PaneBox) {

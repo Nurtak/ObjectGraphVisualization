@@ -66,14 +66,6 @@ public class Arrow extends Group implements Selectable {
 		return arrowEnd;
 	}
 	
-	public ArrowSelection getSelection() {
-		return this.selection;
-	}
-	
-	public Box getSelectionHelper() {
-		return selectionHelper;
-	}
-	
 	public RelationType getType() {
 		return type;
 	}
@@ -202,6 +194,7 @@ public class Arrow extends Group implements Selectable {
 		this.selectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 	}
 	
+	@Override
 	public void setSelected(boolean selected) {
 		this.selection.setVisible(selected);
 		if(selected) {
@@ -216,8 +209,18 @@ public class Arrow extends Group implements Selectable {
 		}
 	}
 	
+	@Override
 	public boolean isSelected() {
 		return this.selection.isVisible();
+	}
+	
+	@Override
+	public ArrowSelection getSelection() {
+		return this.selection;
+	}
+	
+	public Box getSelectionHelper() {
+		return selectionHelper;
 	}
 
 	public void setTranslateXYZ(Point3D point) {

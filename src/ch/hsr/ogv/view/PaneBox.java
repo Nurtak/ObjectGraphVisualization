@@ -74,10 +74,6 @@ public class PaneBox implements Selectable {
 		return this.box;
 	}
 
-	public BoxSelection getSelection() {
-		return this.selection;
-	}
-	
 	public Color getColor() {
 		return this.color;
 	}
@@ -201,12 +197,32 @@ public class PaneBox implements Selectable {
 		return this.topLabel;
 	}
 	
+	public ArrayList<Label> getCenterLabels() {
+		return this.centerLabels;
+	}
+	
+	public ArrayList<TextField> getCenterTextFields() {
+		return this.centerTextFields;
+	}
+	
 	private void swapTop(Node labelOrField) {
 		Node topNode = this.borderPane.getTop();
 		if ((topNode instanceof HBox)) {
 			HBox topHBox = (HBox) topNode;
 			topHBox.getChildren().clear();
 			topHBox.getChildren().add(labelOrField);
+		}
+	}
+	
+	private void swapCenterField(Node labelOrField, int rowIndex) {
+		GridPane centerGridPane = getCenter();
+		if(centerGridPane != null) {
+			try {
+				centerGridPane.getChildren().set(rowIndex, labelOrField);
+			}
+			catch(IndexOutOfBoundsException ioobe) {
+				logger.debug("Swapping center field failed. IndexOutOfBoundsException: " + ioobe.getMessage());
+			}
 		}
 	}
 	
@@ -243,6 +259,36 @@ public class PaneBox implements Selectable {
 		}
 		this.topTextField.setEditable(value);
 		this.topTextField.setDisable(!value);
+	}
+	
+	public void allowCenterFieldTextInput(Label centerLabel, boolean value) {
+		int rowIndex = this.centerLabels.indexOf(centerLabel);
+		if(rowIndex >= 0) {
+			allowCenterFieldTextInput(rowIndex, value);
+		}
+	}
+	
+	private void allowCenterFieldTextInput(int rowIndex, boolean value) {
+		try {
+			Label centerLabel = this.centerLabels.get(rowIndex);
+			TextField centerTextField = this.centerTextFields.get(rowIndex);
+			if (value) {
+				swapCenterField(centerTextField, rowIndex);
+				Platform.runLater(() -> {
+					centerTextField.requestFocus();
+					centerTextField.selectAll();
+					centerTextField.applyCss();
+				});
+			} else {
+				swapCenterField(centerLabel, rowIndex);
+			}
+			centerTextField.setDisable(!value);
+			centerTextField.setEditable(value);
+			centerTextField.setVisible(value);
+		}
+		catch(IndexOutOfBoundsException ioobe) {
+			logger.debug("Allowing textinput failed for center field. IndexOutOfBoundsException: " + ioobe.getMessage());
+		}
 	}
 
 	public GridPane getCenter() {
@@ -298,30 +344,21 @@ public class PaneBox implements Selectable {
 		centerLabel.setBorder(border);
 	}
 	
-	public void showAllCenterRows(boolean value) {
-		for(Label centerLabel : this.centerLabels) {
-			centerLabel.setDisable(!value);
-			centerLabel.setVisible(value);
-		}
-		for(TextField centerTextField : this.centerTextFields) {
-			centerTextField.setDisable(!value);
-			centerTextField.setVisible(value);
+	public void showAllCenterLabels(boolean value) {
+		for(int i = 0; i < this.centerLabels.size(); i++) {
+			showCenterLabel(i, value);
 		}
 		recalcHasCenterGrid();
 	}
 	
-	public void showCenterField(int rowIndex, boolean value) {
+	public void showCenterLabel(int rowIndex, boolean value) {
 		try {
 			Label centerLabel = this.centerLabels.get(rowIndex);
 			centerLabel.setDisable(!value);
 			centerLabel.setVisible(value);
-			
-			TextField centerTextField = this.centerTextFields.get(rowIndex);
-			centerTextField.setDisable(!value);
-			centerTextField.setVisible(value);
 		}
-		catch(IndexOutOfBoundsException iobe) {
-			logger.debug("Showing center field failed. IndexOutOfBoundsException: " + iobe.getMessage());
+		catch(IndexOutOfBoundsException ioobe) {
+			logger.debug("Showing center field failed. IndexOutOfBoundsException: " + ioobe.getMessage());
 		}
 		recalcHasCenterGrid();
 	}
@@ -333,8 +370,8 @@ public class PaneBox implements Selectable {
 			centerLabel = this.centerLabels.get(rowIndex);
 			centerTextField = this.centerTextFields.get(rowIndex);
 		}
-		catch(IndexOutOfBoundsException iobe) {
-			logger.debug("Setting text: " + text + " failed. IndexOutOfBoundsException: " + iobe.getMessage());
+		catch(IndexOutOfBoundsException ioobe) {
+			logger.debug("Setting text: " + text + " failed. IndexOutOfBoundsException: " + ioobe.getMessage());
 		}
 		if(centerLabel != null && centerTextField != null) {
 			centerLabel.setText(text);
@@ -342,15 +379,30 @@ public class PaneBox implements Selectable {
 		}
 	}
 	
+	@Override
 	public void setSelected(boolean selected) {
 		this.selection.setVisible(selected);
 		if (!selected) {
 			allowTopTextInput(false);
+//			for(int i = 0; i < this.centerLabels.size(); i++) {
+//				allowCenterFieldTextInput(i, false);
+//			}
 		}
 	}
 	
+	@Override
 	public boolean isSelected() {
 		return this.selection.isVisible();
+	}
+	
+	@Override
+	public BoxSelection getSelection() {
+		return this.selection;
+	}
+	
+	@Override
+	public void requestFocus() {
+		get().requestFocus();
 	}
 	
 	private double restrictedWidth(double width) {

@@ -9,12 +9,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 
-public class Floor extends Group {
+public class Floor extends Group implements Selectable {
 
 	private HashSet<Rectangle> tiles = new HashSet<Rectangle>();
 	private final double TILE_SIZE = 1000;
 	private final int TILE_DIMENSION = 10;
 	private Color color = Color.WHITESMOKE;
+	
+	private volatile boolean selected = false;
 
 	public Floor() {
 		for (int x = 0; x < TILE_DIMENSION; x++) {
@@ -66,6 +68,21 @@ public class Floor extends Group {
 			return false;
 		Rectangle rect = (Rectangle) node;
 		return this.tiles.contains(rect);
+	}
+
+	@Override
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	@Override
+	public boolean isSelected() {
+		return this.selected;
+	}
+
+	@Override
+	public Group getSelection() {
+		return null; // floor has no real (visible) selection
 	}
 
 }

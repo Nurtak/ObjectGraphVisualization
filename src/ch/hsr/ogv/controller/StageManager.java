@@ -62,7 +62,6 @@ public class StageManager extends Observable implements Observer {
 
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
-	private SubSceneController subSceneController = new SubSceneController();
 	private SelectionController selectionController = new SelectionController();
 	private TextInputController textInputController = new TextInputController();
 	private DragMoveController dragMoveController = new DragMoveController();
@@ -83,11 +82,7 @@ public class StageManager extends Observable implements Observer {
 		this.appTitle = appTitle;
 		this.getPrimaryStage().setTitle(this.appTitle);
 	}
-	
-	public SubSceneController getSubSceneController() {
-		return subSceneController;
-	}
-	
+
 	public SelectionController getSelectionController() {
 		return selectionController;
 	}
@@ -102,7 +97,6 @@ public class StageManager extends Observable implements Observer {
 
 		loadRootLayoutController();
 		setupStage();
-		initSubSceneController();
 		initCameraController();
 		initPaneBoxController();
 	}
@@ -124,6 +118,7 @@ public class StageManager extends Observable implements Observer {
 		this.primaryStage.setScene(scene);
 		this.primaryStage.show();
 		this.subSceneAdapter.getSubScene().requestFocus();
+		this.selectionController.enableSelection(this.subSceneAdapter, this.subSceneAdapter);
 
 		setChanged();
 		notifyObservers(this); // pass StageManager to RootLayoutController
@@ -170,10 +165,6 @@ public class StageManager extends Observable implements Observer {
 	private void initCameraController() {
 		this.cameraController.handleMouse(this.subSceneAdapter);
 		this.cameraController.handleKeyboard(this.subSceneAdapter);
-	}
-
-	private void initSubSceneController() {
-		this.subSceneController.handleSubSceneMouse(this.subSceneAdapter);
 	}
 
 	private void initPaneBoxController() {
@@ -242,14 +233,14 @@ public class StageManager extends Observable implements Observer {
 				PaneBox paneBox = this.boxes.get(modelBox);
 				paneBox.setVisible(showObjects);
 				
-				if(this.selectionController.isSelected(paneBox)) {
+				if(paneBox.isSelected()) {
 					this.subSceneAdapter.getSubScene().requestFocus();
 				}
 				
 				for (Endpoint endpoint : modelBox.getEndpoints()) {
 					Arrow arrow = this.arrows.get(endpoint.getRelation());
 					arrow.setVisible(showObjects);
-					if(this.selectionController.isSelected(arrow)) {
+					if(arrow.isSelected()) {
 						this.subSceneAdapter.getSubScene().requestFocus();
 					}
 				}
@@ -477,10 +468,10 @@ public class StageManager extends Observable implements Observer {
 	private void adaptCenterFields(ModelClass modelClass) {
 		PaneBox paneClassBox = this.boxes.get(modelClass);
 		if(paneClassBox != null) {
-			paneClassBox.showAllCenterRows(false);
+			paneClassBox.showAllCenterLabels(false);
 			for(int i = 0; i < modelClass.getAttributes().size(); i++) {
 				Attribute attribute = modelClass.getAttributes().get(i);
-				paneClassBox.showCenterField(i, true);
+				paneClassBox.showCenterLabel(i, true);
 				paneClassBox.setCenterText(i, attribute.getName());
 			}
 		}
@@ -489,12 +480,12 @@ public class StageManager extends Observable implements Observer {
 	private void adaptCenterFields(ModelObject modelObject) {
 		PaneBox paneObjectBox = this.boxes.get(modelObject);
 		if(paneObjectBox != null) {
-			paneObjectBox.showAllCenterRows(false);
+			paneObjectBox.showAllCenterLabels(false);
 			for(int i = 0; i < modelObject.getModelClass().getAttributes().size(); i++) { // using attribute list of this objects class, to get same order.
 				Attribute attribute = modelObject.getModelClass().getAttributes().get(i);
 				String attributeName = attribute.getName();
 				String attributeValue = modelObject.getAttributeValues().get(attribute);
-				paneObjectBox.showCenterField(i, true);
+				paneObjectBox.showCenterLabel(i, true);
 				if(attributeValue != null && !attributeValue.isEmpty()) {
 					paneObjectBox.setCenterText(i, attributeName + " = " + attributeValue);
 				}

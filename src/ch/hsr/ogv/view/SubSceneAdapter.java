@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
  * @author Simon Gwerder
  *
  */
-public class SubSceneAdapter {
+public class SubSceneAdapter implements Selectable {
 	
 	private Color color = Color.LIGHTCYAN;
 	
@@ -20,6 +20,8 @@ public class SubSceneAdapter {
 	private SubSceneCamera subSceneCamera;
 	private Axis axis;
 	private Floor floor;
+	
+	private volatile boolean selected = false;
 
 	private final Group root = new Group();
 
@@ -93,6 +95,26 @@ public class SubSceneAdapter {
 	
 	public boolean remove(Node node) {
 		return this.world.getChildren().remove(node);
+	}
+
+	@Override
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	@Override
+	public boolean isSelected() {
+		return this.selected;
+	}
+
+	@Override
+	public Group getSelection() {
+		return null; // SubScene has no real (visible) selection
+	}
+
+	@Override
+	public void requestFocus() {
+		this.subScene.requestFocus();
 	}
 	
 }
