@@ -237,14 +237,14 @@ public class StageManager extends Observable implements Observer {
 				paneBox.setVisible(showObjects);
 
 				if (paneBox.isSelected()) {
-					this.subSceneAdapter.getSubScene().requestFocus();
+					this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 				}
 
 				for (Endpoint endpoint : modelBox.getEndpoints()) {
 					Arrow arrow = this.arrows.get(endpoint.getRelation());
 					arrow.setVisible(showObjects);
 					if (arrow.isSelected()) {
-						this.subSceneAdapter.getSubScene().requestFocus();
+						this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 					}
 				}
 			}
