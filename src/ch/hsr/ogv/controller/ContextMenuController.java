@@ -49,6 +49,7 @@ public class ContextMenuController extends Observable {
 				@Override
 				public void handle(MouseEvent e) {
 					if (paneBox.isSelected() && e.getButton() == MouseButton.SECONDARY) {
+						System.out.println("Open contextmenu on class " + modelBox.getName());
 						classCM.show(paneBox.get(), e.getScreenX(), e.getScreenY());
 					}
 				}
@@ -58,6 +59,7 @@ public class ContextMenuController extends Observable {
 				@Override
 				public void handle(MouseEvent e) {
 					if (paneBox.isSelected() && e.getButton() == MouseButton.SECONDARY) {
+						System.out.println("Open contextmenu on object " + modelBox.getName());
 						objectCM.show(paneBox.get(), e.getScreenX(), e.getScreenY());
 					}
 				}
