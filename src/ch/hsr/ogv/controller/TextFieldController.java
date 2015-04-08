@@ -1,5 +1,8 @@
 package ch.hsr.ogv.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
@@ -19,8 +22,12 @@ import ch.hsr.ogv.view.PaneBox;
  */
 public class TextFieldController {
 	
+	private final static Logger logger = LoggerFactory.getLogger(TextFieldController.class);
+	
 	public void enableTextInput(ModelBox modelBox, PaneBox paneBox) {
 		TextField topTextField = paneBox.getTopTextField();
+		
+		//TODO NullPointerException at undo
 		
 		topTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
@@ -55,8 +62,10 @@ public class TextFieldController {
 				public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 					if (!newHasFocus) {
 						int rowIndex = paneBox.getCenterTextFields().indexOf(centerTextField);
-						Label centerLabel = paneBox.getCenterLabels().get(rowIndex);
-						paneBox.allowCenterFieldTextInput(centerLabel, false);
+						if(rowIndex >= 0) {
+							Label centerLabel = paneBox.getCenterLabels().get(rowIndex);
+							paneBox.allowCenterFieldTextInput(centerLabel, false);
+						}
 					}
 				}
 			});
@@ -65,17 +74,20 @@ public class TextFieldController {
 	            @Override
 	            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
 	            	int rowIndex = paneBox.getCenterTextFields().indexOf(centerTextField);
-	            	if(modelBox instanceof ModelClass) {
-	            		//TODO Create methods to change attribute and attribute value that notify StageManager
-	            		ModelClass modelClass = (ModelClass) modelBox;
-	            		Attribute attribute = modelClass.getAttributes().get(rowIndex);
-	            		attribute.setName(newValue);
+	            	try {
+		            	if(modelBox instanceof ModelClass) {
+		            		ModelClass modelClass = (ModelClass) modelBox;
+		            		modelClass.changeAttributeName(rowIndex, newValue);
+		            	}
+		            	else if(modelBox instanceof ModelObject) {
+		            		ModelObject modelObject = (ModelObject) modelBox;
+		            		Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
+		            		modelObject.changeAttributeValue(attribute, newValue);
+		            	}
 	            	}
-	            	else if(modelBox instanceof ModelObject) {
-	            		ModelObject modelObject = (ModelObject) modelBox;
-	            		Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
-	            		modelObject.getAttributeValues().put(attribute, newValue);
-	            	}
+	        		catch(IndexOutOfBoundsException ioobe) {
+	        			logger.debug("Changing attribute failed. IndexOutOfBoundsException: " + ioobe.getMessage());
+	        		}
 	            }
 	        });
 			

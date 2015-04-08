@@ -3,7 +3,6 @@ package ch.hsr.ogv.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import jfxtras.labs.util.Util;
@@ -34,6 +33,16 @@ public class ModelClass extends ModelBox {
 		this.attributes = attributes;
 	}
 	
+	public void changeAttributeName(int rowIndex, String name) throws IndexOutOfBoundsException {
+		Attribute attribute = this.attributes.get(rowIndex);
+		attribute.setName(name);
+		setChanged();
+		notifyObservers(attribute);
+		for (ModelObject modelObject : this.modelObjects) {
+			modelObject.changeAttributeName(attribute, name);
+		}
+	}
+		
 	public List<ModelObject> getModelObjects() {
 		return modelObjects;
 	}
