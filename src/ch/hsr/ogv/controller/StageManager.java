@@ -329,14 +329,11 @@ public class StageManager extends Observable implements Observer {
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
 		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
 		this.textFieldController.enableTextInput(modelBox, paneBox);
-		// TODO
 		if (ModelUtil.isClass(modelBox)) {
 			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
-			this.contextMenuController.enableClassCM((ModelClass) modelBox, paneBox, this.subSceneAdapter);
-		} else if (ModelUtil.isObject(modelBox)) {
-			this.contextMenuController.enableObjectCM((ModelObject) modelBox, paneBox, this.subSceneAdapter);
 		}
+		this.contextMenuController.enableContextMenu(modelBox, paneBox);
 	}
 
 	private void addArrowControls(Arrow arrow) {
