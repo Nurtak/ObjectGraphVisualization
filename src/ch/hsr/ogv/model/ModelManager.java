@@ -8,9 +8,10 @@ import java.util.Set;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import ch.hsr.ogv.util.ModelUtil;
 
 /**
- * 
+ *
  * @author Adrian Rieser
  *
  */
@@ -30,7 +31,7 @@ public class ModelManager extends Observable {
 		notifyObservers(modelClass);
 		return modelClass;
 	}
-	
+
 	public ModelObject createObject(ModelClass modelClass) {
 		ModelObject modelObject = modelClass.createModelObject();
 		setChanged();
@@ -92,8 +93,9 @@ public class ModelManager extends Observable {
 	}
 
 	public ModelClass getClass(String name) {
-		if (name == null)
+		if (name == null) {
 			return null;
+		}
 		for (ModelClass modelClass : this.classes) {
 			if (name.equals(modelClass.getName())) {
 				return modelClass;
@@ -111,22 +113,10 @@ public class ModelManager extends Observable {
 		return false;
 	}
 
-	public boolean isClass(Object object) {
-		return (object instanceof ModelClass);
-	}
-
-	public boolean isObject(Object object) {
-		return (object instanceof ModelObject);
-	}
-
-	public boolean isRelation(Object object) {
-		return (object instanceof Relation);
-	}
-
 	public boolean isRelationAllowed(ModelBox start, ModelBox end, RelationType relationType) {
 		switch (relationType) {
 		case GENERALIZATION:
-			if (isClass(start) && isClass(end) && !start.equals(end)) {
+			if (ModelUtil.isClass(start) && ModelUtil.isClass(end) && !start.equals(end)) {
 				return true;
 			}
 			return false;
@@ -138,13 +128,13 @@ public class ModelManager extends Observable {
 		case UNDIRECTED_COMPOSITION:
 		case DIRECTED_COMPOSITION:
 		case DEPENDENCY:
-			if (isClass(start) && isClass(end)) {
+			if (ModelUtil.isClass(start) && ModelUtil.isClass(end)) {
 				return true;
 			}
 			return false;
 		case OBJDIAGRAM:
 		case OBJGRAPH:
-			if (isObject(start) && isObject(end)) {
+			if (ModelUtil.isObject(start) && ModelUtil.isObject(end)) {
 				return true;
 			}
 			return false;
@@ -152,5 +142,4 @@ public class ModelManager extends Observable {
 			return false;
 		}
 	}
-
 }

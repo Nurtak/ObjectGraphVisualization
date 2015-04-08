@@ -1,4 +1,4 @@
-package ch.hsr.ogv.controller;
+package ch.hsr.ogv.controller.contextmenu;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -6,6 +6,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
@@ -24,7 +25,7 @@ public class ObjectCMController {
 		cm.getItems().add(cmItem1);
 	}
 
-	public void show(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	public void show(ModelObject m, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		paneBox.get().setOnMouseClicked((MouseEvent me) -> {
 			if (MouseButton.SECONDARY.equals(me.getButton())) {
 				cm.show(subSceneAdapter.getSubScene(), me.getScreenX(), me.getScreenY());
