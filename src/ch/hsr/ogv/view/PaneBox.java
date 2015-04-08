@@ -360,19 +360,19 @@ public class PaneBox implements Selectable {
 		recalcHasCenterGrid();
 	}
 	
-	public void setCenterText(int rowIndex, String text) {
+	public void setCenterText(int rowIndex, String labelText, String textFieldText) {
 		Label centerLabel = null;
 		TextField centerTextField = null;
 		try {
 			centerLabel = this.centerLabels.get(rowIndex);
 			centerTextField = this.centerTextFields.get(rowIndex);
+			if(centerLabel != null && centerTextField != null) {
+				centerLabel.setText(labelText);
+				centerTextField.setText(textFieldText);
+			}
 		}
 		catch(IndexOutOfBoundsException ioobe) {
-			logger.debug("Setting text: " + text + " failed. IndexOutOfBoundsException: " + ioobe.getMessage());
-		}
-		if(centerLabel != null && centerTextField != null) {
-			centerLabel.setText(text);
-			centerTextField.setText(text);
+			logger.debug("Setting text failed. IndexOutOfBoundsException: " + ioobe.getMessage());
 		}
 	}
 	

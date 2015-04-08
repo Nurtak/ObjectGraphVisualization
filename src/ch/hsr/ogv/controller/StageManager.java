@@ -474,7 +474,7 @@ public class StageManager extends Observable implements Observer {
 			for(int i = 0; i < modelClass.getAttributes().size(); i++) {
 				Attribute attribute = modelClass.getAttributes().get(i);
 				paneClassBox.showCenterLabel(i, true);
-				paneClassBox.setCenterText(i, attribute.getName());
+				paneClassBox.setCenterText(i, attribute.getName(), attribute.getName());
 			}
 		}
 	}
@@ -489,10 +489,10 @@ public class StageManager extends Observable implements Observer {
 				String attributeValue = modelObject.getAttributeValues().get(attribute);
 				paneObjectBox.showCenterLabel(i, true);
 				if(attributeValue != null && !attributeValue.isEmpty()) {
-					paneObjectBox.setCenterText(i, attributeName + " = " + attributeValue);
+					paneObjectBox.setCenterText(i, attributeName + " = " + attributeValue, attributeValue);
 				}
 				else {
-					paneObjectBox.setCenterText(i, attributeName);
+					paneObjectBox.setCenterText(i, attributeName, attributeValue);
 				}
 			}
 		}

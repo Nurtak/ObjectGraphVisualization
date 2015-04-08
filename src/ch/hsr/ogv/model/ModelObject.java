@@ -32,6 +32,19 @@ public class ModelObject extends ModelBox {
 	public void setAttributeValues(Map<Attribute, String> attributeValues) {
 		this.attributeValues = attributeValues;
 	}
+	
+	public void changeAttributeName(Attribute attribute, String name) {
+		setChanged();
+		notifyObservers(attribute);
+	}
+	
+	public void changeAttributeValue(Attribute attribute, String value) {
+		String oldValue = this.attributeValues.put(attribute, value);
+		if(oldValue != null) {
+			setChanged();
+			notifyObservers(attribute);
+		}
+	}
 
 	public boolean addAttributeValue(Attribute attribute, String attributeValue) {
 		if (attributeValues.containsKey(attribute)) {
