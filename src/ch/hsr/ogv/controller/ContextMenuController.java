@@ -6,10 +6,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.util.ModelUtil;
 import ch.hsr.ogv.view.PaneBox;
@@ -20,8 +16,6 @@ import ch.hsr.ogv.view.PaneBox;
  *
  */
 public class ContextMenuController extends Observable {
-
-	private final static Logger logger = LoggerFactory.getLogger(ContextMenuController.class);
 
 	private ContextMenu classCM;
 	private MenuItem cInstantiateObject;
@@ -44,14 +38,14 @@ public class ContextMenuController extends Observable {
 
 	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox) {
 		if (ModelUtil.isClass(modelBox)) {
-			paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
 					System.out.println("Open contextmenu on class " + modelBox.getName());
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
 			});
 		} else if (ModelUtil.isObject(modelBox)) {
-			paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
 					System.out.println("Open contextmenu on object " + modelBox.getName());
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());

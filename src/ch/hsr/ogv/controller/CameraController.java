@@ -96,7 +96,7 @@ public class CameraController implements Observer {
 				cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MODIFIER_FACTOR * modifier);
 			} else if (me.isMiddleButtonDown()) {
 				double z = ssCamera.get().getTranslateZ();
-				double newZ = z - mouseDeltaY * 2 + MODIFIER_FACTOR * modifier;
+				double newZ = z - mouseDeltaY * 2 * modifier;
 				ssCamera.get().setTranslateZ(newZ);
 			}
 		});
@@ -105,7 +105,17 @@ public class CameraController implements Observer {
 			if (!moveCamera)
 				return;
 			double z = ssCamera.get().getTranslateZ();
-			double newZ = z + se.getDeltaY();
+			double newZ = z;
+			double modifier = MODIFIER;
+			if (se.isControlDown()) {
+				modifier = CONTROL_MULTIPLIER;
+				newZ += se.getDeltaY() * modifier * 0.5;
+			} else if (se.isShiftDown()) {
+				modifier = SHIFT_MULTIPLIER;
+				newZ += se.getDeltaX() * modifier;
+			} else {
+				newZ += se.getDeltaY() * MODIFIER;
+			}
 			ssCamera.get().setTranslateZ(newZ);
 		});
 
