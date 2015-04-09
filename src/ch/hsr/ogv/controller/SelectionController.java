@@ -53,13 +53,13 @@ public class SelectionController extends Observable {
 	}
 
 	private void selectOnMouseClicked(SubSceneAdapter subSceneAdapter) {
-		subSceneAdapter.getSubScene().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+		subSceneAdapter.getSubScene().addEventHandler(MouseEvent.MOUSE_RELEASED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && me.getPickResult().getIntersectedNode() instanceof SubScene) {
 				setSelected(me, subSceneAdapter, true, subSceneAdapter);
 			}
 		});
 
-		subSceneAdapter.getFloor().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+		subSceneAdapter.getFloor().addEventHandler(MouseEvent.MOUSE_RELEASED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect()) {
 				setSelected(me, subSceneAdapter.getFloor(), true, subSceneAdapter);
 			}
@@ -67,12 +67,10 @@ public class SelectionController extends Observable {
 	}
 
 	private void selectOnClicked(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
-		paneBox.getTopLabel().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (MouseButton.PRIMARY.equals(me.getButton()) && !paneBox.isSelected()) {
+
+		paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton())) {
 				setSelected(me, paneBox, true, subSceneAdapter);
-			}
-			if (MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected() && me.getClickCount() >= 2) {
-				paneBox.allowTopTextInput(true);
 			}
 		});
 
@@ -82,24 +80,28 @@ public class SelectionController extends Observable {
 			}
 		});
 
+		paneBox.getTopLabel().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton())) {
+				paneBox.setLabelSelected(paneBox.getTopLabel(), true);
+				setSelected(me, paneBox, true, subSceneAdapter);
+			}
+			if (MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected() && me.getClickCount() >= 2) {
+				paneBox.allowTopTextInput(true);
+			}
+		});
+
 		for (Label centerLabel : paneBox.getCenterLabels()) {
 			centerLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (MouseButton.PRIMARY.equals(me.getButton())) {
+					paneBox.setLabelSelected(centerLabel, true);
 					setSelected(me, paneBox, true, subSceneAdapter);
-					me.consume();
 				}
 				if (MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected() && me.getClickCount() >= 2) {
 					paneBox.allowCenterFieldTextInput(centerLabel, true);
-					me.consume();
 				}
 			});
 		}
 
-		paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (MouseButton.PRIMARY.equals(me.getButton())) {
-				setSelected(me, paneBox, true, subSceneAdapter);
-			}
-		});
 	}
 
 	private void selectOnMouseClicked(Arrow arrow, SubSceneAdapter subSceneAdapter) {
@@ -140,7 +142,7 @@ public class SelectionController extends Observable {
 
 		if (selected) {
 			if (this.selected != null && selectable != this.selected) {
-				this.selected.setSelected(false); // deselect the old selected object
+				setSelected(this.selected, false, subSceneAdapter); // deselect the old selected object
 			}
 
 			this.selected = selectable;
@@ -156,6 +158,10 @@ public class SelectionController extends Observable {
 			notifyObservers(selectable);
 		} else {
 			this.selected = null;
+			if (selectable instanceof PaneBox) {
+				PaneBox paneBox = (PaneBox) selectable;
+				paneBox.setAllLabelSelected(false);
+			}
 			setChanged();
 			notifyObservers(selectable);
 		}
