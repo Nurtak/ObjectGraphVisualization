@@ -329,11 +329,11 @@ public class StageManager extends Observable implements Observer {
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
 		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
 		this.textFieldController.enableTextInput(modelBox, paneBox);
+		this.contextMenuController.enableContextMenu(modelBox, paneBox);
 		if (ModelUtil.isClass(modelBox)) {
 			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
 		}
-		this.contextMenuController.enableContextMenu(modelBox, paneBox);
 	}
 
 	private void addArrowControls(Arrow arrow) {
@@ -496,7 +496,7 @@ public class StageManager extends Observable implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO
-		if (o instanceof ModelManager && arg instanceof ModelClass) {
+		if (o instanceof ModelManager && ModelUtil.isClass(arg)) {
 			ModelClass modelClass = (ModelClass) arg;
 			if (!this.boxes.containsKey(modelClass)) { // class is new
 				addClassToSubScene(modelClass);
@@ -516,7 +516,7 @@ public class StageManager extends Observable implements Observer {
 				Arrow toDelete = this.arrows.remove(relation);
 				removeFromSubScene(toDelete);
 			}
-		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
+		} else if (o instanceof ModelManager && ModelUtil.isObject(arg)) {
 			ModelObject modelObject = (ModelObject) arg;
 			if (!this.boxes.containsKey(modelObject)) { // instance is new
 				addObjectToSubScene(modelObject);
@@ -527,10 +527,10 @@ public class StageManager extends Observable implements Observer {
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
 			}
-		} else if (o instanceof ModelClass && arg instanceof Attribute) {
+		} else if (ModelUtil.isClass(o) && ModelUtil.isAttribute(arg)) {
 			ModelClass modelClass = (ModelClass) o;
 			adaptCenterFields(modelClass);
-		} else if (o instanceof ModelObject && arg instanceof Attribute) {
+		} else if (ModelUtil.isObject(o) && ModelUtil.isAttribute(arg)) {
 			ModelObject modelObject = (ModelObject) o;
 			adaptCenterFields(modelObject);
 		} else if (o instanceof ModelBox && arg instanceof ModelBoxChange) {

@@ -2,7 +2,6 @@ package ch.hsr.ogv.controller;
 
 import java.util.Observable;
 
-import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
@@ -33,35 +32,29 @@ public class ContextMenuController extends Observable {
 
 	public ContextMenuController() {
 		classCM = new ContextMenu();
-		cInstantiateObject = new MenuItem("Instantiate object");
+		cInstantiateObject = new MenuItem("Instantiate Object");
 		cRename = new MenuItem("Rename Class");
 		classCM.getItems().add(cInstantiateObject);
 		classCM.getItems().add(cRename);
 
 		objectCM = new ContextMenu();
 		oRename = new MenuItem("Rename Object");
-		objectCM.getItems().add(cRename);
+		objectCM.getItems().add(oRename);
 	}
 
 	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox) {
 		if (ModelUtil.isClass(modelBox)) {
-			paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent e) {
-					if (paneBox.isSelected() && e.getButton() == MouseButton.SECONDARY) {
-						System.out.println("Open contextmenu on class " + modelBox.getName());
-						classCM.show(paneBox.get(), e.getScreenX(), e.getScreenY());
-					}
+			paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
+					System.out.println("Open contextmenu on class " + modelBox.getName());
+					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
 			});
 		} else if (ModelUtil.isObject(modelBox)) {
-			paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent e) {
-					if (paneBox.isSelected() && e.getButton() == MouseButton.SECONDARY) {
-						System.out.println("Open contextmenu on object " + modelBox.getName());
-						objectCM.show(paneBox.get(), e.getScreenX(), e.getScreenY());
-					}
+			paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
+					System.out.println("Open contextmenu on object " + modelBox.getName());
+					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
 			});
 		}
