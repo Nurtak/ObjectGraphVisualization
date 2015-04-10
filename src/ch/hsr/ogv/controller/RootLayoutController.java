@@ -37,7 +37,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private StageManager stageManager; // reference back to the stage manager
 	private ModelViewConnector mvConnector;
 
-	public void setMVConnecter(ModelViewConnector mvConnector) {
+	public void setMVConnector(ModelViewConnector mvConnector) {
 		this.mvConnector = mvConnector;
 	}
 

@@ -110,7 +110,7 @@ public class StageManager extends Observable implements Observer {
 
 		this.mvConnector = new ModelViewConnector(subSceneAdapter);
 		this.mvConnector.getModelManager().addObserver(this);
-		this.rootLayoutController.setMVConnecter(this.mvConnector);
+		this.rootLayoutController.setMVConnector(this.mvConnector);
 
 		Scene scene = new Scene(this.rootLayout);
 		String sceneCSS = ResourceLocator.getResourcePath(Resource.SCENE_CSS).toExternalForm();
@@ -119,6 +119,8 @@ public class StageManager extends Observable implements Observer {
 		this.primaryStage.show();
 		this.subSceneAdapter.getSubScene().requestFocus();
 		this.selectionController.enableSubSceneSelection(this.subSceneAdapter);
+		this.contextMenuController.setMVConnector(this.mvConnector);
+		this.selectionController.addObserver(contextMenuController);
 
 		setChanged();
 		notifyObservers(this); // pass StageManager to RootLayoutController

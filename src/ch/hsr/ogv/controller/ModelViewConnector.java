@@ -152,4 +152,9 @@ public class ModelViewConnector {
 		ModelBox modelBoxSupplier = this.getModelBox(supplier);
 		return this.getModelManager().createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY);
 	}
+
+	public void handleDeleteObject(PaneBox selectedPaneBox) {
+		ModelClass classToDelete = (ModelClass) this.getModelBox(selectedPaneBox);
+		this.getModelManager().deleteClass(classToDelete);
+	}
 }

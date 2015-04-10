@@ -1,6 +1,7 @@
 package ch.hsr.ogv.controller;
 
 import java.util.Observable;
+import java.util.Observer;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,33 +19,25 @@ import ch.hsr.ogv.view.PaneBox;
  * @author Adrian Rieser
  *
  */
-public class ContextMenuController extends Observable {
+public class ContextMenuController extends Observable implements Observer {
+
+	private ModelViewConnector mvConnector;
+	private PaneBox selected;
 
 	private ContextMenu classCM;
 	private MenuItem cInstantiateObject;
-	private MenuItem cRename;
+	private MenuItem cDeleteClass;
 
 	private ContextMenu objectCM;
-	private MenuItem oRename;
 
 	public ContextMenuController() {
 		classCM = new ContextMenu();
-
 		cInstantiateObject = new MenuItem("Instantiate Object");
-		cInstantiateObject.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
-
-			}
-		});
-
-		cRename = new MenuItem("Rename Class");
+		cDeleteClass = new MenuItem("Delete Class");
 		classCM.getItems().add(cInstantiateObject);
-		classCM.getItems().add(cRename);
+		classCM.getItems().add(cDeleteClass);
 
 		objectCM = new ContextMenu();
-		oRename = new MenuItem("Rename Object");
-		objectCM.getItems().add(oRename);
 	}
 
 	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox) {
@@ -63,4 +56,33 @@ public class ContextMenuController extends Observable {
 		}
 	}
 
+	public void setMVConnector(ModelViewConnector mvConnector) {
+		this.mvConnector = mvConnector;
+		fillContextMenu();
+	}
+
+	public void fillContextMenu() {
+		cInstantiateObject.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				mvConnector.handleCreateNewObject(selected);
+			}
+		});
+		cDeleteClass.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				mvConnector.handleDeleteObject(selected);
+			}
+		});
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof SelectionController && arg instanceof PaneBox) {
+			SelectionController selectionController = (SelectionController) o;
+			if (selectionController.hasSelection()) {
+				this.selected = (PaneBox) arg;
+			}
+		}
+	}
 }
