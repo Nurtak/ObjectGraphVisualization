@@ -44,7 +44,7 @@ public class SelectionController extends Observable {
 	}
 
 	public void enablePaneBoxSelection(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
-		selectOnClicked(paneBox, subSceneAdapter);
+		selectOnMouseClicked(paneBox, subSceneAdapter);
 		selectOnDragDetected(paneBox, subSceneAdapter);
 	}
 
@@ -66,17 +66,25 @@ public class SelectionController extends Observable {
 		});
 	}
 
-	private void selectOnClicked(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	private void selectOnMouseClicked(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 
 		paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton())) {
+				paneBox.setAllLabelSelected(false);
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
 		});
 
 		paneBox.getCenter().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton())) {
+				paneBox.setAllLabelSelected(false);
 				setSelected(me, paneBox, true, subSceneAdapter);
+			}
+		});
+
+		paneBox.getSelection().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton())) {
+				paneBox.setAllLabelSelected(false);
 			}
 		});
 
@@ -95,6 +103,7 @@ public class SelectionController extends Observable {
 				if (MouseButton.PRIMARY.equals(me.getButton())) {
 					paneBox.setLabelSelected(centerLabel, true);
 					setSelected(me, paneBox, true, subSceneAdapter);
+					me.consume(); // otherwise this centerLabel's parent = getCenter() will be called
 				}
 				if (MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected() && me.getClickCount() >= 2) {
 					paneBox.allowCenterFieldTextInput(centerLabel, true);
@@ -115,18 +124,21 @@ public class SelectionController extends Observable {
 	private void selectOnDragDetected(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		paneBox.getTopLabel().addEventHandler(MouseEvent.DRAG_DETECTED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.isSelected()) {
+				paneBox.setAllLabelSelected(false);
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
 		});
 
 		paneBox.getCenter().addEventHandler(MouseEvent.DRAG_DETECTED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.isSelected()) {
+				paneBox.setAllLabelSelected(false);
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
 		});
 
 		paneBox.getBox().addEventHandler(MouseEvent.DRAG_DETECTED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && !paneBox.isSelected()) {
+				paneBox.setAllLabelSelected(false);
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
 		});
