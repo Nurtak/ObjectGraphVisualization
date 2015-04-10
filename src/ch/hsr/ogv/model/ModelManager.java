@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
-import ch.hsr.ogv.util.ModelUtil;
 
 /**
  *
@@ -116,7 +115,7 @@ public class ModelManager extends Observable {
 	public boolean isRelationAllowed(ModelBox start, ModelBox end, RelationType relationType) {
 		switch (relationType) {
 		case GENERALIZATION:
-			if (ModelUtil.isClass(start) && ModelUtil.isClass(end) && !start.equals(end)) {
+			if ((start instanceof ModelClass) && (end instanceof ModelClass) && !start.equals(end)) {
 				return true;
 			}
 			return false;
@@ -128,13 +127,13 @@ public class ModelManager extends Observable {
 		case UNDIRECTED_COMPOSITION:
 		case DIRECTED_COMPOSITION:
 		case DEPENDENCY:
-			if (ModelUtil.isClass(start) && ModelUtil.isClass(end)) {
+			if ((start instanceof ModelClass) && (end instanceof ModelClass)) {
 				return true;
 			}
 			return false;
 		case OBJDIAGRAM:
 		case OBJGRAPH:
-			if (ModelUtil.isObject(start) && ModelUtil.isObject(end)) {
+			if ((start instanceof ModelObject) && (end instanceof ModelObject)) {
 				return true;
 			}
 			return false;

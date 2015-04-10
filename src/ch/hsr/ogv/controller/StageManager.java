@@ -6,6 +6,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -30,7 +31,6 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.FXMLResourceUtil;
-import ch.hsr.ogv.util.ModelUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.util.TextUtil;
@@ -53,9 +53,8 @@ public class StageManager extends Observable implements Observer {
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdapter;
 
-	private ModelViewConnector mvConnector;
+	private ModelViewConnector mvConnector = new ModelViewConnector(subSceneAdapter);
 
-	private RootLayoutController rootLayoutController = new RootLayoutController();
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
 	private SelectionController selectionController = new SelectionController();
@@ -90,6 +89,8 @@ public class StageManager extends Observable implements Observer {
 		}
 		this.primaryStage = primaryStage;
 
+		this.mvConnector.getModelManager().addObserver(this);
+
 		loadRootLayoutController();
 		setupStage();
 		initCameraController();
@@ -108,10 +109,6 @@ public class StageManager extends Observable implements Observer {
 		canvas.getChildren().add(subScene);
 		subScene.widthProperty().bind(canvas.widthProperty());
 		subScene.heightProperty().bind(canvas.heightProperty());
-
-		this.mvConnector = new ModelViewConnector(subSceneAdapter);
-		this.mvConnector.getModelManager().addObserver(this);
-		this.rootLayoutController.setMVConnecter(this.mvConnector);
 
 		Scene scene = new Scene(this.rootLayout);
 		String sceneCSS = ResourceLocator.getResourcePath(Resource.SCENE_CSS).toExternalForm();
@@ -132,7 +129,7 @@ public class StageManager extends Observable implements Observer {
 	private void loadRootLayoutController() {
 		FXMLLoader loader = FXMLResourceUtil.prepareLoader(Resource.ROOTLAYOUT_FXML); // load rootlayout from fxml file
 		try {
-			loader.setController(rootLayoutController);
+			loader.setController(new RootLayoutController());
 			this.rootLayout = (BorderPane) loader.load();
 			addObserver(loader.getController());
 		} catch (IOException | ClassCastException e) {
@@ -153,6 +150,16 @@ public class StageManager extends Observable implements Observer {
 
 	public void onlyFloorMouseEvent(boolean value) {
 		this.subSceneAdapter.onlyFloorMouseEvent(value);
+	}
+
+	public void handleCreateNewClass(Point3D mouseCoords) {
+		onlyFloorMouseEvent(false);
+		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
+		ModelClass newClass = this.mvConnector.getModelManager().createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		PaneBox newBox = this.mvConnector.getPaneBox(newClass);
+		if (newBox != null) {
+			newBox.allowTopTextInput(true);
+		}
 	}
 
 	public void handleCreateNewObject(PaneBox selectedPaneBox) {
@@ -189,7 +196,7 @@ public class StageManager extends Observable implements Observer {
 
 	public void handleShowObjects(boolean showObjects) {
 		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
-			if (ModelUtil.isObject(modelBox)) {
+			if ((modelBox instanceof ModelObject)) {
 				PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
 				paneBox.setVisible(showObjects);
 
@@ -287,7 +294,7 @@ public class StageManager extends Observable implements Observer {
 		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
 		this.textFieldController.enableTextInput(modelBox, paneBox);
 		this.contextMenuController.enableContextMenu(modelBox, paneBox);
-		if (ModelUtil.isClass(modelBox)) {
+		if ((modelBox instanceof ModelClass)) {
 			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
 		}
@@ -299,11 +306,11 @@ public class StageManager extends Observable implements Observer {
 
 	private void adaptBoxSettings(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox != null && ModelUtil.isClass(modelBox)) {
+		if (changedBox != null && (modelBox instanceof ModelClass)) {
 			changedBox.setMinWidth(modelBox.getWidth());
 			changedBox.setMinHeight(modelBox.getHeight());
 			adaptCenterFields((ModelClass) modelBox);
-		} else if (changedBox != null && ModelUtil.isObject(modelBox)) {
+		} else if (changedBox != null && (modelBox instanceof ModelObject)) {
 			ModelObject modelObject = (ModelObject) modelBox;
 			ModelClass modelClass = modelObject.getModelClass();
 			PaneBox paneClassBox = this.mvConnector.getPaneBox(modelClass);
@@ -345,12 +352,12 @@ public class StageManager extends Observable implements Observer {
 
 	private void adaptBoxName(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox != null && ModelUtil.isObject(modelBox)) {
+		if (changedBox != null && (modelBox instanceof ModelObject)) {
 			ModelObject modelObject = (ModelObject) modelBox;
 			changedBox.getTopTextField().setText((modelObject.getName()));
 			changedBox.getTopLabel().setText(modelObject.getName() + " : " + modelObject.getModelClass().getName());
 			modelBox.setWidth(modelObject.getModelClass().getWidth());
-		} else if (changedBox != null && ModelUtil.isClass(modelBox)) {
+		} else if (changedBox != null && (modelBox instanceof ModelClass)) {
 			changedBox.setTopText(modelBox.getName());
 
 			// + 70px for some additional space to compensate insets, borders etc.
@@ -372,7 +379,7 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setWidth(modelBox.getWidth());
 		}
-		if (ModelUtil.isClass(modelBox)) {
+		if ((modelBox instanceof ModelClass)) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setWidth(modelClass.getWidth());
@@ -385,7 +392,7 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setHeight(modelBox.getHeight());
 		}
-		if (ModelUtil.isClass(modelBox)) {
+		if ((modelBox instanceof ModelClass)) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setHeight(modelClass.getHeight());
@@ -398,7 +405,7 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setColor(modelBox.getColor());
 		}
-		if (ModelUtil.isClass(modelBox)) {
+		if ((modelBox instanceof ModelClass)) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setColor(Util.brighter(modelClass.getColor(), 0.1));
@@ -411,7 +418,7 @@ public class StageManager extends Observable implements Observer {
 		if (changedBox != null) {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 		}
-		if (ModelUtil.isClass(modelBox)) {
+		if ((modelBox instanceof ModelClass)) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setX(modelClass.getX());
@@ -453,7 +460,7 @@ public class StageManager extends Observable implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO
-		if (o instanceof ModelManager && ModelUtil.isClass(arg)) {
+		if (o instanceof ModelManager && (arg instanceof ModelClass)) {
 			ModelClass modelClass = (ModelClass) arg;
 			if (!this.mvConnector.containsBoxes(modelClass)) { // class is new
 				addClassToSubScene(modelClass);
@@ -473,7 +480,7 @@ public class StageManager extends Observable implements Observer {
 				Arrow toDelete = this.mvConnector.removeArrows(relation);
 				removeFromSubScene(toDelete);
 			}
-		} else if (o instanceof ModelManager && ModelUtil.isObject(arg)) {
+		} else if (o instanceof ModelManager && (arg instanceof ModelObject)) {
 			ModelObject modelObject = (ModelObject) arg;
 			if (!this.mvConnector.containsBoxes(modelObject)) { // instance is new
 				addObjectToSubScene(modelObject);
@@ -484,10 +491,10 @@ public class StageManager extends Observable implements Observer {
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
 			}
-		} else if (ModelUtil.isClass(o) && ModelUtil.isAttribute(arg)) {
+		} else if ((o instanceof ModelClass) && (arg instanceof Attribute)) {
 			ModelClass modelClass = (ModelClass) o;
 			adaptCenterFields(modelClass);
-		} else if (ModelUtil.isObject(o) && ModelUtil.isAttribute(arg)) {
+		} else if ((o instanceof ModelObject) && (arg instanceof Attribute)) {
 			ModelObject modelObject = (ModelObject) o;
 			adaptCenterFields(modelObject);
 		} else if (o instanceof ModelBox && arg instanceof ModelBoxChange) {

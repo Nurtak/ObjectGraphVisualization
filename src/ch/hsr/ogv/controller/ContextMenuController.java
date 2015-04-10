@@ -9,7 +9,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import ch.hsr.ogv.model.ModelBox;
-import ch.hsr.ogv.util.ModelUtil;
+import ch.hsr.ogv.model.ModelClass;
+import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.view.PaneBox;
 
 /**
@@ -47,13 +48,13 @@ public class ContextMenuController extends Observable {
 	}
 
 	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox) {
-		if (ModelUtil.isClass(modelBox)) {
+		if ((modelBox instanceof ModelClass)) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
 			});
-		} else if (ModelUtil.isObject(modelBox)) {
+		} else if ((modelBox instanceof ModelObject)) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
