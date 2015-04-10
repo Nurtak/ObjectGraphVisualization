@@ -2,6 +2,8 @@ package ch.hsr.ogv.controller;
 
 import java.util.Observable;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
@@ -26,7 +28,15 @@ public class ContextMenuController extends Observable {
 
 	public ContextMenuController() {
 		classCM = new ContextMenu();
+
 		cInstantiateObject = new MenuItem("Instantiate Object");
+		cInstantiateObject.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+
+			}
+		});
+
 		cRename = new MenuItem("Rename Class");
 		classCM.getItems().add(cInstantiateObject);
 		classCM.getItems().add(cRename);
@@ -40,14 +50,12 @@ public class ContextMenuController extends Observable {
 		if (ModelUtil.isClass(modelBox)) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
-					System.out.println("Open contextmenu on class " + modelBox.getName());
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
 			});
 		} else if (ModelUtil.isObject(modelBox)) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
-					System.out.println("Open contextmenu on object " + modelBox.getName());
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
 			});
