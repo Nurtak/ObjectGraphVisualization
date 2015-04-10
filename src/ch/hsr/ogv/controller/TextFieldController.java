@@ -14,7 +14,6 @@ import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
-import ch.hsr.ogv.util.ModelUtil;
 import ch.hsr.ogv.view.PaneBox;
 
 /**
@@ -76,10 +75,10 @@ public class TextFieldController {
 				public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
 					int rowIndex = paneBox.getCenterTextFields().indexOf(centerTextField);
 					try {
-						if (ModelUtil.isClass(modelBox)) {
+						if ((modelBox instanceof ModelClass)) {
 							ModelClass modelClass = (ModelClass) modelBox;
 							modelClass.changeAttributeName(rowIndex, newValue);
-						} else if (ModelUtil.isObject(modelBox)) {
+						} else if ((modelBox instanceof ModelObject)) {
 							ModelObject modelObject = (ModelObject) modelBox;
 							Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
 							modelObject.changeAttributeValue(attribute, newValue);

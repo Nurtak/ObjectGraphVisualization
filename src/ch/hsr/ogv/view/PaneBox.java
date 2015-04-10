@@ -469,7 +469,6 @@ public class PaneBox implements Selectable {
 	}
 
 	public void setHeight(double height) {
-		System.out.println("" + height);
 		this.borderPane.setPrefHeight(height);
 	}
 
