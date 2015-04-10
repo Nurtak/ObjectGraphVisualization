@@ -28,16 +28,14 @@ import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.TSplitMenuButton;
 
 /**
- * The controller for the root layout. The root layout provides the basic
- * application layout containing a menu bar and space where other JavaFX
- * elements can be placed.
- * 
+ * The controller for the root layout. The root layout provides the basic application layout containing a menu bar and space where other JavaFX elements can be placed.
+ *
  * @author Simon Gwerder
  */
 public class RootLayoutController implements Observer, Initializable {
-	
+
 	private StageManager stageManager; // reference back to the stage manager
-	
+
 	/**
 	 * Creates an empty view.
 	 */
@@ -65,19 +63,18 @@ public class RootLayoutController implements Observer, Initializable {
 
 		if (file != null) {
 			this.stageManager.setAppTitle(this.stageManager.getAppTitle() + " - " + file.getName()); // set new app title
-			//TODO
+			// TODO
 		}
 	}
 
 	/**
-	 * Saves the file to the ogv file that is currently open. If there is no
-	 * open file, the "save as" dialog is shown.
+	 * Saves the file to the ogv file that is currently open. If there is no open file, the "save as" dialog is shown.
 	 */
 	@FXML
 	private void handleSave() {
 		File file = UserPreferences.getSavedFile();
 		if (file != null) {
-			//TODO
+			// TODO
 		} else {
 			handleSaveAs();
 		}
@@ -107,7 +104,7 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 			UserPreferences.setSavedFilePath(file);
 			this.stageManager.setAppTitle(this.stageManager.getAppTitle() + " - " + file.getName()); // set new app title
-			//TODO
+			// TODO
 		}
 	}
 
@@ -133,78 +130,77 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleExit() {
 		Platform.exit();
 	}
-	
+
 	@FXML
 	MenuItem centerView;
-	
+
 	@FXML
 	CheckMenuItem lockedTopView;
-	
+
 	@FXML
 	CheckMenuItem showObjects;
-	
+
 	@FXML
 	CheckMenuItem showModelAxis;
-	
+
 	@FXML
 	private void handleCenterView() {
 		this.stageManager.handleCenterView();
 	}
-	
+
 	@FXML
 	private void handleLockedTopView() {
 		this.stageManager.handleLockedTopView(this.lockedTopView.isSelected());
 	}
-	
+
 	@FXML
 	private void handleShowObjects() {
-		if(this.showObjects.isSelected()) {
+		if (this.showObjects.isSelected()) {
 			this.createObject.setDisable(false);
-		}
-		else {
+		} else {
 			this.createObject.setSelected(false);
 			this.createObject.setDisable(true);
 		}
 		this.stageManager.handleShowObjects(this.showObjects.isSelected());
 	}
-	
+
 	@FXML
 	private void handleShowModelAxis() {
 		this.stageManager.handleShowModelAxis(this.showModelAxis.isSelected());
 	}
-	
+
 	@FXML
 	private CheckMenuItem modena;
-	
+
 	@FXML
 	private CheckMenuItem caspian;
-	
+
 	@FXML
 	private CheckMenuItem aqua;
-	
+
 	private void setMenuSelection(CheckMenuItem choosenMenu) {
 		Menu theme = choosenMenu.getParentMenu();
-		for(MenuItem menuItem : theme.getItems()) {
-			if(menuItem instanceof CheckMenuItem) {
+		for (MenuItem menuItem : theme.getItems()) {
+			if (menuItem instanceof CheckMenuItem) {
 				CheckMenuItem cMenuItem = (CheckMenuItem) menuItem;
 				cMenuItem.setSelected(false);
 			}
 		}
 		choosenMenu.setSelected(true);
 	}
-	
+
 	@FXML
 	private void handleSetModena() {
 		setMenuSelection(this.modena);
 		this.stageManager.handleSetTheme(Style.MODENA);
 	}
-	
+
 	@FXML
 	private void handleSetCaspian() {
 		setMenuSelection(this.caspian);
 		this.stageManager.handleSetTheme(Style.CASPIANDARK);
 	}
-	
+
 	@FXML
 	private void handleSetAqua() {
 		setMenuSelection(this.aqua);
@@ -260,7 +256,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateObject() {
 		// Nothing
 	}
-	
+
 	private void splitMenuButtonSelect(MenuItem choosenItem) {
 		this.tSplitMenuButton.setChoice(choosenItem);
 		this.createToolbar.selectToggle(this.tSplitMenuButton);
@@ -319,7 +315,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateDependency() {
 		// TODO
 	}
-	
+
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
