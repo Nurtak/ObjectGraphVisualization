@@ -206,7 +206,7 @@ public class PaneBox implements Selectable {
 		return this.centerTextFields;
 	}
 
-	private void swapTop(Node labelOrField) {
+	private void swapTopField(Node labelOrField) {
 		Node topNode = this.borderPane.getTop();
 		if ((topNode instanceof HBox)) {
 			HBox topHBox = (HBox) topNode;
@@ -251,15 +251,17 @@ public class PaneBox implements Selectable {
 
 	public void allowTopTextInput(boolean value) {
 		if (value) {
-			swapTop(this.topTextField);
+			swapTopField(this.topTextField);
 			Platform.runLater(() -> {
 				this.topTextField.requestFocus();
 				this.topTextField.selectAll();
 				this.topTextField.applyCss();
 			});
 		} else {
-			swapTop(this.topLabel);
-			setLabelSelected(this.topLabel, true);
+			swapTopField(this.topLabel);
+			if (isSelected()) {
+				setLabelSelected(this.topLabel, true);
+			}
 		}
 		this.topTextField.setEditable(value);
 		this.topTextField.setDisable(!value);
@@ -284,7 +286,9 @@ public class PaneBox implements Selectable {
 				});
 			} else {
 				swapCenterField(centerLabel, rowIndex);
-				setLabelSelected(centerLabel, true);
+				if (isSelected()) {
+					setLabelSelected(centerLabel, true);
+				}
 			}
 		} catch (IndexOutOfBoundsException ioobe) {
 			logger.debug("Allowing textinput failed for center field. IndexOutOfBoundsException: " + ioobe.getMessage());

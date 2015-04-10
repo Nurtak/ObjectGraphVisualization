@@ -75,17 +75,6 @@
                         </CheckMenuItem>
                     </items>
                   </Menu>
-                  <Menu id="menu_window" disable="true" mnemonicParsing="false" text="Window">
-                    <items>
-                        <Menu id="menu_theme" mnemonicParsing="false" text="Theme">
-                           <items>
-                              <CheckMenuItem id="cmenuitem_modena" fx:id="modena" mnemonicParsing="false" onAction="#handleSetModena" selected="true" text="Modena" />
-                              <CheckMenuItem id="cmenuitem_caspian" fx:id="caspian" mnemonicParsing="false" onAction="#handleSetCaspian" text="Caspian Dark" />
-                              <CheckMenuItem id="cmenuitem_aqua" fx:id="aqua" mnemonicParsing="false" onAction="#handleSetAqua" text="Aqua" />
-                           </items>
-                        </Menu>
-                    </items>
-                  </Menu>
       				<Menu id="menu_help" mnemonicParsing="false" text="Help">
       					<items>
       						<MenuItem id="menuitem_about" mnemonicParsing="false" onAction="#handleAbout" text="About" />

@@ -4,7 +4,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseButton;
@@ -41,7 +40,7 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox) {
-		if ((modelBox instanceof ModelClass)) {
+		if (modelBox instanceof ModelClass) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
@@ -62,17 +61,11 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	public void fillContextMenu() {
-		cInstantiateObject.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
-				mvConnector.handleCreateNewObject(selected);
-			}
+		cInstantiateObject.setOnAction((ActionEvent e) -> {
+			mvConnector.handleCreateNewObject(selected);
 		});
-		cDeleteClass.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
-				mvConnector.handleDeleteObject(selected);
-			}
+		cDeleteClass.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDeleteObject(selected);
 		});
 	}
 

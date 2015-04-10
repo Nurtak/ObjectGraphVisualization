@@ -13,7 +13,6 @@ import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
-import ch.hsr.ogv.view.SubSceneAdapter;
 
 public class ModelViewConnector {
 
@@ -21,11 +20,6 @@ public class ModelViewConnector {
 
 	private Map<ModelBox, PaneBox> boxes = new HashMap<ModelBox, PaneBox>();
 	private Map<Relation, Arrow> arrows = new HashMap<Relation, Arrow>();
-	private SubSceneAdapter subSceneAdapter;
-
-	public ModelViewConnector(SubSceneAdapter subSceneAdapter) {
-		this.subSceneAdapter = subSceneAdapter;
-	}
 
 	public ModelManager getModelManager() {
 		return this.modelManager;
@@ -116,9 +110,8 @@ public class ModelViewConnector {
 	}
 
 	public PaneBox handleCreateNewClass(Point3D mouseCoords) {
-		onlyFloorMouseEvent(false);
 		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
-		ModelClass newClass = getModelManager().createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass newClass = this.modelManager.createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		PaneBox newBox = getPaneBox(newClass);
 		if (newBox != null) {
 			newBox.allowTopTextInput(true);
@@ -126,14 +119,10 @@ public class ModelViewConnector {
 		return newBox;
 	}
 
-	public void onlyFloorMouseEvent(boolean value) {
-		this.subSceneAdapter.onlyFloorMouseEvent(value);
-	}
-
 	public PaneBox handleCreateNewObject(PaneBox selectedPaneBox) {
 		ModelBox selectedModelBox = this.getModelBox(selectedPaneBox);
 		ModelClass selectedModelClass = (ModelClass) selectedModelBox;
-		ModelObject newObject = this.getModelManager().createObject(selectedModelClass);
+		ModelObject newObject = this.modelManager.createObject(selectedModelClass);
 		PaneBox newBox = this.getPaneBox(newObject);
 		if (newBox != null) {
 			newBox.allowTopTextInput(true);
@@ -144,17 +133,18 @@ public class ModelViewConnector {
 	public Relation handleCreateNewGeneralization(PaneBox child, PaneBox parent) {
 		ModelBox modelBoxChild = this.getModelBox(child);
 		ModelBox modelBoxParent = this.getModelBox(parent);
-		return this.getModelManager().createRelation(modelBoxChild, modelBoxParent, RelationType.GENERALIZATION);
+		return this.modelManager.createRelation(modelBoxChild, modelBoxParent, RelationType.GENERALIZATION);
 	}
 
 	public Relation handleCreateNewDependency(PaneBox dependent, PaneBox supplier) {
 		ModelBox modelBoxDependet = this.getModelBox(dependent);
 		ModelBox modelBoxSupplier = this.getModelBox(supplier);
-		return this.getModelManager().createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY);
+		return this.modelManager.createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY);
 	}
 
 	public void handleDeleteObject(PaneBox selectedPaneBox) {
 		ModelClass classToDelete = (ModelClass) this.getModelBox(selectedPaneBox);
-		this.getModelManager().deleteClass(classToDelete);
+		this.modelManager.deleteClass(classToDelete);
 	}
+
 }

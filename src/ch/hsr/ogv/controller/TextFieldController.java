@@ -75,10 +75,10 @@ public class TextFieldController {
 				public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
 					int rowIndex = paneBox.getCenterTextFields().indexOf(centerTextField);
 					try {
-						if ((modelBox instanceof ModelClass)) {
+						if (modelBox instanceof ModelClass) {
 							ModelClass modelClass = (ModelClass) modelBox;
 							modelClass.changeAttributeName(rowIndex, newValue);
-						} else if ((modelBox instanceof ModelObject)) {
+						} else if (modelBox instanceof ModelObject) {
 							ModelObject modelObject = (ModelObject) modelBox;
 							Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
 							modelObject.changeAttributeValue(attribute, newValue);

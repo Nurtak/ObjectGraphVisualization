@@ -9,10 +9,10 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.ToggleButton;
@@ -20,11 +20,16 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ch.hsr.ogv.controller.ThemeMenuController.Style;
 import ch.hsr.ogv.dataaccess.UserPreferences;
+import ch.hsr.ogv.model.Endpoint;
+import ch.hsr.ogv.model.ModelBox;
+import ch.hsr.ogv.model.ModelObject;
+import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
+import ch.hsr.ogv.view.SubSceneAdapter;
+import ch.hsr.ogv.view.SubSceneCamera;
 import ch.hsr.ogv.view.TSplitMenuButton;
 
 /**
@@ -34,11 +39,33 @@ import ch.hsr.ogv.view.TSplitMenuButton;
  */
 public class RootLayoutController implements Observer, Initializable {
 
-	private StageManager stageManager; // reference back to the stage manager
+	private Stage primaryStage;
+	private String appTitle;
+
 	private ModelViewConnector mvConnector;
+	private SubSceneAdapter subSceneAdapter;
+	private SelectionController selectionController;
+	private CameraController cameraController;
+
+	public void setPrimaryStage(Stage primaryStage) {
+		this.primaryStage = primaryStage;
+		this.appTitle = primaryStage.getTitle();
+	}
 
 	public void setMVConnector(ModelViewConnector mvConnector) {
 		this.mvConnector = mvConnector;
+	}
+
+	public void setSubSceneAdapter(SubSceneAdapter subSceneAdapter) {
+		this.subSceneAdapter = subSceneAdapter;
+	}
+
+	public void setSelectionController(SelectionController selectionController) {
+		this.selectionController = selectionController;
+	}
+
+	public void setCameraController(CameraController cameraController) {
+		this.cameraController = cameraController;
 	}
 
 	/**
@@ -46,7 +73,7 @@ public class RootLayoutController implements Observer, Initializable {
 	 */
 	@FXML
 	private void handleNew() {
-		this.stageManager.setAppTitle(this.stageManager.getAppTitle()); // set new app title TODO
+		this.primaryStage.setTitle(this.appTitle);// set new app title TODO
 	}
 
 	/**
@@ -64,10 +91,9 @@ public class RootLayoutController implements Observer, Initializable {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show open file dialog
-		File file = fileChooser.showOpenDialog(stageManager.getPrimaryStage());
-
+		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
-			this.stageManager.setAppTitle(this.stageManager.getAppTitle() + " - " + file.getName()); // set new app title
+			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 			// TODO
 		}
 	}
@@ -100,7 +126,7 @@ public class RootLayoutController implements Observer, Initializable {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show save file dialog
-		File file = fileChooser.showSaveDialog(this.stageManager.getPrimaryStage());
+		File file = fileChooser.showSaveDialog(this.primaryStage);
 
 		if (file != null) {
 			// Make sure it has the correct extension
@@ -108,7 +134,7 @@ public class RootLayoutController implements Observer, Initializable {
 				file = new File(file.getPath() + ".ogv");
 			}
 			UserPreferences.setSavedFilePath(file);
-			this.stageManager.setAppTitle(this.stageManager.getAppTitle() + " - " + file.getName()); // set new app title
+			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 			// TODO
 		}
 	}
@@ -124,7 +150,7 @@ public class RootLayoutController implements Observer, Initializable {
 		alert.setContentText("Authors: Simon Gwerder, Adrian Rieser");
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image("file:resources/images/application_icon.gif")); // add a custom icon
-		alert.initOwner(this.stageManager.getPrimaryStage());
+		// alert.initOwner(this.stageManager.getPrimaryStage());
 		alert.showAndWait();
 	}
 
@@ -150,12 +176,18 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCenterView() {
-		this.stageManager.handleCenterView();
+		if (this.cameraController != null) {
+			SubSceneCamera ssCamera = this.subSceneAdapter.getSubSceneCamera();
+			this.cameraController.handleCenterView(ssCamera);
+		}
 	}
 
 	@FXML
 	private void handleLockedTopView() {
-		this.stageManager.handleLockedTopView(this.lockedTopView.isSelected());
+		if (this.cameraController != null) {
+			SubSceneCamera ssCamera = this.subSceneAdapter.getSubSceneCamera();
+			this.cameraController.handleLockedTopView(ssCamera, this.lockedTopView.isSelected());
+		}
 	}
 
 	@FXML
@@ -166,12 +198,37 @@ public class RootLayoutController implements Observer, Initializable {
 			this.createObject.setSelected(false);
 			this.createObject.setDisable(true);
 		}
-		this.stageManager.handleShowObjects(this.showObjects.isSelected());
+
+		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
+			if (modelBox instanceof ModelObject) {
+				PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
+				paneBox.setVisible(this.showObjects.isSelected());
+
+				if (paneBox.isSelected() && this.selectionController != null) {
+					this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+				}
+
+				for (Endpoint endpoint : modelBox.getEndpoints()) {
+					Arrow arrow = this.mvConnector.getArrow(endpoint.getRelation());
+					arrow.setVisible(this.showObjects.isSelected());
+					if (arrow.isSelected() && this.selectionController != null) {
+						this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+					}
+				}
+			}
+		}
 	}
 
 	@FXML
 	private void handleShowModelAxis() {
-		this.stageManager.handleShowModelAxis(this.showModelAxis.isSelected());
+		if (this.subSceneAdapter != null) {
+			Group axis = this.subSceneAdapter.getAxis();
+			if (this.showModelAxis.isSelected()) {
+				axis.setVisible(true);
+			} else {
+				axis.setVisible(false);
+			}
+		}
 	}
 
 	@FXML
@@ -182,35 +239,6 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private CheckMenuItem aqua;
-
-	private void setMenuSelection(CheckMenuItem choosenMenu) {
-		Menu theme = choosenMenu.getParentMenu();
-		for (MenuItem menuItem : theme.getItems()) {
-			if (menuItem instanceof CheckMenuItem) {
-				CheckMenuItem cMenuItem = (CheckMenuItem) menuItem;
-				cMenuItem.setSelected(false);
-			}
-		}
-		choosenMenu.setSelected(true);
-	}
-
-	@FXML
-	private void handleSetModena() {
-		setMenuSelection(this.modena);
-		this.stageManager.handleSetTheme(Style.MODENA);
-	}
-
-	@FXML
-	private void handleSetCaspian() {
-		setMenuSelection(this.caspian);
-		this.stageManager.handleSetTheme(Style.CASPIANDARK);
-	}
-
-	@FXML
-	private void handleSetAqua() {
-		setMenuSelection(this.aqua);
-		this.stageManager.handleSetTheme(Style.AQUA);
-	}
 
 	@FXML
 	private ToggleGroup createToolbar;
@@ -254,7 +282,9 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateClass() {
-		this.stageManager.onlyFloorMouseEvent(this.createClass.isSelected());
+		if (this.subSceneAdapter != null) {
+			this.subSceneAdapter.onlyFloorMouseEvent(this.createClass.isSelected());
+		}
 	}
 
 	@FXML
@@ -323,20 +353,16 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
-			StageManager stageManager = (StageManager) arg;
-			this.stageManager = stageManager;
-			this.stageManager.getSelectionController().addObserver(this);
-		} else if (o instanceof SelectionController && arg instanceof Floor) {
-			SelectionController selectionController = (SelectionController) o;
+		if (o instanceof SelectionController && arg instanceof Floor && this.selectionController != null) {
+			this.subSceneAdapter.onlyFloorMouseEvent(false);
 			if (createClass != null && createClass.isSelected()) {
-				this.mvConnector.handleCreateNewClass(selectionController.getSelectionCoordinates());
+				PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getSelectionCoordinates());
 				this.createClass.setSelected(false);
+				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 			}
-		} else if (o instanceof SelectionController && arg instanceof PaneBox) {
-			SelectionController selectionController = (SelectionController) o;
-			Selectable selected = selectionController.getSelected();
-			if (selectionController.hasSelection() && selected instanceof PaneBox && createObject != null && createObject.isSelected()) {
+		} else if (o instanceof SelectionController && arg instanceof PaneBox && this.selectionController != null) {
+			Selectable selected = this.selectionController.getSelected();
+			if (this.selectionController.hasSelection() && selected instanceof PaneBox && createObject != null && createObject.isSelected()) {
 				this.mvConnector.handleCreateNewObject((PaneBox) selected);
 				this.createObject.setSelected(false);
 			}
