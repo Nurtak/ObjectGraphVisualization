@@ -52,8 +52,9 @@ public class StageManager extends Observable implements Observer {
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdapter;
 
-	private ModelViewConnector mvConnector = new ModelViewConnector(subSceneAdapter);
+	private ModelViewConnector mvConnector;
 
+	private RootLayoutController rootLayoutController = new RootLayoutController();
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
 	private SelectionController selectionController = new SelectionController();
@@ -88,8 +89,6 @@ public class StageManager extends Observable implements Observer {
 		}
 		this.primaryStage = primaryStage;
 
-		this.mvConnector.getModelManager().addObserver(this);
-
 		loadRootLayoutController();
 		setupStage();
 		initCameraController();
@@ -108,6 +107,10 @@ public class StageManager extends Observable implements Observer {
 		canvas.getChildren().add(subScene);
 		subScene.widthProperty().bind(canvas.widthProperty());
 		subScene.heightProperty().bind(canvas.heightProperty());
+
+		this.mvConnector = new ModelViewConnector(subSceneAdapter);
+		this.mvConnector.getModelManager().addObserver(this);
+		this.rootLayoutController.setMVConnecter(this.mvConnector);
 
 		Scene scene = new Scene(this.rootLayout);
 		String sceneCSS = ResourceLocator.getResourcePath(Resource.SCENE_CSS).toExternalForm();
@@ -128,7 +131,7 @@ public class StageManager extends Observable implements Observer {
 	private void loadRootLayoutController() {
 		FXMLLoader loader = FXMLResourceUtil.prepareLoader(Resource.ROOTLAYOUT_FXML); // load rootlayout from fxml file
 		try {
-			loader.setController(new RootLayoutController());
+			loader.setController(rootLayoutController);
 			this.rootLayout = (BorderPane) loader.load();
 			addObserver(loader.getController());
 		} catch (IOException | ClassCastException e) {
