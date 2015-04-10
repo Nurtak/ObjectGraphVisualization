@@ -330,14 +330,14 @@ public class RootLayoutController implements Observer, Initializable {
 		} else if (o instanceof SelectionController && arg instanceof Floor) {
 			SelectionController selectionController = (SelectionController) o;
 			if (createClass != null && createClass.isSelected()) {
-				mvConnector.handleCreateNewClass(selectionController.getSelectionCoordinates());
+				this.mvConnector.handleCreateNewClass(selectionController.getSelectionCoordinates());
 				this.createClass.setSelected(false);
 			}
 		} else if (o instanceof SelectionController && arg instanceof PaneBox) {
 			SelectionController selectionController = (SelectionController) o;
 			Selectable selected = selectionController.getSelected();
 			if (selectionController.hasSelection() && selected instanceof PaneBox && createObject != null && createObject.isSelected()) {
-				this.stageManager.handleCreateNewObject((PaneBox) selected);
+				this.mvConnector.handleCreateNewObject((PaneBox) selected);
 				this.createObject.setSelected(false);
 			}
 		}

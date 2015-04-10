@@ -28,7 +28,6 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
-import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ModelUtil;
 import ch.hsr.ogv.util.ResourceLocator;
@@ -153,28 +152,6 @@ public class StageManager extends Observable implements Observer {
 
 	public void onlyFloorMouseEvent(boolean value) {
 		this.subSceneAdapter.onlyFloorMouseEvent(value);
-	}
-
-	public void handleCreateNewObject(PaneBox selectedPaneBox) {
-		ModelBox selectedModelBox = this.mvConnector.getModelBox(selectedPaneBox);
-		ModelClass selectedModelClass = (ModelClass) selectedModelBox;
-		ModelObject newObject = this.mvConnector.getModelManager().createObject(selectedModelClass);
-		PaneBox newBox = this.mvConnector.getPaneBox(newObject);
-		if (newBox != null) {
-			newBox.allowTopTextInput(true);
-		}
-	}
-
-	public void handleCreateNewGeneralization(PaneBox child, PaneBox parent) {
-		ModelBox modelBoxChild = this.mvConnector.getModelBox(child);
-		ModelBox modelBoxParent = this.mvConnector.getModelBox(parent);
-		this.mvConnector.getModelManager().createRelation(modelBoxChild, modelBoxParent, RelationType.GENERALIZATION);
-	}
-
-	public void handleCreateNewDependency(PaneBox dependent, PaneBox supplier) {
-		ModelBox modelBoxDependet = this.mvConnector.getModelBox(dependent);
-		ModelBox modelBoxSupplier = this.mvConnector.getModelBox(supplier);
-		this.mvConnector.getModelManager().createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY);
 	}
 
 	public void handleCenterView() {

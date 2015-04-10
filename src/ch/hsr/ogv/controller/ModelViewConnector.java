@@ -115,7 +115,7 @@ public class ModelViewConnector {
 		mcB.createAttribute();
 	}
 
-	public void handleCreateNewClass(Point3D mouseCoords) {
+	public PaneBox handleCreateNewClass(Point3D mouseCoords) {
 		onlyFloorMouseEvent(false);
 		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
 		ModelClass newClass = getModelManager().createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
@@ -123,9 +123,33 @@ public class ModelViewConnector {
 		if (newBox != null) {
 			newBox.allowTopTextInput(true);
 		}
+		return newBox;
 	}
 
 	public void onlyFloorMouseEvent(boolean value) {
 		this.subSceneAdapter.onlyFloorMouseEvent(value);
+	}
+
+	public PaneBox handleCreateNewObject(PaneBox selectedPaneBox) {
+		ModelBox selectedModelBox = this.getModelBox(selectedPaneBox);
+		ModelClass selectedModelClass = (ModelClass) selectedModelBox;
+		ModelObject newObject = this.getModelManager().createObject(selectedModelClass);
+		PaneBox newBox = this.getPaneBox(newObject);
+		if (newBox != null) {
+			newBox.allowTopTextInput(true);
+		}
+		return newBox;
+	}
+
+	public Relation handleCreateNewGeneralization(PaneBox child, PaneBox parent) {
+		ModelBox modelBoxChild = this.getModelBox(child);
+		ModelBox modelBoxParent = this.getModelBox(parent);
+		return this.getModelManager().createRelation(modelBoxChild, modelBoxParent, RelationType.GENERALIZATION);
+	}
+
+	public Relation handleCreateNewDependency(PaneBox dependent, PaneBox supplier) {
+		ModelBox modelBoxDependet = this.getModelBox(dependent);
+		ModelBox modelBoxSupplier = this.getModelBox(supplier);
+		return this.getModelManager().createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY);
 	}
 }
