@@ -13,6 +13,7 @@ import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.SubSceneAdapter;
 
 public class ModelViewConnector {
 
@@ -20,6 +21,11 @@ public class ModelViewConnector {
 
 	private Map<ModelBox, PaneBox> boxes = new HashMap<ModelBox, PaneBox>();
 	private Map<Relation, Arrow> arrows = new HashMap<Relation, Arrow>();
+	private SubSceneAdapter subSceneAdapter;
+
+	public ModelViewConnector(SubSceneAdapter subSceneAdapter) {
+		this.subSceneAdapter = subSceneAdapter;
+	}
 
 	public ModelManager getModelManager() {
 		return this.modelManager;
@@ -109,4 +115,17 @@ public class ModelViewConnector {
 		mcB.createAttribute();
 	}
 
+	public void handleCreateNewClass(Point3D mouseCoords) {
+		onlyFloorMouseEvent(false);
+		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
+		ModelClass newClass = getModelManager().createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		PaneBox newBox = getPaneBox(newClass);
+		if (newBox != null) {
+			newBox.allowTopTextInput(true);
+		}
+	}
+
+	public void onlyFloorMouseEvent(boolean value) {
+		this.subSceneAdapter.onlyFloorMouseEvent(value);
+	}
 }

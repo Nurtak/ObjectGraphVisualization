@@ -35,6 +35,11 @@ import ch.hsr.ogv.view.TSplitMenuButton;
 public class RootLayoutController implements Observer, Initializable {
 
 	private StageManager stageManager; // reference back to the stage manager
+	private ModelViewConnector mvConnector;
+
+	public void setMVConnecter(ModelViewConnector mvConnector) {
+		this.mvConnector = mvConnector;
+	}
 
 	/**
 	 * Creates an empty view.
@@ -325,7 +330,7 @@ public class RootLayoutController implements Observer, Initializable {
 		} else if (o instanceof SelectionController && arg instanceof Floor) {
 			SelectionController selectionController = (SelectionController) o;
 			if (createClass != null && createClass.isSelected()) {
-				this.stageManager.handleCreateNewClass(selectionController.getSelectionCoordinates());
+				mvConnector.handleCreateNewClass(selectionController.getSelectionCoordinates());
 				this.createClass.setSelected(false);
 			}
 		} else if (o instanceof SelectionController && arg instanceof PaneBox) {

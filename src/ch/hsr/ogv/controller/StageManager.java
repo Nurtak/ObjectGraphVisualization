@@ -6,7 +6,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -54,8 +53,9 @@ public class StageManager extends Observable implements Observer {
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdapter;
 
-	private ModelViewConnector mvConnector = new ModelViewConnector();
+	private ModelViewConnector mvConnector;
 
+	private RootLayoutController rootLayoutController = new RootLayoutController();
 	private ThemeMenuController themeMenuController = new ThemeMenuController();
 	private CameraController cameraController = new CameraController();
 	private SelectionController selectionController = new SelectionController();
@@ -90,8 +90,6 @@ public class StageManager extends Observable implements Observer {
 		}
 		this.primaryStage = primaryStage;
 
-		this.mvConnector.getModelManager().addObserver(this);
-
 		loadRootLayoutController();
 		setupStage();
 		initCameraController();
@@ -111,6 +109,10 @@ public class StageManager extends Observable implements Observer {
 		subScene.widthProperty().bind(canvas.widthProperty());
 		subScene.heightProperty().bind(canvas.heightProperty());
 
+		this.mvConnector = new ModelViewConnector(subSceneAdapter);
+		this.mvConnector.getModelManager().addObserver(this);
+		this.rootLayoutController.setMVConnecter(this.mvConnector);
+
 		Scene scene = new Scene(this.rootLayout);
 		this.primaryStage.setScene(scene);
 		this.primaryStage.show();
@@ -128,7 +130,7 @@ public class StageManager extends Observable implements Observer {
 	private void loadRootLayoutController() {
 		FXMLLoader loader = FXMLResourceUtil.prepareLoader(Resource.ROOTLAYOUT_FXML); // load rootlayout from fxml file
 		try {
-			loader.setController(new RootLayoutController());
+			loader.setController(rootLayoutController);
 			this.rootLayout = (BorderPane) loader.load();
 			addObserver(loader.getController());
 		} catch (IOException | ClassCastException e) {
@@ -149,16 +151,6 @@ public class StageManager extends Observable implements Observer {
 
 	public void onlyFloorMouseEvent(boolean value) {
 		this.subSceneAdapter.onlyFloorMouseEvent(value);
-	}
-
-	public void handleCreateNewClass(Point3D mouseCoords) {
-		onlyFloorMouseEvent(false);
-		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
-		ModelClass newClass = this.mvConnector.getModelManager().createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-		PaneBox newBox = this.mvConnector.getPaneBox(newClass);
-		if (newBox != null) {
-			newBox.allowTopTextInput(true);
-		}
 	}
 
 	public void handleCreateNewObject(PaneBox selectedPaneBox) {
