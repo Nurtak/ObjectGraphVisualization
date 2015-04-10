@@ -114,6 +114,8 @@ public class StageManager extends Observable implements Observer {
 		this.rootLayoutController.setMVConnecter(this.mvConnector);
 
 		Scene scene = new Scene(this.rootLayout);
+		String sceneCSS = ResourceLocator.getResourcePath(Resource.SCENE_CSS).toExternalForm();
+		scene.getStylesheets().add(sceneCSS);
 		this.primaryStage.setScene(scene);
 		this.primaryStage.show();
 		this.subSceneAdapter.getSubScene().requestFocus();

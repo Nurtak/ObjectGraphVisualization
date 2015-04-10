@@ -49,8 +49,8 @@ public class PaneBox implements Selectable {
 	public final static int MIN_WIDTH = 100;
 	public final static int MIN_HEIGHT = 100;
 
-	public final static int MAX_WIDTH = 495;
-	public final static int MAX_HEIGHT = 495;
+	public final static int MAX_WIDTH = 464;
+	public final static int MAX_HEIGHT = 464;
 
 	private Group paneBox = new Group();
 	private BoxSelection selection = null;
@@ -469,6 +469,7 @@ public class PaneBox implements Selectable {
 	}
 
 	public void setHeight(double height) {
+		System.out.println("" + height);
 		this.borderPane.setPrefHeight(height);
 	}
 
