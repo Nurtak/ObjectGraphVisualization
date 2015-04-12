@@ -42,7 +42,9 @@ public class Arrow extends Group implements Selectable {
 
 	private Box line;
 	private ArrayList<Box> dashedLines = new ArrayList<Box>();
-	private Color color = Color.BLACK;
+	
+	public static final Color DEFAULT_COLOR = Color.BLACK;
+	private Color color = DEFAULT_COLOR;
 	private ArrowSelection selection = null;
 	private Box selectionHelper;
 

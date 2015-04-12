@@ -71,7 +71,7 @@ public class ModelClass extends ModelBox {
 
 	public ModelObject createModelObject() {
 		double levelPlus = (this.getModelObjects().size() + 1.0) * OBJECT_LEVEL_DIFF;
-		Point3D modelObjectCoordinates = new Point3D(this.getX(), this.getY() + levelPlus, this.getZ());
+		Point3D modelObjectCoordinates = new Point3D(this.getX(), levelPlus, this.getZ());
 		ModelObject modelObject = new ModelObject(this, modelObjectCoordinates, this.getWidth(), this.getHeight(), Util.brighter(this.getColor(), 0.1));
 		for (Attribute attribute : getAttributes()) {
 			modelObject.addAttributeValue(attribute, "");
@@ -81,6 +81,15 @@ public class ModelClass extends ModelBox {
 			return modelObject;
 		}
 		return null;
+	}
+	
+	private void resetObjectLevel() {
+		for(int i = 0; i < this.modelObjects.size(); i++) {
+			ModelObject modelObject = this.modelObjects.get(i);
+			double level = (i + 1.0) * OBJECT_LEVEL_DIFF;
+			Point3D modelObjectCoordinates = new Point3D(modelObject.getX(), level, this.getZ());
+			modelObject.setCoordinates(modelObjectCoordinates);
+		}
 	}
 
 	public Attribute createAttribute() {
@@ -101,7 +110,12 @@ public class ModelClass extends ModelBox {
 
 	public boolean deleteModelObject(ModelObject modelObject) {
 		// ModelObject.modelObjectCounter.decrementAndGet();
-		return modelObjects.remove(modelObject);
+		boolean removed =  modelObjects.remove(modelObject);
+		if(removed) {
+			// TODO do not change object level, if level was changed by user
+			resetObjectLevel();
+		}
+		return removed;
 	}
 
 	public boolean deleteAttribute(int index) {

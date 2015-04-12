@@ -145,7 +145,10 @@
                            </image>
                         </ImageView>
                      </graphic></Button>
-                  <Separator orientation="VERTICAL" />
+                  <Separator orientation="VERTICAL">
+                     <padding>
+                        <Insets left="3.0" />
+                     </padding></Separator>
                   <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
                     <items>
                         <MenuItem fx:id="createUndirectedAssociation" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association">
@@ -229,7 +232,10 @@
                            </image>
                         </ImageView>
                      </graphic></ToggleButton>
-                  <Separator orientation="VERTICAL" />
+                  <Separator orientation="VERTICAL">
+                     <padding>
+                        <Insets left="3.0" />
+                     </padding></Separator>
                   <Button fx:id="deleteSelected" disable="true" mnemonicParsing="false" onAction="#handleDeleteSelected" text="Delete Selected">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -239,7 +245,12 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <ColorPicker promptText="Set Color" />
+                  <Separator orientation="VERTICAL">
+                     <padding>
+                        <Insets left="3.0" />
+                     </padding>
+                  </Separator>
+                  <ColorPicker fx:id="colorPick" disable="true" onAction="#handleColorPick" promptText="Set Color" />
                </items>
             </ToolBar>
          </children>

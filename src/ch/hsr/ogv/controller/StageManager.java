@@ -26,6 +26,7 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
@@ -99,6 +100,7 @@ public class StageManager extends Observable implements Observer {
 		this.primaryStage.setScene(scene);
 		this.primaryStage.show();
 		this.subSceneAdapter.getSubScene().requestFocus();
+		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
 		setChanged();
 		notifyObservers(this); // pass StageManager to RootLayoutController
@@ -198,6 +200,7 @@ public class StageManager extends Observable implements Observer {
 	}
 
 	private void addRelationToSubScene(Relation relation) {
+		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
 		PaneBox startViewBox = this.mvConnector.getPaneBox(startModelBox);
@@ -246,6 +249,13 @@ public class StageManager extends Observable implements Observer {
 		adaptBoxWidth(modelBox);
 		adaptBoxHeight(modelBox);
 		adaptBoxCoordinates(modelBox);
+	}
+	
+	private void adaptArrowColor(Relation relation) {
+		Arrow changedArrow = this.mvConnector.getArrow(relation);
+		if (changedArrow != null) {
+			changedArrow.setColor(relation.getColor());
+		}
 	}
 
 	private void adaptArrowToBox(ModelBox modelBox) {
@@ -396,6 +406,7 @@ public class StageManager extends Observable implements Observer {
 			Relation relation = (Relation) arg;
 			if (!this.mvConnector.containsArrows(relation)) { // relation is new
 				addRelationToSubScene(relation);
+				adaptArrowColor(relation);
 				// adaptRelation(relation);
 			} else {
 				Arrow toDelete = this.mvConnector.removeArrows(relation);
@@ -446,6 +457,15 @@ public class StageManager extends Observable implements Observer {
 			default:
 				break;
 			}
+		} else if (o instanceof Relation && arg instanceof RelationChange) {
+			Relation relation = (Relation) o;
+			RelationChange relationChange = (RelationChange) arg;
+			switch (relationChange) {
+			case COLOR:
+				adaptArrowColor(relation);
+			default:
+				break;
+			}	
 		}
 		this.rootLayout.applyCss();
 	}

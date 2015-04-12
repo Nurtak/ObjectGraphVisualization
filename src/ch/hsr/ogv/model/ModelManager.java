@@ -38,9 +38,9 @@ public class ModelManager extends Observable {
 		return modelObject;
 	}
 
-	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType) {
+	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType, Color color) {
 		if (isRelationAllowed(start, end, relationType)) {
-			Relation relation = new Relation(start, end, relationType);
+			Relation relation = new Relation(start, end, relationType, color);
 			start.getEndpoints().add(relation.getStart());
 			end.getEndpoints().add(relation.getEnd());
 			relations.add(relation);

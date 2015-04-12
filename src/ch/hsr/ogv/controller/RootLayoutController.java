@@ -14,11 +14,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.dataaccess.UserPreferences;
@@ -282,7 +284,9 @@ public class RootLayoutController implements Observer, Initializable {
 	private ToggleButton createDependency;
 	
 	@FXML Button deleteSelected;
-
+	
+	@FXML ColorPicker colorPick;
+	
 	@FXML
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
@@ -370,6 +374,15 @@ public class RootLayoutController implements Observer, Initializable {
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 		}
 	}
+	
+	@FXML
+	private void handleColorPick() {
+		this.createToolbar.selectToggle(null);
+		Selectable selected = this.selectionController.getSelected();
+		if (this.selectionController.hasSelection()) {
+			this.mvConnector.handleColorPick(selected, this.colorPick.getValue());
+		}
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {
@@ -390,9 +403,20 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 			if (this.selectionController.hasSelection()) {
 				this.deleteSelected.setDisable(false);
+				this.colorPick.setDisable(false);
+				if(selected instanceof PaneBox) {
+					PaneBox selectedPaneBox = (PaneBox) selected;
+					this.colorPick.setValue(selectedPaneBox.getColor());
+				}
+				else if(selected instanceof Arrow) {
+					Arrow selectedArrow = (Arrow) selected;
+					this.colorPick.setValue(selectedArrow.getColor());
+				}
 			}
 			else {
 				this.deleteSelected.setDisable(true);
+				this.colorPick.setDisable(true);
+				this.colorPick.setValue(Color.WHITE);
 			}
 		}
 	}
@@ -400,5 +424,6 @@ public class RootLayoutController implements Observer, Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
 		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
+		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
 	}
 }

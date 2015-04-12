@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
@@ -98,11 +99,11 @@ public class ModelViewConnector {
 		ModelObject moB3 = this.modelManager.createObject(mcB);
 
 		//this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_AGGREGATION);
-		this.modelManager.createRelation(mcC, mcB, RelationType.GENERALIZATION);
-		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY);
-		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM);
-		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM);
-		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM);
+		this.modelManager.createRelation(mcC, mcB, RelationType.GENERALIZATION, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
 
 		mcA.createAttribute();
 		mcA.createAttribute();
@@ -134,13 +135,13 @@ public class ModelViewConnector {
 	public Relation handleCreateNewGeneralization(PaneBox child, PaneBox parent) {
 		ModelBox modelBoxChild = this.getModelBox(child);
 		ModelBox modelBoxParent = this.getModelBox(parent);
-		return this.modelManager.createRelation(modelBoxChild, modelBoxParent, RelationType.GENERALIZATION);
+		return this.modelManager.createRelation(modelBoxChild, modelBoxParent, RelationType.GENERALIZATION, Arrow.DEFAULT_COLOR);
 	}
 
 	public Relation handleCreateNewDependency(PaneBox dependent, PaneBox supplier) {
 		ModelBox modelBoxDependet = this.getModelBox(dependent);
 		ModelBox modelBoxSupplier = this.getModelBox(supplier);
-		return this.modelManager.createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY);
+		return this.modelManager.createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
 	}
 
 	public void handleDelete(Selectable selected) {
@@ -158,6 +159,17 @@ public class ModelViewConnector {
 		else if(selected instanceof Arrow) {
 			Relation relationToDelete = this.getRelation((Arrow) selected);
 			this.modelManager.deleteRelation(relationToDelete);
+		}
+	}
+	
+	public void handleColorPick(Selectable selected, Color pickedColor) {
+		if(selected instanceof PaneBox) {
+			ModelBox modelPickColor = this.getModelBox((PaneBox) selected);
+			modelPickColor.setColor(pickedColor);
+		}
+		else if(selected instanceof Arrow) {
+			Relation relationPickColor = this.getRelation((Arrow) selected);
+			relationPickColor.setColor(pickedColor);
 		}
 	}
 

@@ -2,6 +2,8 @@ package ch.hsr.ogv.model;
 
 import java.util.Observable;
 
+import javafx.scene.paint.Color;
+
 /**
  * 
  * @author Adrian Rieser
@@ -12,13 +14,16 @@ public class Relation extends Observable {
 	private Endpoint start;
 	private Endpoint end;
 	private RelationType type;
+	
+	protected Color color;
 
-	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType) {
+	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType, Color color) {
 		this.start = new Endpoint(relationType.getStartType(), startBox);
 		this.end = new Endpoint(relationType.getEndType(), endBox);
 		this.type = relationType;
 		this.start.setRelation(this);
 		this.end.setRelation(this);
+		this.color = color;
 	}
 
 	public Endpoint getStart() {
@@ -44,6 +49,16 @@ public class Relation extends Observable {
 	public void setType(RelationType type) {
 		this.type = type;
 	}
+	
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+		setChanged();
+		notifyObservers(RelationChange.COLOR);
+	}
 
 	public Endpoint getFriend(Endpoint endpoint) {
 		if (endpoint.equals(start)) {
@@ -64,5 +79,9 @@ public class Relation extends Observable {
 			return true;
 		}
 		return false;
+	}
+	
+	public enum RelationChange {
+		COLOR;
 	}
 }
