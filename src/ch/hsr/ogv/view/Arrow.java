@@ -251,21 +251,16 @@ public class Arrow extends Group implements Selectable {
 	@Override
 	public void setSelected(boolean selected) {
 		this.selection.setVisible(selected);
+		Color colorToApply = getColor();
 		if (selected) {
-			applyColor(this.line, SELECTION_COLOR);
-			for(Box dashedLine : this.dashedLines) {
-				applyColor(dashedLine, SELECTION_COLOR);
-			}
-			this.arrowStart.setColor(SELECTION_COLOR);
-			this.arrowEnd.setColor(SELECTION_COLOR);
-		} else {
-			applyColor(this.line, getColor());
-			for(Box dashedLine : this.dashedLines) {
-				applyColor(dashedLine, getColor());
-			}
-			this.arrowStart.setColor(getColor());
-			this.arrowEnd.setColor(getColor());
+			colorToApply = SELECTION_COLOR;
 		}
+		applyColor(this.line, colorToApply);
+		for(Box dashedLine : this.dashedLines) {
+			applyColor(dashedLine, colorToApply);
+		}
+		this.arrowStart.setColor(colorToApply);
+		this.arrowEnd.setColor(colorToApply);
 	}
 
 	@Override
