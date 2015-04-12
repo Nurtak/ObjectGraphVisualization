@@ -96,9 +96,9 @@ public class ModelViewConnector {
 		ModelObject moB2 = this.modelManager.createObject(mcB);
 		ModelObject moB3 = this.modelManager.createObject(mcB);
 
-		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_AGGREGATION);
+		//this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcB, RelationType.GENERALIZATION);
-		this.modelManager.createRelation(mcC, mcA, RelationType.DIRECTED_COMPOSITION);
+		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY);
 		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM);
 		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM);
 		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM);
