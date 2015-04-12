@@ -13,6 +13,7 @@ import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.Selectable;
 
 public class ModelViewConnector {
 
@@ -83,7 +84,7 @@ public class ModelViewConnector {
 		return this.arrows.remove(relation);
 	}
 
-	public void initDummyShit() {
+	public void createDummyContent() {
 		ModelClass mcA = this.modelManager.createClass(new Point3D(-300, PaneBox.INIT_DEPTH / 2, 200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcA.setName("A");
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
@@ -142,9 +143,22 @@ public class ModelViewConnector {
 		return this.modelManager.createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY);
 	}
 
-	public void handleDeleteObject(PaneBox selectedPaneBox) {
-		ModelClass classToDelete = (ModelClass) this.getModelBox(selectedPaneBox);
-		this.modelManager.deleteClass(classToDelete);
+	public void handleDelete(Selectable selected) {
+		if(selected instanceof PaneBox) {
+			ModelBox modelToDelete = this.getModelBox((PaneBox) selected);
+			if(modelToDelete instanceof ModelClass) {
+				ModelClass classToDelete = (ModelClass) modelToDelete;
+				this.modelManager.deleteClass(classToDelete);
+			}
+			else if(modelToDelete instanceof ModelObject) {
+				ModelObject objectToDelete = (ModelObject) modelToDelete;
+				this.modelManager.deleteObject(objectToDelete);
+			}
+		}
+		else if(selected instanceof Arrow) {
+			Relation relationToDelete = this.getRelation((Arrow) selected);
+			this.modelManager.deleteRelation(relationToDelete);
+		}
 	}
 
 }

@@ -29,26 +29,61 @@
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/new.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
       						<MenuItem id="menuitem_open" disable="true" mnemonicParsing="false" onAction="#handleOpen" text="Open...">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/open.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
       						<MenuItem id="menuitem_save" disable="true" mnemonicParsing="false" onAction="#handleSave" text="Save">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/mm_pc_fd.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
       						<MenuItem id="menuitem_saveas" disable="true" mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
       							</accelerator>
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/mm_pc_fd.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
       						<MenuItem id="menuitem_exit" mnemonicParsing="false" onAction="#handleExit" text="Exit">
       							<accelerator>
       								<KeyCodeCombination alt="DOWN" code="F4" control="UP" meta="UP" shift="UP" shortcut="UP" />
       							</accelerator>
+                           <graphic>
+                              <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/close.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
       					</items>
       				</Menu>
@@ -77,14 +112,21 @@
                   </Menu>
       				<Menu id="menu_help" mnemonicParsing="false" text="Help">
       					<items>
-      						<MenuItem id="menuitem_about" mnemonicParsing="false" onAction="#handleAbout" text="About" />
+      						<MenuItem id="menuitem_about" mnemonicParsing="false" onAction="#handleAbout" text="About">
+                           <graphic>
+                              <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/toolbar/about.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
       					</items>
       				</Menu>
       			</menus>
       		</MenuBar>
             <ToolBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
                <items>
-                  <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" text="Class">
+                  <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" text="Create Class">
                      <toggleGroup>
                         <ToggleGroup fx:id="createToolbar" />
                      </toggleGroup>
@@ -95,14 +137,14 @@
                            </image>
                         </ImageView>
                      </graphic></ToggleButton>
-                  <ToggleButton fx:id="createObject" mnemonicParsing="false" onAction="#handleCreateObject" text="Object" toggleGroup="$createToolbar">
+                  <Button fx:id="createObject" disable="true" mnemonicParsing="false" onAction="#handleCreateObject" text="Create Object">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../images/toolbar/instance.gif" />
                            </image>
                         </ImageView>
-                     </graphic></ToggleButton>
+                     </graphic></Button>
                   <Separator orientation="VERTICAL" />
                   <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
                     <items>
@@ -187,6 +229,17 @@
                            </image>
                         </ImageView>
                      </graphic></ToggleButton>
+                  <Separator orientation="VERTICAL" />
+                  <Button fx:id="deleteSelected" disable="true" mnemonicParsing="false" onAction="#handleDeleteSelected" text="Delete Selected">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/toolbar/trash.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <ColorPicker promptText="Set Color" />
                </items>
             </ToolBar>
          </children>

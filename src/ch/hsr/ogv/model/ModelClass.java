@@ -95,7 +95,6 @@ public class ModelClass extends ModelBox {
 	}
 
 	public void deleteModelObjects() {
-		// TODO
 		// ModelObject.modelObjectCounter.decrementAndGet();
 		modelObjects.clear();
 	}

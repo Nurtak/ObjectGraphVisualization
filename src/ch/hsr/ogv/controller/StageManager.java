@@ -77,7 +77,7 @@ public class StageManager extends Observable implements Observer {
 		initDragController();
 
 		// TODO: Remove everything below this line:
-		mvConnector.initDummyShit();
+		mvConnector.createDummyContent();
 	}
 
 	private void setupStage() {
@@ -400,6 +400,7 @@ public class StageManager extends Observable implements Observer {
 			} else {
 				Arrow toDelete = this.mvConnector.removeArrows(relation);
 				removeFromSubScene(toDelete);
+				removeFromSubScene(toDelete.getSelection());
 			}
 		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) arg;

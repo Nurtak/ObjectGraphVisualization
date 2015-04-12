@@ -52,11 +52,15 @@ public class ModelManager extends Observable {
 	}
 
 	public boolean deleteClass(ModelClass modelClass) {
-		modelClass.deleteModelObjects();
 		ArrayList<Endpoint> classesEndPoints = new ArrayList<Endpoint>(modelClass.getEndpoints());
 		for (Endpoint endPoint : classesEndPoints) {
 			deleteRelation(endPoint.getRelation());
 		}
+		ArrayList<ModelObject> classesObjects = new ArrayList<ModelObject>(modelClass.getModelObjects());
+		for(ModelObject modelObject : classesObjects) {
+			deleteObject(modelObject);
+		}
+		modelClass.deleteModelObjects();
 		boolean deletedClass = classes.remove(modelClass);
 		if (deletedClass) {
 			setChanged();
