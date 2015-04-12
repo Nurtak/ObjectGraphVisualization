@@ -101,7 +101,7 @@
                         </CheckMenuItem>
                         <CheckMenuItem id="checkmenuitem_objectview" fx:id="showObjects" mnemonicParsing="false" onAction="#handleShowObjects" selected="true" text="Show Objects">
                            <accelerator>
-                              <KeyCodeCombination alt="UP" code="O" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                              <KeyCodeCombination alt="UP" code="V" control="UP" meta="ANY" shift="UP" shortcut="UP" />
                            </accelerator></CheckMenuItem>
                         <CheckMenuItem fx:id="showModelAxis" mnemonicParsing="false" onAction="#handleShowModelAxis" selected="true" text="Show Model Axis">
                            <accelerator>

@@ -19,7 +19,7 @@ import ch.hsr.ogv.view.Xform;
 public class CameraController implements Observer {
 
 	private static final double MODIFIER = 2;
-	private static final double MODIFIER_FACTOR = 0.1;
+	private static final double MODIFIER_FACTOR = 0.15;
 	private static final double CONTROL_MULTIPLIER = 1;
 	private static final double SHIFT_MULTIPLIER = 10;
 	private double mousePosX;

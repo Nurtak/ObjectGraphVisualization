@@ -20,6 +20,8 @@ import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -383,6 +385,31 @@ public class RootLayoutController implements Observer, Initializable {
 			this.mvConnector.handleColorPick(selected, this.colorPick.getValue());
 		}
 	}
+	
+	private void addButtonAccelerators() {
+		if(this.createClass != null && this.createObject != null && this.deleteSelected != null) {
+			Platform.runLater(() -> {
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> {
+					if(!this.createClass.isDisable()) {
+						this.createClass.requestFocus();
+						this.createClass.fire();
+					}
+				});
+				
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.O), () -> {
+					if(!this.createObject.isDisable()) {
+						this.createObject.fire();
+					}
+		        });
+				
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.DELETE), () -> {
+					if(!this.deleteSelected.isDisable()) {
+						this.deleteSelected.fire();
+					}
+		        });
+			});
+		}
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {
@@ -423,6 +450,7 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
+		addButtonAccelerators();
 		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
 		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
 	}
