@@ -24,7 +24,7 @@ public class ContextMenuController extends Observable implements Observer {
 	private PaneBox selected;
 
 	private ContextMenu classCM;
-	private MenuItem instantiateObject;
+	private MenuItem createObject;
 	private MenuItem deleteClass;
 
 	private ContextMenu objectCM;
@@ -32,9 +32,9 @@ public class ContextMenuController extends Observable implements Observer {
 
 	public ContextMenuController() {
 		classCM = new ContextMenu();
-		instantiateObject = new MenuItem("Instantiate Object");
+		createObject = new MenuItem("Create Object");
 		deleteClass = new MenuItem("Delete Class");
-		classCM.getItems().add(instantiateObject);
+		classCM.getItems().add(createObject);
 		classCM.getItems().add(deleteClass);
 
 		objectCM = new ContextMenu();
@@ -64,7 +64,7 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	public void fillContextMenu() {
-		instantiateObject.setOnAction((ActionEvent e) -> {
+		createObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleCreateNewObject(selected);
 		});
 		deleteClass.setOnAction((ActionEvent e) -> {

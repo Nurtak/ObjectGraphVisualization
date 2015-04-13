@@ -32,7 +32,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/new.gif" />
+                                    <Image url="@../images/menu/new.gif" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -44,7 +44,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/open.gif" />
+                                    <Image url="@../images/menu/open.gif" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -56,7 +56,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/mm_pc_fd.gif" />
+                                    <Image url="@../images/menu/mm_pc_fd.gif" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -68,7 +68,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/mm_pc_fd.gif" />
+                                    <Image url="@../images/menu/mm_pc_fd.gif" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -80,7 +80,7 @@
                            <graphic>
                               <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/close.png" />
+                                    <Image url="@../images/menu/close.png" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -116,7 +116,7 @@
                            <graphic>
                               <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/about.png" />
+                                    <Image url="@../images/menu/about.png" />
                                  </image>
                               </ImageView>
                            </graphic></MenuItem>
@@ -133,7 +133,7 @@
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/structureclass.gif" />
+                              <Image url="@../images/menu/structureclass.gif" />
                            </image>
                         </ImageView>
                      </graphic></ToggleButton>
@@ -141,7 +141,7 @@
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/instance.gif" />
+                              <Image url="@../images/menu/instance.gif" />
                            </image>
                         </ImageView>
                      </graphic></Button>
@@ -155,7 +155,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/assoc.gif" />
+                                    <Image url="@../images/menu/assoc.gif" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -164,7 +164,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/assoWithNav.gif" />
+                                    <Image url="@../images/menu/assoWithNav.gif" />
                                  </image>
                               </ImageView>
                            </graphic></MenuItem>
@@ -172,14 +172,14 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/assoNavToNav.gif" />
+                                    <Image url="@../images/menu/assoNavToNav.gif" />
                                  </image>
                               </ImageView>                           </graphic></MenuItem>
                         <MenuItem fx:id="createUndirectedAggregation" mnemonicParsing="false" onAction="#handleCreateUndirectedAggregation" text="Aggregation">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/aggregation.gif" />
+                                    <Image url="@../images/menu/aggregation.gif" />
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
@@ -187,7 +187,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/aggregationToNavi.gif" />
+                                    <Image url="@../images/menu/aggregationToNavi.gif" />
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
@@ -195,7 +195,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/composite.gif" />
+                                    <Image url="@../images/menu/composite.gif" />
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
@@ -203,7 +203,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/compositeToNavi.gif" />
+                                    <Image url="@../images/menu/compositeToNavi.gif" />
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
@@ -211,7 +211,7 @@
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/assoc.gif" />
+                              <Image url="@../images/menu/assoc.gif" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -220,7 +220,7 @@
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/general.gif" />
+                              <Image url="@../images/menu/general.gif" />
                            </image>
                         </ImageView>
                      </graphic></ToggleButton>
@@ -228,7 +228,7 @@
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/depend.gif" />
+                              <Image url="@../images/menu/depend.gif" />
                            </image>
                         </ImageView>
                      </graphic></ToggleButton>
@@ -240,7 +240,7 @@
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/trash.png" />
+                              <Image url="@../images/menu/trash.png" />
                            </image>
                         </ImageView>
                      </graphic>

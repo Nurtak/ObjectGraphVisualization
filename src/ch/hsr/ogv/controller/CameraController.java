@@ -19,7 +19,7 @@ import ch.hsr.ogv.view.Xform;
 public class CameraController implements Observer {
 
 	private static final double MODIFIER = 2;
-	private static final double MODIFIER_FACTOR = 0.15;
+	private static final double MODIFIER_FACTOR = 0.1;
 	private static final double CONTROL_MULTIPLIER = 1;
 	private static final double SHIFT_MULTIPLIER = 10;
 	private double mousePosX;
@@ -89,8 +89,8 @@ public class CameraController implements Observer {
 				modifier = SHIFT_MULTIPLIER;
 			}
 			if (me.isPrimaryButtonDown()) {
-				cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX * MODIFIER_FACTOR * modifier * 2.0);
-				cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * MODIFIER_FACTOR * modifier * 2.0);
+				cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX * MODIFIER_FACTOR * modifier * 3.0);
+				cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY * MODIFIER_FACTOR * modifier * 3.0);
 			} else if (me.isSecondaryButtonDown() && !lockedTopView) {
 				cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX * MODIFIER_FACTOR * modifier);
 				cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY * MODIFIER_FACTOR * modifier);
@@ -131,22 +131,22 @@ public class CameraController implements Observer {
 			switch (ke.getCode()) {
 			case UP:
 				double oldY_UP = ssCamera.get().getTranslateY();
-				double newY_UP = oldY_UP - MODIFIER * 7;
+				double newY_UP = oldY_UP - MODIFIER * 8;
 				ssCamera.get().setTranslateY(newY_UP);
 				break;
 			case DOWN:
 				double oldY_DOWN = ssCamera.get().getTranslateY();
-				double newY_DOWN = oldY_DOWN + MODIFIER * 7;
+				double newY_DOWN = oldY_DOWN + MODIFIER * 8;
 				ssCamera.get().setTranslateY(newY_DOWN);
 				break;
 			case RIGHT:
 				double oldX_RIGHT = ssCamera.get().getTranslateX();
-				double newX_RIGHT = oldX_RIGHT + MODIFIER * 7;
+				double newX_RIGHT = oldX_RIGHT + MODIFIER * 8;
 				ssCamera.get().setTranslateX(newX_RIGHT);
 				break;
 			case LEFT:
 				double oldX_LEFT = ssCamera.get().getTranslateX();
-				double newX_LEFT = oldX_LEFT - MODIFIER * 7;
+				double newX_LEFT = oldX_LEFT - MODIFIER * 8;
 				ssCamera.get().setTranslateX(newX_LEFT);
 				break;
 			default:
