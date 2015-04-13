@@ -38,9 +38,9 @@ public class ModelManager extends Observable {
 		return modelObject;
 	}
 
-	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType) {
+	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType, Color color) {
 		if (isRelationAllowed(start, end, relationType)) {
-			Relation relation = new Relation(start, end, relationType);
+			Relation relation = new Relation(start, end, relationType, color);
 			start.getEndpoints().add(relation.getStart());
 			end.getEndpoints().add(relation.getEnd());
 			relations.add(relation);
@@ -52,11 +52,15 @@ public class ModelManager extends Observable {
 	}
 
 	public boolean deleteClass(ModelClass modelClass) {
-		modelClass.deleteModelObjects();
 		ArrayList<Endpoint> classesEndPoints = new ArrayList<Endpoint>(modelClass.getEndpoints());
 		for (Endpoint endPoint : classesEndPoints) {
 			deleteRelation(endPoint.getRelation());
 		}
+		ArrayList<ModelObject> classesObjects = new ArrayList<ModelObject>(modelClass.getModelObjects());
+		for(ModelObject modelObject : classesObjects) {
+			deleteObject(modelObject);
+		}
+		modelClass.deleteModelObjects();
 		boolean deletedClass = classes.remove(modelClass);
 		if (deletedClass) {
 			setChanged();

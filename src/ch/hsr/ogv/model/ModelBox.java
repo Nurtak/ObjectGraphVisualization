@@ -116,10 +116,6 @@ public class ModelBox extends Observable {
 		this.endpoints = endpoints;
 	}
 
-	public enum ModelBoxChange {
-		COORDINATES, HEIGHT, WIDTH, NAME, COLOR;
-	}
-
 	public Map<Endpoint, Endpoint> getFriends(){
 		Map<Endpoint, Endpoint> result = new HashMap<Endpoint, Endpoint>(endpoints.size());
 		for (Endpoint endpoint : endpoints) {
@@ -129,5 +125,9 @@ public class ModelBox extends Observable {
 			}
 		}
 		return result;
+	}
+	
+	public enum ModelBoxChange {
+		COORDINATES, HEIGHT, WIDTH, NAME, COLOR;
 	}
 }

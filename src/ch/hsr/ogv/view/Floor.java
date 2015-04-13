@@ -14,7 +14,9 @@ public class Floor extends Group implements Selectable {
 	private HashSet<Rectangle> tiles = new HashSet<Rectangle>();
 	private final double TILE_SIZE = 1000;
 	private final int TILE_DIMENSION = 10;
-	private Color color = Color.WHITESMOKE;
+	public final static Color DEFAULT_COLOR = Color.WHITESMOKE;
+	
+	private Color color = DEFAULT_COLOR;
 	
 	private volatile boolean selected = false;
 
@@ -32,7 +34,7 @@ public class Floor extends Group implements Selectable {
 	}
 
 	private void buildFloorTile(int x, int z) {
-		Rectangle tile = new Rectangle(TILE_SIZE, TILE_SIZE, color);
+		Rectangle tile = new Rectangle(TILE_SIZE, TILE_SIZE, this.color);
 		tile.setDepthTest(DepthTest.ENABLE);
 		tile.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
 		tile.setTranslateX(-((TILE_DIMENSION * TILE_SIZE) / 2) + (x * TILE_SIZE));

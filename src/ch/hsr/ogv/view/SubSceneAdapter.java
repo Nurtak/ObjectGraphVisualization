@@ -14,7 +14,8 @@ import javafx.scene.paint.Color;
  */
 public class SubSceneAdapter implements Selectable {
 	
-	private Color color = Color.LIGHTCYAN;
+	public final static Color DEFAULT_COLOR = Color.LIGHTCYAN;
+	private Color color = DEFAULT_COLOR;
 	
 	private SubScene subScene;
 	private SubSceneCamera subSceneCamera;

@@ -1,5 +1,7 @@
 package ch.hsr.ogv.view;
 
+import java.util.ArrayList;
+
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -8,6 +10,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import ch.hsr.ogv.model.LineType;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.GeometryUtil;
 
@@ -20,6 +23,7 @@ public class Arrow extends Group implements Selectable {
 
 	private static final int INIT_WIDTH = 2;
 	private static final int SELECTION_HELPER_WIDTH = 20;
+	private static final int DASHED_ELEMENT_COUNT = 20;
 	private double width = INIT_WIDTH;
 	private static final Color SELECTION_COLOR = Color.DODGERBLUE;
 	private double length;
@@ -37,7 +41,10 @@ public class Arrow extends Group implements Selectable {
 	private RelationType type = RelationType.BIDIRECTED_ASSOZIATION;
 
 	private Box line;
-	private Color color = Color.BLACK;
+	private ArrayList<Box> dashedLines = new ArrayList<Box>();
+	
+	public static final Color DEFAULT_COLOR = Color.BLACK;
+	private Color color = DEFAULT_COLOR;
 	private ArrowSelection selection = null;
 	private Box selectionHelper;
 
@@ -81,6 +88,11 @@ public class Arrow extends Group implements Selectable {
 		this.endPoint = endPoint;
 		this.type = type;
 		this.line = new Box(this.width, this.width, this.length);
+		for (int i = 0; i < DASHED_ELEMENT_COUNT; i++) {
+			Box dashedLine = new Box(this.width, this.width, this.length);
+			dashedLine.setVisible(false);
+			this.dashedLines.add(dashedLine);
+		}
 		this.arrowStart = new ArrowEdge(this.type.getStartType(), this.color);
 		this.arrowEnd = new ArrowEdge(this.type.getEndType(), this.color);
 		buildSelectionHelper();
@@ -89,6 +101,7 @@ public class Arrow extends Group implements Selectable {
 		setColor(this.color);
 		drawArrow();
 		getChildren().addAll(this.line, this.arrowStart, this.arrowEnd, this.selectionHelper);
+		getChildren().addAll(this.dashedLines);
 	}
 
 	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
@@ -114,6 +127,12 @@ public class Arrow extends Group implements Selectable {
 		getTransforms().clear();
 		this.length = this.startPoint.distance(this.endPoint);
 
+		boolean isDashedLine = LineType.DASHED_LINE.equals(this.type.getLineType());
+		this.line.setVisible(!isDashedLine);
+		for (Box dashedLine : this.dashedLines) {
+			dashedLine.setVisible(isDashedLine);
+		}
+
 		setArrowLineEdge();
 
 		double endGap = this.arrowEnd.getAdditionalGap();
@@ -122,13 +141,21 @@ public class Arrow extends Group implements Selectable {
 		this.length -= (endGap + startGap) / 2;
 
 		this.line.setDepth(this.length);
+		this.line.setTranslateZ((-endGap + startGap) / 4);
+
+		ArrayList<Point3D> dashedLineCoords = divideLine(new Point3D(0, 0, -this.length / 2), new Point3D(0, 0, this.length / 2), this.dashedLines.size());
+
+		for (int i = 0; i < this.dashedLines.size(); i++) {
+			Box dashedLine = this.dashedLines.get(i);
+			dashedLine.setDepth(this.length / (2 * DASHED_ELEMENT_COUNT));
+			Point3D dashedLineCoord = dashedLineCoords.get(i);
+			dashedLine.setTranslateZ(dashedLineCoord.getZ() - dashedLine.getDepth() + (-endGap + startGap) / 4);
+		}
 
 		this.rotateZAngle = GeometryUtil.rotateZAngle(this.startPoint, this.endPoint);
 		this.rotateXAngle = -GeometryUtil.rotateXAngle(this.startPoint, this.endPoint);
 
 		Point3D midPoint = this.startPoint.midpoint(this.endPoint);
-
-		this.line.setTranslateZ((-endGap + startGap) / 4);
 		setTranslateXYZ(midPoint);
 		addRotateYAxis(this.rotateZAngle);
 		addRotateXAxis(this.rotateXAngle);
@@ -167,6 +194,21 @@ public class Arrow extends Group implements Selectable {
 		return null;
 	}
 
+	private Point3D divideLineFraction(Point3D start, Point3D end, double fraction) {
+		double x = start.getX() + fraction * (end.getX() - start.getX());
+		double y = start.getY() + fraction * (end.getY() - start.getY());
+		double z = start.getZ() + fraction * (end.getZ() - start.getZ());
+		return new Point3D(x, y, z);
+	}
+
+	private ArrayList<Point3D> divideLine(Point3D start, Point3D end, int count) {
+		ArrayList<Point3D> pointList = new ArrayList<Point3D>();
+		for (int i = 1; i <= count; i++) {
+			pointList.add(divideLineFraction(start, end, ((double) i) / ((double) count)));
+		}
+		return pointList;
+	}
+
 	private void setArrowLineEdge() {
 		this.arrowStart.setTranslateX(0);
 		this.arrowStart.setTranslateY(0);
@@ -180,6 +222,9 @@ public class Arrow extends Group implements Selectable {
 	public void setColor(Color color) {
 		this.color = color;
 		applyColor(this.line, this.color);
+		for (Box dashedLine : this.dashedLines) {
+			applyColor(dashedLine, this.color);
+		}
 		this.arrowStart.setColor(color);
 		this.arrowEnd.setColor(color);
 	}
@@ -208,15 +253,16 @@ public class Arrow extends Group implements Selectable {
 	@Override
 	public void setSelected(boolean selected) {
 		this.selection.setVisible(selected);
+		Color colorToApply = getColor();
 		if (selected) {
-			applyColor(this.line, SELECTION_COLOR);
-			this.arrowStart.setColor(SELECTION_COLOR);
-			this.arrowEnd.setColor(SELECTION_COLOR);
-		} else {
-			applyColor(this.line, getColor());
-			this.arrowStart.setColor(getColor());
-			this.arrowEnd.setColor(getColor());
+			colorToApply = SELECTION_COLOR;
 		}
+		applyColor(this.line, colorToApply);
+		for(Box dashedLine : this.dashedLines) {
+			applyColor(dashedLine, colorToApply);
+		}
+		this.arrowStart.setColor(colorToApply);
+		this.arrowEnd.setColor(colorToApply);
 	}
 
 	@Override

@@ -68,7 +68,7 @@ public class ContextMenuController extends Observable implements Observer {
 			mvConnector.handleCreateNewObject(selected);
 		});
 		deleteClass.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDeleteObject(selected);
+			mvConnector.handleDelete(selected);
 		});
 	}
 

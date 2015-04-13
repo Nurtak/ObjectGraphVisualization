@@ -12,17 +12,23 @@ import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import ch.hsr.ogv.dataaccess.UserPreferences;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
+import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.Floor;
@@ -195,7 +201,6 @@ public class RootLayoutController implements Observer, Initializable {
 		if (this.showObjects.isSelected()) {
 			this.createObject.setDisable(false);
 		} else {
-			this.createObject.setSelected(false);
 			this.createObject.setDisable(true);
 		}
 
@@ -247,7 +252,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private ToggleButton createClass;
 
 	@FXML
-	private ToggleButton createObject;
+	private Button createObject;
 
 	@FXML
 	private SplitMenuButton createAssociation;
@@ -279,7 +284,11 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private ToggleButton createDependency;
-
+	
+	@FXML Button deleteSelected;
+	
+	@FXML ColorPicker colorPick;
+	
 	@FXML
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
@@ -289,7 +298,14 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateObject() {
-		// Nothing
+		this.createToolbar.selectToggle(null);
+		Selectable selected = this.selectionController.getSelected();
+		if (this.selectionController.hasSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {
+			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject((PaneBox) selected);
+			if(newPaneBox != null) {
+				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
+			}
+		}
 	}
 
 	private void splitMenuButtonSelect(MenuItem choosenItem) {
@@ -350,6 +366,50 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateDependency() {
 		// TODO
 	}
+	
+	@FXML
+	private void handleDeleteSelected() {
+		this.createToolbar.selectToggle(null);
+		Selectable selected = this.selectionController.getSelected();
+		if (this.selectionController.hasSelection()) {
+			this.mvConnector.handleDelete(selected);
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+		}
+	}
+	
+	@FXML
+	private void handleColorPick() {
+		this.createToolbar.selectToggle(null);
+		Selectable selected = this.selectionController.getSelected();
+		if (this.selectionController.hasSelection()) {
+			this.mvConnector.handleColorPick(selected, this.colorPick.getValue());
+		}
+	}
+	
+	private void addButtonAccelerators() {
+		if(this.createClass != null && this.createObject != null && this.deleteSelected != null) {
+			Platform.runLater(() -> {
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> {
+					if(!this.createClass.isDisable()) {
+						this.createClass.requestFocus();
+						this.createClass.fire();
+					}
+				});
+				
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.O), () -> {
+					if(!this.createObject.isDisable()) {
+						this.createObject.fire();
+					}
+		        });
+				
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.DELETE), () -> {
+					if(!this.deleteSelected.isDisable()) {
+						this.deleteSelected.fire();
+					}
+		        });
+			});
+		}
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {
@@ -360,17 +420,38 @@ public class RootLayoutController implements Observer, Initializable {
 				this.createClass.setSelected(false);
 				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 			}
-		} else if (o instanceof SelectionController && arg instanceof PaneBox && this.selectionController != null) {
+		} else if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow) && this.selectionController != null) {
 			Selectable selected = this.selectionController.getSelected();
-			if (this.selectionController.hasSelection() && selected instanceof PaneBox && createObject != null && createObject.isSelected()) {
-				this.mvConnector.handleCreateNewObject((PaneBox) selected);
-				this.createObject.setSelected(false);
+			if (this.selectionController.hasSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass && createObject != null) {
+				this.createObject.setDisable(false);
+			}
+			else {
+				this.createObject.setDisable(true);
+			}
+			if (this.selectionController.hasSelection()) {
+				this.deleteSelected.setDisable(false);
+				this.colorPick.setDisable(false);
+				if(selected instanceof PaneBox) {
+					PaneBox selectedPaneBox = (PaneBox) selected;
+					this.colorPick.setValue(selectedPaneBox.getColor());
+				}
+				else if(selected instanceof Arrow) {
+					Arrow selectedArrow = (Arrow) selected;
+					this.colorPick.setValue(selectedArrow.getColor());
+				}
+			}
+			else {
+				this.deleteSelected.setDisable(true);
+				this.colorPick.setDisable(true);
+				this.colorPick.setValue(Color.WHITE);
 			}
 		}
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
+		addButtonAccelerators();
 		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
+		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
 	}
 }
