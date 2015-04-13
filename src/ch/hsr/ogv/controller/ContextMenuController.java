@@ -39,7 +39,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 		objectCM = new ContextMenu();
 		deleteObject = new MenuItem("Delete Object");
-		classCM.getItems().add(deleteObject);
+		objectCM.getItems().add(deleteObject);
 	}
 
 	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox) {

@@ -16,6 +16,11 @@ import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
 
+/**
+ * 
+ * @author Adrian Rieser
+ *
+ */
 public class ModelViewConnector {
 
 	private ModelManager modelManager = new ModelManager();
