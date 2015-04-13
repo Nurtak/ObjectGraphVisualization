@@ -211,6 +211,7 @@ public class StageManager extends Observable implements Observer {
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
 			this.mvConnector.putArrows(relation, arrow);
+			this.contextMenuController.enableContextMenu(relation, arrow);
 		}
 	}
 
@@ -250,7 +251,7 @@ public class StageManager extends Observable implements Observer {
 		adaptBoxHeight(modelBox);
 		adaptBoxCoordinates(modelBox);
 	}
-	
+
 	private void adaptArrowColor(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow != null) {
@@ -465,7 +466,7 @@ public class StageManager extends Observable implements Observer {
 				adaptArrowColor(relation);
 			default:
 				break;
-			}	
+			}
 		}
 		this.rootLayout.applyCss();
 	}

@@ -17,7 +17,7 @@ import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
 
 /**
- * 
+ *
  * @author Adrian Rieser
  *
  */
@@ -103,7 +103,7 @@ public class ModelViewConnector {
 		ModelObject moB2 = this.modelManager.createObject(mcB);
 		ModelObject moB3 = this.modelManager.createObject(mcB);
 
-		//this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_AGGREGATION);
+		// this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_AGGREGATION);
 		this.modelManager.createRelation(mcC, mcB, RelationType.GENERALIZATION, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
@@ -126,7 +126,11 @@ public class ModelViewConnector {
 		return newBox;
 	}
 
-	public PaneBox handleCreateNewObject(PaneBox selectedPaneBox) {
+	public PaneBox handleCreateNewObject(Selectable selected) {
+		return this.handleCreateNewObject((PaneBox) selected);
+	}
+
+	private PaneBox handleCreateNewObject(PaneBox selectedPaneBox) {
 		ModelBox selectedModelBox = this.getModelBox(selectedPaneBox);
 		ModelClass selectedModelClass = (ModelClass) selectedModelBox;
 		ModelObject newObject = this.modelManager.createObject(selectedModelClass);
@@ -150,29 +154,26 @@ public class ModelViewConnector {
 	}
 
 	public void handleDelete(Selectable selected) {
-		if(selected instanceof PaneBox) {
+		if (selected instanceof PaneBox) {
 			ModelBox modelToDelete = this.getModelBox((PaneBox) selected);
-			if(modelToDelete instanceof ModelClass) {
+			if (modelToDelete instanceof ModelClass) {
 				ModelClass classToDelete = (ModelClass) modelToDelete;
 				this.modelManager.deleteClass(classToDelete);
-			}
-			else if(modelToDelete instanceof ModelObject) {
+			} else if (modelToDelete instanceof ModelObject) {
 				ModelObject objectToDelete = (ModelObject) modelToDelete;
 				this.modelManager.deleteObject(objectToDelete);
 			}
-		}
-		else if(selected instanceof Arrow) {
+		} else if (selected instanceof Arrow) {
 			Relation relationToDelete = this.getRelation((Arrow) selected);
 			this.modelManager.deleteRelation(relationToDelete);
 		}
 	}
-	
+
 	public void handleColorPick(Selectable selected, Color pickedColor) {
-		if(selected instanceof PaneBox) {
+		if (selected instanceof PaneBox) {
 			ModelBox modelPickColor = this.getModelBox((PaneBox) selected);
 			modelPickColor.setColor(pickedColor);
-		}
-		else if(selected instanceof Arrow) {
+		} else if (selected instanceof Arrow) {
 			Relation relationPickColor = this.getRelation((Arrow) selected);
 			relationPickColor.setColor(pickedColor);
 		}
