@@ -36,9 +36,11 @@ public class ModelBox extends Observable {
 	}
 
 	public void setName(String name) {
-		this.name = name;
-		setChanged();
-		notifyObservers(ModelBoxChange.NAME);
+		if(this.name != null && !this.name.equals(name)) {
+			this.name = name;
+			setChanged();
+			notifyObservers(ModelBoxChange.NAME);
+		}
 	}
 
 	public Point3D getCoordinates() {
@@ -46,9 +48,11 @@ public class ModelBox extends Observable {
 	}
 
 	public void setCoordinates(Point3D coordinates) {
-		this.coordinates = coordinates;
-		setChanged();
-		notifyObservers(ModelBoxChange.COORDINATES);
+		if(this.coordinates != null && !this.coordinates.equals(coordinates)) {
+			this.coordinates = coordinates;
+			setChanged();
+			notifyObservers(ModelBoxChange.COORDINATES);
+		}
 	}
 
 	public void setX(double x) {
@@ -83,9 +87,11 @@ public class ModelBox extends Observable {
 	}
 
 	public void setWidth(double width) {
-		this.width = width;
-		setChanged();
-		notifyObservers(ModelBoxChange.WIDTH);
+		if(this.width != width) {
+			this.width = width;
+			setChanged();
+			notifyObservers(ModelBoxChange.WIDTH);
+		}
 	}
 
 	public double getHeight() {
@@ -93,9 +99,11 @@ public class ModelBox extends Observable {
 	}
 
 	public void setHeight(double height) {
-		this.height = height;
-		setChanged();
-		notifyObservers(ModelBoxChange.HEIGHT);
+		if(this.height != height) {
+			this.height = height;
+			setChanged();
+			notifyObservers(ModelBoxChange.HEIGHT);
+		}
 	}
 
 	public Color getColor() {
@@ -103,9 +111,11 @@ public class ModelBox extends Observable {
 	}
 
 	public void setColor(Color color) {
-		this.color = color;
-		setChanged();
-		notifyObservers(ModelBoxChange.COLOR);
+		if(this.color != null && !this.color.equals(color)) {
+			this.color = color;
+			setChanged();
+			notifyObservers(ModelBoxChange.COLOR);
+		}
 	}
 
 	public List<Endpoint> getEndpoints() {

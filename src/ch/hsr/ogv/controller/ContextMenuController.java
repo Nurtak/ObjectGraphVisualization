@@ -103,7 +103,6 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	public void fillContextMenu() {
-
 		// Class
 		instantiateObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleCreateNewObject(selected);

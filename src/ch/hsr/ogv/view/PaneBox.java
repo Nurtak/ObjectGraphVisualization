@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.util.FXMLResourceUtil;
+import ch.hsr.ogv.util.TextUtil;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
 /**
@@ -293,6 +294,18 @@ public class PaneBox implements Selectable {
 		} catch (IndexOutOfBoundsException ioobe) {
 			logger.debug("Allowing textinput failed for center field. IndexOutOfBoundsException: " + ioobe.getMessage());
 		}
+	}
+	
+	public double calcMinWidth() {
+		// + 70px / 30px for some additional space to compensate padding, insets, borders etc.
+		double retWidth = TextUtil.computeTextWidth(getTopFont(), getTopLabel().getText(), 0.0D) + 70;
+		for(Label centerLabel : getCenterLabels()) {
+			double newWidth = TextUtil.computeTextWidth(centerLabel.getFont(), centerLabel.getText(), 0.0D) + 30;
+			if(newWidth > retWidth) {
+				retWidth = newWidth;
+			}
+		}
+		return retWidth;
 	}
 
 	public GridPane getCenter() {

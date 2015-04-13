@@ -30,7 +30,6 @@ import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
-import ch.hsr.ogv.util.TextUtil;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
@@ -245,7 +244,7 @@ public class StageManager extends Observable implements Observer {
 			}
 			adaptCenterFields((ModelObject) modelBox);
 		}
-		adaptBoxName(modelBox);
+		adaptBoxTopField(modelBox);
 		adaptBoxColor(modelBox);
 		adaptBoxWidth(modelBox);
 		adaptBoxHeight(modelBox);
@@ -281,8 +280,8 @@ public class StageManager extends Observable implements Observer {
 			}
 		}
 	}
-
-	private void adaptBoxName(ModelBox modelBox) {
+	
+	private void adaptBoxTopField(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null && modelBox instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) modelBox;
@@ -292,8 +291,7 @@ public class StageManager extends Observable implements Observer {
 		} else if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
 
-			// + 70px for some additional space to compensate insets, borders etc.
-			double newWidth = TextUtil.computeTextWidth(changedBox.getTopFont(), modelBox.getName(), 0.0D) + 70;
+			double newWidth = changedBox.calcMinWidth();
 			changedBox.setMinWidth(newWidth);
 			// changedBox.getTopLabel().setPrefWidth(newWidth);
 			// changedBox.getTopTextField().setPrefWidth(newWidth);
@@ -368,6 +366,11 @@ public class StageManager extends Observable implements Observer {
 				paneClassBox.showCenterLabel(i, true);
 				paneClassBox.setCenterText(i, attribute.getName(), attribute.getName());
 			}
+			double newWidth = paneClassBox.calcMinWidth();
+			paneClassBox.setMinWidth(newWidth);
+			// paneClassBox.getTopLabel().setPrefWidth(newWidth);
+			// paneClassBox.getTopTextField().setPrefWidth(newWidth);
+			modelClass.setWidth(paneClassBox.getMinWidth());
 		}
 	}
 
@@ -448,7 +451,7 @@ public class StageManager extends Observable implements Observer {
 				adaptArrowToBox(modelBox);
 				break;
 			case NAME:
-				adaptBoxName(modelBox);
+				adaptBoxTopField(modelBox);
 				adaptArrowToBox(modelBox);
 				break;
 			case WIDTH:
