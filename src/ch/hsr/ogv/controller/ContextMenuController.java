@@ -7,7 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -43,7 +43,6 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem deleteRelation;
 
 	private Menu createRelationM;
-	private ToggleGroup createRelationTG;
 	private MenuItem createUndirectedAssociation;
 	private MenuItem createDirectedAssociation;
 	private MenuItem createBidirectedAssociation;
@@ -63,7 +62,6 @@ public class ContextMenuController extends Observable implements Observer {
 		classCM.getItems().add(deleteClass);
 
 		createRelationM = new Menu("Create Relation");
-		createRelationTG = new ToggleGroup();
 
 		createUndirectedAssociation = new MenuItem("Association");
 		ImageView undirectedAssociationIV = new ImageView(ResourceLocator.getResourcePath(Resource.UNDIRECTED_ASSOCIATION_GIF).toExternalForm());
@@ -108,8 +106,9 @@ public class ContextMenuController extends Observable implements Observer {
 		createRelationM.getItems().add(createDirectedAggregation);
 		createRelationM.getItems().add(createUndirectedComposition);
 		createRelationM.getItems().add(createDirectedComposition);
-		// createRelationM.getItems().add(new Separator().);
+		createRelationM.getItems().add(new SeparatorMenuItem());
 		createRelationM.getItems().add(createGeneralization);
+		createRelationM.getItems().add(new SeparatorMenuItem());
 		createRelationM.getItems().add(createDependency);
 		classCM.getItems().add(createRelationM);
 
