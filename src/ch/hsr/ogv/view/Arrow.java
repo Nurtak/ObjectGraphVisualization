@@ -38,7 +38,7 @@ public class Arrow extends Group implements Selectable {
 	private ArrowEdge arrowStart;
 	private ArrowEdge arrowEnd;
 
-	private RelationType type = RelationType.BIDIRECTED_ASSOZIATION;
+	private RelationType type = RelationType.BIDIRECTED_ASSOCIATION;
 
 	private Box line;
 	private ArrayList<Box> dashedLines = new ArrayList<Box>();

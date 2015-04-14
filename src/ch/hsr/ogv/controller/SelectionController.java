@@ -19,24 +19,42 @@ import ch.hsr.ogv.view.SubSceneAdapter;
  */
 public class SelectionController extends Observable {
 
-	private volatile Selectable selected = null;
+	private volatile Selectable previousSelected = null;
+	private volatile Selectable currentSelected = null;
 
-	private Point3D selectionCoordinates;
-
-	public Point3D getSelectionCoordinates() {
-		return selectionCoordinates;
+	private Point3D previousSelectionCoord;
+	private Point3D currentSelectionCoord;
+	
+	public Point3D getPreviousSelectionCoord() {
+		return previousSelectionCoord;
 	}
 
-	public boolean hasSelection() {
-		return this.selected != null;
+	public boolean hasPreviousSelection() {
+		return this.previousSelected != null;
 	}
 
-	public Selectable getSelected() {
-		return this.selected;
+	public Selectable getPreviousSelected() {
+		return this.currentSelected;
 	}
 
-	public boolean isSelected(Selectable selectable) {
-		return this.selected != null && this.selected.equals(selectable);
+	public boolean isPreviousSelected(Selectable selectable) {
+		return this.previousSelected != null && this.previousSelected.equals(selectable);
+	}
+	
+	public Point3D getCurrentSelectionCoord() {
+		return currentSelectionCoord;
+	}
+
+	public boolean hasCurrentSelection() {
+		return this.currentSelected != null;
+	}
+
+	public Selectable getCurrentSelected() {
+		return this.currentSelected;
+	}
+
+	public boolean isCurrentSelected(Selectable selectable) {
+		return this.currentSelected != null && this.currentSelected.equals(selectable);
 	}
 
 	public void enableSubSceneSelection(SubSceneAdapter subSceneAdapter) {
@@ -145,7 +163,7 @@ public class SelectionController extends Observable {
 	}
 
 	private void setSelected(MouseEvent me, Selectable selectable, boolean selected, SubSceneAdapter subSceneAdapter) {
-		this.selectionCoordinates = new Point3D(me.getX(), me.getY(), me.getZ());
+		this.currentSelectionCoord = new Point3D(me.getX(), me.getY(), me.getZ());
 		setSelected(selectable, selected, subSceneAdapter);
 	}
 
@@ -153,27 +171,20 @@ public class SelectionController extends Observable {
 		selectable.setSelected(selected);
 
 		if (selected) {
-			if (this.selected != null && selectable != this.selected) {
-				setSelected(this.selected, false, subSceneAdapter); // deselect the old selected object
+			if (this.currentSelected != null && selectable != this.currentSelected) {
+				this.previousSelected = this.currentSelected; // current selection becomes previous selected object
+				this.previousSelectionCoord = this.currentSelectionCoord;
+				setSelected(this.currentSelected, false, subSceneAdapter); // deselect the old selected object
 			}
-
-			this.selected = selectable;
-
+			this.currentSelected = selectable;
 			selectable.requestFocus();
-
-			if (selectable instanceof PaneBox) {
-				PaneBox paneBox = (PaneBox) selectable;
-				paneBox.get().toFront();
-				subSceneAdapter.getFloor().toFront();
-			}
+			subSceneAdapter.getFloor().toFront();
+			
 			setChanged();
 			notifyObservers(selectable);
 		} else {
-			this.selected = null;
-			if (selectable instanceof PaneBox) {
-				PaneBox paneBox = (PaneBox) selectable;
-				paneBox.setAllLabelSelected(false);
-			}
+			this.currentSelected = null;
+
 			setChanged();
 			notifyObservers(selectable);
 		}

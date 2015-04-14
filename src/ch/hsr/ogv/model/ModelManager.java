@@ -124,9 +124,9 @@ public class ModelManager extends Observable {
 				return true;
 			}
 			return false;
-		case UNDIRECTED_ASSOZIATION:
-		case DIRECTED_ASSOZIATION:
-		case BIDIRECTED_ASSOZIATION:
+		case UNDIRECTED_ASSOCIATION:
+		case DIRECTED_ASSOCIATION:
+		case BIDIRECTED_ASSOCIATION:
 		case UNDIRECTED_AGGREGATION:
 		case DIRECTED_AGGREGATION:
 		case UNDIRECTED_COMPOSITION:

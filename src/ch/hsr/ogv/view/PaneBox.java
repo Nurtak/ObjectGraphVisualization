@@ -393,6 +393,12 @@ public class PaneBox implements Selectable {
 	@Override
 	public void setSelected(boolean selected) {
 		this.selection.setVisible(selected);
+		if(selected) {
+			get().toFront();
+		}
+		else {
+			setAllLabelSelected(false);
+		}
 	}
 
 	@Override

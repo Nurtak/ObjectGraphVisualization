@@ -2,6 +2,7 @@ package ch.hsr.ogv.controller;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
@@ -17,6 +18,7 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -30,6 +32,7 @@ import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
+import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
@@ -51,8 +54,11 @@ public class RootLayoutController implements Observer, Initializable {
 	private ModelViewConnector mvConnector;
 	private SubSceneAdapter subSceneAdapter;
 	private SelectionController selectionController;
+	private MouseMoveController mouseMoveController;
 	private CameraController cameraController;
-
+	
+	private HashMap<Object, RelationType> toggleRelationMap = new HashMap<Object, RelationType>();
+	
 	public void setPrimaryStage(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 		this.appTitle = primaryStage.getTitle();
@@ -68,6 +74,10 @@ public class RootLayoutController implements Observer, Initializable {
 
 	public void setSelectionController(SelectionController selectionController) {
 		this.selectionController = selectionController;
+	}
+	
+	public void setMouseMoveController(MouseMoveController mouseMoveController) {
+		this.mouseMoveController = mouseMoveController;
 	}
 
 	public void setCameraController(CameraController cameraController) {
@@ -299,8 +309,8 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleCreateObject() {
 		this.createToolbar.selectToggle(null);
-		Selectable selected = this.selectionController.getSelected();
-		if (this.selectionController.hasSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {
+		Selectable selected = this.selectionController.getCurrentSelected();
+		if (this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {
 			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject((PaneBox) selected);
 			if(newPaneBox != null) {
 				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
@@ -370,8 +380,8 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleDeleteSelected() {
 		this.createToolbar.selectToggle(null);
-		Selectable selected = this.selectionController.getSelected();
-		if (this.selectionController.hasSelection()) {
+		Selectable selected = this.selectionController.getCurrentSelected();
+		if (this.selectionController.hasCurrentSelection()) {
 			this.mvConnector.handleDelete(selected);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 		}
@@ -380,8 +390,8 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleColorPick() {
 		this.createToolbar.selectToggle(null);
-		Selectable selected = this.selectionController.getSelected();
-		if (this.selectionController.hasSelection()) {
+		Selectable selected = this.selectionController.getCurrentSelected();
+		if (this.selectionController.hasCurrentSelection()) {
 			this.mvConnector.handleColorPick(selected, this.colorPick.getValue());
 		}
 	}
@@ -413,22 +423,43 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof SelectionController && arg instanceof Floor && this.selectionController != null) {
+		if (o instanceof SelectionController && arg instanceof Floor && this.selectionController != null) { // creating class
 			this.subSceneAdapter.onlyFloorMouseEvent(false);
 			if (createClass != null && createClass.isSelected()) {
-				PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getSelectionCoordinates());
+				PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getCurrentSelectionCoord());
 				this.createClass.setSelected(false);
 				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 			}
-		} else if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow) && this.selectionController != null) {
-			Selectable selected = this.selectionController.getSelected();
-			if (this.selectionController.hasSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass && createObject != null) {
+		} else if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow) && this.selectionController != null) { // PaneBox or Arrow selected
+			Selectable selected = this.selectionController.getCurrentSelected();
+			
+			// creating objects
+			if (this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass && createObject != null) {
 				this.createObject.setDisable(false);
 			}
 			else {
 				this.createObject.setDisable(true);
 			}
-			if (this.selectionController.hasSelection()) {
+			
+			// creating relations
+			if(this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) {
+				Toggle toggle = this.createToolbar.getSelectedToggle();
+				if(toggle != null && toggle.equals(this.tSplitMenuButton)) {
+					MenuItem selectedChoice = this.tSplitMenuButton.selectedChoice();
+					if(selectedChoice != null && this.toggleRelationMap.containsKey(selectedChoice)) {
+						RelationType relationType = this.toggleRelationMap.get(selectedChoice);
+						//this.mvConnector
+					}
+				}
+				else if(toggle != null && toggle.equals(this.createDependency)) {
+					
+				}
+				else if(toggle != null && toggle.equals(this.createGeneralization)) {
+					
+				}
+			}
+			
+			if (this.selectionController.hasCurrentSelection()) {
 				this.deleteSelected.setDisable(false);
 				this.colorPick.setDisable(false);
 				if(selected instanceof PaneBox) {
@@ -447,11 +478,24 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 		}
 	}
+	
+	private void initToggleRelationMap() {
+		this.toggleRelationMap.put(this.createDependency,     		 RelationType.DEPENDENCY);
+		this.toggleRelationMap.put(this.createGeneralization,        RelationType.GENERALIZATION);
+		this.toggleRelationMap.put(this.createUndirectedAssociation, RelationType.UNDIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createDirectedAssociation,	 RelationType.DIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createBidirectedAssociation, RelationType.BIDIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createUndirectedAggregation, RelationType.UNDIRECTED_AGGREGATION);
+		this.toggleRelationMap.put(this.createDirectedAggregation,	 RelationType.DIRECTED_AGGREGATION);
+		this.toggleRelationMap.put(this.createUndirectedComposition, RelationType.UNDIRECTED_COMPOSITION);
+		this.toggleRelationMap.put(this.createDirectedComposition,	 RelationType.DIRECTED_COMPOSITION);
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
 		addButtonAccelerators();
 		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
 		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
+		initToggleRelationMap();
 	}
 }

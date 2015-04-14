@@ -76,7 +76,7 @@ public class ContextMenuController extends Observable implements Observer {
 	public void update(Observable o, Object arg) {
 		if (o instanceof SelectionController && arg instanceof PaneBox) {
 			SelectionController selectionController = (SelectionController) o;
-			if (selectionController.hasSelection()) {
+			if (selectionController.hasCurrentSelection()) {
 				this.selected = (PaneBox) arg;
 			}
 		}

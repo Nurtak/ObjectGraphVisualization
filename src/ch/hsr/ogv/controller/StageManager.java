@@ -53,6 +53,7 @@ public class StageManager extends Observable implements Observer {
 	private RootLayoutController rootLayoutController = new RootLayoutController();
 	private CameraController cameraController = new CameraController();
 	private SelectionController selectionController = new SelectionController();
+	private MouseMoveController mouseMoveController = new MouseMoveController();
 	private TextFieldController textFieldController = new TextFieldController();
 	private DragMoveController dragMoveController = new DragMoveController();
 	private DragResizeController dragResizeController = new DragResizeController();
@@ -73,6 +74,7 @@ public class StageManager extends Observable implements Observer {
 		initRootLayoutController();
 		initContextMenuController();
 		initSelectionController();
+		initMouseMoveController();
 		initCameraController();
 		initDragController();
 
@@ -138,6 +140,10 @@ public class StageManager extends Observable implements Observer {
 		this.selectionController.enableSubSceneSelection(this.subSceneAdapter);
 		this.selectionController.addObserver(this.rootLayoutController);
 		this.selectionController.addObserver(this.contextMenuController);
+	}
+	
+	private void initMouseMoveController() {
+		this.mouseMoveController.enableSubSceneMouseMove(this.subSceneAdapter);
 	}
 
 	private void initCameraController() {
