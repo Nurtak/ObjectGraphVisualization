@@ -255,7 +255,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private Button createObject;
 
 	@FXML
-	private SplitMenuButton createAssociation;
+	private SplitMenuButton createRelation;
 	private TSplitMenuButton tSplitMenuButton;
 
 	@FXML
@@ -284,11 +284,13 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private ToggleButton createDependency;
-	
-	@FXML Button deleteSelected;
-	
-	@FXML ColorPicker colorPick;
-	
+
+	@FXML
+	Button deleteSelected;
+
+	@FXML
+	ColorPicker colorPick;
+
 	@FXML
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
@@ -301,8 +303,8 @@ public class RootLayoutController implements Observer, Initializable {
 		this.createToolbar.selectToggle(null);
 		Selectable selected = this.selectionController.getSelected();
 		if (this.selectionController.hasSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {
-			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject((PaneBox) selected);
-			if(newPaneBox != null) {
+			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject(selected);
+			if (newPaneBox != null) {
 				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 			}
 		}
@@ -366,7 +368,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateDependency() {
 		// TODO
 	}
-	
+
 	@FXML
 	private void handleDeleteSelected() {
 		this.createToolbar.selectToggle(null);
@@ -376,7 +378,7 @@ public class RootLayoutController implements Observer, Initializable {
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 		}
 	}
-	
+
 	@FXML
 	private void handleColorPick() {
 		this.createToolbar.selectToggle(null);
@@ -385,28 +387,28 @@ public class RootLayoutController implements Observer, Initializable {
 			this.mvConnector.handleColorPick(selected, this.colorPick.getValue());
 		}
 	}
-	
+
 	private void addButtonAccelerators() {
-		if(this.createClass != null && this.createObject != null && this.deleteSelected != null) {
+		if (this.createClass != null && this.createObject != null && this.deleteSelected != null) {
 			Platform.runLater(() -> {
 				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> {
-					if(!this.createClass.isDisable()) {
+					if (!this.createClass.isDisable()) {
 						this.createClass.requestFocus();
 						this.createClass.fire();
 					}
 				});
-				
+
 				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.O), () -> {
-					if(!this.createObject.isDisable()) {
+					if (!this.createObject.isDisable()) {
 						this.createObject.fire();
 					}
-		        });
-				
+				});
+
 				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.DELETE), () -> {
-					if(!this.deleteSelected.isDisable()) {
+					if (!this.deleteSelected.isDisable()) {
 						this.deleteSelected.fire();
 					}
-		        });
+				});
 			});
 		}
 	}
@@ -424,23 +426,20 @@ public class RootLayoutController implements Observer, Initializable {
 			Selectable selected = this.selectionController.getSelected();
 			if (this.selectionController.hasSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass && createObject != null) {
 				this.createObject.setDisable(false);
-			}
-			else {
+			} else {
 				this.createObject.setDisable(true);
 			}
 			if (this.selectionController.hasSelection()) {
 				this.deleteSelected.setDisable(false);
 				this.colorPick.setDisable(false);
-				if(selected instanceof PaneBox) {
+				if (selected instanceof PaneBox) {
 					PaneBox selectedPaneBox = (PaneBox) selected;
 					this.colorPick.setValue(selectedPaneBox.getColor());
-				}
-				else if(selected instanceof Arrow) {
+				} else if (selected instanceof Arrow) {
 					Arrow selectedArrow = (Arrow) selected;
 					this.colorPick.setValue(selectedArrow.getColor());
 				}
-			}
-			else {
+			} else {
 				this.deleteSelected.setDisable(true);
 				this.colorPick.setDisable(true);
 				this.colorPick.setValue(Color.WHITE);
@@ -451,7 +450,7 @@ public class RootLayoutController implements Observer, Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
 		addButtonAccelerators();
-		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
+		this.tSplitMenuButton = new TSplitMenuButton(this.createRelation, this.createUndirectedAssociation, this.createToolbar);
 		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
 	}
 }

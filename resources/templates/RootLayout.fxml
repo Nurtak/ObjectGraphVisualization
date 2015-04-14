@@ -149,7 +149,7 @@
                      <padding>
                         <Insets left="3.0" />
                      </padding></Separator>
-                  <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
+                  <SplitMenuButton fx:id="createRelation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
                     <items>
                         <MenuItem fx:id="createUndirectedAssociation" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association">
                            <graphic>

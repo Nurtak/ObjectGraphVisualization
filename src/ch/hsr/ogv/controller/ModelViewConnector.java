@@ -127,18 +127,18 @@ public class ModelViewConnector {
 	}
 
 	public PaneBox handleCreateNewObject(Selectable selected) {
-		return this.handleCreateNewObject((PaneBox) selected);
-	}
-
-	private PaneBox handleCreateNewObject(PaneBox selectedPaneBox) {
-		ModelBox selectedModelBox = this.getModelBox(selectedPaneBox);
-		ModelClass selectedModelClass = (ModelClass) selectedModelBox;
-		ModelObject newObject = this.modelManager.createObject(selectedModelClass);
-		PaneBox newBox = this.getPaneBox(newObject);
-		if (newBox != null) {
-			newBox.allowTopTextInput(true);
+		if (selected instanceof PaneBox) {
+			ModelBox selectedModelBox = this.getModelBox((PaneBox) selected);
+			ModelClass selectedModelClass = (ModelClass) selectedModelBox;
+			ModelObject newObject = this.modelManager.createObject(selectedModelClass);
+			PaneBox newBox = this.getPaneBox(newObject);
+			if (newBox != null) {
+				newBox.allowTopTextInput(true);
+			}
+			return newBox;
+		} else {
+			return null;
 		}
-		return newBox;
 	}
 
 	public Relation handleCreateNewGeneralization(PaneBox child, PaneBox parent) {
