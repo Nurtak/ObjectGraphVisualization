@@ -294,11 +294,13 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private ToggleButton createDependency;
-	
-	@FXML Button deleteSelected;
-	
-	@FXML ColorPicker colorPick;
-	
+
+	@FXML
+	Button deleteSelected;
+
+	@FXML
+	ColorPicker colorPick;
+
 	@FXML
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
@@ -311,8 +313,8 @@ public class RootLayoutController implements Observer, Initializable {
 		this.createToolbar.selectToggle(null);
 		Selectable selected = this.selectionController.getCurrentSelected();
 		if (this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {
-			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject((PaneBox) selected);
-			if(newPaneBox != null) {
+			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject(selected);
+			if (newPaneBox != null) {
 				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 			}
 		}
@@ -376,7 +378,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateDependency() {
 		// TODO
 	}
-	
+
 	@FXML
 	private void handleDeleteSelected() {
 		this.createToolbar.selectToggle(null);
@@ -386,7 +388,7 @@ public class RootLayoutController implements Observer, Initializable {
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 		}
 	}
-	
+
 	@FXML
 	private void handleColorPick() {
 		this.createToolbar.selectToggle(null);
@@ -395,7 +397,7 @@ public class RootLayoutController implements Observer, Initializable {
 			this.mvConnector.handleColorPick(selected, this.colorPick.getValue());
 		}
 	}
-	
+
 	private void addButtonAccelerators() {
 		if(this.createClass != null && this.createObject != null && this.deleteSelected != null) {
 			Platform.runLater(() -> {
@@ -405,18 +407,18 @@ public class RootLayoutController implements Observer, Initializable {
 						this.createClass.fire();
 					}
 				});
-				
+
 				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.O), () -> {
-					if(!this.createObject.isDisable()) {
+					if (!this.createObject.isDisable()) {
 						this.createObject.fire();
 					}
-		        });
-				
+				});
+
 				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.DELETE), () -> {
-					if(!this.deleteSelected.isDisable()) {
+					if (!this.deleteSelected.isDisable()) {
 						this.deleteSelected.fire();
 					}
-		        });
+				});
 			});
 		}
 	}
