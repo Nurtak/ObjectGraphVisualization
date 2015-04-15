@@ -31,11 +31,16 @@ public class ContextMenuController extends Observable implements Observer {
 	private ModelViewConnector mvConnector;
 	private Selectable selected;
 
+	private ContextMenu subsceneCM;
+	private MenuItem createClass;
+
 	private ContextMenu classCM;
 	private MenuItem createObject;
+	private MenuItem renameClass;
 	private MenuItem deleteClass;
 
 	private ContextMenu objectCM;
+	private MenuItem renameObject;
 	private MenuItem deleteObject;
 
 	private ContextMenu relationCM;
@@ -54,14 +59,37 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem createDependency;
 
 	public ContextMenuController() {
+		// Subscene
+		subsceneCM = new ContextMenu();
+		createClass = new MenuItem("Create Class");
+		ImageView createClassIV = new ImageView(ResourceLocator.getResourcePath(Resource.CLASS_GIF).toExternalForm());
+		createClass.setGraphic(createClassIV);
+
+		subsceneCM.getItems().add(createClass);
+
 		// Class
 		classCM = new ContextMenu();
-		createObject = new MenuItem("Create object");
-		deleteClass = new MenuItem("Delete class");
+		createObject = new MenuItem("Create Object");
+		ImageView createObjectIV = new ImageView(ResourceLocator.getResourcePath(Resource.OBJECT_GIF).toExternalForm());
+		createObject.setGraphic(createObjectIV);
+
+		renameClass = new MenuItem("Rename Class");
+		ImageView renameClassIV = new ImageView(ResourceLocator.getResourcePath(Resource.RENAME_GIF).toExternalForm());
+		renameClass.setGraphic(renameClassIV);
+
+		deleteClass = new MenuItem("Delete Class");
+		ImageView deleteIV = new ImageView(ResourceLocator.getResourcePath(Resource.DELETE_PNG).toExternalForm());
+		deleteClass.setGraphic(deleteIV);
+
 		classCM.getItems().add(createObject);
+		classCM.getItems().add(renameClass);
 		classCM.getItems().add(deleteClass);
 
+		// Class - Relation
+
 		createRelationM = new Menu("Create Relation");
+		ImageView relationIV = new ImageView(ResourceLocator.getResourcePath(Resource.RELATION_GIF).toExternalForm());
+		createRelationM.setGraphic(relationIV);
 
 		createUndirectedAssociation = new MenuItem("Association");
 		ImageView undirectedAssociationIV = new ImageView(ResourceLocator.getResourcePath(Resource.UNDIRECTED_ASSOCIATION_GIF).toExternalForm());
@@ -114,13 +142,27 @@ public class ContextMenuController extends Observable implements Observer {
 
 		// Object
 		objectCM = new ContextMenu();
-		deleteObject = new MenuItem("Delete object");
+		renameObject = new MenuItem("Rename Object");
+		ImageView renameObjectIV = new ImageView(ResourceLocator.getResourcePath(Resource.RENAME_GIF).toExternalForm());
+		renameObject.setGraphic(renameObjectIV);
+
+		deleteObject = new MenuItem("Delete Object");
+		ImageView deleteObjectIV = new ImageView(ResourceLocator.getResourcePath(Resource.DELETE_PNG).toExternalForm());
+		deleteObject.setGraphic(deleteObjectIV);
+
+		objectCM.getItems().add(renameObject);
 		objectCM.getItems().add(deleteObject);
 
 		// Relation
 		relationCM = new ContextMenu();
-		changeDirection = new MenuItem("Change direction");
-		deleteRelation = new MenuItem("Delete relation");
+		changeDirection = new MenuItem("Change Direction");
+		ImageView changeDirectionIV = new ImageView(ResourceLocator.getResourcePath(Resource.CHANGE_DIRECTION_GIF).toExternalForm());
+		changeDirection.setGraphic(changeDirectionIV);
+
+		deleteRelation = new MenuItem("Delete Relation");
+		ImageView deleteRelationIV = new ImageView(ResourceLocator.getResourcePath(Resource.DELETE_PNG).toExternalForm());
+		deleteRelation.setGraphic(deleteRelationIV);
+
 		relationCM.getItems().add(changeDirection);
 		relationCM.getItems().add(deleteRelation);
 
@@ -160,11 +202,17 @@ public class ContextMenuController extends Observable implements Observer {
 		createObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleCreateNewObject(selected);
 		});
+		// renameClass.setOnAction((ActionEvent e) -> {
+		// mvConnector.handleRename(selected);
+		// });
 		deleteClass.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
 		});
 
 		// Object
+		// renameObject.setOnAction((ActionEvent e) -> {
+		// mvConnector.handleRename(selected);
+		// });
 		deleteObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
 		});
