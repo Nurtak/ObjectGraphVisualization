@@ -60,8 +60,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private MouseMoveController mouseMoveController;
 	private CameraController cameraController;
 	
-	private Arrow viewArrow;
-	private PaneBox startBox;
+	private RelationCreationProcess relationCreationProcess = new RelationCreationProcess();
 	
 	private HashMap<Object, RelationType> toggleRelationMap = new HashMap<Object, RelationType>();
 	
@@ -310,7 +309,7 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
-			this.subSceneAdapter.receiveMouseEvents(this.createClass.isSelected(), this.subSceneAdapter.getFloor());
+			this.subSceneAdapter.receiveMouseEventsOnly(this.createClass.isSelected(), this.subSceneAdapter.getFloor());
 		}
 	}
 
@@ -335,8 +334,11 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateAssociation() {
 		if (tSplitMenuButton.isSelected()) {
 			this.createToolbar.selectToggle(null);
+			this.createClass.setDisable(false);
 		} else {
 			this.createToolbar.selectToggle(this.tSplitMenuButton);
+			this.createClass.setDisable(true);
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 		}
 	}
 
@@ -429,36 +431,21 @@ public class RootLayoutController implements Observer, Initializable {
 		}
 	}
 	
-	private void createShowViewArrow(PaneBox startBox, Point3D endPoint, RelationType relationType) {
-		if(this.viewArrow != null) {
-			this.subSceneAdapter.remove(this.viewArrow);
-			this.startBox = null;
-		}
-		this.startBox = startBox;
-		this.viewArrow = new Arrow(startBox, endPoint, relationType);
-		this.subSceneAdapter.add(this.viewArrow);
-	}
-
 	@Override
 	public void update(Observable o, Object arg) {
-		if (o instanceof SelectionController && arg instanceof Floor && this.selectionController != null) { // creating class
-			this.subSceneAdapter.receiveMouseEvents(false, this.subSceneAdapter.getFloor());
+		
+		if(this.selectionController == null) return;
+		
+		if (o instanceof SelectionController && arg instanceof Floor) { // creating class
+			this.subSceneAdapter.receiveMouseEventsOnly(false, this.subSceneAdapter.getFloor());
 			if (createClass != null && createClass.isSelected()) {
 				PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getCurrentSelectionCoord());
 				this.createClass.setSelected(false);
 				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 			}
 		}
-		else if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow) && this.selectionController != null) { // PaneBox or Arrow selected
+		else if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow)) { // PaneBox or Arrow selected
 			Selectable selected = this.selectionController.getCurrentSelected();
-			
-			// creating objects
-			if (this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass && createObject != null) {
-				this.createObject.setDisable(false);
-			}
-			else {
-				this.createObject.setDisable(true);
-			}
 			
 			// creating relations
 			if(this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) {
@@ -468,10 +455,11 @@ public class RootLayoutController implements Observer, Initializable {
 					MenuItem selectedChoice = this.tSplitMenuButton.selectedChoice();
 					if(selectedChoice != null && this.toggleRelationMap.containsKey(selectedChoice)) {
 						if(this.mouseMoveController != null) {
-							this.mouseMoveController.addObserver(this);
-							this.subSceneAdapter.receiveMouseEvents(true, this.subSceneAdapter.getFloor());
+							this.createAssociation.setDisable(true);
+							this.mouseMoveController.addObserver(this.relationCreationProcess);
+							this.subSceneAdapter.receiveMouseEventsOnly(true, this.subSceneAdapter.getFloor());
 							RelationType relationType = this.toggleRelationMap.get(selectedChoice);
-							createShowViewArrow(selectedPaneBox, this.selectionController.getCurrentSelectionCoord(), relationType);
+							this.relationCreationProcess.createViewArrow(this.selectionController, this.subSceneAdapter, selectedPaneBox, relationType);
 						}
 					}
 				}
@@ -483,12 +471,15 @@ public class RootLayoutController implements Observer, Initializable {
 				}
 			}
 			
-			if (this.selectionController.hasCurrentSelection()) {
+			if (this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProgress()) {
 				this.deleteSelected.setDisable(false);
 				this.colorPick.setDisable(false);
 				if(selected instanceof PaneBox) {
 					PaneBox selectedPaneBox = (PaneBox) selected;
 					this.colorPick.setValue(selectedPaneBox.getColor());
+					if(mvConnector.getModelBox(selectedPaneBox) instanceof ModelClass) {
+						this.createObject.setDisable(false);
+					}
 				}
 				else if(selected instanceof Arrow) {
 					Arrow selectedArrow = (Arrow) selected;
@@ -496,16 +487,11 @@ public class RootLayoutController implements Observer, Initializable {
 				}
 			}
 			else {
+				this.createObject.setDisable(true);
 				this.deleteSelected.setDisable(true);
 				this.colorPick.setDisable(true);
 				this.colorPick.setValue(Color.WHITE);
 			}
-		}
-		else if(o instanceof MouseMoveController && arg instanceof Point3D && this.viewArrow != null && this.startBox != null) {
-			Point3D movePoint = (Point3D) arg;
-			System.out.println("x: " + movePoint.getX() + ", y: " + movePoint.getY() + ", z: " + movePoint.getZ());
-			this.viewArrow.setPoints(this.startBox, movePoint);
-			this.viewArrow.drawArrow();
 		}
 	}
 	

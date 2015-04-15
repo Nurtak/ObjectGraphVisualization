@@ -176,7 +176,7 @@ public class Arrow extends Group implements Selectable {
 		addRotateXAxis(this.rotateXAngle);
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
-
+	
 	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box) {
 		Point3D boxCenter = box.getCenterPoint();
 		double halfWidth = box.getWidth() / 2;
