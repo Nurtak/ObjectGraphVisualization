@@ -104,10 +104,25 @@ public class Arrow extends Group implements Selectable {
 		getChildren().addAll(this.dashedLines);
 	}
 
+	public Arrow(PaneBox startBox, Point3D endPoint, RelationType type) {
+		this(startBox.getCenterPoint(), endPoint, type);
+		setPoints(startBox, endPoint);
+		drawArrow();
+	}
+	
 	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
 		this(startBox.getCenterPoint(), endBox.getCenterPoint(), type);
 		setPointsBasedOnBoxes(startBox, endBox);
 		drawArrow();
+	}
+	
+	public void setPoints(PaneBox startBox, Point3D endPoint) {
+		setStartPoint(startBox.getCenterPoint());
+		setEndPoint(endPoint);
+		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox);
+		if (startIntersection != null) {
+			setStartPoint(new Point3D(startIntersection.getX(), this.startPoint.getY(), startIntersection.getY()));
+		}
 	}
 
 	public void setPointsBasedOnBoxes(PaneBox startBox, PaneBox endBox) {

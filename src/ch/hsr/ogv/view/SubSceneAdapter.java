@@ -77,15 +77,17 @@ public class SubSceneAdapter implements Selectable {
     }
 	
 	/**
-	 * If set to true, only the floor will receive Mouse Events and every other added
+	 * If set to true, only the specified nodes will receive Mouse Events and every other added
 	 * Node will have MouseTransparent disabled. Reversed if false.
 	 * @param value
 	 */
-	public void onlyFloorMouseEvent(boolean value) {
+	public void receiveMouseEvents(boolean value, Node... nodes) {
 		for(Node n: world.getChildren()) {
 			n.setMouseTransparent(value);
 		}
-		this.floor.setMouseTransparent(!value);
+		for(Node n : nodes) {
+			n.setMouseTransparent(!value);
+		}
 	}
 	
 	public boolean add(Node node) {

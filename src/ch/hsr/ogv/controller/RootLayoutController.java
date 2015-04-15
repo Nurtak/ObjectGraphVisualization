@@ -7,9 +7,12 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
 
+import org.apache.log4j.helpers.OnlyOnceErrorHandler;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -56,6 +59,9 @@ public class RootLayoutController implements Observer, Initializable {
 	private SelectionController selectionController;
 	private MouseMoveController mouseMoveController;
 	private CameraController cameraController;
+	
+	private Arrow viewArrow;
+	private PaneBox startBox;
 	
 	private HashMap<Object, RelationType> toggleRelationMap = new HashMap<Object, RelationType>();
 	
@@ -304,7 +310,7 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
-			this.subSceneAdapter.onlyFloorMouseEvent(this.createClass.isSelected());
+			this.subSceneAdapter.receiveMouseEvents(this.createClass.isSelected(), this.subSceneAdapter.getFloor());
 		}
 	}
 
@@ -422,17 +428,28 @@ public class RootLayoutController implements Observer, Initializable {
 			});
 		}
 	}
+	
+	private void createShowViewArrow(PaneBox startBox, Point3D endPoint, RelationType relationType) {
+		if(this.viewArrow != null) {
+			this.subSceneAdapter.remove(this.viewArrow);
+			this.startBox = null;
+		}
+		this.startBox = startBox;
+		this.viewArrow = new Arrow(startBox, endPoint, relationType);
+		this.subSceneAdapter.add(this.viewArrow);
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof SelectionController && arg instanceof Floor && this.selectionController != null) { // creating class
-			this.subSceneAdapter.onlyFloorMouseEvent(false);
+			this.subSceneAdapter.receiveMouseEvents(false, this.subSceneAdapter.getFloor());
 			if (createClass != null && createClass.isSelected()) {
 				PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getCurrentSelectionCoord());
 				this.createClass.setSelected(false);
 				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 			}
-		} else if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow) && this.selectionController != null) { // PaneBox or Arrow selected
+		}
+		else if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow) && this.selectionController != null) { // PaneBox or Arrow selected
 			Selectable selected = this.selectionController.getCurrentSelected();
 			
 			// creating objects
@@ -445,12 +462,17 @@ public class RootLayoutController implements Observer, Initializable {
 			
 			// creating relations
 			if(this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
 				Toggle toggle = this.createToolbar.getSelectedToggle();
 				if(toggle != null && toggle.equals(this.tSplitMenuButton)) {
 					MenuItem selectedChoice = this.tSplitMenuButton.selectedChoice();
 					if(selectedChoice != null && this.toggleRelationMap.containsKey(selectedChoice)) {
-						RelationType relationType = this.toggleRelationMap.get(selectedChoice);
-						//this.mvConnector
+						if(this.mouseMoveController != null) {
+							this.mouseMoveController.addObserver(this);
+							this.subSceneAdapter.receiveMouseEvents(true, this.subSceneAdapter.getFloor());
+							RelationType relationType = this.toggleRelationMap.get(selectedChoice);
+							createShowViewArrow(selectedPaneBox, this.selectionController.getCurrentSelectionCoord(), relationType);
+						}
 					}
 				}
 				else if(toggle != null && toggle.equals(this.createDependency)) {
@@ -478,6 +500,12 @@ public class RootLayoutController implements Observer, Initializable {
 				this.colorPick.setDisable(true);
 				this.colorPick.setValue(Color.WHITE);
 			}
+		}
+		else if(o instanceof MouseMoveController && arg instanceof Point3D && this.viewArrow != null && this.startBox != null) {
+			Point3D movePoint = (Point3D) arg;
+			System.out.println("x: " + movePoint.getX() + ", y: " + movePoint.getY() + ", z: " + movePoint.getZ());
+			this.viewArrow.setPoints(this.startBox, movePoint);
+			this.viewArrow.drawArrow();
 		}
 	}
 	
