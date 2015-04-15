@@ -134,6 +134,7 @@ public class StageManager extends Observable implements Observer {
 
 	private void initContextMenuController() {
 		this.contextMenuController.setMVConnector(this.mvConnector);
+		this.contextMenuController.enableContextMenu(this.subSceneAdapter.getSubScene());
 	}
 
 	private void initSelectionController() {
@@ -141,7 +142,7 @@ public class StageManager extends Observable implements Observer {
 		this.selectionController.addObserver(this.rootLayoutController);
 		this.selectionController.addObserver(this.contextMenuController);
 	}
-	
+
 	private void initMouseMoveController() {
 		this.mouseMoveController.enableSubSceneMouseMove(this.subSceneAdapter);
 	}
@@ -286,7 +287,7 @@ public class StageManager extends Observable implements Observer {
 			}
 		}
 	}
-	
+
 	private void adaptBoxTopField(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null && modelBox instanceof ModelObject) {

@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.event.ActionEvent;
+import javafx.scene.SubScene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -31,7 +32,7 @@ public class ContextMenuController extends Observable implements Observer {
 	private ModelViewConnector mvConnector;
 	private Selectable selected;
 
-	private ContextMenu subsceneCM;
+	private ContextMenu subSceneCM;
 	private MenuItem createClass;
 
 	private ContextMenu classCM;
@@ -60,12 +61,12 @@ public class ContextMenuController extends Observable implements Observer {
 
 	public ContextMenuController() {
 		// Subscene
-		subsceneCM = new ContextMenu();
+		subSceneCM = new ContextMenu();
 		createClass = new MenuItem("Create Class");
 		ImageView createClassIV = new ImageView(ResourceLocator.getResourcePath(Resource.CLASS_GIF).toExternalForm());
 		createClass.setGraphic(createClassIV);
 
-		subsceneCM.getItems().add(createClass);
+		subSceneCM.getItems().add(createClass);
 
 		// Class
 		classCM = new ContextMenu();
@@ -86,7 +87,6 @@ public class ContextMenuController extends Observable implements Observer {
 		classCM.getItems().add(deleteClass);
 
 		// Class - Relation
-
 		createRelationM = new Menu("Create Relation");
 		ImageView relationIV = new ImageView(ResourceLocator.getResourcePath(Resource.RELATION_GIF).toExternalForm());
 		createRelationM.setGraphic(relationIV);
@@ -168,17 +168,30 @@ public class ContextMenuController extends Observable implements Observer {
 
 	}
 
+	public void enableContextMenu(SubScene subScene) {
+		subScene.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (me.getButton() == MouseButton.SECONDARY) {
+				subSceneCM.hide();
+				subSceneCM.show(subScene, me.getScreenX(), me.getScreenY());
+			} else if (subSceneCM.isShowing()) {
+				subSceneCM.hide();
+			}
+		});
+	}
+
 	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox) {
 		if (modelBox instanceof ModelClass) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+					me.consume();
 				}
 			});
 		} else if ((modelBox instanceof ModelObject)) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY) {
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+					me.consume();
 				}
 			});
 		}
@@ -188,6 +201,7 @@ public class ContextMenuController extends Observable implements Observer {
 		arrow.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (arrow.isSelected() && me.getButton() == MouseButton.SECONDARY) {
 				relationCM.show(arrow, me.getScreenX(), me.getScreenY());
+				me.consume();
 			}
 		});
 	}
