@@ -471,6 +471,7 @@ public class RootLayoutController implements Observer, Initializable {
 				}
 			}
 			
+			// button enabling / disabling
 			if (this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProgress()) {
 				this.deleteSelected.setDisable(false);
 				this.colorPick.setDisable(false);
