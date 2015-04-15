@@ -140,17 +140,11 @@ public class ModelViewConnector {
 			return null;
 		}
 	}
-
-	public Relation handleCreateNewGeneralization(PaneBox child, PaneBox parent) {
-		ModelBox modelBoxChild = this.getModelBox(child);
-		ModelBox modelBoxParent = this.getModelBox(parent);
-		return this.modelManager.createRelation(modelBoxChild, modelBoxParent, RelationType.GENERALIZATION, Arrow.DEFAULT_COLOR);
-	}
-
-	public Relation handleCreateNewDependency(PaneBox dependent, PaneBox supplier) {
-		ModelBox modelBoxDependet = this.getModelBox(dependent);
-		ModelBox modelBoxSupplier = this.getModelBox(supplier);
-		return this.modelManager.createRelation(modelBoxDependet, modelBoxSupplier, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
+	
+	public Relation handleCreateRelation(PaneBox start, PaneBox end, RelationType relationType) {
+		ModelBox modelBoxStart = this.getModelBox(start);
+		ModelBox modelBoxEnd = this.getModelBox(end);
+		return this.modelManager.createRelation(modelBoxStart, modelBoxEnd, relationType, Arrow.DEFAULT_COLOR);
 	}
 
 	public void handleDelete(Selectable selected) {

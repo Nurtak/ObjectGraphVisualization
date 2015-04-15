@@ -129,6 +129,7 @@ public class StageManager extends Observable implements Observer {
 		this.rootLayoutController.setMVConnector(this.mvConnector);
 		this.rootLayoutController.setSubSceneAdapter(this.subSceneAdapter);
 		this.rootLayoutController.setSelectionController(this.selectionController);
+		this.rootLayoutController.setMouseMoveController(this.mouseMoveController);
 		this.rootLayoutController.setCameraController(this.cameraController);
 	}
 
