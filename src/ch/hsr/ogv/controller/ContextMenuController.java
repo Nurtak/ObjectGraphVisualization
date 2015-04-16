@@ -4,7 +4,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.event.ActionEvent;
-import javafx.scene.SubScene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -21,6 +20,7 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
+import ch.hsr.ogv.view.SubSceneAdapter;
 
 /**
  *
@@ -168,11 +168,11 @@ public class ContextMenuController extends Observable implements Observer {
 
 	}
 
-	public void enableContextMenu(SubScene subScene) {
-		subScene.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+	public void enableContextMenu(SubSceneAdapter subSceneAdapter) {
+		subSceneAdapter.getSubScene().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY) {
 				subSceneCM.hide();
-				subSceneCM.show(subScene, me.getScreenX(), me.getScreenY());
+				subSceneCM.show(subSceneAdapter.getSubScene(), me.getScreenX(), me.getScreenY());
 			} else if (subSceneCM.isShowing()) {
 				subSceneCM.hide();
 			}

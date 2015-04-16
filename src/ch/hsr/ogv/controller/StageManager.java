@@ -135,7 +135,7 @@ public class StageManager extends Observable implements Observer {
 
 	private void initContextMenuController() {
 		this.contextMenuController.setMVConnector(this.mvConnector);
-		this.contextMenuController.enableContextMenu(this.subSceneAdapter.getSubScene());
+		this.contextMenuController.enableContextMenu(this.subSceneAdapter);
 	}
 
 	private void initSelectionController() {
