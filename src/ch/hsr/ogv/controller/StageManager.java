@@ -86,7 +86,7 @@ public class StageManager extends Observable implements Observer {
 		this.primaryStage.setTitle(this.appTitle);
 		this.primaryStage.setMinWidth(MIN_WIDTH);
 		this.primaryStage.setMinHeight(MIN_HEIGHT);
-		this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_PNG).toExternalForm())); // set the application icon
+		this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_GIF).toExternalForm())); // set the application icon
 
 		Pane canvas = (Pane) this.rootLayout.getCenter();
 		this.subSceneAdapter = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());

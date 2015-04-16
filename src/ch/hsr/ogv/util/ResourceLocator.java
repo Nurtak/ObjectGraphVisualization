@@ -15,7 +15,7 @@ public class ResourceLocator {
 
 	public enum Resource {
 
-		ICON_PNG("images/application_icon.gif"),
+		ICON_GIF("images/OGV.gif"),
 
 		ROOTLAYOUT_FXML("templates/RootLayout.fxml"),
 		PANEPRESET_FXML("templates/PanePreset.fxml"),

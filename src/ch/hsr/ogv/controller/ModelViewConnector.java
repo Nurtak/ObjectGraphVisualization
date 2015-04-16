@@ -103,8 +103,8 @@ public class ModelViewConnector {
 		ModelObject moB2 = this.modelManager.createObject(mcB);
 		ModelObject moB3 = this.modelManager.createObject(mcB);
 
-		// this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_AGGREGATION);
-		this.modelManager.createRelation(mcC, mcB, RelationType.GENERALIZATION, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
