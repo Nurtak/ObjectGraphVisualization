@@ -1,8 +1,10 @@
 package ch.hsr.ogv.controller;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
@@ -51,6 +53,26 @@ public class ModelViewConnector {
 			}
 		}
 		return null;
+	}
+	
+	public Set<PaneBox> getClassPaneBoxes() {
+		Set<PaneBox> classPaneBoxes = new HashSet<PaneBox>();
+		for(ModelBox modelBox : getBoxes().keySet()) {
+			if(modelBox instanceof ModelClass) {
+				classPaneBoxes.add(getBoxes().get(modelBox));
+			}
+		}
+		return classPaneBoxes;
+	}
+	
+	public Set<PaneBox> getObjectPaneBoxes() {
+		Set<PaneBox> objectPaneBoxes = new HashSet<PaneBox>();
+		for(ModelBox modelBox : getBoxes().keySet()) {
+			if(modelBox instanceof ModelObject) {
+				objectPaneBoxes.add(getBoxes().get(modelBox));
+			}
+		}
+		return objectPaneBoxes;
 	}
 
 	public Arrow getArrow(Relation key) {
@@ -141,9 +163,9 @@ public class ModelViewConnector {
 		}
 	}
 	
-	public Relation handleCreateRelation(PaneBox start, PaneBox end, RelationType relationType) {
-		ModelBox modelBoxStart = this.getModelBox(start);
-		ModelBox modelBoxEnd = this.getModelBox(end);
+	public Relation handleCreateRelation(PaneBox startBox, PaneBox endBox, RelationType relationType) {
+		ModelBox modelBoxStart = this.getModelBox(startBox);
+		ModelBox modelBoxEnd = this.getModelBox(endBox);
 		return this.modelManager.createRelation(modelBoxStart, modelBoxEnd, relationType, Arrow.DEFAULT_COLOR);
 	}
 

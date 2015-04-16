@@ -78,10 +78,11 @@ public class SubSceneAdapter implements Selectable {
 	
 	/**
 	 * If set to true, only the specified nodes will receive Mouse Events and every other added
-	 * Node will have MouseTransparent disabled. Reversed if false.
+	 * Node will have MouseTransparent disabled. Reversed if false. The specified nodes can be
+	 * omitted to allow mouse events for all respectively no nodes in this scene.
 	 * @param value
 	 */
-	public void receiveMouseEventsOnly(boolean value, Node... nodes) {
+	public void receiveMouseEvents(boolean value, Node... nodes) {
 		for(Node n: world.getChildren()) {
 			n.setMouseTransparent(value);
 		}

@@ -145,7 +145,7 @@ public class StageManager extends Observable implements Observer {
 	}
 
 	private void initMouseMoveController() {
-		this.mouseMoveController.enableSubSceneMouseMove(this.subSceneAdapter);
+		this.mouseMoveController.enableMouseMove(this.subSceneAdapter.getFloor());
 	}
 
 	private void initCameraController() {
@@ -229,6 +229,7 @@ public class StageManager extends Observable implements Observer {
 		if (modelBox instanceof ModelClass) {
 			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
+			this.mouseMoveController.enableMouseMove(paneBox);
 		}
 	}
 

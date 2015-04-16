@@ -72,7 +72,7 @@ public class Arrow extends Group implements Selectable {
 		return arrowEnd;
 	}
 
-	public RelationType getType() {
+	public RelationType getRelationType() {
 		return type;
 	}
 
