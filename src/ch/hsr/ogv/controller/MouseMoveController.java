@@ -2,10 +2,8 @@ package ch.hsr.ogv.controller;
 
 import java.util.Observable;
 
-import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
-import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
 public class MouseMoveController extends Observable {
@@ -24,9 +22,8 @@ public class MouseMoveController extends Observable {
 			//Floor floor = subSceneAdapter.getFloor();
 			PickResult pick = me.getPickResult();
 			if (pick != null && pick.getIntersectedNode() != null) { // && floor.hasTile(pick.getIntersectedNode())
-				Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
 				setChanged();
-				notifyObservers(new Point3D(coords.getX(), coords.getY(), coords.getZ()));
+				notifyObservers(pick);
 			}
 		});
 	}

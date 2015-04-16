@@ -27,7 +27,7 @@ public abstract class DragController extends Observable {
 
 	protected void setDragInProgress(SubSceneAdapter subSceneAdapter, boolean value) {
 		this.dragInProgress = value;
-		subSceneAdapter.receiveMouseEvents(value, subSceneAdapter.getFloor());
+		subSceneAdapter.receiveMouseEventsOnly(value, subSceneAdapter.getFloor());
 		setChanged();
 		notifyObservers(this.selected);
 	}
