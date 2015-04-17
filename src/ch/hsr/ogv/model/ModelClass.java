@@ -70,7 +70,7 @@ public class ModelClass extends ModelBox {
 	}
 
 	public ModelObject createModelObject() {
-		double levelPlus = (this.getModelObjects().size() + 1.0) * OBJECT_LEVEL_DIFF;
+		double levelPlus = getTopLevel() + OBJECT_LEVEL_DIFF;
 		Point3D modelObjectCoordinates = new Point3D(this.getX(), levelPlus, this.getZ());
 		ModelObject modelObject = new ModelObject(this, modelObjectCoordinates, this.getWidth(), this.getHeight(), Util.brighter(this.getColor(), 0.1));
 		for (Attribute attribute : getAttributes()) {
@@ -83,13 +83,23 @@ public class ModelClass extends ModelBox {
 		return null;
 	}
 	
-	private void resetObjectLevel() {
+	public void resetObjectLevel() {
 		for(int i = 0; i < this.modelObjects.size(); i++) {
 			ModelObject modelObject = this.modelObjects.get(i);
 			double level = (i + 1.0) * OBJECT_LEVEL_DIFF;
 			Point3D modelObjectCoordinates = new Point3D(modelObject.getX(), level, this.getZ());
 			modelObject.setCoordinates(modelObjectCoordinates);
 		}
+	}
+	
+	private double getTopLevel() {
+		double y = 0.0;
+		for(ModelObject modelObject : this.modelObjects) {
+			if(modelObject.getY() > y) {
+				y = modelObject.getY();
+			}
+		}
+		return y;
 	}
 
 	public Attribute createAttribute() {
@@ -112,8 +122,9 @@ public class ModelClass extends ModelBox {
 		// ModelObject.modelObjectCounter.decrementAndGet();
 		boolean removed =  modelObjects.remove(modelObject);
 		if(removed) {
-			// TODO do not change object level, if level was changed by user
-			resetObjectLevel();
+			double level = getTopLevel() + OBJECT_LEVEL_DIFF;
+			Point3D modelObjectCoordinates = new Point3D(modelObject.getX(), level, this.getZ());
+			modelObject.setCoordinates(modelObjectCoordinates);
 		}
 		return removed;
 	}

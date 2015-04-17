@@ -332,10 +332,8 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateAssociation() {
 		if (tSplitMenuButton.isSelected()) {
 			this.createToolbar.selectToggle(null);
-			this.createClass.setDisable(false);
 		} else {
 			this.createToolbar.selectToggle(this.tSplitMenuButton);
-			this.createClass.setDisable(true);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 		}
 	}
@@ -446,9 +444,6 @@ public class RootLayoutController implements Observer, Initializable {
 		}
 		
 		if(this.mouseMoveController != null && relationType != null) {
-			this.createAssociation.setDisable(true);
-			this.createDependency.setDisable(true);
-			this.createGeneralization.setDisable(true);
 			this.mouseMoveController.addObserver(this.relationCreationProcess);
 			this.relationCreationProcess.startProcess(this.mvConnector, this.selectionController, this.subSceneAdapter, selectedPaneBox, relationType);
 		}
@@ -460,9 +455,6 @@ public class RootLayoutController implements Observer, Initializable {
 		PaneBox endBox = this.relationCreationProcess.getEndBox();
 		
 		this.mouseMoveController.deleteObserver(this.relationCreationProcess);
-		this.createAssociation.setDisable(false);
-		this.createDependency.setDisable(false);
-		this.createGeneralization.setDisable(false);
 		this.createToolbar.selectToggle(null);
 		this.relationCreationProcess.endProcess(this.subSceneAdapter);
 		
@@ -474,6 +466,17 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 		}
 
+	}
+	
+	private void disableAllButtons(boolean value) {
+		this.createAssociation.setDisable(value);
+		this.createDependency.setDisable(value);
+		this.createGeneralization.setDisable(value);
+		this.createClass.setDisable(value);
+		this.createObject.setDisable(value);
+		this.deleteSelected.setDisable(value);
+		this.colorPick.setDisable(value);
+		if(value) this.colorPick.setValue(Color.WHITE);
 	}
 	
 	@Override
@@ -509,8 +512,8 @@ public class RootLayoutController implements Observer, Initializable {
 			
 			// button enabling / disabling
 			if (this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProcess()) {
-				this.deleteSelected.setDisable(false);
-				this.colorPick.setDisable(false);
+				disableAllButtons(false);
+				this.colorPick.setValue(Color.WHITE);
 				if(selectable instanceof PaneBox && this.selectionController.isCurrentSelected(selectable)) {
 					PaneBox selectedPaneBox = (PaneBox) selectable;
 					this.colorPick.setValue(selectedPaneBox.getColor());
@@ -523,11 +526,16 @@ public class RootLayoutController implements Observer, Initializable {
 					this.colorPick.setValue(selectedArrow.getColor());
 				}
 			}
-			else {
+			
+			if (!this.selectionController.hasCurrentSelection()) {
+				disableAllButtons(false);
 				this.createObject.setDisable(true);
 				this.deleteSelected.setDisable(true);
 				this.colorPick.setDisable(true);
-				this.colorPick.setValue(Color.WHITE);
+			}
+			
+			if (this.relationCreationProcess.isInProcess()) {
+				disableAllButtons(true);
 			}
 		}
 	}

@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
@@ -151,22 +152,34 @@ public class ModelViewConnector {
 	public PaneBox handleCreateNewObject(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			ModelBox selectedModelBox = this.getModelBox((PaneBox) selected);
-			ModelClass selectedModelClass = (ModelClass) selectedModelBox;
-			ModelObject newObject = this.modelManager.createObject(selectedModelClass);
-			PaneBox newBox = this.getPaneBox(newObject);
-			if (newBox != null) {
-				newBox.allowTopTextInput(true);
+			if(selectedModelBox != null && selectedModelBox instanceof ModelClass) {
+				ModelClass selectedModelClass = (ModelClass) selectedModelBox;
+				ModelObject newObject = this.modelManager.createObject(selectedModelClass);
+				PaneBox newBox = this.getPaneBox(newObject);
+				if (newBox != null) {
+					newBox.allowTopTextInput(true);
+					return newBox;
+				}
 			}
-			return newBox;
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	public Relation handleCreateRelation(PaneBox startBox, PaneBox endBox, RelationType relationType) {
 		ModelBox modelBoxStart = this.getModelBox(startBox);
 		ModelBox modelBoxEnd = this.getModelBox(endBox);
 		return this.modelManager.createRelation(modelBoxStart, modelBoxEnd, relationType, Arrow.DEFAULT_COLOR);
+	}
+	
+	public Attribute createNewAttribute(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			ModelBox selectedModelBox = this.getModelBox((PaneBox) selected);
+			if(selectedModelBox != null && selectedModelBox instanceof ModelClass) {
+				ModelClass selectedModelClass = (ModelClass) selectedModelBox;
+				return selectedModelClass.createAttribute();
+			}
+		}
+		return null;
 	}
 
 	public void handleDelete(Selectable selected) {
@@ -184,7 +197,11 @@ public class ModelViewConnector {
 			this.modelManager.deleteRelation(relationToDelete);
 		}
 	}
-
+	
+	public void handleDelete(Selectable selected, int i) {
+		
+	}
+	
 	public void handleColorPick(Selectable selected, Color pickedColor) {
 		if (selected instanceof PaneBox) {
 			ModelBox modelPickColor = this.getModelBox((PaneBox) selected);
