@@ -139,7 +139,7 @@ public class ModelClass extends ModelBox {
 		return deletedObject;
 	}
 
-	public boolean deleteAttribute(Attribute attribute) {
+	private boolean deleteAttribute(Attribute attribute) {
 		for (ModelObject modelObject : getModelObjects()) {
 			modelObject.deleteAttributeValue(attribute);
 		}
@@ -150,14 +150,18 @@ public class ModelClass extends ModelBox {
 		}
 		return deleted;
 	}
-
-	public boolean hasSuperClass() {
+	
+	public List<ModelClass> getSubClasses() {
+		ArrayList<ModelClass> subClassList = new ArrayList<ModelClass>();
 		for (Endpoint endpoint : this.getEndpoints()) {
-			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
-				return true;
+			if(endpoint.getType() == EndpointType.EMPTY_ARROW) {
+				ModelBox modelBox = endpoint.getFriend().getAppendant();
+				if(modelBox instanceof ModelClass) {
+					subClassList.add((ModelClass) modelBox);
+				}
 			}
 		}
-		return false;
+		return subClassList;
 	}
 
 	public ModelClass getSuperClass() {

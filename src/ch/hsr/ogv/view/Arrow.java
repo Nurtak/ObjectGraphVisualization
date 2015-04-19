@@ -256,11 +256,13 @@ public class Arrow extends Group implements Selectable {
 	}
 
 	private void buildSelectionHelper() {
-		this.selectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, this.length);
-		this.selectionHelper.depthProperty().bind(this.line.depthProperty());
+		double endGap = this.arrowEnd.getAdditionalGap();
+		double startGap = this.arrowStart.getAdditionalGap();
+		this.selectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, this.length + (endGap + startGap) / 2);
+		this.selectionHelper.depthProperty().bind(this.line.depthProperty().add((endGap + startGap) / 2));
 		this.selectionHelper.translateXProperty().bind(this.line.translateXProperty());
 		this.selectionHelper.translateYProperty().bind(this.line.translateYProperty());
-		this.selectionHelper.translateZProperty().bind(this.line.translateZProperty());
+		this.selectionHelper.translateZProperty().bind(this.line.translateZProperty().subtract((-endGap + startGap) / 4));
 		this.selectionHelper.rotateProperty().bind(this.line.rotateProperty());
 		this.selectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 	}

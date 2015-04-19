@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javafx.geometry.Point3D;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.ModelBox;
@@ -184,7 +185,7 @@ public class ModelViewConnector {
 
 	public void handleDelete(Selectable selected) {
 		if (selected instanceof PaneBox) {
-			ModelBox modelToDelete = this.getModelBox((PaneBox) selected);
+			ModelBox modelToDelete = getModelBox((PaneBox) selected);
 			if (modelToDelete instanceof ModelClass) {
 				ModelClass classToDelete = (ModelClass) modelToDelete;
 				this.modelManager.deleteClass(classToDelete);
@@ -193,13 +194,21 @@ public class ModelViewConnector {
 				this.modelManager.deleteObject(objectToDelete);
 			}
 		} else if (selected instanceof Arrow) {
-			Relation relationToDelete = this.getRelation((Arrow) selected);
+			Relation relationToDelete = getRelation((Arrow) selected);
 			this.modelManager.deleteRelation(relationToDelete);
 		}
 	}
 	
-	public void handleDelete(Selectable selected, int i) {
-		
+	public void handleDeleteAttribute(PaneBox paneBox) {
+		Label selectedLabel = paneBox.getSelectedLabel();
+		if(selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
+			int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+			ModelBox modelBox = getModelBox(paneBox);
+			if(modelBox instanceof ModelClass) {
+				ModelClass modelClass = (ModelClass) modelBox;
+				modelClass.deleteAttribute(rowIndex);
+			}
+		}
 	}
 	
 	public void handleColorPick(Selectable selected, Color pickedColor) {
