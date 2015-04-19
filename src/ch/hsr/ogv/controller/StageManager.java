@@ -179,6 +179,11 @@ public class StageManager extends Observable implements Observer {
 		this.subSceneAdapter.remove(node);
 		this.rootLayout.applyCss();
 	}
+	
+//	private void addVerticalHelper(PaneBox basePaneBox) {
+//		VerticalHelper verticalHelper = this.subSceneAdapter.addVerticalHelper(basePaneBox);
+//		this.mouseMoveController.enableMouseMove(verticalHelper);
+//	}
 
 	private void addClassToSubScene(ModelClass modelClass) {
 		modelClass.addObserver(this);
@@ -190,6 +195,8 @@ public class StageManager extends Observable implements Observer {
 		addPaneBoxControls(modelClass, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
+		// TODO vertical helpers
+		//addVerticalHelper(paneBox);
 		this.mvConnector.putBoxes(modelClass, paneBox);
 	}
 
@@ -226,10 +233,10 @@ public class StageManager extends Observable implements Observer {
 		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
 		this.textFieldController.enableTextInput(modelBox, paneBox);
 		this.contextMenuController.enableContextMenu(modelBox, paneBox);
+		this.mouseMoveController.enableMouseMove(paneBox);
 		if (modelBox instanceof ModelClass) {
 			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
-			this.mouseMoveController.enableMouseMove(paneBox);
 		}
 	}
 
@@ -403,7 +410,6 @@ public class StageManager extends Observable implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) arg;
 			if (!this.mvConnector.containsBoxes(modelClass)) { // class is new
@@ -412,6 +418,7 @@ public class StageManager extends Observable implements Observer {
 				adaptArrowToBox(modelClass);
 			} else {
 				PaneBox toDelete = this.mvConnector.removeBoxes(modelClass);
+				this.subSceneAdapter.removeVerticalHelper(toDelete);
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
 			}

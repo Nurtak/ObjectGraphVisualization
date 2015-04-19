@@ -1,5 +1,8 @@
 package ch.hsr.ogv.view;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -21,6 +24,7 @@ public class SubSceneAdapter implements Selectable {
 	private SubSceneCamera subSceneCamera;
 	private Axis axis;
 	private Floor floor;
+	private Set<VerticalHelper> verticalHelpers = new HashSet<VerticalHelper>();
 	
 	private volatile boolean selected = false;
 
@@ -42,6 +46,28 @@ public class SubSceneAdapter implements Selectable {
 	
 	public Floor getFloor() {
 		return this.floor;
+	}
+	
+	public Set<VerticalHelper> getVerticalHelpers() {
+		return this.verticalHelpers;
+	}
+	
+	public VerticalHelper addVerticalHelper(PaneBox basePaneBox) {
+		VerticalHelper verticalHelper = new VerticalHelper(basePaneBox);
+		this.world.getChildren().add(verticalHelper);
+		this.verticalHelpers.add(verticalHelper);
+		return verticalHelper;
+	}
+	
+	public VerticalHelper removeVerticalHelper(PaneBox basePaneBox) {
+		for(VerticalHelper verticalHelper : this.verticalHelpers) {
+			if(verticalHelper.isBasePaneBox(basePaneBox)) {
+				this.world.getChildren().remove(verticalHelper);
+				this.verticalHelpers.remove(verticalHelper);
+				return verticalHelper;
+			}
+		}
+		return null;
 	}
 	
 	public Color getColor() {

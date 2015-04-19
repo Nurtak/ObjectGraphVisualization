@@ -375,12 +375,16 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateGeneralization() {
-		// TODO
+		if(this.createGeneralization.isSelected()) {
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+		}
 	}
 
 	@FXML
 	private void handleCreateDependency() {
-		// TODO
+		if(this.createDependency.isSelected()) {
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+		}
 	}
 
 	@FXML
@@ -485,11 +489,16 @@ public class RootLayoutController implements Observer, Initializable {
 		if(this.selectionController == null) return;
 		
 		if (o instanceof SelectionController && arg instanceof Floor) { // creating class
-			this.subSceneAdapter.receiveMouseEvents(false, this.subSceneAdapter.getFloor());
-			if (createClass != null && createClass.isSelected()) {
-				PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getCurrentSelectionCoord());
-				this.createClass.setSelected(false);
-				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
+			if(!this.relationCreationProcess.isInProcess()) {
+				this.subSceneAdapter.receiveMouseEvents(false, this.subSceneAdapter.getFloor());
+				if (createClass != null && createClass.isSelected()) {
+					PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getCurrentSelectionCoord());
+					this.createClass.setSelected(false);
+					this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
+				}
+			}
+			else {
+				this.selectionController.setSelected(this.relationCreationProcess.getViewArrow(), true, this.subSceneAdapter);
 			}
 		}
 		else if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow)) { // PaneBox or Arrow selected
@@ -513,7 +522,6 @@ public class RootLayoutController implements Observer, Initializable {
 			// button enabling / disabling
 			if (this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProcess()) {
 				disableAllButtons(false);
-				this.colorPick.setValue(Color.WHITE);
 				if(selectable instanceof PaneBox && this.selectionController.isCurrentSelected(selectable)) {
 					PaneBox selectedPaneBox = (PaneBox) selectable;
 					this.colorPick.setValue(selectedPaneBox.getColor());
@@ -527,7 +535,7 @@ public class RootLayoutController implements Observer, Initializable {
 				}
 			}
 			
-			if (!this.selectionController.hasCurrentSelection()) {
+			if (!this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProcess()) {
 				disableAllButtons(false);
 				this.createObject.setDisable(true);
 				this.deleteSelected.setDisable(true);
@@ -537,6 +545,9 @@ public class RootLayoutController implements Observer, Initializable {
 			if (this.relationCreationProcess.isInProcess()) {
 				disableAllButtons(true);
 			}
+		}
+		else { // SubSceneAdapter selected
+			this.colorPick.setValue(Color.WHITE);
 		}
 	}
 	

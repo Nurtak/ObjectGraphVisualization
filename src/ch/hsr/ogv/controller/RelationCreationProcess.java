@@ -1,8 +1,8 @@
 package ch.hsr.ogv.controller;
 
+import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
@@ -49,7 +49,7 @@ public class RelationCreationProcess implements Observer {
 		subSceneAdapter.add(this.viewArrow);
 		subSceneAdapter.add(this.viewArrow.getSelection());
 		subSceneAdapter.receiveMouseEvents(false, this.viewArrow);
-		restrictMouseEvents();
+		handleMouseEvents();
 	}
 	
 	public void endProcess(SubSceneAdapter subSceneAdapter) {
@@ -74,16 +74,16 @@ public class RelationCreationProcess implements Observer {
 		this.subSceneAdapter.receiveMouseEvents(false, this.subSceneAdapter.getFloor());
 	}
 	
-	private void restrictMouseEvents() {
+	private void handleMouseEvents() {
 		if(mvConnector == null) return;
-		Set<PaneBox> classPaneBoxes = mvConnector.getClassPaneBoxes();
-		Node[] nodes = new Node[classPaneBoxes.size() + 1];
+		Collection<PaneBox> boxes = mvConnector.getBoxes().values();
+		Node[] nodes = new Node[boxes.size() + 1];
 		int i = 0;
-		for(PaneBox classPaneBox : classPaneBoxes) {
-			nodes[i] = classPaneBox.get();
+		for(PaneBox box : boxes) {
+			nodes[i] = box.get();
 			i++;
 		}
-		nodes[classPaneBoxes.size()] = this.subSceneAdapter.getFloor();
+		nodes[boxes.size()] = this.subSceneAdapter.getFloor();
 		this.subSceneAdapter.receiveMouseEvents(true, nodes);
 	}
 	
@@ -115,6 +115,10 @@ public class RelationCreationProcess implements Observer {
 		}
 		else if(o instanceof MouseMoveController && arg instanceof PaneBox && this.creationInProcess) {
 			PaneBox paneBoxMovedOver = (PaneBox) arg;
+			if(this.endBox != null && !this.endBox.equals(this.startBox) && !this.endBox.equals(paneBoxMovedOver)) {
+				this.endBox.setSelected(false);
+				this.endBox = null;
+			}
 			this.endBox = paneBoxMovedOver;
 			this.endBox.setSelected(true); // only visually show selection
 			this.viewArrow.setPointsBasedOnBoxes(this.startBox, this.endBox);
