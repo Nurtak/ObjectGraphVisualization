@@ -39,22 +39,5 @@ public class GeometryUtil {
 		}
 		return Math.toDegrees(Math.asin(height / hypothenuse));
 	}
-	
-	public static double divideLineFraction(double start, double end, double fraction) {
-		return start + fraction * end - start;
-	}
-	
-	public static Point2D divideLineFraction(Point2D start, Point2D end, double fraction) {
-		double x = start.getX() + fraction * (end.getX() - start.getX());
-		double y = start.getY() + fraction * (end.getY() - start.getY());
-		return new Point2D(x, y);
-	}
-
-	public static Point3D divideLineFraction(Point3D start, Point3D end, double fraction) {
-		double x = start.getX() + fraction * (end.getX() - start.getX());
-		double y = start.getY() + fraction * (end.getY() - start.getY());
-		double z = start.getZ() + fraction * (end.getZ() - start.getZ());
-		return new Point3D(x, y, z);
-	}
 		
 }

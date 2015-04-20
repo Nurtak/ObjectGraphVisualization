@@ -49,6 +49,7 @@ public class ResourceLocator {
 		GENERALIZATION_GIF("images/menu/general.gif"),
 		DEPENDENCY_GIF("images/menu/depend.gif"),
 
+		ADD_GIF("images/menu/add.gif"),	
 		CLASS_GIF("images/menu/structureclass.gif"),
 		OBJECT_GIF("images/menu/instance.gif"),
 		RELATION_GIF("images/menu/relation.gif"),

@@ -32,22 +32,28 @@ public class ContextMenuController extends Observable implements Observer {
 	private ModelViewConnector mvConnector;
 	private Selectable selected;
 
+	// Subscene
 	private ContextMenu subSceneCM;
 	private MenuItem createClass;
 
+	// Class
 	private ContextMenu classCM;
 	private MenuItem createObject;
 	private MenuItem renameClass;
+	private MenuItem addAttribute;
 	private MenuItem deleteClass;
 
+	// Object
 	private ContextMenu objectCM;
 	private MenuItem renameObject;
 	private MenuItem deleteObject;
 
+	// Relation
 	private ContextMenu relationCM;
 	private MenuItem changeDirection;
 	private MenuItem deleteRelation;
 
+	// ModelBox
 	private Menu createRelationM;
 	private MenuItem createUndirectedAssociation;
 	private MenuItem createDirectedAssociation;
@@ -59,72 +65,66 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem createGeneralization;
 	private MenuItem createDependency;
 
+	// Attribute
+	private Menu attributeCM;
+	private MenuItem renameAttribute;
+	private MenuItem muteAttributeUp;
+	private MenuItem muteAttributeDown;
+	private MenuItem deleteAttribute;
+
+	// Value (Attribute)
+	private Menu valueCM;
+	private MenuItem changeValue;
+
 	public ContextMenuController() {
+
 		// Subscene
 		subSceneCM = new ContextMenu();
-		createClass = new MenuItem("Create Class");
-		ImageView createClassIV = new ImageView(ResourceLocator.getResourcePath(Resource.CLASS_GIF).toExternalForm());
-		createClass.setGraphic(createClassIV);
-
+		createClass = getMenuItem("Create Class", Resource.CLASS_GIF);
 		subSceneCM.getItems().add(createClass);
 
 		// Class
 		classCM = new ContextMenu();
-		createObject = new MenuItem("Create Object");
-		ImageView createObjectIV = new ImageView(ResourceLocator.getResourcePath(Resource.OBJECT_GIF).toExternalForm());
-		createObject.setGraphic(createObjectIV);
-
-		renameClass = new MenuItem("Rename Class");
-		ImageView renameClassIV = new ImageView(ResourceLocator.getResourcePath(Resource.RENAME_GIF).toExternalForm());
-		renameClass.setGraphic(renameClassIV);
-
-		deleteClass = new MenuItem("Delete Class");
-		ImageView deleteIV = new ImageView(ResourceLocator.getResourcePath(Resource.DELETE_PNG).toExternalForm());
-		deleteClass.setGraphic(deleteIV);
-
+		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF);
+		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF);
+		addAttribute = getMenuItem("Add Attribute", Resource.ADD_GIF);
+		deleteClass = getMenuItem("Delete Class", Resource.DELETE_PNG);
+		relationMenu();
 		classCM.getItems().add(renameClass);
-		classCM.getItems().add(createObject);
+		classCM.getItems().add(addAttribute);
+		classCM.getItems().add(createRelationM);
+		classCM.getItems().add(deleteClass);
 
+		// Object
+		objectCM = new ContextMenu();
+		renameObject = getMenuItem("Rename Object", Resource.RENAME_GIF);
+		deleteObject = getMenuItem("Delete Object", Resource.DELETE_PNG);
+		objectCM.getItems().add(renameObject);
+		objectCM.getItems().add(deleteObject);
+
+		// Relation
+		relationCM = new ContextMenu();
+		changeDirection = getMenuItem("Change Direction", Resource.CHANGE_DIRECTION_GIF);
+		deleteRelation = getMenuItem("Delete Relation", Resource.DELETE_PNG);
+		relationCM.getItems().add(changeDirection);
+		relationCM.getItems().add(deleteRelation);
+
+	}
+
+	private void relationMenu() {
 		// Class - Relation
 		createRelationM = new Menu("Create Relation");
-		ImageView relationIV = new ImageView(ResourceLocator.getResourcePath(Resource.RELATION_GIF).toExternalForm());
-		createRelationM.setGraphic(relationIV);
+		createRelationM.setGraphic(getImageView(Resource.RELATION_GIF));
 
-		createUndirectedAssociation = new MenuItem("Association");
-		ImageView undirectedAssociationIV = new ImageView(ResourceLocator.getResourcePath(Resource.UNDIRECTED_ASSOCIATION_GIF).toExternalForm());
-		createUndirectedAssociation.setGraphic(undirectedAssociationIV);
-
-		createDirectedAssociation = new MenuItem("Directed Association");
-		ImageView directedAssociationIV = new ImageView(ResourceLocator.getResourcePath(Resource.DIRECTED_ASSOCIATION_GIF).toExternalForm());
-		createDirectedAssociation.setGraphic(directedAssociationIV);
-
-		createBidirectedAssociation = new MenuItem("Bidirected Association");
-		ImageView bidirectedAssociationIV = new ImageView(ResourceLocator.getResourcePath(Resource.BIDIRECTED_ASSOCIATION_GIF).toExternalForm());
-		createBidirectedAssociation.setGraphic(bidirectedAssociationIV);
-
-		createUndirectedAggregation = new MenuItem("Aggregation");
-		ImageView undirectedAggregationIV = new ImageView(ResourceLocator.getResourcePath(Resource.UNDIRECTED_AGGREGATION_GIF).toExternalForm());
-		createUndirectedAggregation.setGraphic(undirectedAggregationIV);
-
-		createDirectedAggregation = new MenuItem("Directed Aggregation");
-		ImageView directedAggregationIV = new ImageView(ResourceLocator.getResourcePath(Resource.DIRECTED_AGGREGATION_GIF).toExternalForm());
-		createDirectedAggregation.setGraphic(directedAggregationIV);
-
-		createUndirectedComposition = new MenuItem("Composition");
-		ImageView undirectedCompositionnIV = new ImageView(ResourceLocator.getResourcePath(Resource.UNDIRECTED_COMPOSITION_GIF).toExternalForm());
-		createUndirectedComposition.setGraphic(undirectedCompositionnIV);
-
-		createDirectedComposition = new MenuItem("Directed Composition");
-		ImageView directedCompositionIV = new ImageView(ResourceLocator.getResourcePath(Resource.DIRECTED_COMPOSITION_GIF).toExternalForm());
-		createDirectedComposition.setGraphic(directedCompositionIV);
-
-		createGeneralization = new MenuItem("Generalization");
-		ImageView generalizationIV = new ImageView(ResourceLocator.getResourcePath(Resource.GENERALIZATION_GIF).toExternalForm());
-		createGeneralization.setGraphic(generalizationIV);
-
-		createDependency = new MenuItem("Dependency");
-		ImageView dependencyIV = new ImageView(ResourceLocator.getResourcePath(Resource.DEPENDENCY_GIF).toExternalForm());
-		createDependency.setGraphic(dependencyIV);
+		createUndirectedAssociation = getMenuItem("Association", Resource.UNDIRECTED_ASSOCIATION_GIF);
+		createDirectedAssociation = getMenuItem("Directed Association", Resource.DIRECTED_ASSOCIATION_GIF);
+		createBidirectedAssociation = getMenuItem("Bidirected Association", Resource.BIDIRECTED_ASSOCIATION_GIF);
+		createUndirectedAggregation = getMenuItem("Aggregation", Resource.UNDIRECTED_AGGREGATION_GIF);
+		createDirectedAggregation = getMenuItem("Directed Aggregation", Resource.DIRECTED_AGGREGATION_GIF);
+		createUndirectedComposition = getMenuItem("Composition", Resource.UNDIRECTED_COMPOSITION_GIF);
+		createDirectedComposition = getMenuItem("Directed Composition", Resource.DIRECTED_COMPOSITION_GIF);
+		createGeneralization = getMenuItem("Generalization", Resource.GENERALIZATION_GIF);
+		createDependency = getMenuItem("Dependency", Resource.DEPENDENCY_GIF);
 
 		createRelationM.getItems().add(createUndirectedAssociation);
 		createRelationM.getItems().add(createDirectedAssociation);
@@ -137,36 +137,6 @@ public class ContextMenuController extends Observable implements Observer {
 		createRelationM.getItems().add(createGeneralization);
 		createRelationM.getItems().add(new SeparatorMenuItem());
 		createRelationM.getItems().add(createDependency);
-		classCM.getItems().add(createRelationM);
-
-		classCM.getItems().add(deleteClass);
-
-		// Object
-		objectCM = new ContextMenu();
-		renameObject = new MenuItem("Rename Object");
-		ImageView renameObjectIV = new ImageView(ResourceLocator.getResourcePath(Resource.RENAME_GIF).toExternalForm());
-		renameObject.setGraphic(renameObjectIV);
-
-		deleteObject = new MenuItem("Delete Object");
-		ImageView deleteObjectIV = new ImageView(ResourceLocator.getResourcePath(Resource.DELETE_PNG).toExternalForm());
-		deleteObject.setGraphic(deleteObjectIV);
-
-		objectCM.getItems().add(renameObject);
-		objectCM.getItems().add(deleteObject);
-
-		// Relation
-		relationCM = new ContextMenu();
-		changeDirection = new MenuItem("Change Direction");
-		ImageView changeDirectionIV = new ImageView(ResourceLocator.getResourcePath(Resource.CHANGE_DIRECTION_GIF).toExternalForm());
-		changeDirection.setGraphic(changeDirectionIV);
-
-		deleteRelation = new MenuItem("Delete Relation");
-		ImageView deleteRelationIV = new ImageView(ResourceLocator.getResourcePath(Resource.DELETE_PNG).toExternalForm());
-		deleteRelation.setGraphic(deleteRelationIV);
-
-		relationCM.getItems().add(changeDirection);
-		relationCM.getItems().add(deleteRelation);
-
 	}
 
 	public void enableContextMenu(SubSceneAdapter subSceneAdapter) {
@@ -246,5 +216,15 @@ public class ContextMenuController extends Observable implements Observer {
 				this.selected = (Selectable) arg;
 			}
 		}
+	}
+
+	private ImageView getImageView(Resource image) {
+		return new ImageView(ResourceLocator.getResourcePath(image).toExternalForm());
+	}
+
+	private MenuItem getMenuItem(String text, Resource image) {
+		MenuItem mi = new MenuItem(text);
+		mi.setGraphic(getImageView(image));
+		return mi;
 	}
 }
