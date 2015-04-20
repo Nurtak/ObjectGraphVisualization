@@ -32,6 +32,7 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.util.FXMLResourceUtil;
+import ch.hsr.ogv.util.GeometryUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
@@ -299,19 +300,34 @@ public class StageManager extends Observable implements Observer {
 	}
 	
 	private void adjustArrowShift(ModelBox modelBox) {
-		HashMap<Endpoint, Arrow> arrowCoordinates = new HashMap<Endpoint, Arrow>();
+		HashMap<Endpoint, Arrow> endpointArrow = new HashMap<Endpoint, Arrow>();
 		ArrayList<Endpoint> xSortedList = new ArrayList<Endpoint>();
 		ArrayList<Endpoint> zSortedList = new ArrayList<Endpoint>();
 		for(Endpoint endpoint : modelBox.getEndpoints()) {
 			Arrow arrow = this.mvConnector.getArrow(endpoint.getRelation());
 			if(arrow != null) {
-				arrowCoordinates.put(endpoint, arrow);
+				endpointArrow.put(endpoint, arrow);
 				xSortedList.add(endpoint);
 				zSortedList.add(endpoint);
 			}
 		}
 		sortListByX(xSortedList);
 		sortListByZ(zSortedList);
+		
+		for(int i = 1; i <= xSortedList.size(); i++) {
+			Endpoint endpoint = xSortedList.get(i - 1);
+			double shift = GeometryUtil.divideLineFraction(modelBox.getX() - modelBox.getWidth() / 2, modelBox.getX() + modelBox.getWidth() / 2, ((double) i) / xSortedList.size());
+			System.out.println("Position: " + i + " - " + shift);
+			Arrow arrow = endpointArrow.get(endpoint);
+			if(endpoint.isStart()) {
+				//arrow.setStartShiftWidth(shift);
+			}
+			else {
+				//arrow.setEndShiftWidth(shift);
+			}
+		}
+		
+		
 	}
 
 	private void adaptArrowToBox(ModelBox modelBox) {
@@ -332,7 +348,7 @@ public class StageManager extends Observable implements Observer {
 					friendEndpoint.setCoordinates(changedArrow.getStartPoint());
 					endpoint.setCoordinates(changedArrow.getEndPoint());
 				}
-				// TODO adjustArrowShift(modelBox);
+				adjustArrowShift(modelBox);
 				changedArrow.drawArrow();
 			}
 		}
