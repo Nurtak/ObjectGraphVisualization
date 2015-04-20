@@ -316,8 +316,7 @@ public class StageManager extends Observable implements Observer {
 		
 		for(int i = 1; i <= xSortedList.size(); i++) {
 			Endpoint endpoint = xSortedList.get(i - 1);
-			double shift = GeometryUtil.divideLineFraction(modelBox.getX() - modelBox.getWidth() / 2, modelBox.getX() + modelBox.getWidth() / 2, ((double) i) / xSortedList.size());
-			System.out.println("Position: " + i + " - " + shift);
+			
 			Arrow arrow = endpointArrow.get(endpoint);
 			if(endpoint.isStart()) {
 				//arrow.setStartShiftWidth(shift);
@@ -327,6 +326,17 @@ public class StageManager extends Observable implements Observer {
 			}
 		}
 		
+		for(int i = 1; i <= zSortedList.size(); i++) {
+			Endpoint endpoint = zSortedList.get(i - 1);
+			
+			Arrow arrow = endpointArrow.get(endpoint);
+			if(endpoint.isStart()) {
+				//arrow.setStartShiftHeight(shift);
+			}
+			else {
+				//arrow.setEndShiftHeight(shift);
+			}
+		}
 		
 	}
 

@@ -40,10 +40,6 @@ public class GeometryUtil {
 		return Math.toDegrees(Math.asin(height / hypothenuse));
 	}
 
-	public static double divideLineFraction(double start, double end, double fraction) {
-		return start + fraction * end - start;
-	}
-
 	public static Point2D divideLineFraction(Point2D start, Point2D end, double fraction) {
 		double x = start.getX() + fraction * (end.getX() - start.getX());
 		double y = start.getY() + fraction * (end.getY() - start.getY());
