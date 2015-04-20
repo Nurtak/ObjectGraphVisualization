@@ -119,7 +119,7 @@ public class ModelViewConnector {
 		mcA.setName("A");
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcB.setName("B");
-		ModelClass mcC = this.modelManager.createClass(new Point3D(0, PaneBox.INIT_DEPTH / 2, -200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass mcC = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, -300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcC.setName("C");
 
 		ModelObject moA1 = this.modelManager.createObject(mcA);
