@@ -54,7 +54,9 @@ public class ResourceLocator {
 		OBJECT_GIF("images/menu/instance.gif"),
 		RELATION_GIF("images/menu/relation.gif"),
 		RENAME_GIF("images/menu/text_box2.gif"),
-		RENAME_ATTRIBUTES_GIF("images/menu/testcase.gif"),
+		RENAME_ATTR_GIF("images/menu/testcase.gif"),
+		MOVE_UP_PNG("images/menu/mm_arrow_triangle_up.png"),
+		MOVE_DOWN_PNG("images/menu/mm_arrow_triangle_down.png"),		
 		CHANGE_DIRECTION_GIF("images/menu/synchronize_dgm_tab.gif"),
 		DELETE_PNG("images/menu/trash.png");
 
