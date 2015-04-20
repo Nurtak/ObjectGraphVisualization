@@ -31,6 +31,12 @@ public class Arrow extends Group implements Selectable {
 	private double rotateXAngle;
 
 	private static final double EDGE_SPACING = 3;
+	
+	private double startShiftWidth = 0.0;
+	private double startShiftHeight = 0.0;
+	
+	private double endShiftWidth = 0.0;
+	private double endShiftHeight = 0.0;
 
 	private Point3D startPoint;
 	private Point3D endPoint;
@@ -82,6 +88,22 @@ public class Arrow extends Group implements Selectable {
 		this.arrowEnd.setEndpointType(type.getEndType());
 		drawArrow();
 	}
+	
+	public void setStartShiftWidth(double startShiftWidth) {
+		this.startShiftWidth = startShiftWidth;
+	}
+
+	public void setStartShiftHeight(double startShiftHeight) {
+		this.startShiftHeight = startShiftHeight;
+	}
+
+	public void setEndShiftWidth(double endShiftWidth) {
+		this.endShiftWidth = endShiftWidth;
+	}
+
+	public void setEndShiftHeight(double endShiftHeight) {
+		this.endShiftHeight = endShiftHeight;
+	}
 
 	public Arrow(Point3D startPoint, Point3D endPoint, RelationType type) {
 		this.startPoint = startPoint;
@@ -119,7 +141,7 @@ public class Arrow extends Group implements Selectable {
 	public void setPoints(PaneBox startBox, Point3D endPoint) {
 		setStartPoint(startBox.getCenterPoint());
 		setEndPoint(endPoint);
-		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox);
+		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox, 0.0, 0.0);
 		if (startIntersection != null) {
 			setStartPoint(new Point3D(startIntersection.getX(), this.startPoint.getY(), startIntersection.getY()));
 		}
@@ -128,8 +150,8 @@ public class Arrow extends Group implements Selectable {
 	public void setPointsBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
 		setStartPoint(startBox.getCenterPoint());
 		setEndPoint(endBox.getCenterPoint());
-		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox);
-		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox);
+		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox, this.startShiftWidth, this.startShiftHeight);
+		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox, this.endShiftWidth, this.endShiftHeight);
 		if (startIntersection != null) {
 			setStartPoint(new Point3D(startIntersection.getX(), this.startPoint.getY(), startIntersection.getY()));
 		}
@@ -177,13 +199,13 @@ public class Arrow extends Group implements Selectable {
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 	
-	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box) {
+	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box, double shiftWidth, double shiftHeight) {
 		Point3D boxCenter = box.getCenterPoint();
 		double halfWidth = box.getWidth() / 2;
 		double halfHeight = box.getHeight() / 2;
-
+		
 		Point2D lineStart = new Point2D(externalPoint.getX(), externalPoint.getZ());
-		Point2D lineEnd = new Point2D(boxCenter.getX(), boxCenter.getZ());
+		Point2D lineEnd   = new Point2D(boxCenter.getX() + shiftWidth, boxCenter.getZ() + shiftHeight);
 		Point2D northEast = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() + halfHeight);
 		Point2D southEast = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() - halfHeight);
 		Point2D southWest = new Point2D(boxCenter.getX() + halfWidth, boxCenter.getZ() - halfHeight);
@@ -208,18 +230,11 @@ public class Arrow extends Group implements Selectable {
 		}
 		return null;
 	}
-
-	private Point3D divideLineFraction(Point3D start, Point3D end, double fraction) {
-		double x = start.getX() + fraction * (end.getX() - start.getX());
-		double y = start.getY() + fraction * (end.getY() - start.getY());
-		double z = start.getZ() + fraction * (end.getZ() - start.getZ());
-		return new Point3D(x, y, z);
-	}
-
+	
 	private ArrayList<Point3D> divideLine(Point3D start, Point3D end, int count) {
 		ArrayList<Point3D> pointList = new ArrayList<Point3D>();
 		for (int i = 1; i <= count; i++) {
-			pointList.add(divideLineFraction(start, end, ((double) i) / ((double) count)));
+			pointList.add(GeometryUtil.divideLineFraction(start, end, ((double) i) / ((double) count)));
 		}
 		return pointList;
 	}

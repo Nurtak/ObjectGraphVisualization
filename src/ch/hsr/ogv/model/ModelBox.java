@@ -36,7 +36,8 @@ public class ModelBox extends Observable {
 	}
 
 	public void setName(String name) {
-		if(this.name != null && !this.name.equals(name)) {
+		// not doing the equals check here for when ModelObject needs a name change event
+		if(this.name != null) { 
 			this.name = name;
 			setChanged();
 			notifyObservers(ModelBoxChange.NAME);

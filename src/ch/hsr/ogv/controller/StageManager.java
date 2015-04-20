@@ -1,6 +1,10 @@
 package ch.hsr.ogv.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -212,7 +216,7 @@ public class StageManager extends Observable implements Observer {
 		addToSubScene(paneBox.getSelection());
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
-
+	
 	private void addRelationToSubScene(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
@@ -273,6 +277,42 @@ public class StageManager extends Observable implements Observer {
 			changedArrow.setColor(relation.getColor());
 		}
 	}
+	
+	private void sortListByX(ArrayList<Endpoint> listEndpoints) {
+		Collections.sort(listEndpoints, new Comparator<Endpoint>(){
+		     public int compare(Endpoint e1, Endpoint e2){
+		         if(e1.getCoordinates().getX() == e2.getCoordinates().getX())
+		             return 0;
+		         return e1.getCoordinates().getX() < e2.getCoordinates().getX() ? -1 : 1;
+		     }
+		});
+	}
+	
+	private void sortListByZ(ArrayList<Endpoint> listEndpoints) {
+		Collections.sort(listEndpoints, new Comparator<Endpoint>(){
+		     public int compare(Endpoint e1, Endpoint e2){
+		         if(e1.getCoordinates().getZ() == e2.getCoordinates().getZ())
+		             return 0;
+		         return e1.getCoordinates().getZ() < e2.getCoordinates().getZ() ? -1 : 1;
+		     }
+		});
+	}
+	
+	private void adjustArrowShift(ModelBox modelBox) {
+		HashMap<Endpoint, Arrow> arrowCoordinates = new HashMap<Endpoint, Arrow>();
+		ArrayList<Endpoint> xSortedList = new ArrayList<Endpoint>();
+		ArrayList<Endpoint> zSortedList = new ArrayList<Endpoint>();
+		for(Endpoint endpoint : modelBox.getEndpoints()) {
+			Arrow arrow = this.mvConnector.getArrow(endpoint.getRelation());
+			if(arrow != null) {
+				arrowCoordinates.put(endpoint, arrow);
+				xSortedList.add(endpoint);
+				zSortedList.add(endpoint);
+			}
+		}
+		sortListByX(xSortedList);
+		sortListByZ(zSortedList);
+	}
 
 	private void adaptArrowToBox(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
@@ -292,6 +332,7 @@ public class StageManager extends Observable implements Observer {
 					friendEndpoint.setCoordinates(changedArrow.getStartPoint());
 					endpoint.setCoordinates(changedArrow.getEndPoint());
 				}
+				// TODO adjustArrowShift(modelBox);
 				changedArrow.drawArrow();
 			}
 		}
