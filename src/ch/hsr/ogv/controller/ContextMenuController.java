@@ -80,34 +80,25 @@ public class ContextMenuController extends Observable implements Observer {
 
 		// Subscene
 		subSceneCM = new ContextMenu();
-		createClass = getMenuItem("Create Class", Resource.CLASS_GIF);
-		subSceneCM.getItems().add(createClass);
+		createClass = getMenuItem("Create Class", Resource.CLASS_GIF, subSceneCM);
 
 		// Class
 		classCM = new ContextMenu();
-		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF);
-		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF);
-		addAttribute = getMenuItem("Add Attribute", Resource.ADD_GIF);
-		deleteClass = getMenuItem("Delete Class", Resource.DELETE_PNG);
+		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF, classCM);
+		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF, classCM);
+		addAttribute = getMenuItem("Add Attribute", Resource.ADD_GIF, classCM);
+		deleteClass = getMenuItem("Delete Class", Resource.DELETE_PNG, classCM);
 		relationMenu();
-		classCM.getItems().add(renameClass);
-		classCM.getItems().add(addAttribute);
-		classCM.getItems().add(createRelationM);
-		classCM.getItems().add(deleteClass);
 
 		// Object
 		objectCM = new ContextMenu();
-		renameObject = getMenuItem("Rename Object", Resource.RENAME_GIF);
-		deleteObject = getMenuItem("Delete Object", Resource.DELETE_PNG);
-		objectCM.getItems().add(renameObject);
-		objectCM.getItems().add(deleteObject);
+		renameObject = getMenuItem("Rename Object", Resource.RENAME_GIF, objectCM);
+		deleteObject = getMenuItem("Delete Object", Resource.DELETE_PNG, objectCM);
 
 		// Relation
 		relationCM = new ContextMenu();
-		changeDirection = getMenuItem("Change Direction", Resource.CHANGE_DIRECTION_GIF);
-		deleteRelation = getMenuItem("Delete Relation", Resource.DELETE_PNG);
-		relationCM.getItems().add(changeDirection);
-		relationCM.getItems().add(deleteRelation);
+		changeDirection = getMenuItem("Change Direction", Resource.CHANGE_DIRECTION_GIF, relationCM);
+		deleteRelation = getMenuItem("Delete Relation", Resource.DELETE_PNG, relationCM);
 
 	}
 
@@ -116,27 +107,18 @@ public class ContextMenuController extends Observable implements Observer {
 		createRelationM = new Menu("Create Relation");
 		createRelationM.setGraphic(getImageView(Resource.RELATION_GIF));
 
-		createUndirectedAssociation = getMenuItem("Association", Resource.UNDIRECTED_ASSOCIATION_GIF);
-		createDirectedAssociation = getMenuItem("Directed Association", Resource.DIRECTED_ASSOCIATION_GIF);
-		createBidirectedAssociation = getMenuItem("Bidirected Association", Resource.BIDIRECTED_ASSOCIATION_GIF);
-		createUndirectedAggregation = getMenuItem("Aggregation", Resource.UNDIRECTED_AGGREGATION_GIF);
-		createDirectedAggregation = getMenuItem("Directed Aggregation", Resource.DIRECTED_AGGREGATION_GIF);
-		createUndirectedComposition = getMenuItem("Composition", Resource.UNDIRECTED_COMPOSITION_GIF);
-		createDirectedComposition = getMenuItem("Directed Composition", Resource.DIRECTED_COMPOSITION_GIF);
-		createGeneralization = getMenuItem("Generalization", Resource.GENERALIZATION_GIF);
-		createDependency = getMenuItem("Dependency", Resource.DEPENDENCY_GIF);
+		createUndirectedAssociation = getMenuItem("Association", Resource.UNDIRECTED_ASSOCIATION_GIF, createRelationM);
+		createDirectedAssociation = getMenuItem("Directed Association", Resource.DIRECTED_ASSOCIATION_GIF, createRelationM);
+		createBidirectedAssociation = getMenuItem("Bidirected Association", Resource.BIDIRECTED_ASSOCIATION_GIF, createRelationM);
+		createUndirectedAggregation = getMenuItem("Aggregation", Resource.UNDIRECTED_AGGREGATION_GIF, createRelationM);
+		createDirectedAggregation = getMenuItem("Directed Aggregation", Resource.DIRECTED_AGGREGATION_GIF, createRelationM);
+		createUndirectedComposition = getMenuItem("Composition", Resource.UNDIRECTED_COMPOSITION_GIF, createRelationM);
+		createDirectedComposition = getMenuItem("Directed Composition", Resource.DIRECTED_COMPOSITION_GIF, createRelationM);
+		createRelationM.getItems().add(new SeparatorMenuItem());
+		createGeneralization = getMenuItem("Generalization", Resource.GENERALIZATION_GIF, createRelationM);
+		createRelationM.getItems().add(new SeparatorMenuItem());
+		createDependency = getMenuItem("Dependency", Resource.DEPENDENCY_GIF, createRelationM);
 
-		createRelationM.getItems().add(createUndirectedAssociation);
-		createRelationM.getItems().add(createDirectedAssociation);
-		createRelationM.getItems().add(createBidirectedAssociation);
-		createRelationM.getItems().add(createUndirectedAggregation);
-		createRelationM.getItems().add(createDirectedAggregation);
-		createRelationM.getItems().add(createUndirectedComposition);
-		createRelationM.getItems().add(createDirectedComposition);
-		createRelationM.getItems().add(new SeparatorMenuItem());
-		createRelationM.getItems().add(createGeneralization);
-		createRelationM.getItems().add(new SeparatorMenuItem());
-		createRelationM.getItems().add(createDependency);
 	}
 
 	public void enableContextMenu(SubSceneAdapter subSceneAdapter) {
@@ -222,9 +204,17 @@ public class ContextMenuController extends Observable implements Observer {
 		return new ImageView(ResourceLocator.getResourcePath(image).toExternalForm());
 	}
 
-	private MenuItem getMenuItem(String text, Resource image) {
-		MenuItem mi = new MenuItem(text);
-		mi.setGraphic(getImageView(image));
-		return mi;
+	private MenuItem getMenuItem(String text, Resource image, ContextMenu contextMenu) {
+		MenuItem menuItem = new MenuItem(text);
+		menuItem.setGraphic(getImageView(image));
+		contextMenu.getItems().add(menuItem);
+		return menuItem;
+	}
+
+	private MenuItem getMenuItem(String text, Resource image, Menu menu) {
+		MenuItem menuItem = new MenuItem(text);
+		menuItem.setGraphic(getImageView(image));
+		menu.getItems().add(menuItem);
+		return menuItem;
 	}
 }

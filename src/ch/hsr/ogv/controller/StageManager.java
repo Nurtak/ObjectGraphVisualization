@@ -32,7 +32,6 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.util.FXMLResourceUtil;
-import ch.hsr.ogv.util.GeometryUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
@@ -184,11 +183,11 @@ public class StageManager extends Observable implements Observer {
 		this.subSceneAdapter.remove(node);
 		this.rootLayout.applyCss();
 	}
-	
-//	private void addVerticalHelper(PaneBox basePaneBox) {
-//		VerticalHelper verticalHelper = this.subSceneAdapter.addVerticalHelper(basePaneBox);
-//		this.mouseMoveController.enableMouseMove(verticalHelper);
-//	}
+
+	// private void addVerticalHelper(PaneBox basePaneBox) {
+	// VerticalHelper verticalHelper = this.subSceneAdapter.addVerticalHelper(basePaneBox);
+	// this.mouseMoveController.enableMouseMove(verticalHelper);
+	// }
 
 	private void addClassToSubScene(ModelClass modelClass) {
 		modelClass.addObserver(this);
@@ -201,7 +200,7 @@ public class StageManager extends Observable implements Observer {
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
 		// TODO vertical helpers
-		//addVerticalHelper(paneBox);
+		// addVerticalHelper(paneBox);
 		this.mvConnector.putBoxes(modelClass, paneBox);
 	}
 
@@ -217,7 +216,7 @@ public class StageManager extends Observable implements Observer {
 		addToSubScene(paneBox.getSelection());
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
-	
+
 	private void addRelationToSubScene(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
@@ -278,34 +277,38 @@ public class StageManager extends Observable implements Observer {
 			changedArrow.setColor(relation.getColor());
 		}
 	}
-	
+
 	private void sortListByX(ArrayList<Endpoint> listEndpoints) {
-		Collections.sort(listEndpoints, new Comparator<Endpoint>(){
-		     public int compare(Endpoint e1, Endpoint e2){
-		         if(e1.getCoordinates().getX() == e2.getCoordinates().getX())
-		             return 0;
-		         return e1.getCoordinates().getX() < e2.getCoordinates().getX() ? -1 : 1;
-		     }
+		Collections.sort(listEndpoints, new Comparator<Endpoint>() {
+			@Override
+			public int compare(Endpoint e1, Endpoint e2) {
+				if (e1.getCoordinates().getX() == e2.getCoordinates().getX()) {
+					return 0;
+				}
+				return e1.getCoordinates().getX() < e2.getCoordinates().getX() ? -1 : 1;
+			}
 		});
 	}
-	
+
 	private void sortListByZ(ArrayList<Endpoint> listEndpoints) {
-		Collections.sort(listEndpoints, new Comparator<Endpoint>(){
-		     public int compare(Endpoint e1, Endpoint e2){
-		         if(e1.getCoordinates().getZ() == e2.getCoordinates().getZ())
-		             return 0;
-		         return e1.getCoordinates().getZ() < e2.getCoordinates().getZ() ? -1 : 1;
-		     }
+		Collections.sort(listEndpoints, new Comparator<Endpoint>() {
+			@Override
+			public int compare(Endpoint e1, Endpoint e2) {
+				if (e1.getCoordinates().getZ() == e2.getCoordinates().getZ()) {
+					return 0;
+				}
+				return e1.getCoordinates().getZ() < e2.getCoordinates().getZ() ? -1 : 1;
+			}
 		});
 	}
-	
+
 	private void adjustArrowShift(ModelBox modelBox) {
 		HashMap<Endpoint, Arrow> endpointArrow = new HashMap<Endpoint, Arrow>();
 		ArrayList<Endpoint> xSortedList = new ArrayList<Endpoint>();
 		ArrayList<Endpoint> zSortedList = new ArrayList<Endpoint>();
-		for(Endpoint endpoint : modelBox.getEndpoints()) {
+		for (Endpoint endpoint : modelBox.getEndpoints()) {
 			Arrow arrow = this.mvConnector.getArrow(endpoint.getRelation());
-			if(arrow != null) {
+			if (arrow != null) {
 				endpointArrow.put(endpoint, arrow);
 				xSortedList.add(endpoint);
 				zSortedList.add(endpoint);
@@ -313,31 +316,29 @@ public class StageManager extends Observable implements Observer {
 		}
 		sortListByX(xSortedList);
 		sortListByZ(zSortedList);
-		
-		for(int i = 1; i <= xSortedList.size(); i++) {
+
+		for (int i = 1; i <= xSortedList.size(); i++) {
 			Endpoint endpoint = xSortedList.get(i - 1);
-			
+
 			Arrow arrow = endpointArrow.get(endpoint);
-			if(endpoint.isStart()) {
-				//arrow.setStartShiftWidth(shift);
-			}
-			else {
-				//arrow.setEndShiftWidth(shift);
+			if (endpoint.isStart()) {
+				arrow.setStartShiftWidth(modelBox.getWidth() / xSortedList.size() * i);
+			} else {
+				arrow.setEndShiftWidth(modelBox.getWidth() / xSortedList.size() * i);
 			}
 		}
-		
-		for(int i = 1; i <= zSortedList.size(); i++) {
+
+		for (int i = 1; i <= zSortedList.size(); i++) {
 			Endpoint endpoint = zSortedList.get(i - 1);
-			
+
 			Arrow arrow = endpointArrow.get(endpoint);
-			if(endpoint.isStart()) {
-				//arrow.setStartShiftHeight(shift);
-			}
-			else {
-				//arrow.setEndShiftHeight(shift);
+			if (endpoint.isStart()) {
+				arrow.setStartShiftHeight(modelBox.getHeight() / zSortedList.size() * i);
+			} else {
+				arrow.setEndShiftHeight(modelBox.getHeight() / zSortedList.size() * i);
 			}
 		}
-		
+
 	}
 
 	private void adaptArrowToBox(ModelBox modelBox) {
@@ -358,7 +359,7 @@ public class StageManager extends Observable implements Observer {
 					friendEndpoint.setCoordinates(changedArrow.getStartPoint());
 					endpoint.setCoordinates(changedArrow.getEndPoint());
 				}
-				adjustArrowShift(modelBox);
+				// adjustArrowShift(modelBox);
 				changedArrow.drawArrow();
 			}
 		}

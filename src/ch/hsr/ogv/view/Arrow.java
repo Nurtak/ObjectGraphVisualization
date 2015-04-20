@@ -31,10 +31,10 @@ public class Arrow extends Group implements Selectable {
 	private double rotateXAngle;
 
 	private static final double EDGE_SPACING = 3;
-	
+
 	private Double startShiftWidth = null;
 	private Double startShiftHeight = null;
-	
+
 	private Double endShiftWidth = null;
 	private Double endShiftHeight = null;
 
@@ -48,7 +48,7 @@ public class Arrow extends Group implements Selectable {
 
 	private Box line;
 	private ArrayList<Box> dashedLines = new ArrayList<Box>();
-	
+
 	public static final Color DEFAULT_COLOR = Color.BLACK;
 	private Color color = DEFAULT_COLOR;
 	private ArrowSelection selection = null;
@@ -88,7 +88,7 @@ public class Arrow extends Group implements Selectable {
 		this.arrowEnd.setEndpointType(type.getEndType());
 		drawArrow();
 	}
-	
+
 	public void setStartShiftWidth(Double startShiftWidth) {
 		this.startShiftWidth = startShiftWidth;
 	}
@@ -131,13 +131,13 @@ public class Arrow extends Group implements Selectable {
 		setPoints(startBox, endPoint);
 		drawArrow();
 	}
-	
+
 	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
 		this(startBox.getCenterPoint(), endBox.getCenterPoint(), type);
 		setPointsBasedOnBoxes(startBox, endBox);
 		drawArrow();
 	}
-	
+
 	public void setPoints(PaneBox startBox, Point3D endPoint) {
 		setStartPoint(startBox.getCenterPoint());
 		setEndPoint(endPoint);
@@ -150,10 +150,10 @@ public class Arrow extends Group implements Selectable {
 	public void setPointsBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
 		setStartPoint(startBox.getCenterPoint());
 		setEndPoint(endBox.getCenterPoint());
-		startShiftWidth = this.startShiftWidth != null ? (startBox.getCenterPoint().getX() - startBox.getWidth() / 2 + this.startShiftHeight) : startBox.getCenterPoint().getX();
-		startShiftHeight = this.startShiftHeight != null ? (startBox.getCenterPoint().getZ() - startBox.getHeight() / 2 + this.startShiftHeight) : startBox.getCenterPoint().getZ();
-		endShiftWidth = this.endShiftWidth != null ? (endBox.getCenterPoint().getX() - endBox.getWidth() / 2 + this.endShiftWidth) : endBox.getCenterPoint().getX();
-		endShiftHeight = this.endShiftHeight != null ? (endBox.getCenterPoint().getZ() - endBox.getWidth() / 2 + this.endShiftHeight) : endBox.getCenterPoint().getZ();
+		double startShiftWidth = this.startShiftWidth != null ? (startBox.getCenterPoint().getX() - startBox.getWidth() / 2 + this.startShiftWidth) : startBox.getCenterPoint().getX();
+		double startShiftHeight = this.startShiftHeight != null ? (startBox.getCenterPoint().getZ() - startBox.getHeight() / 2 + this.startShiftHeight) : startBox.getCenterPoint().getZ();
+		double endShiftWidth = this.endShiftWidth != null ? (endBox.getCenterPoint().getX() - endBox.getWidth() / 2 + this.endShiftWidth) : endBox.getCenterPoint().getX();
+		double endShiftHeight = this.endShiftHeight != null ? (endBox.getCenterPoint().getZ() - endBox.getWidth() / 2 + this.endShiftHeight) : endBox.getCenterPoint().getZ();
 		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox, startShiftWidth, startShiftHeight);
 		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox, endShiftWidth, endShiftHeight);
 		if (startIntersection != null) {
@@ -203,21 +203,21 @@ public class Arrow extends Group implements Selectable {
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 		resetShift();
 	}
-	
+
 	private void resetShift() {
 		setStartShiftWidth(null);
 		setStartShiftHeight(null);
 		setEndShiftWidth(null);
 		setEndShiftHeight(null);
 	}
-	
+
 	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box, double shiftWidth, double shiftHeight) {
 		Point3D boxCenter = box.getCenterPoint();
 		double halfWidth = box.getWidth() / 2;
 		double halfHeight = box.getHeight() / 2;
-		
+
 		Point2D lineStart = new Point2D(externalPoint.getX(), externalPoint.getZ());
-		Point2D lineEnd   = new Point2D(shiftWidth, shiftHeight);
+		Point2D lineEnd = new Point2D(shiftWidth, shiftHeight);
 		Point2D northEast = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() + halfHeight);
 		Point2D southEast = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() - halfHeight);
 		Point2D southWest = new Point2D(boxCenter.getX() + halfWidth, boxCenter.getZ() - halfHeight);
@@ -242,7 +242,7 @@ public class Arrow extends Group implements Selectable {
 		}
 		return null;
 	}
-	
+
 	private ArrayList<Point3D> divideLine(Point3D start, Point3D end, int count) {
 		ArrayList<Point3D> pointList = new ArrayList<Point3D>();
 		for (int i = 1; i <= count; i++) {
@@ -302,7 +302,7 @@ public class Arrow extends Group implements Selectable {
 			colorToApply = SELECTION_COLOR;
 		}
 		applyColor(this.line, colorToApply);
-		for(Box dashedLine : this.dashedLines) {
+		for (Box dashedLine : this.dashedLines) {
 			applyColor(dashedLine, colorToApply);
 		}
 		this.arrowStart.setColor(colorToApply);
