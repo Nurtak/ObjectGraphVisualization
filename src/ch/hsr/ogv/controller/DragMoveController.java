@@ -55,19 +55,18 @@ public class DragMoveController extends DragController {
 					}
 				}
 				else if(modelBox instanceof ModelObject && mvConnector != null) {
+					subSceneAdapter.removeVerticalHelpers();
 					VerticalHelper verticalHelper = subSceneAdapter.addVerticalHelper(paneBox);
-					if(verticalHelper != null) {
-						subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
-						PickResult pick = me.getPickResult();
-						if (pick != null && pick.getIntersectedNode() != null && verticalHelper.isVerticalHelper(paneBox, pick.getIntersectedNode())) {
-							Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
-							double newY = coords.getY() - origRelMouseY;
-							if(newY < ModelClass.OBJECT_LEVEL_DIFF) {
-								newY = ModelClass.OBJECT_LEVEL_DIFF;
-							}
-							Point3D objectCoordinates = new Point3D(modelBox.getX(), newY, modelBox.getZ());
-							modelBox.setCoordinates(objectCoordinates);
+					subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
+					PickResult pick = me.getPickResult();
+					if (pick != null && pick.getIntersectedNode() != null && verticalHelper.isVerticalHelper(paneBox, pick.getIntersectedNode())) {
+						Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
+						double newY = coords.getY() - origRelMouseY;
+						if(newY < ModelClass.OBJECT_LEVEL_DIFF) {
+							newY = ModelClass.OBJECT_LEVEL_DIFF;
 						}
+						Point3D objectCoordinates = new Point3D(modelBox.getX(), newY, modelBox.getZ());
+						modelBox.setCoordinates(objectCoordinates);
 					}
 				}
 			}
