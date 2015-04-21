@@ -136,6 +136,9 @@ public class ModelViewConnector {
 
 		mcA.createAttribute();
 		mcA.createAttribute();
+		mcA.createAttribute();
+		mcA.createAttribute();
+		mcA.createAttribute();
 
 		mcB.createAttribute();
 	}

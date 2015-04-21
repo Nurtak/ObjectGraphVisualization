@@ -387,6 +387,9 @@ public class StageManager extends Observable implements Observer {
 			// paneClassBox.getTopLabel().setPrefWidth(newWidth);
 			// paneClassBox.getTopTextField().setPrefWidth(newWidth);
 			modelClass.setWidth(paneClassBox.getMinWidth());
+			double newHeight = paneClassBox.calcMinHeight();
+			paneClassBox.setMinHeight(newHeight);
+			modelClass.setHeight(paneClassBox.getMinHeight());
 		}
 	}
 

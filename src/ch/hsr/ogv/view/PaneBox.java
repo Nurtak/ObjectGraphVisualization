@@ -52,6 +52,9 @@ public class PaneBox implements Selectable {
 
 	public final static int MAX_WIDTH = 464;
 	public final static int MAX_HEIGHT = 464;
+	
+	public final static int BASE_HEIGHT = 72; // required min height with one centerlabel (experience value)
+	private final static double CENTER_LABEL_HEIGHT = 28.0;
 
 	private Group paneBox = new Group();
 	private BoxSelection selection = null;
@@ -305,7 +308,19 @@ public class PaneBox implements Selectable {
 				retWidth = newWidth;
 			}
 		}
-		return retWidth;
+		return restrictedWidth(retWidth);
+	}
+	
+	public double calcMinHeight() {
+		double newMinHeight =  minHeightPer(numberCenterLabelShowing());
+		return restrictedHeight(newMinHeight);
+	}
+	
+	private double minHeightPer(int countCenterLabels) {
+		if(this.centerLabels.isEmpty()) {
+			return 0.0;
+		}
+		return BASE_HEIGHT + (countCenterLabels - 1) * CENTER_LABEL_HEIGHT;
 	}
 
 	public GridPane getCenter() {
@@ -374,7 +389,37 @@ public class PaneBox implements Selectable {
 		}
 		recalcHasCenterGrid();
 	}
+	
+//  TODO these methods should not be needed
+//	public void moveCenterLabelUp(Label centerLabel) {
+//		if(this.centerLabels.contains(centerLabel) && !this.centerLabels.get(0).equals(centerLabel)) {
+//			int thisRowIndex = this.centerLabels.indexOf(centerLabel);
+//			Label prevCenterLabel = this.centerLabels.set(thisRowIndex - 1, centerLabel);
+//			this.centerLabels.set(thisRowIndex, prevCenterLabel);
+//		}
+//	}
+//	
+//	public void moveCenterLabelDown(Label centerLabel) {
+//		if(this.centerLabels.contains(centerLabel) && !this.centerLabels.isEmpty() && !this.centerLabels.get(centerLabels.size() - 1).equals(centerLabel)) {
+//			int thisRowIndex = this.centerLabels.indexOf(centerLabel);
+//			Label nextCenterLabel = this.centerLabels.set(thisRowIndex + 1, centerLabel);
+//			this.centerLabels.set(thisRowIndex, nextCenterLabel);
+//		}
+//	}
 
+	public int numberCenterLabelShowing() {
+		int count = 0;
+		for(Label centerLabel : this.centerLabels) {
+			if(centerLabel.isVisible()) {
+				count++;
+			}
+			else {
+				break;
+			}
+		}
+		return count;
+	}
+	
 	public void setCenterText(int rowIndex, String labelText, String textFieldText) {
 		Label centerLabel = null;
 		TextField centerTextField = null;
@@ -524,7 +569,7 @@ public class PaneBox implements Selectable {
 	public double getMinHeight() {
 		return this.borderPane.getMinHeight();
 	}
-
+	
 	/**
 	 * Sets the maximum height of this box. Note that it can not be set above {@link PaneBox#MAX_HEIGHT}.
 	 * 

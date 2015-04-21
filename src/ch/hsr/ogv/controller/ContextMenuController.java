@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Point3D;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -176,8 +177,10 @@ public class ContextMenuController extends Observable implements Observer {
 	public void fillContextMenu() {
 
 		// SubScene
-		createClass.setOnAction((ActionEvent e) -> {
-			// mvConnector.handleCreateNewClass(e.);
+		createClass.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (MouseButton.PRIMARY.equals(me.getButton())) {
+				mvConnector.handleCreateNewClass(new Point3D(me.getX(), me.getY(), me.getZ()));
+			}
 		});
 
 		// Class
@@ -202,6 +205,10 @@ public class ContextMenuController extends Observable implements Observer {
 		// Relation
 		deleteRelation.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
+		});
+		
+		addAttribute.setOnAction((ActionEvent e) -> {
+			mvConnector.createNewAttribute(selected);
 		});
 	}
 
