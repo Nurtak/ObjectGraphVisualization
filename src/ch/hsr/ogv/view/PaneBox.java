@@ -9,6 +9,7 @@ import javafx.scene.CacheHint;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Border;
@@ -29,8 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.util.FXMLResourceUtil;
-import ch.hsr.ogv.util.TextUtil;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
+import ch.hsr.ogv.util.TextUtil;
 
 /**
  * 
@@ -132,7 +133,7 @@ public class PaneBox implements Selectable {
 	private void initLayout() {
 		this.borderPane = loadBorderPane();
 		this.topTextField = loadTopTextField();
-
+		this.topTextField.setContextMenu(new ContextMenu()); // overrides the bugged default contextmenu
 		Node topNode = this.borderPane.getTop();
 		if ((topNode instanceof HBox)) {
 			HBox topHBox = (HBox) topNode;
@@ -152,6 +153,7 @@ public class PaneBox implements Selectable {
 					Label centerLabel = (Label) rowNode;
 					TextField centerTextField = loadCenterTextField();
 					centerTextField.setText(centerLabel.getText());
+					centerTextField.setContextMenu(new ContextMenu()); // overrides the bugged default contextmenu
 					this.centerLabels.add(centerLabel);
 					this.centerTextFields.add(centerTextField);
 				}
