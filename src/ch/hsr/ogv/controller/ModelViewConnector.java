@@ -225,6 +225,18 @@ public class ModelViewConnector {
 	}
 
 	public void handleRename(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			PaneBox selectedBox = (PaneBox) selected;
+			Label selectedLabel = selectedBox.getSelectedLabel();
+			if (selectedLabel == null) {
+				selectedBox.allowTopTextInput(true);
+			} else {
+				selectedBox.setLabelSelected(selectedLabel, true);
+			}
+		}
+	}
+
+	public void handleAddAttribute(Selectable selected) {
 		// TODO Auto-generated method stub
 
 	}

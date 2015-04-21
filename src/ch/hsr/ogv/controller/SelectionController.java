@@ -13,7 +13,7 @@ import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
 /**
- * 
+ *
  * @author Simon Gwerder
  *
  */
@@ -24,7 +24,7 @@ public class SelectionController extends Observable {
 
 	private Point3D previousSelectionCoord;
 	private Point3D currentSelectionCoord;
-	
+
 	public Point3D getPreviousSelectionCoord() {
 		return previousSelectionCoord;
 	}
@@ -40,7 +40,7 @@ public class SelectionController extends Observable {
 	public boolean isPreviousSelected(Selectable selectable) {
 		return this.previousSelected != null && this.previousSelected.equals(selectable);
 	}
-	
+
 	public Point3D getCurrentSelectionCoord() {
 		return currentSelectionCoord;
 	}
@@ -72,7 +72,7 @@ public class SelectionController extends Observable {
 
 	private void selectOnMouseClicked(SubSceneAdapter subSceneAdapter) {
 		subSceneAdapter.getSubScene().addEventHandler(MouseEvent.MOUSE_RELEASED, (MouseEvent me) -> {
-			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect() && me.getPickResult().getIntersectedNode() instanceof SubScene) {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && me.isDragDetect() && me.getPickResult().getIntersectedNode() instanceof SubScene) {
 				setSelected(me, subSceneAdapter, true, subSceneAdapter);
 			}
 		});
@@ -87,27 +87,27 @@ public class SelectionController extends Observable {
 	private void selectOnMouseClicked(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 
 		paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (MouseButton.PRIMARY.equals(me.getButton())) {
+			if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
 				paneBox.setAllLabelSelected(false);
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
 		});
 
 		paneBox.getCenter().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (MouseButton.PRIMARY.equals(me.getButton())) {
+			if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
 				paneBox.setAllLabelSelected(false);
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
 		});
 
 		paneBox.getSelection().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (MouseButton.PRIMARY.equals(me.getButton())) {
+			if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
 				paneBox.setAllLabelSelected(false);
 			}
 		});
 
 		paneBox.getTopLabel().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (MouseButton.PRIMARY.equals(me.getButton())) {
+			if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
 				paneBox.setLabelSelected(paneBox.getTopLabel(), true);
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
@@ -118,7 +118,7 @@ public class SelectionController extends Observable {
 
 		for (Label centerLabel : paneBox.getCenterLabels()) {
 			centerLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-				if (MouseButton.PRIMARY.equals(me.getButton())) {
+				if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
 					paneBox.setLabelSelected(centerLabel, true);
 					setSelected(me, paneBox, true, subSceneAdapter);
 					me.consume(); // otherwise this centerLabel's parent = getCenter() will be called
@@ -133,7 +133,7 @@ public class SelectionController extends Observable {
 
 	private void selectOnMouseClicked(Arrow arrow, SubSceneAdapter subSceneAdapter) {
 		arrow.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (MouseButton.PRIMARY.equals(me.getButton()) && !arrow.isSelected()) {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && !arrow.isSelected()) {
 				setSelected(me, arrow, true, subSceneAdapter);
 			}
 		});
@@ -179,7 +179,7 @@ public class SelectionController extends Observable {
 			this.currentSelected = selectable;
 			selectable.requestFocus();
 			subSceneAdapter.getFloor().toFront();
-			
+
 			setChanged();
 			notifyObservers(selectable);
 		} else {

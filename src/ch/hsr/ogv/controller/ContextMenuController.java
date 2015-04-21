@@ -6,6 +6,7 @@ import java.util.Observer;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point3D;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -54,8 +55,6 @@ public class ContextMenuController extends Observable implements Observer {
 	private ContextMenu relationCM;
 	private MenuItem changeDirection;
 	private MenuItem deleteRelation;
-
-	// ModelBox
 	private Menu createRelationM;
 	private MenuItem createUndirectedAssociation;
 	private MenuItem createDirectedAssociation;
@@ -132,9 +131,21 @@ public class ContextMenuController extends Observable implements Observer {
 
 	}
 
+	public void enableContextMenu(Label label, PaneBox paneBox) {
+		label.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (label.equals(paneBox.getSelectedLabel()) && paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+				this.position = new Point3D(me.getX(), 0.0, me.getZ());
+				classCM.hide();
+				objectCM.hide();
+				attributeCM.hide();
+				attributeCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+			}
+		});
+	}
+
 	public void enableContextMenu(SubSceneAdapter subSceneAdapter) {
 		subSceneAdapter.getSubScene().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+			if (subSceneAdapter.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				this.position = new Point3D(me.getX(), 0.0, me.getZ());
 				subSceneCM.hide();
 				subSceneCM.show(subSceneAdapter.getSubScene(), me.getScreenX(), me.getScreenY());
@@ -148,6 +159,8 @@ public class ContextMenuController extends Observable implements Observer {
 		if (modelBox instanceof ModelClass) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+					attributeCM.hide();
+					classCM.hide();
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 					me.consume();
 				}
@@ -155,6 +168,8 @@ public class ContextMenuController extends Observable implements Observer {
 		} else if ((modelBox instanceof ModelObject)) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+					attributeCM.hide();
+					objectCM.hide();
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 					me.consume();
 				}
@@ -187,29 +202,78 @@ public class ContextMenuController extends Observable implements Observer {
 		createObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleCreateNewObject(selected);
 		});
-		// renameClass.setOnAction((ActionEvent e) -> {
-		// mvConnector.handleRename(selected);
-		// });
+		renameClass.setOnAction((ActionEvent e) -> {
+			mvConnector.handleRename(selected);
+		});
+		addAttribute.setOnAction((ActionEvent e) -> {
+			mvConnector.handleAddAttribute(selected);
+		});
 		deleteClass.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDelete(selected);
+		});
+		createUndirectedAssociation.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDelete(selected);
+		});
+		createDirectedAssociation.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDelete(selected);
+		});
+		createBidirectedAssociation.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDelete(selected);
+		});
+		createUndirectedAggregation.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDelete(selected);
+		});
+		createDirectedAggregation.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDelete(selected);
+		});
+		createUndirectedComposition.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDelete(selected);
+		});
+		createDirectedComposition.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDelete(selected);
+		});
+		createGeneralization.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDelete(selected);
+		});
+		createDependency.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
 		});
 
 		// Object
-		// renameObject.setOnAction((ActionEvent e) -> {
-		// mvConnector.handleRename(selected);
-		// });
+		renameObject.setOnAction((ActionEvent e) -> {
+			mvConnector.handleRename(selected);
+		});
 		deleteObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
 		});
 
 		// Relation
+		changeDirection.setOnAction((ActionEvent e) -> {
+			mvConnector.createNewAttribute(selected);
+		});
 		deleteRelation.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
 		});
 
-		addAttribute.setOnAction((ActionEvent e) -> {
-			mvConnector.createNewAttribute(selected);
+		// Attribute
+		renameAttribute.setOnAction((ActionEvent e) -> {
+			mvConnector.handleRename(selected);
 		});
+		moveAttributeUp.setOnAction((ActionEvent e) -> {
+			mvConnector.handleRename(selected);
+		});
+		moveAttributeDown.setOnAction((ActionEvent e) -> {
+			mvConnector.handleRename(selected);
+		});
+		deleteAttribute.setOnAction((ActionEvent e) -> {
+			mvConnector.handleRename(selected);
+		});
+
+		// Value (Attribute)
+		changeValue.setOnAction((ActionEvent e) -> {
+			mvConnector.handleRename(selected);
+		});
+
 	}
 
 	@Override

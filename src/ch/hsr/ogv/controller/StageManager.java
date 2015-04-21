@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -233,6 +234,9 @@ public class StageManager extends Observable implements Observer {
 		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
 		this.textFieldController.enableTextInput(modelBox, paneBox);
 		this.contextMenuController.enableContextMenu(modelBox, paneBox);
+		for (Label label : paneBox.getCenterLabels()) {
+			this.contextMenuController.enableContextMenu(label, paneBox);
+		}
 		this.mouseMoveController.enableMouseMove(paneBox);
 		if (modelBox instanceof ModelClass) {
 			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
@@ -273,7 +277,7 @@ public class StageManager extends Observable implements Observer {
 			changedArrow.setColor(relation.getColor());
 		}
 	}
-	
+
 	private void adaptArrowToBox(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		Map<Endpoint, Endpoint> endpointMap = modelBox.getFriends();
