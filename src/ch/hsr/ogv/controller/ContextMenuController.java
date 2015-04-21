@@ -210,7 +210,8 @@ public class ContextMenuController extends Observable implements Observer {
 			mvConnector.handleRename(selected);
 		});
 		createAttribute.setOnAction((ActionEvent e) -> {
-			mvConnector.createNewAttribute(selected);
+			mvConnector.handleCreateNewAttribute(selected);
+			
 		});
 		deleteClass.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
@@ -253,7 +254,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 		// Relation
 		changeDirection.setOnAction((ActionEvent e) -> {
-			mvConnector.createNewAttribute(selected);
+			mvConnector.handleDelete(selected);
 		});
 		deleteRelation.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
