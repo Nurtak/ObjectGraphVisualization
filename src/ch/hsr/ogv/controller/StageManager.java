@@ -378,9 +378,11 @@ public class StageManager extends Observable implements Observer {
 		if (paneClassBox != null) {
 			paneClassBox.showAllCenterLabels(false);
 			for (int i = 0; i < modelClass.getAttributes().size(); i++) {
-				Attribute attribute = modelClass.getAttributes().get(i);
-				paneClassBox.showCenterLabel(i, true);
-				paneClassBox.setCenterText(i, attribute.getName(), attribute.getName());
+				if(i < PaneBox.MAX_CENTER_LABELS) {
+					Attribute attribute = modelClass.getAttributes().get(i);
+					paneClassBox.showCenterLabel(i, true);
+					paneClassBox.setCenterText(i, attribute.getName(), attribute.getName());
+				}
 			}
 			double newWidth = paneClassBox.calcMinWidth();
 			paneClassBox.setMinWidth(newWidth);
@@ -398,14 +400,16 @@ public class StageManager extends Observable implements Observer {
 		if (paneObjectBox != null) {
 			paneObjectBox.showAllCenterLabels(false);
 			for (int i = 0; i < modelObject.getModelClass().getAttributes().size(); i++) { // using attribute list of this objects class, to get same order.
-				Attribute attribute = modelObject.getModelClass().getAttributes().get(i);
-				String attributeName = attribute.getName();
-				String attributeValue = modelObject.getAttributeValues().get(attribute);
-				paneObjectBox.showCenterLabel(i, true);
-				if (attributeValue != null && !attributeValue.isEmpty()) {
-					paneObjectBox.setCenterText(i, attributeName + " = " + attributeValue, attributeValue);
-				} else {
-					paneObjectBox.setCenterText(i, attributeName, attributeValue);
+				if(i < PaneBox.MAX_CENTER_LABELS) {
+					Attribute attribute = modelObject.getModelClass().getAttributes().get(i);
+					String attributeName = attribute.getName();
+					String attributeValue = modelObject.getAttributeValues().get(attribute);
+					paneObjectBox.showCenterLabel(i, true);
+					if (attributeValue != null && !attributeValue.isEmpty()) {
+						paneObjectBox.setCenterText(i, attributeName + " = " + attributeValue, attributeValue);
+					} else {
+						paneObjectBox.setCenterText(i, attributeName, attributeValue);
+					}
 				}
 			}
 		}

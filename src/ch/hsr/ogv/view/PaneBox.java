@@ -55,6 +55,7 @@ public class PaneBox implements Selectable {
 	
 	public final static int BASE_HEIGHT = 72; // required min height with one centerlabel (experience value)
 	private final static double CENTER_LABEL_HEIGHT = 28.0;
+	public final static int MAX_CENTER_LABELS = 15;
 
 	private Group paneBox = new Group();
 	private BoxSelection selection = null;
