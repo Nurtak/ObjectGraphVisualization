@@ -6,9 +6,12 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
 import ch.hsr.ogv.model.ModelBox;
+import ch.hsr.ogv.model.ModelClass;
+import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
+import ch.hsr.ogv.view.VerticalHelper;
 
 /**
  *
@@ -17,10 +20,12 @@ import ch.hsr.ogv.view.SubSceneAdapter;
  */
 public class DragMoveController extends DragController {
 
+	private ModelViewConnector mvConnector;
+	
 	protected volatile double origRelMouseX;
 	protected volatile double origRelMouseY;
 	protected volatile double origRelMouseZ;
-
+	
 	public void enableDragMove(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		startOnMouseMoved(modelBox, paneBox, subSceneAdapter);
 		moveOnMouseDragged(modelBox, paneBox, subSceneAdapter);
@@ -39,15 +44,37 @@ public class DragMoveController extends DragController {
 		paneBox.get().addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
 			setDragInProgress(subSceneAdapter, true);
 			if (MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected()) {
-				Floor floor = subSceneAdapter.getFloor();
-				subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
-				PickResult pick = me.getPickResult();
-				if (pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
-					Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
-					Point3D classCoordinates = new Point3D(coords.getX() - origRelMouseX, modelBox.getY(), coords.getZ() - origRelMouseZ);
-					modelBox.setCoordinates(classCoordinates);
+				if(modelBox instanceof ModelClass) {
+					Floor floor = subSceneAdapter.getFloor();
+					subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
+					PickResult pick = me.getPickResult();
+					if (pick != null && pick.getIntersectedNode() != null && floor.hasTile(pick.getIntersectedNode())) {
+						Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
+						Point3D classCoordinates = new Point3D(coords.getX() - origRelMouseX, modelBox.getY(), coords.getZ() - origRelMouseZ);
+						modelBox.setCoordinates(classCoordinates);
+					}
+				}
+				else if(modelBox instanceof ModelObject && mvConnector != null) {
+					VerticalHelper verticalHelper = subSceneAdapter.addVerticalHelper(paneBox);
+					if(verticalHelper != null) {
+						subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
+						PickResult pick = me.getPickResult();
+						if (pick != null && pick.getIntersectedNode() != null && verticalHelper.isVerticalHelper(paneBox, pick.getIntersectedNode())) {
+							Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
+							double newY = coords.getY() - origRelMouseY;
+							if(newY < ModelClass.OBJECT_LEVEL_DIFF) {
+								newY = ModelClass.OBJECT_LEVEL_DIFF;
+							}
+							Point3D objectCoordinates = new Point3D(modelBox.getX(), newY, modelBox.getZ());
+							modelBox.setCoordinates(objectCoordinates);
+						}
+					}
 				}
 			}
 		});
+	}
+	
+	public void setMVConnector(ModelViewConnector mvConnector) {
+		this.mvConnector = mvConnector;
 	}
 }

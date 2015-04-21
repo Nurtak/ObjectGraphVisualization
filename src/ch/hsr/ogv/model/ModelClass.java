@@ -15,7 +15,7 @@ import jfxtras.labs.util.Util;
  */
 public class ModelClass extends ModelBox {
 
-	private final static double OBJECT_LEVEL_DIFF = 100;
+	public final static double OBJECT_LEVEL_DIFF = 100;
 
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
@@ -32,16 +32,6 @@ public class ModelClass extends ModelBox {
 
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
-	}
-
-	public void changeAttributeName(int rowIndex, String name) throws IndexOutOfBoundsException {
-		Attribute attribute = this.attributes.get(rowIndex);
-		attribute.setName(name);
-		setChanged();
-		notifyObservers(attribute);
-		for (ModelObject modelObject : this.modelObjects) {
-			modelObject.changeAttributeName(attribute, name);
-		}
 	}
 
 	public List<ModelObject> getModelObjects() {
@@ -102,17 +92,6 @@ public class ModelClass extends ModelBox {
 		return y;
 	}
 
-	public Attribute createAttribute() {
-		Attribute attribute = new Attribute("field" + (this.attributes.size() + 1));
-		boolean added = addAttribute(attribute);
-		if (added) {
-			setChanged();
-			notifyObservers(attribute);
-			return attribute;
-		}
-		return null;
-	}
-
 	public void deleteModelObjects() {
 		// ModelObject.modelObjectCounter.decrementAndGet();
 		modelObjects.clear();
@@ -128,15 +107,56 @@ public class ModelClass extends ModelBox {
 		}
 		return removed;
 	}
+	
+	public Attribute createAttribute() {
+		Attribute attribute = new Attribute("field" + (this.attributes.size() + 1));
+		boolean added = addAttribute(attribute);
+		if (added) {
+			setChanged();
+			notifyObservers(attribute);
+			return attribute;
+		}
+		return null;
+	}
 
-	public boolean deleteAttribute(int index) {
-		if (getAttributes().isEmpty() || index < 0 || index >= getAttributes().size()) {
+	public boolean deleteAttribute(int rowIndex) {
+		if (getAttributes().isEmpty() || rowIndex < 0 || rowIndex >= getAttributes().size()) {
 			return false;
 		}
-		Attribute attribute = getAttributes().get(index);
+		Attribute attribute = getAttributes().get(rowIndex);
 		boolean deletedObject = deleteAttribute(attribute);
 
 		return deletedObject;
+	}
+	
+	public boolean moveAttributeUp(int rowIndex) {
+		if (getAttributes().isEmpty() || rowIndex <= 0 || rowIndex >= getAttributes().size()) {
+			return false;
+		}
+		Attribute thisAttribute = getAttributes().get(rowIndex);
+		Attribute upperAttribute = getAttributes().set(rowIndex - 1, thisAttribute);
+		getAttributes().set(rowIndex, upperAttribute);
+		return true;
+	}
+	
+	public boolean moveAttributeDown(int rowIndex) {
+		if (getAttributes().isEmpty() || rowIndex < 0 || rowIndex >= getAttributes().size() - 1) {
+			return false;
+		}
+		Attribute thisAttribute = getAttributes().get(rowIndex);
+		Attribute lowerAttribute = getAttributes().set(rowIndex + 1, thisAttribute);
+		getAttributes().set(rowIndex, lowerAttribute);
+		return true;
+	}
+	
+	public void changeAttributeName(int rowIndex, String name) throws IndexOutOfBoundsException {
+		Attribute attribute = this.attributes.get(rowIndex);
+		attribute.setName(name);
+		setChanged();
+		notifyObservers(attribute);
+		for (ModelObject modelObject : this.modelObjects) {
+			modelObject.changeAttributeName(attribute, name);
+		}
 	}
 
 	private boolean deleteAttribute(Attribute attribute) {

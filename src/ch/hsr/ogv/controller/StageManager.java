@@ -156,6 +156,7 @@ public class StageManager extends Observable implements Observer {
 
 	private void initDragController() {
 		this.dragMoveController.addObserver(this.cameraController);
+		this.dragMoveController.setMVConnector(this.mvConnector);
 		this.dragResizeController.addObserver(this.cameraController);
 	}
 
@@ -181,11 +182,6 @@ public class StageManager extends Observable implements Observer {
 		this.rootLayout.applyCss();
 	}
 
-	// private void addVerticalHelper(PaneBox basePaneBox) {
-	// VerticalHelper verticalHelper = this.subSceneAdapter.addVerticalHelper(basePaneBox);
-	// this.mouseMoveController.enableMouseMove(verticalHelper);
-	// }
-
 	private void addClassToSubScene(ModelClass modelClass) {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
@@ -196,8 +192,6 @@ public class StageManager extends Observable implements Observer {
 		addPaneBoxControls(modelClass, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
-		// TODO vertical helpers
-		// addVerticalHelper(paneBox);
 		this.mvConnector.putBoxes(modelClass, paneBox);
 	}
 
@@ -238,8 +232,8 @@ public class StageManager extends Observable implements Observer {
 			this.contextMenuController.enableContextMenu(label, paneBox);
 		}
 		this.mouseMoveController.enableMouseMove(paneBox);
+		this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 		if (modelBox instanceof ModelClass) {
-			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
 		}
 	}
@@ -382,9 +376,11 @@ public class StageManager extends Observable implements Observer {
 		if (paneClassBox != null) {
 			paneClassBox.showAllCenterLabels(false);
 			for (int i = 0; i < modelClass.getAttributes().size(); i++) {
-				Attribute attribute = modelClass.getAttributes().get(i);
-				paneClassBox.showCenterLabel(i, true);
-				paneClassBox.setCenterText(i, attribute.getName(), attribute.getName());
+				if(i < PaneBox.MAX_CENTER_LABELS) {
+					Attribute attribute = modelClass.getAttributes().get(i);
+					paneClassBox.showCenterLabel(i, true);
+					paneClassBox.setCenterText(i, attribute.getName(), attribute.getName());
+				}
 			}
 			double newWidth = paneClassBox.calcMinWidth();
 			paneClassBox.setMinWidth(newWidth);
@@ -402,14 +398,16 @@ public class StageManager extends Observable implements Observer {
 		if (paneObjectBox != null) {
 			paneObjectBox.showAllCenterLabels(false);
 			for (int i = 0; i < modelObject.getModelClass().getAttributes().size(); i++) { // using attribute list of this objects class, to get same order.
-				Attribute attribute = modelObject.getModelClass().getAttributes().get(i);
-				String attributeName = attribute.getName();
-				String attributeValue = modelObject.getAttributeValues().get(attribute);
-				paneObjectBox.showCenterLabel(i, true);
-				if (attributeValue != null && !attributeValue.isEmpty()) {
-					paneObjectBox.setCenterText(i, attributeName + " = " + attributeValue, attributeValue);
-				} else {
-					paneObjectBox.setCenterText(i, attributeName, attributeValue);
+				if(i < PaneBox.MAX_CENTER_LABELS) {
+					Attribute attribute = modelObject.getModelClass().getAttributes().get(i);
+					String attributeName = attribute.getName();
+					String attributeValue = modelObject.getAttributeValues().get(attribute);
+					paneObjectBox.showCenterLabel(i, true);
+					if (attributeValue != null && !attributeValue.isEmpty()) {
+						paneObjectBox.setCenterText(i, attributeName + " = " + attributeValue, attributeValue);
+					} else {
+						paneObjectBox.setCenterText(i, attributeName, attributeValue);
+					}
 				}
 			}
 		}
@@ -425,7 +423,6 @@ public class StageManager extends Observable implements Observer {
 				adaptArrowToBox(modelClass);
 			} else {
 				PaneBox toDelete = this.mvConnector.removeBoxes(modelClass);
-				this.subSceneAdapter.removeVerticalHelper(toDelete);
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
 			}

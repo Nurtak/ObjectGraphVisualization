@@ -1,5 +1,6 @@
 package ch.hsr.ogv.view;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,10 +61,26 @@ public class SubSceneAdapter implements Selectable {
 	}
 	
 	public VerticalHelper removeVerticalHelper(PaneBox basePaneBox) {
-		for(VerticalHelper verticalHelper : this.verticalHelpers) {
+		for(VerticalHelper verticalHelper : new ArrayList<VerticalHelper>(this.verticalHelpers)) {
 			if(verticalHelper.isBasePaneBox(basePaneBox)) {
 				this.world.getChildren().remove(verticalHelper);
 				this.verticalHelpers.remove(verticalHelper);
+				return verticalHelper;
+			}
+		}
+		return null;
+	}
+	
+	public void removeVerticalHelpers() {
+		for(VerticalHelper verticalHelper : new ArrayList<VerticalHelper>(this.verticalHelpers)) {
+			this.world.getChildren().remove(verticalHelper);
+			this.verticalHelpers.remove(verticalHelper);
+		}
+	}
+	
+	public VerticalHelper getVerticalHelper(PaneBox basePaneBox) {
+		for(VerticalHelper verticalHelper : this.verticalHelpers) {
+			if(verticalHelper.isBasePaneBox(basePaneBox)) {
 				return verticalHelper;
 			}
 		}

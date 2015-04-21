@@ -87,9 +87,9 @@ public class ContextMenuController extends Observable implements Observer {
 		classCM = new ContextMenu();
 		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF, classCM);
 		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF, classCM);
-		addAttribute = getMenuItem("Add Attribute", Resource.ADD_GIF, classCM);
-		deleteClass = getMenuItem("Delete Class", Resource.DELETE_PNG, classCM);
+		addAttribute = getMenuItem("Create Attribute", Resource.ADD_ATTR_GIF, classCM);
 		createRelationM = getClassRelationMenu(classCM);
+		deleteClass = getMenuItem("Delete Class", Resource.DELETE_PNG, classCM);
 
 		// Object
 		objectCM = new ContextMenu();
