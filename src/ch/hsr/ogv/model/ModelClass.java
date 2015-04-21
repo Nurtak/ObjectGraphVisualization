@@ -15,7 +15,7 @@ import jfxtras.labs.util.Util;
  */
 public class ModelClass extends ModelBox {
 
-	private final static double OBJECT_LEVEL_DIFF = 100;
+	public final static double OBJECT_LEVEL_DIFF = 100;
 
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
