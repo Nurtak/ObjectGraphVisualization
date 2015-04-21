@@ -306,8 +306,11 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateClass() {
-		if (this.subSceneAdapter != null) {
-			this.subSceneAdapter.receiveMouseEvents(this.createClass.isSelected(), this.subSceneAdapter.getFloor());
+		if(createClass.isSelected()) {
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			if (this.subSceneAdapter != null) {
+				this.subSceneAdapter.receiveMouseEvents(this.createClass.isSelected(), this.subSceneAdapter.getFloor());
+			}
 		}
 	}
 

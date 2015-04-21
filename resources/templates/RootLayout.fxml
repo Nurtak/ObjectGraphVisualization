@@ -257,6 +257,20 @@
       </GridPane>
 	</top>
    <center>
-		<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" BorderPane.alignment="CENTER" />
+		<Pane style="-fx-background-color: black;" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin></Pane>
    </center>
+   <bottom>
+      <HBox alignment="CENTER_LEFT" layoutY="4.0">
+         <children>
+            <TextField disable="true" editable="false" HBox.hgrow="ALWAYS">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+   </bottom>
 </BorderPane>

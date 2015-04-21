@@ -206,6 +206,10 @@ public class ContextMenuController extends Observable implements Observer {
 		deleteRelation.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
 		});
+
+		addAttribute.setOnAction((ActionEvent e) -> {
+			mvConnector.createNewAttribute(selected);
+		});
 	}
 
 	@Override
