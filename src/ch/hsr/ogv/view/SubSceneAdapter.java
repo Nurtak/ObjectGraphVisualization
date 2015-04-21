@@ -1,9 +1,5 @@
 package ch.hsr.ogv.view;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -25,7 +21,7 @@ public class SubSceneAdapter implements Selectable {
 	private SubSceneCamera subSceneCamera;
 	private Axis axis;
 	private Floor floor;
-	private Set<VerticalHelper> verticalHelpers = new HashSet<VerticalHelper>();
+	private VerticalHelper verticalHelper;
 	
 	private volatile boolean selected = false;
 
@@ -49,42 +45,8 @@ public class SubSceneAdapter implements Selectable {
 		return this.floor;
 	}
 	
-	public Set<VerticalHelper> getVerticalHelpers() {
-		return this.verticalHelpers;
-	}
-	
-	public VerticalHelper addVerticalHelper(PaneBox basePaneBox) {
-		VerticalHelper verticalHelper = new VerticalHelper(basePaneBox);
-		this.world.getChildren().add(verticalHelper);
-		this.verticalHelpers.add(verticalHelper);
-		return verticalHelper;
-	}
-	
-	public VerticalHelper removeVerticalHelper(PaneBox basePaneBox) {
-		for(VerticalHelper verticalHelper : new ArrayList<VerticalHelper>(this.verticalHelpers)) {
-			if(verticalHelper.isBasePaneBox(basePaneBox)) {
-				this.world.getChildren().remove(verticalHelper);
-				this.verticalHelpers.remove(verticalHelper);
-				return verticalHelper;
-			}
-		}
-		return null;
-	}
-	
-	public void removeVerticalHelpers() {
-		for(VerticalHelper verticalHelper : new ArrayList<VerticalHelper>(this.verticalHelpers)) {
-			this.world.getChildren().remove(verticalHelper);
-			this.verticalHelpers.remove(verticalHelper);
-		}
-	}
-	
-	public VerticalHelper getVerticalHelper(PaneBox basePaneBox) {
-		for(VerticalHelper verticalHelper : this.verticalHelpers) {
-			if(verticalHelper.isBasePaneBox(basePaneBox)) {
-				return verticalHelper;
-			}
-		}
-		return null;
+	public VerticalHelper getVerticalHelper() {
+		return this.verticalHelper;
 	}
 	
 	public Color getColor() {
@@ -109,6 +71,9 @@ public class SubSceneAdapter implements Selectable {
         // create ground floor and add it to the world Xform
         this.floor = new Floor();
         this.world.getChildren().add(floor);
+        
+		this.verticalHelper = new VerticalHelper();
+		this.world.getChildren().add(this.verticalHelper);
 
         // add a camera for the subscene
         this.subSceneCamera = new SubSceneCamera();
@@ -137,6 +102,7 @@ public class SubSceneAdapter implements Selectable {
 	public boolean add(Node node) {
 		boolean retAdd = this.world.getChildren().add(node);
 		this.floor.toFront();
+		this.verticalHelper.toFront();
 		return retAdd;
 	}
 	

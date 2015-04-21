@@ -550,7 +550,12 @@ public class RootLayoutController implements Observer, Initializable {
 				disableAllButtons(true);
 			}
 		}
-		else { // SubSceneAdapter selected
+		else if(this.selectionController.hasCurrentSelection() && this.selectionController.getCurrentSelected().equals(this.subSceneAdapter)){ // SubSceneAdapter selected
+			this.colorPick.setDisable(false);
+			this.colorPick.setValue(this.subSceneAdapter.getFloor().getColor());
+		}
+		else {
+			this.colorPick.setDisable(true);
 			this.colorPick.setValue(Color.WHITE);
 		}
 	}
@@ -571,6 +576,8 @@ public class RootLayoutController implements Observer, Initializable {
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
 		addButtonAccelerators();
 		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
+		this.colorPick.getCustomColors().add(SubSceneAdapter.DEFAULT_COLOR);
+		this.colorPick.getCustomColors().add(Floor.DEFAULT_COLOR);
 		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
 		this.colorPick.getCustomColors().add(Util.brighter(PaneBox.DEFAULT_COLOR, 0.1));
 		initToggleRelationMap();

@@ -19,6 +19,7 @@ import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
+import ch.hsr.ogv.view.SubSceneAdapter;
 
 /**
  *
@@ -216,11 +217,14 @@ public class ModelViewConnector {
 
 	public void handleColorPick(Selectable selected, Color pickedColor) {
 		if (selected instanceof PaneBox) {
-			ModelBox modelPickColor = this.getModelBox((PaneBox) selected);
-			modelPickColor.setColor(pickedColor);
+			ModelBox modelBox = this.getModelBox((PaneBox) selected);
+			modelBox.setColor(pickedColor);
 		} else if (selected instanceof Arrow) {
-			Relation relationPickColor = this.getRelation((Arrow) selected);
-			relationPickColor.setColor(pickedColor);
+			Relation relation = this.getRelation((Arrow) selected);
+			relation.setColor(pickedColor);
+		} else if (selected instanceof SubSceneAdapter) {
+			SubSceneAdapter subSceneAdapter = (SubSceneAdapter) selected;
+			subSceneAdapter.getFloor().setColor(pickedColor);
 		}
 	}
 

@@ -3,76 +3,82 @@ package ch.hsr.ogv.view;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
+import ch.hsr.ogv.model.ModelClass;
 
 public class VerticalHelper extends Group {
 	
-	public final static double DEPTH = 1000;
+	public final static double DEPTH = 10000;
+	public final static double OPACITY = 0.1;
+	
+	private final static double PLUS_SIZE = 2;
 	
 	private PaneBox basePaneBox;
-	private Box verticalHelperBox;
+	
+	public PaneBox getBasePaneBox() {
+		return basePaneBox;
+	}
+
+	private Rectangle northRectangle = new Rectangle(PLUS_SIZE, DEPTH, DEFAULT_COLOR);
+	private Rectangle southRectangle = new Rectangle(PLUS_SIZE, DEPTH, DEFAULT_COLOR);
+	private Rectangle eastRectangle = new Rectangle(PLUS_SIZE, DEPTH, DEFAULT_COLOR);
+	private Rectangle westRectangle = new Rectangle(PLUS_SIZE, DEPTH, DEFAULT_COLOR);
 	
 	public final static Color DEFAULT_COLOR = Color.DODGERBLUE;
 	
-	public VerticalHelper(PaneBox basePaneBox) {
-		this.basePaneBox = basePaneBox;
-		this.verticalHelperBox = new Box(this.basePaneBox.getWidth(), DEPTH, this.basePaneBox.getHeight());
-		//this.verticalHelper.setTranslateY(DEPTH / 2);
-		this.verticalHelperBox.translateXProperty().bind(this.basePaneBox.get().translateXProperty());
-		this.verticalHelperBox.translateYProperty().bind(this.basePaneBox.get().translateYProperty());
-		this.verticalHelperBox.translateZProperty().bind(this.basePaneBox.get().translateZProperty());
-		this.verticalHelperBox.widthProperty().bind(this.basePaneBox.getBox().widthProperty());
-		this.verticalHelperBox.depthProperty().bind(this.basePaneBox.getBox().heightProperty());
-		//this.verticalHelper.setMouseTransparent(false);
-		this.verticalHelperBox.setOpacity(0.0);
+	public VerticalHelper() {
+		this.northRectangle.setOpacity(OPACITY);
+		this.northRectangle.setTranslateY(ModelClass.OBJECT_LEVEL_DIFF);
 		
-		Rectangle northRectangle = new Rectangle(basePaneBox.getWidth(), DEPTH, DEFAULT_COLOR);
-		northRectangle.setOpacity(0.1);
-		northRectangle.setMouseTransparent(true);
-		northRectangle.translateXProperty().bind(this.basePaneBox.get().translateXProperty().subtract(basePaneBox.getBox().widthProperty().divide(2)));
-		northRectangle.translateYProperty().bind(this.basePaneBox.get().translateYProperty().subtract(DEPTH / 2));
-		northRectangle.translateZProperty().bind(this.basePaneBox.get().translateZProperty().add(basePaneBox.getBox().heightProperty().divide(2)));
-		northRectangle.widthProperty().bind(this.basePaneBox.getBox().widthProperty());
+		this.southRectangle.setOpacity(OPACITY);
+		this.southRectangle.setTranslateY(ModelClass.OBJECT_LEVEL_DIFF);
 		
-		Rectangle southRectangle = new Rectangle(basePaneBox.getWidth(), DEPTH, DEFAULT_COLOR);
-		southRectangle.setOpacity(0.1);
-		northRectangle.setMouseTransparent(true);
-		southRectangle.translateXProperty().bind(this.basePaneBox.get().translateXProperty().subtract(basePaneBox.getBox().widthProperty().divide(2)));
-		southRectangle.translateYProperty().bind(this.basePaneBox.get().translateYProperty().subtract(DEPTH / 2));
-		southRectangle.translateZProperty().bind(this.basePaneBox.get().translateZProperty().subtract(basePaneBox.getBox().heightProperty().divide(2)));
-		southRectangle.widthProperty().bind(this.basePaneBox.getBox().widthProperty());
+		this.eastRectangle.setOpacity(OPACITY);
+		this.eastRectangle.setTranslateY(ModelClass.OBJECT_LEVEL_DIFF);
+		this.eastRectangle.getTransforms().add(new Rotate(90, Rotate.Y_AXIS));
 		
-		Rectangle eastRectangle = new Rectangle(basePaneBox.getHeight(), DEPTH, DEFAULT_COLOR);
-		eastRectangle.setOpacity(0.1);
-		eastRectangle.setMouseTransparent(true);
-		eastRectangle.getTransforms().add(new Rotate(90, Rotate.Y_AXIS));
-		eastRectangle.translateXProperty().bind(this.basePaneBox.get().translateXProperty().add(basePaneBox.getBox().widthProperty().divide(2)));
-		eastRectangle.translateYProperty().bind(this.basePaneBox.get().translateYProperty().subtract(DEPTH / 2));
-		eastRectangle.translateZProperty().bind(this.basePaneBox.get().translateZProperty().add(basePaneBox.getBox().heightProperty().divide(2)));
-		eastRectangle.widthProperty().bind(this.basePaneBox.getBox().heightProperty());
-			
-		Rectangle westRectangle = new Rectangle(basePaneBox.getHeight(), DEPTH, DEFAULT_COLOR);
-		westRectangle.setOpacity(0.1);
-		westRectangle.setMouseTransparent(true);
-		westRectangle.getTransforms().add(new Rotate(90, Rotate.Y_AXIS));
-		westRectangle.translateXProperty().bind(this.basePaneBox.get().translateXProperty().subtract(basePaneBox.getBox().widthProperty().divide(2)));
-		westRectangle.translateYProperty().bind(this.basePaneBox.get().translateYProperty().subtract(DEPTH / 2));
-		westRectangle.translateZProperty().bind(this.basePaneBox.get().translateZProperty().add(basePaneBox.getBox().heightProperty().divide(2)));
-		westRectangle.widthProperty().bind(this.basePaneBox.getBox().heightProperty());
+		this.westRectangle.setOpacity(OPACITY);
+		this.westRectangle.setTranslateY(ModelClass.OBJECT_LEVEL_DIFF);
+		this.westRectangle.getTransforms().add(new Rotate(90, Rotate.Y_AXIS));
 		
-		this.getChildren().addAll(verticalHelperBox, northRectangle, southRectangle, eastRectangle, westRectangle);
+		getChildren().addAll(this.northRectangle, this.southRectangle, this.eastRectangle, this.westRectangle);
+		setMouseTransparent(true);
+		setVisible(false);
 	}
 	
-	public boolean isBasePaneBox(PaneBox basePaneBox) {
-		return this.basePaneBox.equals(basePaneBox);
+	public void setBasePaneBox(PaneBox paneBox) {
+		this.basePaneBox = paneBox;
+		if(paneBox == null) return;
+		this.northRectangle.setWidth(paneBox.getWidth() + PLUS_SIZE);
+		this.northRectangle.setTranslateX(paneBox.getTranslateX() - paneBox.getWidth() / 2 - PLUS_SIZE / 2);
+		this.northRectangle.setTranslateZ(paneBox.getTranslateZ() + paneBox.getHeight() / 2 + PLUS_SIZE / 2);
+		
+		this.southRectangle.setWidth(paneBox.getWidth() + PLUS_SIZE);
+		this.southRectangle.setTranslateX(paneBox.getTranslateX() - paneBox.getWidth() / 2 - PLUS_SIZE / 2);
+		this.southRectangle.setTranslateZ(paneBox.getTranslateZ() - paneBox.getHeight() / 2 - PLUS_SIZE / 2);
+		
+		this.eastRectangle.setWidth(paneBox.getHeight() + PLUS_SIZE);
+		this.eastRectangle.setTranslateX(paneBox.getTranslateX() + paneBox.getWidth() / 2 + PLUS_SIZE / 2);
+		this.eastRectangle.setTranslateZ(paneBox.getTranslateZ() + paneBox.getHeight() / 2 + PLUS_SIZE / 2);
+		
+		this.westRectangle.setWidth(paneBox.getHeight() + PLUS_SIZE);
+		this.westRectangle.setTranslateX(paneBox.getTranslateX() - paneBox.getWidth() / 2 - PLUS_SIZE / 2);
+		this.westRectangle.setTranslateZ(paneBox.getTranslateZ() + paneBox.getHeight() / 2 + PLUS_SIZE / 2);
 	}
 	
-	public boolean isVerticalHelper(PaneBox paneBox, Node node) {
-		if (node == null || !(node instanceof Box))
+	private boolean isVerticalHelper(Rectangle rectangle) {
+		if(this.northRectangle.equals(rectangle)) return true;
+		if(this.southRectangle.equals(rectangle)) return true;
+		if(this.eastRectangle.equals(rectangle)) return true;
+		if(this.westRectangle.equals(rectangle)) return true;
+		return false;
+	}
+	
+	public boolean isVerticalHelper(Node node) {
+		if (node == null || !(node instanceof Rectangle))
 			return false;
-		return isBasePaneBox(paneBox);
+		return isVerticalHelper((Rectangle) node);
 	}
 
 }

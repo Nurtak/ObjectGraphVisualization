@@ -55,11 +55,14 @@ public class DragMoveController extends DragController {
 					}
 				}
 				else if(modelBox instanceof ModelObject && mvConnector != null) {
-					subSceneAdapter.removeVerticalHelpers();
-					VerticalHelper verticalHelper = subSceneAdapter.addVerticalHelper(paneBox);
+					VerticalHelper verticalHelper = subSceneAdapter.getVerticalHelper();
+					if(verticalHelper == null) return;
+					verticalHelper.setBasePaneBox(paneBox);
+					verticalHelper.setVisible(true);
+					paneBox.get().toBack();
 					subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
 					PickResult pick = me.getPickResult();
-					if (pick != null && pick.getIntersectedNode() != null && verticalHelper.isVerticalHelper(paneBox, pick.getIntersectedNode())) {
+					if (pick != null && pick.getIntersectedNode() != null && verticalHelper.isVerticalHelper(pick.getIntersectedNode())) {
 						Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
 						double newY = coords.getY() - origRelMouseY;
 						if(newY < ModelClass.OBJECT_LEVEL_DIFF) {
@@ -67,6 +70,7 @@ public class DragMoveController extends DragController {
 						}
 						Point3D objectCoordinates = new Point3D(modelBox.getX(), newY, modelBox.getZ());
 						modelBox.setCoordinates(objectCoordinates);
+						verticalHelper.setBasePaneBox(paneBox);
 					}
 				}
 			}
