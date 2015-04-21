@@ -49,14 +49,17 @@ public class ResourceLocator {
 		GENERALIZATION_GIF("images/menu/general.gif"),
 		DEPENDENCY_GIF("images/menu/depend.gif"),
 
+		IMPORT_PNG("images/menu/application-import.png"),
 		ADD_ATTR_GIF("images/menu/artifactPrj.gif"),	
 		CLASS_GIF("images/menu/structureclass.gif"),
 		OBJECT_GIF("images/menu/instance.gif"),
 		RELATION_GIF("images/menu/relation.gif"),
 		RENAME_GIF("images/menu/text_box2.gif"),
 		RENAME_ATTR_GIF("images/menu/testcase.gif"),
-		MOVE_UP_PNG("images/menu/mm_arrow_triangle_up.png"),
-		MOVE_DOWN_PNG("images/menu/mm_arrow_triangle_down.png"),		
+//		MOVE_UP_PNG("images/menu/arrow-up-01-16.png"),
+//		MOVE_DOWN_PNG("images/menu/arrow-down-01-16.png"),
+		MOVE_UP_PNG("images/menu/bullet_arrow_up.png"),
+		MOVE_DOWN_PNG("images/menu/bullet_arrow_down.png"),
 		CHANGE_DIRECTION_GIF("images/menu/synchronize_dgm_tab.gif"),
 		DELETE_PNG("images/menu/trash.png");
 
