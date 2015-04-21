@@ -124,9 +124,7 @@ public class ModelClass extends ModelBox {
 			return false;
 		}
 		Attribute attribute = getAttributes().get(rowIndex);
-		boolean deletedObject = deleteAttribute(attribute);
-
-		return deletedObject;
+		return deleteAttribute(attribute);
 	}
 	
 	public boolean moveAttributeUp(int rowIndex) {
@@ -136,6 +134,8 @@ public class ModelClass extends ModelBox {
 		Attribute thisAttribute = getAttributes().get(rowIndex);
 		Attribute upperAttribute = getAttributes().set(rowIndex - 1, thisAttribute);
 		getAttributes().set(rowIndex, upperAttribute);
+		setChanged();
+		notifyObservers(thisAttribute);
 		return true;
 	}
 	
@@ -146,6 +146,8 @@ public class ModelClass extends ModelBox {
 		Attribute thisAttribute = getAttributes().get(rowIndex);
 		Attribute lowerAttribute = getAttributes().set(rowIndex + 1, thisAttribute);
 		getAttributes().set(rowIndex, lowerAttribute);
+		setChanged();
+		notifyObservers(thisAttribute);
 		return true;
 	}
 	
@@ -160,10 +162,10 @@ public class ModelClass extends ModelBox {
 	}
 
 	private boolean deleteAttribute(Attribute attribute) {
+		boolean deleted = attributes.remove(attribute);
 		for (ModelObject modelObject : getModelObjects()) {
 			modelObject.deleteAttributeValue(attribute);
 		}
-		boolean deleted = attributes.remove(attribute);
 		if (deleted) {
 			setChanged();
 			notifyObservers(attribute);

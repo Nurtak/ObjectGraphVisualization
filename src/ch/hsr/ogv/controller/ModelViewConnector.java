@@ -202,15 +202,48 @@ public class ModelViewConnector {
 			this.modelManager.deleteRelation(relationToDelete);
 		}
 	}
+	
+	public void handleMoveAttributeUp(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			PaneBox paneBox = (PaneBox) selected;
+			Label selectedLabel = paneBox.getSelectedLabel();
+			if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
+				int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+				ModelBox modelBox = getModelBox(paneBox);
+				if (modelBox instanceof ModelClass) {
+					ModelClass modelClass = (ModelClass) modelBox;
+					modelClass.moveAttributeUp(rowIndex);
+				}
+			}
+		}
+	}
+	
+	public void handleMoveAttributeDown(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			PaneBox paneBox = (PaneBox) selected;
+			Label selectedLabel = paneBox.getSelectedLabel();
+			if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
+				int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+				ModelBox modelBox = getModelBox(paneBox);
+				if (modelBox instanceof ModelClass) {
+					ModelClass modelClass = (ModelClass) modelBox;
+					modelClass.moveAttributeDown(rowIndex);
+				}
+			}
+		}
+	}
 
-	public void handleDeleteAttribute(PaneBox paneBox) {
-		Label selectedLabel = paneBox.getSelectedLabel();
-		if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
-			int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
-			ModelBox modelBox = getModelBox(paneBox);
-			if (modelBox instanceof ModelClass) {
-				ModelClass modelClass = (ModelClass) modelBox;
-				modelClass.deleteAttribute(rowIndex);
+	public void handleDeleteAttribute(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			PaneBox paneBox = (PaneBox) selected;
+			Label selectedLabel = paneBox.getSelectedLabel();
+			if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
+				int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+				ModelBox modelBox = getModelBox(paneBox);
+				if (modelBox instanceof ModelClass) {
+					ModelClass modelClass = (ModelClass) modelBox;
+					modelClass.deleteAttribute(rowIndex);
+				}
 			}
 		}
 	}
@@ -235,14 +268,9 @@ public class ModelViewConnector {
 			if (selectedLabel == null) {
 				selectedBox.allowTopTextInput(true);
 			} else {
-				selectedBox.setLabelSelected(selectedLabel, true);
+				selectedBox.allowCenterFieldTextInput(selectedLabel, true);
 			}
 		}
-	}
-
-	public void handleAddAttribute(Selectable selected) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
