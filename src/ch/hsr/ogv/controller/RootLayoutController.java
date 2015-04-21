@@ -27,6 +27,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jfxtras.labs.util.Util;
 import ch.hsr.ogv.dataaccess.UserPreferences;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
@@ -571,6 +572,7 @@ public class RootLayoutController implements Observer, Initializable {
 		addButtonAccelerators();
 		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
 		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
+		this.colorPick.getCustomColors().add(Util.brighter(PaneBox.DEFAULT_COLOR, 0.1));
 		initToggleRelationMap();
 	}
 }
