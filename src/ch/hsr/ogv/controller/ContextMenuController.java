@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Point3D;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -31,6 +32,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 	private ModelViewConnector mvConnector;
 	private Selectable selected;
+	private Point3D position;
 
 	// Subscene
 	private ContextMenu subSceneCM;
@@ -133,6 +135,7 @@ public class ContextMenuController extends Observable implements Observer {
 	public void enableContextMenu(SubSceneAdapter subSceneAdapter) {
 		subSceneAdapter.getSubScene().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+				this.position = new Point3D(me.getX(), 0.0, me.getZ());
 				subSceneCM.hide();
 				subSceneCM.show(subSceneAdapter.getSubScene(), me.getScreenX(), me.getScreenY());
 			} else if (subSceneCM.isShowing()) {
@@ -177,7 +180,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 		// SubScene
 		createClass.setOnAction((ActionEvent e) -> {
-			// mvConnector.handleCreateNewClass(e.);
+			mvConnector.handleCreateNewClass(position);
 		});
 
 		// Class

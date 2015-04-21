@@ -56,21 +56,21 @@ public class ModelViewConnector {
 		}
 		return null;
 	}
-	
+
 	public Set<PaneBox> getClassPaneBoxes() {
 		Set<PaneBox> classPaneBoxes = new HashSet<PaneBox>();
-		for(ModelBox modelBox : getBoxes().keySet()) {
-			if(modelBox instanceof ModelClass) {
+		for (ModelBox modelBox : getBoxes().keySet()) {
+			if (modelBox instanceof ModelClass) {
 				classPaneBoxes.add(getBoxes().get(modelBox));
 			}
 		}
 		return classPaneBoxes;
 	}
-	
+
 	public Set<PaneBox> getObjectPaneBoxes() {
 		Set<PaneBox> objectPaneBoxes = new HashSet<PaneBox>();
-		for(ModelBox modelBox : getBoxes().keySet()) {
-			if(modelBox instanceof ModelObject) {
+		for (ModelBox modelBox : getBoxes().keySet()) {
+			if (modelBox instanceof ModelObject) {
 				objectPaneBoxes.add(getBoxes().get(modelBox));
 			}
 		}
@@ -153,7 +153,7 @@ public class ModelViewConnector {
 	public PaneBox handleCreateNewObject(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			ModelBox selectedModelBox = this.getModelBox((PaneBox) selected);
-			if(selectedModelBox != null && selectedModelBox instanceof ModelClass) {
+			if (selectedModelBox != null && selectedModelBox instanceof ModelClass) {
 				ModelClass selectedModelClass = (ModelClass) selectedModelBox;
 				ModelObject newObject = this.modelManager.createObject(selectedModelClass);
 				PaneBox newBox = this.getPaneBox(newObject);
@@ -165,17 +165,17 @@ public class ModelViewConnector {
 		}
 		return null;
 	}
-	
+
 	public Relation handleCreateRelation(PaneBox startBox, PaneBox endBox, RelationType relationType) {
 		ModelBox modelBoxStart = this.getModelBox(startBox);
 		ModelBox modelBoxEnd = this.getModelBox(endBox);
 		return this.modelManager.createRelation(modelBoxStart, modelBoxEnd, relationType, Arrow.DEFAULT_COLOR);
 	}
-	
+
 	public Attribute createNewAttribute(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			ModelBox selectedModelBox = this.getModelBox((PaneBox) selected);
-			if(selectedModelBox != null && selectedModelBox instanceof ModelClass) {
+			if (selectedModelBox != null && selectedModelBox instanceof ModelClass) {
 				ModelClass selectedModelClass = (ModelClass) selectedModelBox;
 				return selectedModelClass.createAttribute();
 			}
@@ -198,19 +198,19 @@ public class ModelViewConnector {
 			this.modelManager.deleteRelation(relationToDelete);
 		}
 	}
-	
+
 	public void handleDeleteAttribute(PaneBox paneBox) {
 		Label selectedLabel = paneBox.getSelectedLabel();
-		if(selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
+		if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
 			int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
 			ModelBox modelBox = getModelBox(paneBox);
-			if(modelBox instanceof ModelClass) {
+			if (modelBox instanceof ModelClass) {
 				ModelClass modelClass = (ModelClass) modelBox;
 				modelClass.deleteAttribute(rowIndex);
 			}
 		}
 	}
-	
+
 	public void handleColorPick(Selectable selected, Color pickedColor) {
 		if (selected instanceof PaneBox) {
 			ModelBox modelPickColor = this.getModelBox((PaneBox) selected);
@@ -219,6 +219,11 @@ public class ModelViewConnector {
 			Relation relationPickColor = this.getRelation((Arrow) selected);
 			relationPickColor.setColor(pickedColor);
 		}
+	}
+
+	public void handleRename(Selectable selected) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
