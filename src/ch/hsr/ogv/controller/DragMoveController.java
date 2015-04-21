@@ -20,8 +20,6 @@ import ch.hsr.ogv.view.VerticalHelper;
  */
 public class DragMoveController extends DragController {
 
-	private ModelViewConnector mvConnector;
-	
 	protected volatile double origRelMouseX;
 	protected volatile double origRelMouseY;
 	protected volatile double origRelMouseZ;
@@ -54,12 +52,12 @@ public class DragMoveController extends DragController {
 						modelBox.setCoordinates(classCoordinates);
 					}
 				}
-				else if(modelBox instanceof ModelObject && mvConnector != null) {
+				else if(modelBox instanceof ModelObject) {
 					VerticalHelper verticalHelper = subSceneAdapter.getVerticalHelper();
 					if(verticalHelper == null) return;
 					verticalHelper.setBasePaneBox(paneBox);
 					verticalHelper.setVisible(true);
-					paneBox.get().toBack();
+					verticalHelper.toFront();
 					subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
 					PickResult pick = me.getPickResult();
 					if (pick != null && pick.getIntersectedNode() != null && verticalHelper.isVerticalHelper(pick.getIntersectedNode())) {
@@ -77,7 +75,4 @@ public class DragMoveController extends DragController {
 		});
 	}
 	
-	public void setMVConnector(ModelViewConnector mvConnector) {
-		this.mvConnector = mvConnector;
-	}
 }

@@ -1,6 +1,7 @@
 package ch.hsr.ogv.controller;
 
 import java.util.Observable;
+import java.util.Observer;
 
 import javafx.geometry.Point3D;
 import javafx.scene.SubScene;
@@ -17,7 +18,7 @@ import ch.hsr.ogv.view.SubSceneAdapter;
  * @author Simon Gwerder
  *
  */
-public class SelectionController extends Observable {
+public class SelectionController extends Observable implements Observer {
 
 	private volatile Selectable previousSelected = null;
 	private volatile Selectable currentSelected = null;
@@ -171,14 +172,14 @@ public class SelectionController extends Observable {
 		selectable.setSelected(selected);
 
 		if (selected) {
-			if (this.currentSelected != null && selectable != this.currentSelected) {
+			if (this.currentSelected != null && selectable != this.currentSelected && subSceneAdapter != null) {
 				this.previousSelected = this.currentSelected; // current selection becomes previous selected object
 				this.previousSelectionCoord = this.currentSelectionCoord;
 				setSelected(this.currentSelected, false, subSceneAdapter); // deselect the old selected object
 			}
 			this.currentSelected = selectable;
 			selectable.requestFocus();
-			subSceneAdapter.getFloor().toFront();
+			if(subSceneAdapter != null) subSceneAdapter.getFloor().toFront();
 
 			setChanged();
 			notifyObservers(selectable);
@@ -187,6 +188,16 @@ public class SelectionController extends Observable {
 
 			setChanged();
 			notifyObservers(selectable);
+		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof DragController) {
+			DragController dragController = (DragController) o;
+			if(!dragController.isDragInProgress() && hasCurrentSelection()) {
+				setSelected(getCurrentSelected(), true, null);
+			}
 		}
 	}
 
