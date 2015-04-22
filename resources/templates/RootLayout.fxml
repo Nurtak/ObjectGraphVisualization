@@ -15,13 +15,14 @@
       <GridPane>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-      		<MenuBar id="menubar" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER">
+      		<MenuBar id="menubar" prefHeight="25.0" prefWidth="956.0" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER" GridPane.columnSpan="2">
       			<menus>
       				<Menu id="menu_file" mnemonicParsing="false" text="File">
       					<items>
@@ -124,7 +125,7 @@
       				</Menu>
       			</menus>
       		</MenuBar>
-            <ToolBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
+            <ToolBar prefHeight="40.0" prefWidth="1167.0" GridPane.rowIndex="1">
                <items>
                   <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" text="Create Class">
                      <toggleGroup>
@@ -136,7 +137,8 @@
                               <Image url="@../images/menu/structureclass.gif" />
                            </image>
                         </ImageView>
-                     </graphic></ToggleButton>
+                     </graphic>
+                  </ToggleButton>
                   <Button fx:id="createObject" disable="true" mnemonicParsing="false" onAction="#handleCreateObject" text="Create Object">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -144,11 +146,13 @@
                               <Image url="@../images/menu/instance.gif" />
                            </image>
                         </ImageView>
-                     </graphic></Button>
+                     </graphic>
+                  </Button>
                   <Separator orientation="VERTICAL">
                      <padding>
                         <Insets left="3.0" />
-                     </padding></Separator>
+                     </padding>
+                  </Separator>
                   <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
                     <items>
                         <MenuItem fx:id="createUndirectedAssociation" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association">
@@ -167,14 +171,16 @@
                                     <Image url="@../images/menu/assoWithNav.gif" />
                                  </image>
                               </ImageView>
-                           </graphic></MenuItem>
+                           </graphic>
+                        </MenuItem>
                       <MenuItem fx:id="createBidirectedAssociation" mnemonicParsing="false" onAction="#handleCreateBidirectedAssociation" text="Bidirected Association">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../images/menu/assoNavToNav.gif" />
                                  </image>
-                              </ImageView>                           </graphic></MenuItem>
+                              </ImageView>                           </graphic>
+                        </MenuItem>
                         <MenuItem fx:id="createUndirectedAggregation" mnemonicParsing="false" onAction="#handleCreateUndirectedAggregation" text="Aggregation">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
@@ -223,7 +229,8 @@
                               <Image url="@../images/menu/general.gif" />
                            </image>
                         </ImageView>
-                     </graphic></ToggleButton>
+                     </graphic>
+                  </ToggleButton>
                   <ToggleButton fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -231,11 +238,13 @@
                               <Image url="@../images/menu/depend.gif" />
                            </image>
                         </ImageView>
-                     </graphic></ToggleButton>
+                     </graphic>
+                  </ToggleButton>
                   <Separator orientation="VERTICAL">
                      <padding>
                         <Insets left="3.0" />
-                     </padding></Separator>
+                     </padding>
+                  </Separator>
                   <Button fx:id="deleteSelected" disable="true" mnemonicParsing="false" onAction="#handleDeleteSelected" text="Delete Selected">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -250,8 +259,13 @@
                         <Insets left="3.0" />
                      </padding>
                   </Separator>
-                  <ColorPicker fx:id="colorPick" disable="true" onAction="#handleColorPick" promptText="Set Color" />
                </items>
+            </ToolBar>
+            <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+              <items>
+                  <ColorPicker fx:id="colorPick" disable="true" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleColorPick" promptText="Set Color" />
+                  <Label fx:id="pickColorLabel" text="Pick color: " />
+              </items>
             </ToolBar>
          </children>
       </GridPane>
