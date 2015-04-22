@@ -79,7 +79,7 @@ public class SelectionController extends Observable implements Observer {
 		});
 
 		subSceneAdapter.getFloor().addEventHandler(MouseEvent.MOUSE_RELEASED, (MouseEvent me) -> {
-			if (MouseButton.PRIMARY.equals(me.getButton()) && me.isDragDetect()) {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && me.isDragDetect()) {
 				setSelected(me, subSceneAdapter.getFloor(), true, subSceneAdapter);
 			}
 		});

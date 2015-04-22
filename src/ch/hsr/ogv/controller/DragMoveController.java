@@ -27,7 +27,7 @@ public class DragMoveController extends DragController {
 	public void enableDragMove(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		startOnMouseMoved(modelBox, paneBox, subSceneAdapter);
 		moveOnMouseDragged(modelBox, paneBox, subSceneAdapter);
-		endOnMouseReleased(paneBox.get(), subSceneAdapter);
+		endOnMouseReleased(paneBox.get(), paneBox, subSceneAdapter);
 	}
 
 	private void startOnMouseMoved(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {

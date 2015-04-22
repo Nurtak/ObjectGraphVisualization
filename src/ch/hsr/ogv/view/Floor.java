@@ -30,7 +30,6 @@ public class Floor extends Group implements Selectable {
 		for (Rectangle tile : this.tiles) {
 			getChildren().add(tile);
 		}
-		setMouseTransparent(true);
 	}
 
 	private void buildFloorTile(int x, int z) {

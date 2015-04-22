@@ -48,7 +48,9 @@ public class RelationCreationProcess implements Observer {
 		this.viewArrow = new Arrow(startBox, startBox.getCenterPoint(), relationType);
 		subSceneAdapter.add(this.viewArrow);
 		subSceneAdapter.add(this.viewArrow.getSelection());
-		subSceneAdapter.receiveMouseEvents(false, this.viewArrow);
+		subSceneAdapter.worldReceiveMouseEvents();
+		subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
+		subSceneAdapter.restrictMouseEvents(this.viewArrow);
 		handleMouseEvents();
 	}
 	
@@ -71,7 +73,8 @@ public class RelationCreationProcess implements Observer {
 			this.endBox = null;
 		}
 
-		this.subSceneAdapter.receiveMouseEvents(false, this.subSceneAdapter.getFloor());
+		subSceneAdapter.worldReceiveMouseEvents();
+		subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 	}
 	
 	private void handleMouseEvents() {
@@ -84,7 +87,8 @@ public class RelationCreationProcess implements Observer {
 			i++;
 		}
 		nodes[boxes.size()] = this.subSceneAdapter.getFloor();
-		this.subSceneAdapter.receiveMouseEvents(true, nodes);
+		this.subSceneAdapter.worldRestrictMouseEvents();
+		this.subSceneAdapter.receiveMouseEvents(nodes);
 	}
 	
 	private boolean pointBoxXZ(PaneBox box, Point3D movePoint) {

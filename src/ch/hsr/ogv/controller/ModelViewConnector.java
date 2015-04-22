@@ -17,6 +17,7 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.SubSceneAdapter;
@@ -263,6 +264,9 @@ public class ModelViewConnector {
 		} else if (selected instanceof SubSceneAdapter) {
 			SubSceneAdapter subSceneAdapter = (SubSceneAdapter) selected;
 			subSceneAdapter.getFloor().setColor(pickedColor);
+		} else if (selected instanceof Floor) {
+			Floor floor = (Floor) selected;
+			floor.setColor(pickedColor);
 		}
 	}
 

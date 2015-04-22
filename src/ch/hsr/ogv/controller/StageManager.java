@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -227,10 +226,7 @@ public class StageManager implements Observer {
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
 		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
 		this.textFieldController.enableTextInput(modelBox, paneBox);
-		this.contextMenuController.enableContextMenu(modelBox, paneBox);
-		for (Label label : paneBox.getCenterLabels()) {
-			this.contextMenuController.enableContextMenu(label, paneBox);
-		}
+		this.contextMenuController.enableContextMenu(modelBox, paneBox, this.subSceneAdapter);
 		this.mouseMoveController.enableMouseMove(paneBox);
 		this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 		if (modelBox instanceof ModelClass) {
@@ -307,9 +303,9 @@ public class StageManager implements Observer {
 
 			double newWidth = changedBox.calcMinWidth();
 			changedBox.setMinWidth(newWidth);
-			// changedBox.getTopLabel().setPrefWidth(newWidth);
-			// changedBox.getTopTextField().setPrefWidth(newWidth);
-			modelBox.setWidth(changedBox.getMinWidth());
+			if(newWidth > changedBox.getWidth()) {
+				modelBox.setWidth(changedBox.getMinWidth());
+			}
 
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
@@ -372,24 +368,26 @@ public class StageManager implements Observer {
 	}
 
 	private void adaptCenterFields(ModelClass modelClass) {
-		PaneBox paneClassBox = this.mvConnector.getPaneBox(modelClass);
-		if (paneClassBox != null) {
-			paneClassBox.showAllCenterLabels(false);
+		PaneBox changedBox = this.mvConnector.getPaneBox(modelClass);
+		if (changedBox != null) {
+			changedBox.showAllCenterLabels(false);
 			for (int i = 0; i < modelClass.getAttributes().size(); i++) {
 				if(i < PaneBox.MAX_CENTER_LABELS) {
 					Attribute attribute = modelClass.getAttributes().get(i);
-					paneClassBox.showCenterLabel(i, true);
-					paneClassBox.setCenterText(i, attribute.getName(), attribute.getName());
+					changedBox.showCenterLabel(i, true);
+					changedBox.setCenterText(i, attribute.getName(), attribute.getName());
 				}
 			}
-			double newWidth = paneClassBox.calcMinWidth();
-			paneClassBox.setMinWidth(newWidth);
-			// paneClassBox.getTopLabel().setPrefWidth(newWidth);
-			// paneClassBox.getTopTextField().setPrefWidth(newWidth);
-			modelClass.setWidth(paneClassBox.getMinWidth());
-			double newHeight = paneClassBox.calcMinHeight();
-			paneClassBox.setMinHeight(newHeight);
-			modelClass.setHeight(paneClassBox.getMinHeight());
+			double newWidth = changedBox.calcMinWidth();
+			changedBox.setMinWidth(newWidth);
+			if(newWidth > changedBox.getWidth()) {
+				modelClass.setWidth(changedBox.getMinWidth());
+			}
+			double newHeight = changedBox.calcMinHeight();
+			changedBox.setMinHeight(newHeight);
+			if(newHeight > changedBox.getHeight()) {
+				modelClass.setHeight(changedBox.getMinHeight());
+			}
 		}
 	}
 

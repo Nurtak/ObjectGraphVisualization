@@ -46,7 +46,7 @@ public class DragResizeController extends DragController {
 	    });
 		
 		resizeOnMouseDragged(g, modelBox, paneBox, subSceneAdapter, direction);
-		endOnMouseReleased(g, subSceneAdapter);
+		endOnMouseReleased(g, paneBox, subSceneAdapter);
 	}
 	
 	private void setOriginals(ModelBox modelBox) {

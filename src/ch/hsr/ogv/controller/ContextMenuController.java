@@ -13,6 +13,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.PickResult;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
@@ -32,8 +33,8 @@ import ch.hsr.ogv.view.SubSceneAdapter;
 public class ContextMenuController extends Observable implements Observer {
 
 	private ModelViewConnector mvConnector;
-	private Selectable selected;
-	private Point3D position;
+	private volatile Selectable selected;
+	private volatile Point3D position;
 
 	// Subscene
 	private ContextMenu subSceneCM;
@@ -131,10 +132,9 @@ public class ContextMenuController extends Observable implements Observer {
 
 	}
 
-	public void enableContextMenu(Label label, PaneBox paneBox) {
+	private void enableContextMenu(Label label, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		label.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (label.equals(paneBox.getSelectedLabel()) && paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
-				this.position = new Point3D(me.getX(), 0.0, me.getZ());
 				classCM.hide();
 				objectCM.hide();
 				int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
@@ -147,18 +147,21 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	public void enableContextMenu(SubSceneAdapter subSceneAdapter) {
-		subSceneAdapter.getSubScene().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (subSceneAdapter.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
-				this.position = new Point3D(me.getX(), 0.0, me.getZ());
+		subSceneAdapter.getFloor().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (subSceneAdapter.getFloor().isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+				PickResult pick = me.getPickResult();
+				if (pick != null && pick.getIntersectedNode() != null && subSceneAdapter.getFloor().hasTile(pick.getIntersectedNode())) {
+					this.position = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
+				}
 				subSceneCM.hide();
-				subSceneCM.show(subSceneAdapter.getSubScene(), me.getScreenX(), me.getScreenY());
+				subSceneCM.show(subSceneAdapter.getFloor(), me.getScreenX(), me.getScreenY());
 			} else if (subSceneCM.isShowing()) {
 				subSceneCM.hide();
 			}
 		});
 	}
 
-	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox) {
+	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		if (modelBox instanceof ModelClass) {
 			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
@@ -178,6 +181,10 @@ public class ContextMenuController extends Observable implements Observer {
 					me.consume();
 				}
 			});
+		}
+		
+		for (Label centerLabel : paneBox.getCenterLabels()) {
+			enableContextMenu(centerLabel, paneBox, subSceneAdapter);
 		}
 	}
 

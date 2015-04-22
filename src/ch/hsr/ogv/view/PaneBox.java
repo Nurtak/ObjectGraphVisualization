@@ -393,23 +393,6 @@ public class PaneBox implements Selectable {
 		recalcHasCenterGrid();
 	}
 	
-//  TODO these methods should not be needed
-//	public void moveCenterLabelUp(Label centerLabel) {
-//		if(this.centerLabels.contains(centerLabel) && !this.centerLabels.get(0).equals(centerLabel)) {
-//			int thisRowIndex = this.centerLabels.indexOf(centerLabel);
-//			Label prevCenterLabel = this.centerLabels.set(thisRowIndex - 1, centerLabel);
-//			this.centerLabels.set(thisRowIndex, prevCenterLabel);
-//		}
-//	}
-//	
-//	public void moveCenterLabelDown(Label centerLabel) {
-//		if(this.centerLabels.contains(centerLabel) && !this.centerLabels.isEmpty() && !this.centerLabels.get(centerLabels.size() - 1).equals(centerLabel)) {
-//			int thisRowIndex = this.centerLabels.indexOf(centerLabel);
-//			Label nextCenterLabel = this.centerLabels.set(thisRowIndex + 1, centerLabel);
-//			this.centerLabels.set(thisRowIndex, nextCenterLabel);
-//		}
-//	}
-
 	public int numberCenterLabelShowing() {
 		int count = 0;
 		for(Label centerLabel : this.centerLabels) {

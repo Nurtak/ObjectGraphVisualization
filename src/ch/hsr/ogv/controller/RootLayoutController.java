@@ -309,10 +309,19 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateClass() {
-		if(createClass.isSelected()) {
-			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-			if (this.subSceneAdapter != null) {
-				this.subSceneAdapter.receiveMouseEvents(this.createClass.isSelected(), this.subSceneAdapter.getFloor());
+		if (this.subSceneAdapter != null) {
+			if(this.createClass.isSelected()) {
+				this.subSceneAdapter.worldRestrictMouseEvents();
+				this.subSceneAdapter.receiveMouseEvents(this.subSceneAdapter.getFloor());
+				this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
+				this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+				this.colorPick.setDisable(true);
+			}
+			else {
+				this.subSceneAdapter.worldReceiveMouseEvents();
+				this.subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
+				this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+				this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 			}
 		}
 	}
@@ -332,15 +341,20 @@ public class RootLayoutController implements Observer, Initializable {
 	private void splitMenuButtonSelect(MenuItem choosenItem) {
 		this.tSplitMenuButton.setChoice(choosenItem);
 		this.createToolbar.selectToggle(this.tSplitMenuButton);
+		this.colorPick.setDisable(true);
 	}
 
 	@FXML
 	private void handleCreateAssociation() {
 		if (tSplitMenuButton.isSelected()) {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			this.createToolbar.selectToggle(null);
+			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		} else {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 			this.createToolbar.selectToggle(this.tSplitMenuButton);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			this.colorPick.setDisable(true);
 		}
 	}
 
@@ -382,14 +396,26 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleCreateGeneralization() {
 		if(this.createGeneralization.isSelected()) {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			this.colorPick.setDisable(true);
+		}
+		else {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		}
 	}
 
 	@FXML
 	private void handleCreateDependency() {
 		if(this.createDependency.isSelected()) {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			this.colorPick.setDisable(true);
+		}
+		else {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		}
 	}
 
@@ -502,27 +528,28 @@ public class RootLayoutController implements Observer, Initializable {
 		
 		if(this.selectionController == null) return;
 		
-		if (o instanceof SelectionController && arg instanceof Floor) { // creating class
+		if (this.createClass.isSelected() && o instanceof SelectionController && (this.selectionController.hasCurrentSelection() && arg instanceof Floor)) { // creating class
 			if(!this.relationCreationProcess.isInProcess()) {
-				this.subSceneAdapter.receiveMouseEvents(false, this.subSceneAdapter.getFloor());
+				this.subSceneAdapter.worldReceiveMouseEvents();
+				subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 				if (createClass != null && createClass.isSelected()) {
 					PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getCurrentSelectionCoord());
 					this.createClass.setSelected(false);
 					this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 				}
 			}
-			else {
-				this.selectionController.setSelected(this.relationCreationProcess.getViewArrow(), true, this.subSceneAdapter);
-			}
 		}
-		else if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow)) { // PaneBox or Arrow selected
+		if(o instanceof SelectionController && arg instanceof Floor && this.selectionController.hasCurrentSelection() && this.relationCreationProcess.isInProcess()) {
+			this.selectionController.setSelected(this.relationCreationProcess.getViewArrow(), true, this.subSceneAdapter);
+		}
+		else if (o instanceof SelectionController && arg instanceof PaneBox || arg instanceof Arrow) { // PaneBox, Arrow selected
 			Selectable selectable = this.selectionController.getCurrentSelected();
-			
 			// creating relations
-			if(this.selectionController.isCurrentSelected(selectable) && selectable instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) {
+			if((this.selectionController.isCurrentSelected(selectable) && selectable instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) || arg instanceof Floor) {
 				PaneBox selectedPaneBox = (PaneBox) selectable;
 				
 				if(!this.relationCreationProcess.isInProcess()) { // first selection
+					this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 					startRelationCreation(selectedPaneBox);
 				}
 				else { // second selection
@@ -530,7 +557,6 @@ public class RootLayoutController implements Observer, Initializable {
 						endRelationCreation(selectedPaneBox);
 					}
 				}
-				
 			}
 			
 			// button enabling / disabling
@@ -554,7 +580,7 @@ public class RootLayoutController implements Observer, Initializable {
 				disableAllButtons(true);
 			}
 		}
-		else if(this.selectionController.hasCurrentSelection() && this.selectionController.getCurrentSelected().equals(this.subSceneAdapter)){ // SubSceneAdapter selected
+		else if(this.selectionController.hasCurrentSelection() && (this.selectionController.getCurrentSelected().equals(this.subSceneAdapter) || this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter selected
 			this.createObject.setDisable(true);
 			this.deleteSelected.setDisable(true);
 			this.colorPick.setDisable(false);
