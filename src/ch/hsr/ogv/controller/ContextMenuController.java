@@ -43,7 +43,7 @@ public class ContextMenuController extends Observable implements Observer {
 	private ContextMenu classCM;
 	private MenuItem createObject;
 	private MenuItem renameClass;
-	private MenuItem addAttribute;
+	private MenuItem createAttribute;
 	private MenuItem deleteClass;
 
 	// Object
@@ -55,7 +55,7 @@ public class ContextMenuController extends Observable implements Observer {
 	private ContextMenu relationCM;
 	private MenuItem changeDirection;
 	private MenuItem deleteRelation;
-	private Menu createRelationM;
+	private Menu createRelationMenu;
 	private MenuItem createUndirectedAssociation;
 	private MenuItem createDirectedAssociation;
 	private MenuItem createBidirectedAssociation;
@@ -87,8 +87,8 @@ public class ContextMenuController extends Observable implements Observer {
 		classCM = new ContextMenu();
 		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF, classCM);
 		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF, classCM);
-		addAttribute = getMenuItem("Create Attribute", Resource.ADD_ATTR_GIF, classCM);
-		createRelationM = getClassRelationMenu("Create Relation", Resource.RELATION_GIF, classCM);
+		createAttribute = getMenuItem("Create Attribute", Resource.ADD_ATTR_GIF, classCM);
+		createRelationMenu = getClassRelationMenu(classCM);
 		deleteClass = getMenuItem("Delete Class", Resource.DELETE_PNG, classCM);
 
 		// Object
@@ -111,9 +111,9 @@ public class ContextMenuController extends Observable implements Observer {
 		changeValue = getMenuItem("Change Value", Resource.RENAME_ATTR_GIF, attributeValueCM);
 	}
 
-	private Menu getClassRelationMenu(String title, Resource image, ContextMenu parent) {
-		Menu relationMenu = new Menu(title);
-		relationMenu.setGraphic(getImageView(image));
+	private Menu getClassRelationMenu(ContextMenu contextMenu) {
+		Menu relationMenu = new Menu("Create Relation");
+		relationMenu.setGraphic(getImageView(Resource.RELATION_GIF));
 
 		createUndirectedAssociation = getMenuItem("Association", Resource.UNDIRECTED_ASSOCIATION_GIF, relationMenu);
 		createDirectedAssociation = getMenuItem("Directed Association", Resource.DIRECTED_ASSOCIATION_GIF, relationMenu);
@@ -126,7 +126,7 @@ public class ContextMenuController extends Observable implements Observer {
 		createGeneralization = getMenuItem("Generalization", Resource.GENERALIZATION_GIF, relationMenu);
 		relationMenu.getItems().add(new SeparatorMenuItem());
 		createDependency = getMenuItem("Dependency", Resource.DEPENDENCY_GIF, relationMenu);
-		parent.getItems().add(relationMenu);
+		contextMenu.getItems().add(relationMenu);
 		return relationMenu;
 
 	}
@@ -137,6 +137,9 @@ public class ContextMenuController extends Observable implements Observer {
 				this.position = new Point3D(me.getX(), 0.0, me.getZ());
 				classCM.hide();
 				objectCM.hide();
+				int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
+				moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.numberCenterLabelShowing() - 1);
+				moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.numberCenterLabelShowing() - 1);
 				attributeCM.hide();
 				attributeCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 			}
@@ -161,6 +164,7 @@ public class ContextMenuController extends Observable implements Observer {
 				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 					attributeCM.hide();
 					classCM.hide();
+					createAttribute.setDisable(paneBox.numberCenterLabelShowing() >= PaneBox.MAX_CENTER_LABELS);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 					me.consume();
 				}
@@ -205,8 +209,9 @@ public class ContextMenuController extends Observable implements Observer {
 		renameClass.setOnAction((ActionEvent e) -> {
 			mvConnector.handleRename(selected);
 		});
-		addAttribute.setOnAction((ActionEvent e) -> {
-			mvConnector.handleAddAttribute(selected);
+		createAttribute.setOnAction((ActionEvent e) -> {
+			mvConnector.handleCreateNewAttribute(selected);
+
 		});
 		deleteClass.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
@@ -249,7 +254,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 		// Relation
 		changeDirection.setOnAction((ActionEvent e) -> {
-			mvConnector.createNewAttribute(selected);
+			mvConnector.handleDelete(selected);
 		});
 		deleteRelation.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
@@ -260,13 +265,13 @@ public class ContextMenuController extends Observable implements Observer {
 			mvConnector.handleRename(selected);
 		});
 		moveAttributeUp.setOnAction((ActionEvent e) -> {
-			mvConnector.handleRename(selected);
+			mvConnector.handleMoveAttributeUp(selected);
 		});
 		moveAttributeDown.setOnAction((ActionEvent e) -> {
-			mvConnector.handleRename(selected);
+			mvConnector.handleMoveAttributeDown(selected);
 		});
 		deleteAttribute.setOnAction((ActionEvent e) -> {
-			mvConnector.handleRename(selected);
+			mvConnector.handleDeleteAttribute(selected);
 		});
 
 		// Value (Attribute)
@@ -290,17 +295,17 @@ public class ContextMenuController extends Observable implements Observer {
 		return new ImageView(ResourceLocator.getResourcePath(image).toExternalForm());
 	}
 
-	private MenuItem getMenuItem(String title, Resource image, ContextMenu parent) {
-		MenuItem menuItem = new MenuItem(title);
+	private MenuItem getMenuItem(String text, Resource image, ContextMenu contextMenu) {
+		MenuItem menuItem = new MenuItem(text);
 		menuItem.setGraphic(getImageView(image));
-		parent.getItems().add(menuItem);
+		contextMenu.getItems().add(menuItem);
 		return menuItem;
 	}
 
-	private MenuItem getMenuItem(String text, Resource image, Menu parent) {
+	private MenuItem getMenuItem(String text, Resource image, Menu menu) {
 		MenuItem menuItem = new MenuItem(text);
 		menuItem.setGraphic(getImageView(image));
-		parent.getItems().add(menuItem);
+		menu.getItems().add(menuItem);
 		return menuItem;
 	}
 }

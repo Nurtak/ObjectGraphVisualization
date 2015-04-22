@@ -20,8 +20,6 @@ import ch.hsr.ogv.view.VerticalHelper;
  */
 public class DragMoveController extends DragController {
 
-	private ModelViewConnector mvConnector;
-	
 	protected volatile double origRelMouseX;
 	protected volatile double origRelMouseY;
 	protected volatile double origRelMouseZ;
@@ -54,27 +52,27 @@ public class DragMoveController extends DragController {
 						modelBox.setCoordinates(classCoordinates);
 					}
 				}
-				else if(modelBox instanceof ModelObject && mvConnector != null) {
-					VerticalHelper verticalHelper = subSceneAdapter.addVerticalHelper(paneBox);
-					if(verticalHelper != null) {
-						subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
-						PickResult pick = me.getPickResult();
-						if (pick != null && pick.getIntersectedNode() != null && verticalHelper.isVerticalHelper(paneBox, pick.getIntersectedNode())) {
-							Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
-							double newY = coords.getY() - origRelMouseY;
-							if(newY < ModelClass.OBJECT_LEVEL_DIFF) {
-								newY = ModelClass.OBJECT_LEVEL_DIFF;
-							}
-							Point3D objectCoordinates = new Point3D(modelBox.getX(), newY, modelBox.getZ());
-							modelBox.setCoordinates(objectCoordinates);
+				else if(modelBox instanceof ModelObject) {
+					VerticalHelper verticalHelper = subSceneAdapter.getVerticalHelper();
+					if(verticalHelper == null) return;
+					verticalHelper.setBasePaneBox(paneBox);
+					verticalHelper.setVisible(true);
+					verticalHelper.toFront();
+					subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
+					PickResult pick = me.getPickResult();
+					if (pick != null && pick.getIntersectedNode() != null && verticalHelper.isVerticalHelper(pick.getIntersectedNode())) {
+						Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
+						double newY = coords.getY() - origRelMouseY;
+						if(newY < ModelClass.OBJECT_LEVEL_DIFF) {
+							newY = ModelClass.OBJECT_LEVEL_DIFF;
 						}
+						Point3D objectCoordinates = new Point3D(modelBox.getX(), newY, modelBox.getZ());
+						modelBox.setCoordinates(objectCoordinates);
+						verticalHelper.setBasePaneBox(paneBox);
 					}
 				}
 			}
 		});
 	}
 	
-	public void setMVConnector(ModelViewConnector mvConnector) {
-		this.mvConnector = mvConnector;
-	}
 }

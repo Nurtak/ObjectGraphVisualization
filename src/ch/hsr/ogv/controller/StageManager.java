@@ -40,7 +40,7 @@ import ch.hsr.ogv.view.SubSceneAdapter;
  * @author Simon Gwerder
  *
  */
-public class StageManager extends Observable implements Observer {
+public class StageManager implements Observer {
 
 	private final static Logger logger = LoggerFactory.getLogger(StageManager.class);
 
@@ -103,9 +103,6 @@ public class StageManager extends Observable implements Observer {
 		this.primaryStage.show();
 		this.subSceneAdapter.getSubScene().requestFocus();
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-
-		setChanged();
-		notifyObservers(this); // pass StageManager to RootLayoutController
 	}
 
 	private void loadRootLayoutController() {
@@ -113,7 +110,6 @@ public class StageManager extends Observable implements Observer {
 		try {
 			loader.setController(rootLayoutController);
 			this.rootLayout = (BorderPane) loader.load();
-			addObserver(loader.getController());
 		} catch (IOException | ClassCastException e) {
 			logger.debug(e.getMessage());
 			e.printStackTrace();
@@ -156,8 +152,11 @@ public class StageManager extends Observable implements Observer {
 
 	private void initDragController() {
 		this.dragMoveController.addObserver(this.cameraController);
-		this.dragMoveController.setMVConnector(this.mvConnector);
+		this.dragMoveController.addObserver(this.rootLayoutController);
+		this.dragMoveController.addObserver(this.selectionController);
 		this.dragResizeController.addObserver(this.cameraController);
+		this.dragResizeController.addObserver(this.rootLayoutController);
+		this.dragResizeController.addObserver(this.selectionController);
 	}
 
 	/**

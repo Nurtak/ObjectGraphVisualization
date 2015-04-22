@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -24,7 +25,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jfxtras.labs.util.Util;
@@ -216,6 +216,8 @@ public class RootLayoutController implements Observer, Initializable {
 			this.createObject.setDisable(false);
 		} else {
 			this.createObject.setDisable(true);
+			this.subSceneAdapter.getVerticalHelper().setVisible(false);
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		}
 
 		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
@@ -484,11 +486,19 @@ public class RootLayoutController implements Observer, Initializable {
 		this.createObject.setDisable(value);
 		this.deleteSelected.setDisable(value);
 		this.colorPick.setDisable(value);
-		if(value) this.colorPick.setValue(Color.WHITE);
+		//if(value) this.colorPick.setValue(Color.WHITE);
 	}
 	
+	// TODO Refactor!!
 	@Override
 	public void update(Observable o, Object arg) {
+		if (o instanceof DragController) {
+			DragController dragController = (DragController) o;
+			if(dragController.isDragInProgress()) {
+				disableAllButtons(true);
+				return;
+			}
+		}
 		
 		if(this.selectionController == null) return;
 		
@@ -526,6 +536,7 @@ public class RootLayoutController implements Observer, Initializable {
 			// button enabling / disabling
 			if (this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProcess()) {
 				disableAllButtons(false);
+				this.createObject.setDisable(true);
 				if(selectable instanceof PaneBox && this.selectionController.isCurrentSelected(selectable)) {
 					PaneBox selectedPaneBox = (PaneBox) selectable;
 					this.colorPick.setValue(selectedPaneBox.getColor());
@@ -539,19 +550,19 @@ public class RootLayoutController implements Observer, Initializable {
 				}
 			}
 			
-			if (!this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProcess()) {
-				disableAllButtons(false);
-				this.createObject.setDisable(true);
-				this.deleteSelected.setDisable(true);
-				this.colorPick.setDisable(true);
-			}
-			
 			if (this.relationCreationProcess.isInProcess()) {
 				disableAllButtons(true);
 			}
 		}
-		else { // SubSceneAdapter selected
-			this.colorPick.setValue(Color.WHITE);
+		else if(this.selectionController.hasCurrentSelection() && this.selectionController.getCurrentSelected().equals(this.subSceneAdapter)){ // SubSceneAdapter selected
+			this.createObject.setDisable(true);
+			this.deleteSelected.setDisable(true);
+			this.colorPick.setDisable(false);
+			this.colorPick.setValue(this.subSceneAdapter.getFloor().getColor());
+		}
+		else {
+			//this.colorPick.setDisable(true);
+			//this.colorPick.setValue(Color.WHITE);
 		}
 	}
 	
@@ -571,6 +582,8 @@ public class RootLayoutController implements Observer, Initializable {
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
 		addButtonAccelerators();
 		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
+		this.colorPick.getCustomColors().add(SubSceneAdapter.DEFAULT_COLOR);
+		this.colorPick.getCustomColors().add(Floor.DEFAULT_COLOR);
 		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
 		this.colorPick.getCustomColors().add(Util.brighter(PaneBox.DEFAULT_COLOR, 0.1));
 		initToggleRelationMap();

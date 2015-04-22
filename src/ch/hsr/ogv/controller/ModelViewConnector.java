@@ -19,6 +19,7 @@ import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
+import ch.hsr.ogv.view.SubSceneAdapter;
 
 /**
  *
@@ -175,12 +176,17 @@ public class ModelViewConnector {
 		return this.modelManager.createRelation(modelBoxStart, modelBoxEnd, relationType, Arrow.DEFAULT_COLOR);
 	}
 
-	public Attribute createNewAttribute(Selectable selected) {
+	public Attribute handleCreateNewAttribute(Selectable selected) {
 		if (selected instanceof PaneBox) {
-			ModelBox selectedModelBox = this.getModelBox((PaneBox) selected);
+			PaneBox selectedPaneBox = (PaneBox) selected;
+			ModelBox selectedModelBox = this.getModelBox(selectedPaneBox);
 			if (selectedModelBox != null && selectedModelBox instanceof ModelClass) {
 				ModelClass selectedModelClass = (ModelClass) selectedModelBox;
-				return selectedModelClass.createAttribute();
+				Attribute newAttribute = selectedModelClass.createAttribute();
+				int lastVisibleIndex = selectedPaneBox.numberCenterLabelShowing() - 1;
+				Label lastVisibleLabel = selectedPaneBox.getCenterLabels().get(lastVisibleIndex);
+				selectedPaneBox.allowCenterFieldTextInput(lastVisibleLabel, true);
+				return newAttribute;
 			}
 		}
 		return null;
@@ -202,25 +208,61 @@ public class ModelViewConnector {
 		}
 	}
 
-	public void handleDeleteAttribute(PaneBox paneBox) {
-		Label selectedLabel = paneBox.getSelectedLabel();
-		if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
-			int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
-			ModelBox modelBox = getModelBox(paneBox);
-			if (modelBox instanceof ModelClass) {
-				ModelClass modelClass = (ModelClass) modelBox;
-				modelClass.deleteAttribute(rowIndex);
+	public void handleMoveAttributeUp(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			PaneBox paneBox = (PaneBox) selected;
+			Label selectedLabel = paneBox.getSelectedLabel();
+			if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
+				int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+				ModelBox modelBox = getModelBox(paneBox);
+				if (modelBox instanceof ModelClass) {
+					ModelClass modelClass = (ModelClass) modelBox;
+					modelClass.moveAttributeUp(rowIndex);
+				}
+			}
+		}
+	}
+
+	public void handleMoveAttributeDown(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			PaneBox paneBox = (PaneBox) selected;
+			Label selectedLabel = paneBox.getSelectedLabel();
+			if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
+				int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+				ModelBox modelBox = getModelBox(paneBox);
+				if (modelBox instanceof ModelClass) {
+					ModelClass modelClass = (ModelClass) modelBox;
+					modelClass.moveAttributeDown(rowIndex);
+				}
+			}
+		}
+	}
+
+	public void handleDeleteAttribute(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			PaneBox paneBox = (PaneBox) selected;
+			Label selectedLabel = paneBox.getSelectedLabel();
+			if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
+				int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+				ModelBox modelBox = getModelBox(paneBox);
+				if (modelBox instanceof ModelClass) {
+					ModelClass modelClass = (ModelClass) modelBox;
+					modelClass.deleteAttribute(rowIndex);
+				}
 			}
 		}
 	}
 
 	public void handleColorPick(Selectable selected, Color pickedColor) {
 		if (selected instanceof PaneBox) {
-			ModelBox modelPickColor = this.getModelBox((PaneBox) selected);
-			modelPickColor.setColor(pickedColor);
+			ModelBox modelBox = this.getModelBox((PaneBox) selected);
+			modelBox.setColor(pickedColor);
 		} else if (selected instanceof Arrow) {
-			Relation relationPickColor = this.getRelation((Arrow) selected);
-			relationPickColor.setColor(pickedColor);
+			Relation relation = this.getRelation((Arrow) selected);
+			relation.setColor(pickedColor);
+		} else if (selected instanceof SubSceneAdapter) {
+			SubSceneAdapter subSceneAdapter = (SubSceneAdapter) selected;
+			subSceneAdapter.getFloor().setColor(pickedColor);
 		}
 	}
 
@@ -231,16 +273,9 @@ public class ModelViewConnector {
 			if (selectedLabel == null) {
 				selectedBox.allowTopTextInput(true);
 			} else {
-				selectedBox.setLabelSelected(selectedLabel, true);
+				selectedBox.allowCenterFieldTextInput(selectedLabel, true);
 			}
 		}
 	}
 
-	public void handleAddAttribute(Selectable selected) {
-		if (selected instanceof ModelClass) {
-			ModelBox modelBox = getModelBox((PaneBox) selected);
-			ModelClass modelClass = (ModelClass) modelBox;
-			// modelClass.;(rowIndex);
-		}
-	}
 }

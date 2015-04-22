@@ -21,16 +21,14 @@ public abstract class DragController extends Observable {
 	protected void endOnMouseReleased(Group g, SubSceneAdapter subSceneAdapter) {
 		g.setOnMouseReleased((MouseEvent me) -> {
 			setDragInProgress(subSceneAdapter, false);
+			subSceneAdapter.getVerticalHelper().setVisible(false);
 			subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		});
 	}
 
 	protected void setDragInProgress(SubSceneAdapter subSceneAdapter, boolean value) {
 		this.dragInProgress = value;
-		subSceneAdapter.receiveMouseEvents(value, subSceneAdapter.getFloor());
-		if(!value) {
-			subSceneAdapter.removeVerticalHelpers();
-		}
+		subSceneAdapter.receiveMouseEvents(value, subSceneAdapter.getFloor(), subSceneAdapter.getVerticalHelper());
 		setChanged();
 		notifyObservers(this.selected);
 	}
