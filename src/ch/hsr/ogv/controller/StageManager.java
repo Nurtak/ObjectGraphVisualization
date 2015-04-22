@@ -79,6 +79,8 @@ public class StageManager implements Observer {
 		initCameraController();
 		initDragController();
 
+		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+		
 		// TODO: Remove everything below this line:
 		mvConnector.createDummyContent();
 	}
@@ -102,7 +104,6 @@ public class StageManager implements Observer {
 		this.primaryStage.setScene(scene);
 		this.primaryStage.show();
 		this.subSceneAdapter.getSubScene().requestFocus();
-		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 	}
 
 	private void loadRootLayoutController() {

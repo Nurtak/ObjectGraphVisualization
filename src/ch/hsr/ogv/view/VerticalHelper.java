@@ -9,7 +9,7 @@ import ch.hsr.ogv.model.ModelClass;
 
 public class VerticalHelper extends Group {
 	
-	public final static double DEPTH = 10000;
+	public final static double DEPTH = 5000;
 	public final static double OPACITY = 0.1;
 	
 	private final static double PLUS_SIZE = 2;
