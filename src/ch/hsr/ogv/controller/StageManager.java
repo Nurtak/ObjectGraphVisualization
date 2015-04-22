@@ -372,7 +372,7 @@ public class StageManager implements Observer {
 		if (changedBox != null) {
 			changedBox.showAllCenterLabels(false);
 			for (int i = 0; i < modelClass.getAttributes().size(); i++) {
-				if(i < PaneBox.MAX_CENTER_LABELS) {
+				if (i < PaneBox.MAX_CENTER_LABELS) {
 					Attribute attribute = modelClass.getAttributes().get(i);
 					changedBox.showCenterLabel(i, true);
 					changedBox.setCenterText(i, attribute.getName(), attribute.getName());
@@ -396,7 +396,7 @@ public class StageManager implements Observer {
 		if (paneObjectBox != null) {
 			paneObjectBox.showAllCenterLabels(false);
 			for (int i = 0; i < modelObject.getModelClass().getAttributes().size(); i++) { // using attribute list of this objects class, to get same order.
-				if(i < PaneBox.MAX_CENTER_LABELS) {
+				if (i < PaneBox.MAX_CENTER_LABELS) {
 					Attribute attribute = modelObject.getModelClass().getAttributes().get(i);
 					String attributeName = attribute.getName();
 					String attributeValue = modelObject.getAttributeValues().get(attribute);

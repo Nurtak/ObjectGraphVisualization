@@ -208,7 +208,7 @@ public class ModelViewConnector {
 			this.modelManager.deleteRelation(relationToDelete);
 		}
 	}
-	
+
 	public void handleMoveAttributeUp(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			PaneBox paneBox = (PaneBox) selected;
@@ -223,7 +223,7 @@ public class ModelViewConnector {
 			}
 		}
 	}
-	
+
 	public void handleMoveAttributeDown(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			PaneBox paneBox = (PaneBox) selected;
