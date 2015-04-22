@@ -237,8 +237,10 @@ public class ModelViewConnector {
 	}
 
 	public void handleAddAttribute(Selectable selected) {
-		// TODO Auto-generated method stub
-
+		if (selected instanceof ModelClass) {
+			ModelBox modelBox = getModelBox((PaneBox) selected);
+			ModelClass modelClass = (ModelClass) modelBox;
+			// modelClass.;(rowIndex);
+		}
 	}
-
 }

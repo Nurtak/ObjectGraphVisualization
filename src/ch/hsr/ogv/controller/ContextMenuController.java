@@ -88,7 +88,7 @@ public class ContextMenuController extends Observable implements Observer {
 		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF, classCM);
 		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF, classCM);
 		addAttribute = getMenuItem("Create Attribute", Resource.ADD_ATTR_GIF, classCM);
-		createRelationM = getClassRelationMenu(classCM);
+		createRelationM = getClassRelationMenu("Create Relation", Resource.RELATION_GIF, classCM);
 		deleteClass = getMenuItem("Delete Class", Resource.DELETE_PNG, classCM);
 
 		// Object
@@ -111,9 +111,9 @@ public class ContextMenuController extends Observable implements Observer {
 		changeValue = getMenuItem("Change Value", Resource.RENAME_ATTR_GIF, attributeValueCM);
 	}
 
-	private Menu getClassRelationMenu(ContextMenu contextMenu) {
-		Menu relationMenu = new Menu("Create Relation");
-		relationMenu.setGraphic(getImageView(Resource.RELATION_GIF));
+	private Menu getClassRelationMenu(String title, Resource image, ContextMenu parent) {
+		Menu relationMenu = new Menu(title);
+		relationMenu.setGraphic(getImageView(image));
 
 		createUndirectedAssociation = getMenuItem("Association", Resource.UNDIRECTED_ASSOCIATION_GIF, relationMenu);
 		createDirectedAssociation = getMenuItem("Directed Association", Resource.DIRECTED_ASSOCIATION_GIF, relationMenu);
@@ -126,7 +126,7 @@ public class ContextMenuController extends Observable implements Observer {
 		createGeneralization = getMenuItem("Generalization", Resource.GENERALIZATION_GIF, relationMenu);
 		relationMenu.getItems().add(new SeparatorMenuItem());
 		createDependency = getMenuItem("Dependency", Resource.DEPENDENCY_GIF, relationMenu);
-		contextMenu.getItems().add(relationMenu);
+		parent.getItems().add(relationMenu);
 		return relationMenu;
 
 	}
@@ -290,17 +290,17 @@ public class ContextMenuController extends Observable implements Observer {
 		return new ImageView(ResourceLocator.getResourcePath(image).toExternalForm());
 	}
 
-	private MenuItem getMenuItem(String text, Resource image, ContextMenu contextMenu) {
-		MenuItem menuItem = new MenuItem(text);
+	private MenuItem getMenuItem(String title, Resource image, ContextMenu parent) {
+		MenuItem menuItem = new MenuItem(title);
 		menuItem.setGraphic(getImageView(image));
-		contextMenu.getItems().add(menuItem);
+		parent.getItems().add(menuItem);
 		return menuItem;
 	}
 
-	private MenuItem getMenuItem(String text, Resource image, Menu menu) {
+	private MenuItem getMenuItem(String text, Resource image, Menu parent) {
 		MenuItem menuItem = new MenuItem(text);
 		menuItem.setGraphic(getImageView(image));
-		menu.getItems().add(menuItem);
+		parent.getItems().add(menuItem);
 		return menuItem;
 	}
 }
