@@ -228,7 +228,7 @@ public class StageManager implements Observer {
 		this.textFieldController.enableTextInput(modelBox, paneBox);
 		this.contextMenuController.enableContextMenu(modelBox, paneBox);
 		for (Label label : paneBox.getCenterLabels()) {
-			this.contextMenuController.enableContextMenu(label, paneBox);
+			this.contextMenuController.enableContextMenu(label, modelBox, paneBox);
 		}
 		this.mouseMoveController.enableMouseMove(paneBox);
 		this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
@@ -375,7 +375,7 @@ public class StageManager implements Observer {
 		if (paneClassBox != null) {
 			paneClassBox.showAllCenterLabels(false);
 			for (int i = 0; i < modelClass.getAttributes().size(); i++) {
-				if(i < PaneBox.MAX_CENTER_LABELS) {
+				if (i < PaneBox.MAX_CENTER_LABELS) {
 					Attribute attribute = modelClass.getAttributes().get(i);
 					paneClassBox.showCenterLabel(i, true);
 					paneClassBox.setCenterText(i, attribute.getName(), attribute.getName());
@@ -397,7 +397,7 @@ public class StageManager implements Observer {
 		if (paneObjectBox != null) {
 			paneObjectBox.showAllCenterLabels(false);
 			for (int i = 0; i < modelObject.getModelClass().getAttributes().size(); i++) { // using attribute list of this objects class, to get same order.
-				if(i < PaneBox.MAX_CENTER_LABELS) {
+				if (i < PaneBox.MAX_CENTER_LABELS) {
 					Attribute attribute = modelObject.getModelClass().getAttributes().get(i);
 					String attributeName = attribute.getName();
 					String attributeValue = modelObject.getAttributeValues().get(attribute);

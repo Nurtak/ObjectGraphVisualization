@@ -67,14 +67,12 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem createDependency;
 
 	// Attribute
-	private ContextMenu attributeCM;
 	private MenuItem renameAttribute;
 	private MenuItem moveAttributeUp;
 	private MenuItem moveAttributeDown;
 	private MenuItem deleteAttribute;
 
 	// Value (Attribute)
-	private ContextMenu attributeValueCM;
 	private MenuItem changeValue;
 
 	public ContextMenuController() {
@@ -87,13 +85,22 @@ public class ContextMenuController extends Observable implements Observer {
 		classCM = new ContextMenu();
 		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF, classCM);
 		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF, classCM);
-		createAttribute = getMenuItem("Create Attribute", Resource.ADD_ATTR_GIF, classCM);
 		createRelationMenu = getClassRelationMenu("Create Relation", Resource.RELATION_GIF, classCM);
+		createAttribute = getMenuItem("Create Attribute", Resource.ADD_ATTR_GIF, classCM);
+		classCM.getItems().add(new SeparatorMenuItem());
+		renameAttribute = getMenuItem("Rename Attribute", Resource.RENAME_ATTR_GIF, classCM);
+		moveAttributeUp = getMenuItem("Move Up", Resource.MOVE_UP_PNG, classCM);
+		moveAttributeDown = getMenuItem("Move Down", Resource.MOVE_DOWN_PNG, classCM);
+		deleteAttribute = getMenuItem("Delete Attribute", Resource.DELETE_PNG, classCM);
+		classCM.getItems().add(new SeparatorMenuItem());
 		deleteClass = getMenuItem("Delete Class", Resource.DELETE_PNG, classCM);
 
 		// Object
 		objectCM = new ContextMenu();
 		renameObject = getMenuItem("Rename Object", Resource.RENAME_GIF, objectCM);
+		objectCM.getItems().add(new SeparatorMenuItem());
+		changeValue = getMenuItem("Change Value", Resource.RENAME_ATTR_GIF, objectCM);
+		objectCM.getItems().add(new SeparatorMenuItem());
 		deleteObject = getMenuItem("Delete Object", Resource.DELETE_PNG, objectCM);
 
 		// Relation
@@ -101,14 +108,6 @@ public class ContextMenuController extends Observable implements Observer {
 		changeDirection = getMenuItem("Change Direction", Resource.CHANGE_DIRECTION_GIF, relationCM);
 		deleteRelation = getMenuItem("Delete Relation", Resource.DELETE_PNG, relationCM);
 
-		attributeCM = new ContextMenu();
-		renameAttribute = getMenuItem("Rename Attribute", Resource.RENAME_ATTR_GIF, attributeCM);
-		moveAttributeUp = getMenuItem("Move Up", Resource.MOVE_UP_PNG, attributeCM);
-		moveAttributeDown = getMenuItem("Move Down", Resource.MOVE_DOWN_PNG, attributeCM);
-		deleteAttribute = getMenuItem("Delete Attribute", Resource.DELETE_PNG, attributeCM);
-
-		attributeValueCM = new ContextMenu();
-		changeValue = getMenuItem("Change Value", Resource.RENAME_ATTR_GIF, attributeValueCM);
 	}
 
 	private Menu getClassRelationMenu(String title, Resource image, ContextMenu parent) {
@@ -131,21 +130,6 @@ public class ContextMenuController extends Observable implements Observer {
 
 	}
 
-	public void enableContextMenu(Label label, PaneBox paneBox) {
-		label.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (label.equals(paneBox.getSelectedLabel()) && paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
-				this.position = new Point3D(me.getX(), 0.0, me.getZ());
-				classCM.hide();
-				objectCM.hide();
-				int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
-				moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.numberCenterLabelShowing() - 1);
-				moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.numberCenterLabelShowing() - 1);
-				attributeCM.hide();
-				attributeCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-			}
-		});
-	}
-
 	public void enableContextMenu(SubSceneAdapter subSceneAdapter) {
 		subSceneAdapter.getSubScene().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (subSceneAdapter.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
@@ -159,35 +143,67 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox) {
-		if (modelBox instanceof ModelClass) {
-			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
-					attributeCM.hide();
-					classCM.hide();
+		paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+				hideAllContextMenus();
+				if (modelBox instanceof ModelClass) {
+					// Class
+					attributeActive(false);
 					createAttribute.setDisable(paneBox.numberCenterLabelShowing() >= PaneBox.MAX_CENTER_LABELS);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-					me.consume();
-				}
-			});
-		} else if ((modelBox instanceof ModelObject)) {
-			paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-				if (paneBox.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
-					attributeCM.hide();
-					objectCM.hide();
+				} else if ((modelBox instanceof ModelObject)) {
+					// Object
+					hideAllContextMenus();
+					changeValue.setDisable(true);
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-					me.consume();
 				}
-			});
-		}
+			}
+			me.consume();
+		});
+	}
+
+	public void enableContextMenu(Label label, ModelBox modelBox, PaneBox paneBox) {
+		label.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+				hideAllContextMenus();
+				if (modelBox instanceof ModelClass) {
+					// Label on Class
+					attributeActive(true);
+					int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
+					moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.numberCenterLabelShowing() - 1);
+					moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.numberCenterLabelShowing() - 1);
+					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+				} else if (modelBox instanceof ModelObject) {
+					// Label on Object
+					changeValue.setDisable(false);
+					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+				}
+				me.consume();
+			}
+		});
 	}
 
 	public void enableContextMenu(Relation relation, Arrow arrow) {
 		arrow.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (arrow.isSelected() && me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+				hideAllContextMenus();
 				relationCM.show(arrow, me.getScreenX(), me.getScreenY());
 				me.consume();
 			}
 		});
+	}
+
+	private void hideAllContextMenus() {
+		subSceneCM.hide();
+		classCM.hide();
+		objectCM.hide();
+	}
+
+	private void attributeActive(boolean isAttributeActive) {
+		renameAttribute.setDisable(!isAttributeActive);
+		moveAttributeUp.setDisable(!isAttributeActive);
+		moveAttributeDown.setDisable(!isAttributeActive);
+		deleteAttribute.setDisable(!isAttributeActive);
 	}
 
 	public void setMVConnector(ModelViewConnector mvConnector) {
