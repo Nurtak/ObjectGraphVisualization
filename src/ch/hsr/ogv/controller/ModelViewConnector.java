@@ -282,4 +282,9 @@ public class ModelViewConnector {
 		}
 	}
 
+	public void handleChangeDirection(Selectable selected){
+		if (selected instanceof Arrow) {
+			getRelation((Arrow) selected).changeDirection();
+		}
+	}
 }
