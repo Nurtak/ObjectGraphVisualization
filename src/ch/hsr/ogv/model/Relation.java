@@ -5,7 +5,7 @@ import java.util.Observable;
 import javafx.scene.paint.Color;
 
 /**
- * 
+ *
  * @author Adrian Rieser
  *
  */
@@ -14,7 +14,7 @@ public class Relation extends Observable {
 	private Endpoint start;
 	private Endpoint end;
 	private RelationType type;
-	
+
 	protected Color color;
 
 	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType, Color color) {
@@ -49,7 +49,7 @@ public class Relation extends Observable {
 	public void setType(RelationType type) {
 		this.type = type;
 	}
-	
+
 	public Color getColor() {
 		return color;
 	}
@@ -73,15 +73,25 @@ public class Relation extends Observable {
 		}
 		return false;
 	}
-	
+
 	public boolean isEnd(Endpoint endpoint) {
 		if (end.equals(endpoint)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public enum RelationChange {
-		COLOR;
+		COLOR, DIRECTION;
+	}
+
+	public void changeDirection(){
+		this.start.getAppendant().changeEndpoint(this.start, this.end);
+		this.end.getAppendant().changeEndpoint(this.end, this.start);
+		Endpoint temp = this.end;
+		this.end = this.start;
+		this.start = temp;
+		setChanged();
+		notifyObservers(RelationChange.DIRECTION);
 	}
 }

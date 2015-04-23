@@ -10,7 +10,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
 /**
- * 
+ *
  * @author Adrian Rieser
  *
  */
@@ -30,14 +30,14 @@ public class ModelBox extends Observable {
 		this.height = heigth;
 		this.color = color;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		// not doing the equals check here for when ModelObject needs a name change event
-		if(this.name != null) { 
+		if(this.name != null) {
 			this.name = name;
 			setChanged();
 			notifyObservers(ModelBoxChange.NAME);
@@ -127,6 +127,13 @@ public class ModelBox extends Observable {
 		this.endpoints = endpoints;
 	}
 
+	public void changeEndpoint(Endpoint oldEP, Endpoint newEP){
+		int index = endpoints.indexOf(oldEP);
+		endpoints.set(index, newEP);
+		setChanged();
+		notifyObservers(ModelBoxChange.ENDPOINTS);
+	}
+
 	public Map<Endpoint, Endpoint> getFriends(){
 		Map<Endpoint, Endpoint> result = new HashMap<Endpoint, Endpoint>(endpoints.size());
 		for (Endpoint endpoint : endpoints) {
@@ -137,8 +144,8 @@ public class ModelBox extends Observable {
 		}
 		return result;
 	}
-	
+
 	public enum ModelBoxChange {
-		COORDINATES, HEIGHT, WIDTH, NAME, COLOR;
+		COORDINATES, HEIGHT, WIDTH, NAME, COLOR, ENDPOINTS;
 	}
 }

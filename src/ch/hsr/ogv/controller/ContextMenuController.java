@@ -172,12 +172,12 @@ public class ContextMenuController extends Observable implements Observer {
 			}
 			me.consume();
 		});
-		
+
 		for (Label centerLabel : paneBox.getCenterLabels()) {
 			enableContextMenu(centerLabel, modelBox, paneBox, subSceneAdapter);
 		}
 	}
-	
+
 	private void enableContextMenu(Label label, ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		label.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
@@ -197,7 +197,7 @@ public class ContextMenuController extends Observable implements Observer {
 				me.consume();
 			}
 		});
-		
+
 	}
 
 	public void enableContextMenu(Relation relation, Arrow arrow) {
@@ -316,7 +316,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 		// Relation
 		changeDirection.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleChangeDirection(selected);
 		});
 		deleteRelation.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);

@@ -79,7 +79,7 @@ public class StageManager implements Observer {
 		initDragController();
 
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-		
+
 		// TODO: Remove everything below this line:
 		mvConnector.createDummyContent();
 	}
@@ -303,7 +303,7 @@ public class StageManager implements Observer {
 
 			double newWidth = changedBox.calcMinWidth();
 			changedBox.setMinWidth(newWidth);
-			if(newWidth > changedBox.getWidth()) {
+			if (newWidth > changedBox.getWidth()) {
 				modelBox.setWidth(changedBox.getMinWidth());
 			}
 
@@ -380,12 +380,12 @@ public class StageManager implements Observer {
 			}
 			double newWidth = changedBox.calcMinWidth();
 			changedBox.setMinWidth(newWidth);
-			if(newWidth > changedBox.getWidth()) {
+			if (newWidth > changedBox.getWidth()) {
 				modelClass.setWidth(changedBox.getMinWidth());
 			}
 			double newHeight = changedBox.calcMinHeight();
 			changedBox.setMinHeight(newHeight);
-			if(newHeight > changedBox.getHeight()) {
+			if (newHeight > changedBox.getHeight()) {
 				modelClass.setHeight(changedBox.getMinHeight());
 			}
 		}
