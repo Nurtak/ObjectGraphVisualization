@@ -267,6 +267,13 @@ public class StageManager implements Observer {
 			changedArrow.setColor(relation.getColor());
 		}
 	}
+	
+	private void adaptArrowDirection(Relation relation) {
+		Arrow changedArrow = this.mvConnector.getArrow(relation);
+		if (changedArrow != null) {
+			changedArrow.setType(relation.getType());
+		}
+	}
 
 	private void adaptArrowToBox(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
@@ -485,6 +492,8 @@ public class StageManager implements Observer {
 			switch (relationChange) {
 			case COLOR:
 				adaptArrowColor(relation);
+			case DIRECTION:
+				adaptArrowDirection(relation);
 			default:
 				break;
 			}
