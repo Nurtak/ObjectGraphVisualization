@@ -138,6 +138,24 @@ public class SelectionController extends Observable implements Observer {
 				setSelected(me, arrow, true, subSceneAdapter);
 			}
 		});
+		
+		arrow.getLineSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && !arrow.isSelected()) {
+				setSelected(me, arrow, true, subSceneAdapter);
+			}
+		});
+		
+		arrow.getStartSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && !arrow.isSelected()) {
+				setSelected(me, arrow, true, subSceneAdapter);
+			}
+		});
+		
+		arrow.getEndSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && !arrow.isSelected()) {
+				setSelected(me, arrow, true, subSceneAdapter);
+			}
+		});
 	}
 
 	private void selectOnDragDetected(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {

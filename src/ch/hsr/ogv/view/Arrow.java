@@ -46,8 +46,10 @@ public class Arrow extends Group implements Selectable {
 	public static final Color DEFAULT_COLOR = Color.BLACK;
 	private Color color = DEFAULT_COLOR;
 	private ArrowSelection selection = null;
-	private Box selectionHelper;
-
+	private Box lineSelectionHelper;
+	private Box startSelectionHelper;
+	private Box endSelectionHelper;
+	
 	public Point3D getStartPoint() {
 		return startPoint;
 	}
@@ -83,6 +85,18 @@ public class Arrow extends Group implements Selectable {
 		drawArrow();
 	}
 	
+	public Box getLineSelectionHelper() {
+		return lineSelectionHelper;
+	}
+
+	public Box getStartSelectionHelper() {
+		return startSelectionHelper;
+	}
+
+	public Box getEndSelectionHelper() {
+		return endSelectionHelper;
+	}
+	
 	public Arrow(PaneBox startBox, Point3D endPoint, RelationType type) {
 		setPoints(startBox, endPoint);
 		this.type = type;
@@ -100,14 +114,14 @@ public class Arrow extends Group implements Selectable {
 	private void buildArrow() {
 		prepareArrowLineEdge();
 		prepareLines();
-		buildSelectionHelper();
+		buildSelectionHelpers();
 		this.selection = new ArrowSelection();
 		this.selection.setVisible(false);
 		setColor(this.color);
 		drawArrow();
 		getChildren().addAll(this.line, this.arrowStart, this.arrowEnd);
 		getChildren().addAll(this.dashedLines);
-		getChildren().addAll(this.selectionHelper);
+		getChildren().addAll(this.lineSelectionHelper, this.startSelectionHelper, this.endSelectionHelper);
 	}
 
 	private void prepareArrowLineEdge() {
@@ -125,16 +139,35 @@ public class Arrow extends Group implements Selectable {
 		}		
 	}
 	
-	private void buildSelectionHelper() {
+	private void buildSelectionHelpers() {
+		double lineSelectionGap = 100;
 		double endGap = this.arrowEnd.getAdditionalGap();
 		double startGap = this.arrowStart.getAdditionalGap();
-		this.selectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, line.getDepth() + (endGap + startGap) / 2);
-		this.selectionHelper.depthProperty().bind(this.line.depthProperty().add((endGap + startGap) / 2));
-		this.selectionHelper.translateXProperty().bind(this.line.translateXProperty());
-		this.selectionHelper.translateYProperty().bind(this.line.translateYProperty());
-		this.selectionHelper.translateZProperty().bind(this.line.translateZProperty().subtract((-endGap + startGap) / 4));
-		this.selectionHelper.rotateProperty().bind(this.line.rotateProperty());
-		this.selectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
+		PhongMaterial material = new PhongMaterial();
+		material.setDiffuseColor(Color.DODGERBLUE);
+		this.lineSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, this.line.getDepth() - lineSelectionGap);
+		this.lineSelectionHelper.depthProperty().bind(this.line.depthProperty().subtract(lineSelectionGap).add((endGap + startGap) / 2));
+		this.lineSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
+		this.lineSelectionHelper.translateYProperty().bind(this.line.translateYProperty());
+		this.lineSelectionHelper.translateZProperty().bind(this.line.translateZProperty().subtract((-endGap + startGap) / 4));
+		this.lineSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
+		this.lineSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
+		
+		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, lineSelectionGap / 2);
+		this.startSelectionHelper.setMaterial(material); // for debugging
+		this.startSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
+		this.startSelectionHelper.translateYProperty().bind(this.line.translateYProperty());
+		this.startSelectionHelper.translateZProperty().bind(this.line.translateZProperty().subtract(this.line.depthProperty().divide(2)).subtract(startGap / 2).add(lineSelectionGap / 4));
+		this.startSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
+		this.startSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
+		
+		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, lineSelectionGap / 2);
+		this.endSelectionHelper.setMaterial(material); // for debugging
+		this.endSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
+		this.endSelectionHelper.translateYProperty().bind(this.line.translateYProperty());
+		this.endSelectionHelper.translateZProperty().bind(this.line.translateZProperty().add(this.line.depthProperty().divide(2)).add(endGap / 2).subtract(lineSelectionGap / 4));
+		this.endSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
+		this.endSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 	}
 
 	public void setPoints(PaneBox startBox, Point3D endPoint) {
@@ -298,7 +331,7 @@ public class Arrow extends Group implements Selectable {
 	}
 
 	public Box getSelectionHelper() {
-		return selectionHelper;
+		return lineSelectionHelper;
 	}
 
 	public void setTranslateXYZ(Point3D point) {

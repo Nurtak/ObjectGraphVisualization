@@ -61,6 +61,9 @@ public class ResourceLocator {
 		MOVE_UP_PNG("images/menu/bullet_arrow_up.png"),
 		MOVE_DOWN_PNG("images/menu/bullet_arrow_down.png"),
 		CHANGE_DIRECTION_GIF("images/menu/synchronize_dgm_tab.gif"),
+		ASSOCIATION_CLASS_GIF("images/menu/associationClass.gif"),
+		ADD_MULTIPLICITY_GIF("images/menu/multiplicity.gif"),
+		ADD_ROLE_GIF("images/menu/ColRole.gif"),
 		DELETE_PNG("images/menu/trash.png");
 
 
