@@ -480,7 +480,7 @@ public class PaneBox implements Selectable {
 	public Label getSelectedLabel() {
 		return this.selectedLabel;
 	}
-
+	
 	private double restrictedWidth(double width) {
 		double retWidth = width;
 		if (width < MIN_WIDTH) {
