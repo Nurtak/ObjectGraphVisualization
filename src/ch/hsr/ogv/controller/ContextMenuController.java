@@ -79,6 +79,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 	// Value (Attribute)
 	private MenuItem changeValue;
+	private MenuItem deleteValue;
 
 	public ContextMenuController() {
 
@@ -105,6 +106,7 @@ public class ContextMenuController extends Observable implements Observer {
 		renameObject = getMenuItem("Rename Object", Resource.RENAME_GIF, objectCM);
 		objectCM.getItems().add(new SeparatorMenuItem());
 		changeValue = getMenuItem("Change Value", Resource.RENAME_ATTR_GIF, objectCM);
+		deleteValue = getMenuItem("Delete Value", Resource.DELETE_PNG, objectCM);
 		objectCM.getItems().add(new SeparatorMenuItem());
 		deleteObject = getMenuItem("Delete Object", Resource.DELETE_PNG, objectCM);
 
@@ -342,6 +344,10 @@ public class ContextMenuController extends Observable implements Observer {
 		// Value (Attribute)
 		changeValue.setOnAction((ActionEvent e) -> {
 			mvConnector.handleRename(selected);
+		});
+		
+		deleteValue.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDeleteAttributeValue(selected);
 		});
 
 	}

@@ -431,7 +431,7 @@ public class StageManager implements Observer {
 	public void update(Observable o, Object arg) {
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) arg;
-			if (!this.mvConnector.containsBoxes(modelClass)) { // class is new
+			if (!this.mvConnector.containsModelBox(modelClass)) { // class is new
 				addClassToSubScene(modelClass);
 				adaptBoxSettings(modelClass);
 				adaptArrowToBox(modelClass);
@@ -442,7 +442,7 @@ public class StageManager implements Observer {
 			}
 		} else if (o instanceof ModelManager && arg instanceof Relation) {
 			Relation relation = (Relation) arg;
-			if (!this.mvConnector.containsArrows(relation)) { // relation is new
+			if (!this.mvConnector.containsRelation(relation)) { // relation is new
 				addRelationToSubScene(relation);
 				adaptArrowColor(relation);
 				// adaptRelation(relation);
@@ -453,7 +453,7 @@ public class StageManager implements Observer {
 			}
 		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) arg;
-			if (!this.mvConnector.containsBoxes(modelObject)) { // instance is new
+			if (!this.mvConnector.containsModelBox(modelObject)) { // instance is new
 				addObjectToSubScene(modelObject);
 				adaptBoxSettings(modelObject);
 				adaptArrowToBox(modelObject);

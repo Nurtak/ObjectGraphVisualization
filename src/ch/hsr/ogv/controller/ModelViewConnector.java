@@ -92,14 +92,32 @@ public class ModelViewConnector {
 		return null;
 	}
 
-	public boolean containsBoxes(ModelBox modelBox) {
+	public boolean containsModelBox(ModelBox modelBox) {
 		return this.boxes.containsKey(modelBox);
 	}
 
-	public boolean containsArrows(Relation relation) {
+	public boolean containsRelation(Relation relation) {
 		return this.arrows.containsKey(relation);
 	}
+	
+	public boolean containsPaneBox(PaneBox paneBox) {
+		return this.boxes.values().contains(paneBox);
+	}
+	
+	public boolean containsArrow(Arrow arrow) {
+		return this.arrows.values().contains(arrow);
+	}
 
+	public boolean containsSelectable(Selectable selectable) {
+		if(selectable instanceof PaneBox) {
+			return containsPaneBox((PaneBox) selectable);
+		}
+		else if(selectable instanceof Arrow) {
+			return containsArrow((Arrow) selectable);
+		}
+		return false;
+	}
+	
 	public PaneBox putBoxes(ModelBox key, PaneBox value) {
 		return this.boxes.put(key, value);
 	}
@@ -121,20 +139,20 @@ public class ModelViewConnector {
 		mcA.setName("A");
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcB.setName("B");
-//		ModelClass mcC = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, -300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-//		mcC.setName("C");
+		ModelClass mcC = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, -300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		mcC.setName("C");
 
-//		ModelObject moA1 = this.modelManager.createObject(mcA);
-//		ModelObject moB1 = this.modelManager.createObject(mcB);
-//		ModelObject moB2 = this.modelManager.createObject(mcB);
-//		ModelObject moB3 = this.modelManager.createObject(mcB);
+		ModelObject moA1 = this.modelManager.createObject(mcA);
+		ModelObject moB1 = this.modelManager.createObject(mcB);
+		ModelObject moB2 = this.modelManager.createObject(mcB);
+		ModelObject moB3 = this.modelManager.createObject(mcB);
 
-		this.modelManager.createRelation(mcA, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
 
 		mcA.createAttribute();
 		mcA.createAttribute();
@@ -195,16 +213,30 @@ public class ModelViewConnector {
 
 	public void handleDelete(Selectable selected) {
 		if (selected instanceof PaneBox) {
-			ModelBox modelToDelete = getModelBox((PaneBox) selected);
+			PaneBox paneBox = (PaneBox) selected;
+			ModelBox modelToDelete = getModelBox(paneBox);
+			boolean centerlabelSelected = paneBox.getSelectedLabel() != null && paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel()) >= 0;
 			if (modelToDelete instanceof ModelClass) {
-				ModelClass classToDelete = (ModelClass) modelToDelete;
-				this.modelManager.deleteClass(classToDelete);
+				if(!centerlabelSelected) { // delete the whole class
+					ModelClass classToDelete = (ModelClass) modelToDelete;
+					this.modelManager.deleteClass(classToDelete);
+				}
+				else { // delete selected attribute
+					handleDeleteAttribute(selected);
+				}
+
 			} else if (modelToDelete instanceof ModelObject) {
-				ModelObject objectToDelete = (ModelObject) modelToDelete;
-				this.modelManager.deleteObject(objectToDelete);
+				if(!centerlabelSelected) { // delete the whole object
+					ModelObject objectToDelete = (ModelObject) modelToDelete;
+					this.modelManager.deleteObject(objectToDelete);
+				}
+				else { // clear attribute value
+					handleDeleteAttributeValue(selected);
+				}
 			}
 		} else if (selected instanceof Arrow) {
-			Relation relationToDelete = getRelation((Arrow) selected);
+			Arrow arrow = (Arrow) selected;
+			Relation relationToDelete = getRelation(arrow);
 			this.modelManager.deleteRelation(relationToDelete);
 		}
 	}
@@ -253,6 +285,22 @@ public class ModelViewConnector {
 			}
 		}
 	}
+	
+	public void handleDeleteAttributeValue(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			PaneBox paneBox = (PaneBox) selected;
+			Label selectedLabel = paneBox.getSelectedLabel();
+			if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
+				int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+				ModelBox modelBox = getModelBox(paneBox);
+				if (modelBox instanceof ModelObject) {
+					ModelObject modelObject = (ModelObject) modelBox;
+					Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
+					modelObject.changeAttributeValue(attribute, "");
+				}
+			}
+		}
+	}
 
 	public void handleColorPick(Selectable selected, Color pickedColor) {
 		if (selected instanceof PaneBox) {
@@ -274,7 +322,7 @@ public class ModelViewConnector {
 		if (selected instanceof PaneBox) {
 			PaneBox selectedBox = (PaneBox) selected;
 			Label selectedLabel = selectedBox.getSelectedLabel();
-			if (selectedLabel == null) {
+			if (selectedLabel == null || selectedLabel.equals(selectedBox.getTopLabel())) {
 				selectedBox.allowTopTextInput(true);
 			} else {
 				selectedBox.allowCenterFieldTextInput(selectedLabel, true);

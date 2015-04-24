@@ -343,6 +343,7 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 
 	private void splitMenuButtonSelect(MenuItem choosenItem) {
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 		this.tSplitMenuButton.setChoice(choosenItem);
 		this.createToolbar.selectToggle(this.tSplitMenuButton);
 		this.colorPick.setDisable(true);
@@ -429,7 +430,9 @@ public class RootLayoutController implements Observer, Initializable {
 		Selectable selected = this.selectionController.getCurrentSelected();
 		if (this.selectionController.hasCurrentSelection()) {
 			this.mvConnector.handleDelete(selected);
-			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			if(!this.mvConnector.containsSelectable(selected)) {
+				this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			}
 		}
 	}
 
