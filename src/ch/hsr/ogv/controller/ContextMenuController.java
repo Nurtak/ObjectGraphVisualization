@@ -282,31 +282,31 @@ public class ContextMenuController extends Observable implements Observer {
 			mvConnector.handleDelete(selected);
 		});
 		createUndirectedAssociation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleCreateUndirectedAssociation(selected);
 		});
 		createDirectedAssociation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleCreateDirectedAssociation(selected);
 		});
 		createBidirectedAssociation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleCreateBidirectedAssociation(selected);
 		});
 		createUndirectedAggregation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleCreateUndirectedAggregation(selected);
 		});
 		createDirectedAggregation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleCreateDirectedAggregation(selected);
 		});
 		createUndirectedComposition.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleCreateUndirectedComposition(selected);
 		});
 		createDirectedComposition.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleCreateDirectedComposition(selected);
 		});
 		createGeneralization.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleCreateGeneralization(selected);
 		});
 		createDependency.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			mvConnector.handleCreateDependency(selected);
 		});
 
 		// Object
