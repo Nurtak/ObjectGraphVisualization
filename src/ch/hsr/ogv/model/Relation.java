@@ -86,22 +86,17 @@ public class Relation extends Observable {
 	}
 
 	public void changeDirection() {
-		System.out.println("BEFORE \t -- Start: " + start + " has class " + start.getAppendant() + ", End: " + end + " has class " + end.getAppendant());
-		//System.out.println("Start Class: " + start.getAppendant().getEndpoints());
-		//System.out.println("End Class: " + end.getAppendant().getEndpoints());
 		this.start.getAppendant().changeEndpoint(this.start, this.end);
 		this.end.getAppendant().changeEndpoint(this.end, this.start);
+
 		ModelBox tempModelBox = this.end.getAppendant();
 		this.end.setAppendant(this.start.getAppendant());
 		this.start.setAppendant(tempModelBox);
+
 		Endpoint tempEndpoint = this.end;
 		this.end = this.start;
 		this.start = tempEndpoint;
-		this.start.setRelation(this);
-		this.end.setRelation(this);
-		System.out.println("AFTER \t -- Start: " + start + " has class " + start.getAppendant() + ", End: " + end + " has class " + end.getAppendant());
-		//System.out.println("Start Class: " + start.getAppendant().getEndpoints());
-		//System.out.println("End Class: " + end.getAppendant().getEndpoints());
+
 		setChanged();
 		notifyObservers(RelationChange.DIRECTION);
 	}

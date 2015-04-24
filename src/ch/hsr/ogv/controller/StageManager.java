@@ -267,16 +267,17 @@ public class StageManager implements Observer {
 			changedArrow.setColor(relation.getColor());
 		}
 	}
-	
+
 	private void adaptArrowDirection(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow != null) {
 			ModelBox startModelBox = relation.getStart().getAppendant();
 			ModelBox endModelBox = relation.getEnd().getAppendant();
-			System.out.println("Relation getStart(): " + relation.getStart() + " has class: " + relation.getStart().getAppendant());
-			System.out.println("Relation getEnd(): " + relation.getEnd() + " has class: " + relation.getEnd().getAppendant());
+
 			PaneBox startPaneBox = this.mvConnector.getPaneBox(startModelBox);
 			PaneBox endPaneBox = this.mvConnector.getPaneBox(endModelBox);
+
+			changedArrow.setType(relation.getType());
 			changedArrow.setPointsBasedOnBoxes(startPaneBox, endPaneBox);
 			changedArrow.drawArrow();
 			this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
