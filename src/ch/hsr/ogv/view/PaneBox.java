@@ -391,6 +391,9 @@ public class PaneBox implements Selectable {
 			logger.debug("Showing center field failed. IndexOutOfBoundsException: " + ioobe.getMessage());
 		}
 		recalcHasCenterGrid();
+		if(getSelectedLabel() != null) {
+			setLabelSelected(getSelectedLabel(), true);
+		}
 	}
 	
 	public int numberCenterLabelShowing() {

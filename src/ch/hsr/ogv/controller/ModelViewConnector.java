@@ -282,6 +282,7 @@ public class ModelViewConnector {
 					ModelClass modelClass = (ModelClass) modelBox;
 					modelClass.deleteAttribute(rowIndex);
 				}
+				paneBox.setAllLabelSelected(false);
 			}
 		}
 	}

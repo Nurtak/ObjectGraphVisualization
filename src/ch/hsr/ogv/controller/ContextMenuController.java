@@ -165,7 +165,7 @@ public class ContextMenuController extends Observable implements Observer {
 				hideAllContextMenus();
 				if (modelBox instanceof ModelClass) {
 					// Class
-					attributeActive(false);
+					enableAttributeSelected(false);
 					addAttribute.setDisable(paneBox.numberCenterLabelShowing() >= PaneBox.MAX_CENTER_LABELS);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				} else if ((modelBox instanceof ModelObject)) {
@@ -189,7 +189,8 @@ public class ContextMenuController extends Observable implements Observer {
 				hideAllContextMenus();
 				if (modelBox instanceof ModelClass) {
 					// Label on Class
-					attributeActive(true);
+					enableAttributeSelected(true);
+					addAttribute.setDisable(paneBox.numberCenterLabelShowing() >= PaneBox.MAX_CENTER_LABELS);
 					int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
 					moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.numberCenterLabelShowing() - 1);
 					moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.numberCenterLabelShowing() - 1);
@@ -250,7 +251,7 @@ public class ContextMenuController extends Observable implements Observer {
 		relationCM.hide();
 	}
 
-	private void attributeActive(boolean isAttributeActive) {
+	private void enableAttributeSelected(boolean isAttributeActive) {
 		renameAttribute.setDisable(!isAttributeActive);
 		moveAttributeUp.setDisable(!isAttributeActive);
 		moveAttributeDown.setDisable(!isAttributeActive);
