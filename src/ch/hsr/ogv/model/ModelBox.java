@@ -127,13 +127,6 @@ public class ModelBox extends Observable {
 		this.endpoints = endpoints;
 	}
 
-	public void changeEndpoint(Endpoint oldEP, Endpoint newEP) {
-		int index = endpoints.indexOf(oldEP);
-		endpoints.set(index, newEP);
-		setChanged();
-		notifyObservers(ModelBoxChange.ENDPOINTS);
-	}
-
 	public Map<Endpoint, Endpoint> getFriends(){
 		Map<Endpoint, Endpoint> result = new HashMap<Endpoint, Endpoint>(endpoints.size());
 		for (Endpoint endpoint : endpoints) {
@@ -146,6 +139,6 @@ public class ModelBox extends Observable {
 	}
 
 	public enum ModelBoxChange {
-		COORDINATES, HEIGHT, WIDTH, NAME, COLOR, ENDPOINTS;
+		COORDINATES, HEIGHT, WIDTH, NAME, COLOR;
 	}
 }
