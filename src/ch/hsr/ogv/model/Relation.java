@@ -86,11 +86,15 @@ public class Relation extends Observable {
 	}
 
 	public void changeDirection() {
+		System.out.println("BEFORE -- Start: " + start.getAppendant() + ", End: " + end.getAppendant());
 		this.start.getAppendant().changeEndpoint(this.start, this.end);
 		this.end.getAppendant().changeEndpoint(this.end, this.start);
-		Endpoint temp = this.end;
+		Endpoint tempEndpoint = this.end;
 		this.end = this.start;
-		this.start = temp;
+		this.start = tempEndpoint;
+		ModelBox tempModelBox = this.end.getAppendant();
+		this.end.setAppendant(this.start.getAppendant());
+		this.start.setAppendant(tempModelBox);
 		setChanged();
 		notifyObservers(RelationChange.DIRECTION);
 	}
