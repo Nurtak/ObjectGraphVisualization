@@ -127,9 +127,11 @@ public class ModelBox extends Observable {
 		this.endpoints = endpoints;
 	}
 
-	public void changeEndpoint(Endpoint oldEP, Endpoint newEP){
+	public void changeEndpoint(Endpoint oldEP, Endpoint newEP) {
+		System.out.println("Before change in class: " + this.getName() + " -- " + this.endpoints);
 		int index = endpoints.indexOf(oldEP);
 		endpoints.set(index, newEP);
+		System.out.println("After change in class: " + this.getName() + " -- " + this.endpoints);
 		setChanged();
 		notifyObservers(ModelBoxChange.ENDPOINTS);
 	}

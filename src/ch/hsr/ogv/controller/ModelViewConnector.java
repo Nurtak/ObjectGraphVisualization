@@ -121,20 +121,20 @@ public class ModelViewConnector {
 		mcA.setName("A");
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcB.setName("B");
-		ModelClass mcC = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, -300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-		mcC.setName("C");
+//		ModelClass mcC = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, -300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+//		mcC.setName("C");
 
 		ModelObject moA1 = this.modelManager.createObject(mcA);
 		ModelObject moB1 = this.modelManager.createObject(mcB);
-		ModelObject moB2 = this.modelManager.createObject(mcB);
-		ModelObject moB3 = this.modelManager.createObject(mcB);
+//		ModelObject moB2 = this.modelManager.createObject(mcB);
+//		ModelObject moB3 = this.modelManager.createObject(mcB);
 
 		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
+//		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
+//		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+//		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+//		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
 
 		mcA.createAttribute();
 		mcA.createAttribute();

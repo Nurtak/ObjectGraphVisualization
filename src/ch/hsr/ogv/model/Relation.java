@@ -85,7 +85,7 @@ public class Relation extends Observable {
 		COLOR, DIRECTION;
 	}
 
-	public void changeDirection(){
+	public void changeDirection() {
 		this.start.getAppendant().changeEndpoint(this.start, this.end);
 		this.end.getAppendant().changeEndpoint(this.end, this.start);
 		Endpoint temp = this.end;
