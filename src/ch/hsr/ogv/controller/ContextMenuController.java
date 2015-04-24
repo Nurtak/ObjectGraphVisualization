@@ -112,10 +112,13 @@ public class ContextMenuController extends Observable implements Observer {
 		relationCM = new ContextMenu();
 		changeDirection = getMenuItem("Change Direction", Resource.CHANGE_DIRECTION_GIF, relationCM);
 		associationClass = getMenuItem("To Association Class", Resource.ASSOCIATION_CLASS_GIF, relationCM);
+		relationCM.getItems().add(new SeparatorMenuItem());
 		addMultiplicity = getMenuItem("Add Multiplicity", Resource.ADD_MULTIPLICITY_GIF, relationCM);
-		addRole = getMenuItem("Add Role", Resource.ADD_ROLE_GIF, relationCM);
 		deleteMultiplicity = getMenuItem("Delete Multiplicity", Resource.DELETE_PNG, relationCM);
+		relationCM.getItems().add(new SeparatorMenuItem());
+		addRole = getMenuItem("Add Role", Resource.ADD_ROLE_GIF, relationCM);
 		deleteRole = getMenuItem("Delete Role", Resource.DELETE_PNG, relationCM);
+		relationCM.getItems().add(new SeparatorMenuItem());
 		deleteRelation = getMenuItem("Delete Relation", Resource.DELETE_PNG, relationCM);
 	}
 
@@ -212,7 +215,7 @@ public class ContextMenuController extends Observable implements Observer {
 				me.consume();
 			}
 		});
-		
+
 		arrow.getStartSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
@@ -224,7 +227,7 @@ public class ContextMenuController extends Observable implements Observer {
 				me.consume();
 			}
 		});
-		
+
 		arrow.getEndSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
