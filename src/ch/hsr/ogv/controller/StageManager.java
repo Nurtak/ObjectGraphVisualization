@@ -273,6 +273,8 @@ public class StageManager implements Observer {
 		if (changedArrow != null) {
 			ModelBox startModelBox = relation.getStart().getAppendant();
 			ModelBox endModelBox = relation.getEnd().getAppendant();
+			
+			System.out.println("Startclass" + startModelBox.getName() + " Endclass: " + endModelBox.getName());
 
 			PaneBox startPaneBox = this.mvConnector.getPaneBox(startModelBox);
 			PaneBox endPaneBox = this.mvConnector.getPaneBox(endModelBox);
