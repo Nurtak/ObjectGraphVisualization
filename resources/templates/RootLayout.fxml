@@ -277,14 +277,6 @@
          </BorderPane.margin></Pane>
    </center>
    <bottom>
-      <HBox alignment="CENTER_LEFT" layoutY="4.0" minHeight="38.0">
-         <children>
-            <TextField fx:id="messageBar" disable="true" editable="false" minHeight="28.0" HBox.hgrow="ALWAYS">
-               <HBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </HBox.margin>
-            </TextField>
-         </children>
-      </HBox>
+      <HBox fx:id="messageBarContainer" alignment="CENTER_LEFT" layoutY="4.0" minHeight="38.0" />
    </bottom>
 </BorderPane>

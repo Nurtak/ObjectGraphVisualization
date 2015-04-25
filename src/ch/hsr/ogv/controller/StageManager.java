@@ -31,6 +31,7 @@ import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.MessageBar;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
@@ -49,6 +50,8 @@ public class StageManager implements Observer {
 	private SubSceneAdapter subSceneAdapter;
 
 	private ModelViewConnector mvConnector;
+	
+	private MessageBar messageBar = new MessageBar();
 
 	private RootLayoutController rootLayoutController = new RootLayoutController();
 	private CameraController cameraController = new CameraController();
@@ -128,6 +131,7 @@ public class StageManager implements Observer {
 		this.rootLayoutController.setSelectionController(this.selectionController);
 		this.rootLayoutController.setMouseMoveController(this.mouseMoveController);
 		this.rootLayoutController.setCameraController(this.cameraController);
+		this.rootLayoutController.setMessageBar(this.messageBar);
 	}
 
 	private void initContextMenuController() {

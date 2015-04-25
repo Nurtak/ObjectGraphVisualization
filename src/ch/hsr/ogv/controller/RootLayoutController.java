@@ -26,6 +26,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jfxtras.labs.util.Util;
@@ -38,6 +39,7 @@ import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.Floor;
+import ch.hsr.ogv.view.MessageBar;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.SubSceneAdapter;
@@ -54,6 +56,8 @@ public class RootLayoutController implements Observer, Initializable {
 	private Stage primaryStage;
 	private String appTitle;
 
+	private MessageBar messageBar;
+	
 	private ModelViewConnector mvConnector;
 	private SubSceneAdapter subSceneAdapter;
 	private SelectionController selectionController;
@@ -72,7 +76,7 @@ public class RootLayoutController implements Observer, Initializable {
 	public void setMVConnector(ModelViewConnector mvConnector) {
 		this.mvConnector = mvConnector;
 	}
-
+	
 	public void setSubSceneAdapter(SubSceneAdapter subSceneAdapter) {
 		this.subSceneAdapter = subSceneAdapter;
 	}
@@ -87,6 +91,11 @@ public class RootLayoutController implements Observer, Initializable {
 
 	public void setCameraController(CameraController cameraController) {
 		this.cameraController = cameraController;
+	}
+	
+	public void setMessageBar(MessageBar messageBar) {
+		this.messageBar = messageBar;
+		this.messageBarContainer.getChildren().add(messageBar.get());
 	}
 
 	/**
@@ -310,7 +319,10 @@ public class RootLayoutController implements Observer, Initializable {
 	
 	@FXML
 	Label pickColorLabel;
-
+	
+	@FXML
+	HBox messageBarContainer;
+	
 	@FXML
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
