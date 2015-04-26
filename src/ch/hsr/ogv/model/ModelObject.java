@@ -34,6 +34,7 @@ public class ModelObject extends ModelBox {
 	}
 	
 	public void changeAttributeName(Attribute attribute, String name) {
+		attribute.setName(name);
 		setChanged();
 		notifyObservers(attribute);
 	}

@@ -229,8 +229,11 @@ public class StageManager implements Observer {
 
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
 		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
-		this.textFieldController.enableTextInput(modelBox, paneBox);
-		this.contextMenuController.enableContextMenu(modelBox, paneBox, this.subSceneAdapter);
+		this.selectionController.enableCenterLabelSelection(paneBox, subSceneAdapter);
+		this.textFieldController.enableTopTextInput(modelBox, paneBox);
+		this.textFieldController.enableCenterTextInput(modelBox, paneBox);
+		this.contextMenuController.enablePaneBoxContextMenu(modelBox, paneBox, this.subSceneAdapter);
+		this.contextMenuController.enableCenterFieldContextMenu(modelBox, paneBox, this.subSceneAdapter);
 		this.mouseMoveController.enableMouseMove(paneBox);
 		this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
 		if (modelBox instanceof ModelClass) {
@@ -389,14 +392,20 @@ public class StageManager implements Observer {
 	private void adaptCenterFields(ModelClass modelClass) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelClass);
 		if (changedBox != null) {
-			changedBox.showAllCenterLabels(false);
+			int prevSelectionIndex = changedBox.getCenterLabels().indexOf(changedBox.getSelectedLabel());
+			changedBox.clearCenterFields();
 			for (int i = 0; i < modelClass.getAttributes().size(); i++) {
 				if (i < PaneBox.MAX_CENTER_LABELS) {
 					Attribute attribute = modelClass.getAttributes().get(i);
-					changedBox.showCenterLabel(i, true);
 					changedBox.setCenterText(i, attribute.getName(), attribute.getName());
 				}
 			}
+			changedBox.setLabelSelected(prevSelectionIndex, true);
+			// center labels were cleared and recreated, need controls again
+			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter); 
+			this.textFieldController.enableCenterTextInput(modelClass, changedBox);
+			this.contextMenuController.enableCenterFieldContextMenu(modelClass, changedBox, this.subSceneAdapter);
+			
 			double newWidth = changedBox.calcMinWidth();
 			changedBox.setMinWidth(newWidth);
 			if (newWidth > changedBox.getWidth()) {
@@ -411,22 +420,29 @@ public class StageManager implements Observer {
 	}
 
 	private void adaptCenterFields(ModelObject modelObject) {
-		PaneBox paneObjectBox = this.mvConnector.getPaneBox(modelObject);
-		if (paneObjectBox != null) {
-			paneObjectBox.showAllCenterLabels(false);
-			for (int i = 0; i < modelObject.getModelClass().getAttributes().size(); i++) { // using attribute list of this objects class, to get same order.
+		PaneBox changedBox = this.mvConnector.getPaneBox(modelObject);
+		if (changedBox != null) {
+			int prevSelectionIndex = changedBox.getCenterLabels().indexOf(changedBox.getSelectedLabel());
+			changedBox.clearCenterFields();
+			// using attribute list of this objects class, to get same order.
+			for (int i = 0; i < modelObject.getModelClass().getAttributes().size(); i++) {
 				if (i < PaneBox.MAX_CENTER_LABELS) {
 					Attribute attribute = modelObject.getModelClass().getAttributes().get(i);
 					String attributeName = attribute.getName();
 					String attributeValue = modelObject.getAttributeValues().get(attribute);
-					paneObjectBox.showCenterLabel(i, true);
 					if (attributeValue != null && !attributeValue.isEmpty()) {
-						paneObjectBox.setCenterText(i, attributeName + " = " + attributeValue, attributeValue);
+						changedBox.setCenterText(i, attributeName + " = " + attributeValue, attributeValue);
 					} else {
-						paneObjectBox.setCenterText(i, attributeName, attributeValue);
+						changedBox.setCenterText(i, attributeName, attributeValue);
 					}
 				}
 			}
+			changedBox.recalcHasCenterGrid();
+			changedBox.setLabelSelected(prevSelectionIndex, true);
+			 // center labels were cleared and recreated, need controls again
+			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter);
+			this.textFieldController.enableCenterTextInput(modelObject, changedBox);
+			this.contextMenuController.enableCenterFieldContextMenu(modelObject, changedBox, this.subSceneAdapter);
 		}
 	}
 

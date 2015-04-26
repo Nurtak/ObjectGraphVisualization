@@ -159,7 +159,6 @@ public class ModelViewConnector {
 		mcA.createAttribute();
 		mcA.createAttribute();
 		mcA.createAttribute();
-
 		mcB.createAttribute();
 	}
 
@@ -198,13 +197,14 @@ public class ModelViewConnector {
 	public Attribute handleCreateNewAttribute(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			PaneBox selectedPaneBox = (PaneBox) selected;
+			selectedPaneBox.setAllLabelSelected(false);
 			ModelBox selectedModelBox = this.getModelBox(selectedPaneBox);
 			if (selectedModelBox != null && selectedModelBox instanceof ModelClass) {
 				ModelClass selectedModelClass = (ModelClass) selectedModelBox;
 				Attribute newAttribute = selectedModelClass.createAttribute();
-				int lastVisibleIndex = selectedPaneBox.numberCenterLabelShowing() - 1;
-				Label lastVisibleLabel = selectedPaneBox.getCenterLabels().get(lastVisibleIndex);
-				selectedPaneBox.allowCenterFieldTextInput(lastVisibleLabel, true);
+				int lastCenterLabelIndex = selectedPaneBox.getCenterLabels().size() - 1;
+				Label lastCenterLabel = selectedPaneBox.getCenterLabels().get(lastCenterLabelIndex);
+				selectedPaneBox.allowCenterFieldTextInput(lastCenterLabel, true);
 				return newAttribute;
 			}
 		}
@@ -247,6 +247,7 @@ public class ModelViewConnector {
 			Label selectedLabel = paneBox.getSelectedLabel();
 			if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
 				int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+				paneBox.setLabelSelected(rowIndex - 1, true);
 				ModelBox modelBox = getModelBox(paneBox);
 				if (modelBox instanceof ModelClass) {
 					ModelClass modelClass = (ModelClass) modelBox;
@@ -262,6 +263,7 @@ public class ModelViewConnector {
 			Label selectedLabel = paneBox.getSelectedLabel();
 			if (selectedLabel != null && paneBox.getCenterLabels().indexOf(selectedLabel) >= 0) {
 				int rowIndex = paneBox.getCenterLabels().indexOf(selectedLabel);
+				paneBox.setLabelSelected(rowIndex + 1, true);
 				ModelBox modelBox = getModelBox(paneBox);
 				if (modelBox instanceof ModelClass) {
 					ModelClass modelClass = (ModelClass) modelBox;
@@ -319,13 +321,18 @@ public class ModelViewConnector {
 		}
 	}
 
-	public void handleRename(Selectable selected) {
+	public void handleRenameClassOrObject(Selectable selected) {
+		if (selected instanceof PaneBox) {
+			PaneBox selectedBox = (PaneBox) selected;
+			selectedBox.allowTopTextInput(true);
+		}
+	}
+	
+	public void handleRenameFieldOrValue(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			PaneBox selectedBox = (PaneBox) selected;
 			Label selectedLabel = selectedBox.getSelectedLabel();
-			if (selectedLabel == null || selectedLabel.equals(selectedBox.getTopLabel())) {
-				selectedBox.allowTopTextInput(true);
-			} else {
+			if (selectedLabel != null && !selectedLabel.equals(selectedBox.getTopLabel())) {
 				selectedBox.allowCenterFieldTextInput(selectedLabel, true);
 			}
 		}

@@ -136,6 +136,10 @@ public class ModelClass extends ModelBox {
 		getAttributes().set(rowIndex, upperAttribute);
 		setChanged();
 		notifyObservers(thisAttribute);
+		for(ModelObject modelObject : getModelObjects()) {
+			modelObject.changeAttributeName(thisAttribute, thisAttribute.getName());
+			// modelObject.changeAttributeName(upperAttribute, upperAttribute.getName());
+		}
 		return true;
 	}
 	
@@ -148,6 +152,10 @@ public class ModelClass extends ModelBox {
 		getAttributes().set(rowIndex, lowerAttribute);
 		setChanged();
 		notifyObservers(thisAttribute);
+		for(ModelObject modelObject : getModelObjects()) {
+			modelObject.changeAttributeName(thisAttribute, thisAttribute.getName());
+			// modelObject.changeAttributeName(lowerAttribute, lowerAttribute.getName());
+		}
 		return true;
 	}
 	
