@@ -29,6 +29,7 @@ public class Persistancy {
 
 	        modelManager.clearClasses();
 	        modelManager.setClasses(savedModelManager.getClasses());
+	        modelManager.setRelations(savedModelManager.getRelations());
 
 	    } catch (Exception e) { // catches ANY exception
 	        Alert alert = new Alert(AlertType.ERROR);
@@ -47,14 +48,16 @@ public class Persistancy {
 	        Marshaller m = context.createMarshaller();
 	        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-//	        // Wrapping our person data.
-//	        ModelManager modelManager = new ModelManager();
-//	        modelManager.setPersons(personData);
+	        // Wrapping our person data.
+	        ModelManager wrapper = new ModelManager();
+	        wrapper.setClasses(modelManager.getClasses());
+	        wrapper.setRelations(modelManager.getRelations());
 
 	        // Marshalling and saving XML to the file.
 	        m.marshal(modelManager, file);
 
 	    } catch (Exception e) { // catches ANY exception
+	    	System.out.println(e);
 	        Alert alert = new Alert(AlertType.ERROR);
 	        alert.setTitle("Error");
 	        alert.setHeaderText("Could not save data");
