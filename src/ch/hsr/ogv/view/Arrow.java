@@ -10,9 +10,11 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import jfxtras.labs.util.Util;
 import ch.hsr.ogv.model.LineType;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.GeometryUtil;
+import ch.hsr.ogv.util.TextUtil;
 
 /**
  *
@@ -25,18 +27,23 @@ public class Arrow extends Group implements Selectable {
 	private static final int SELECTION_HELPER_WIDTH = 20;
 	private static final int DASHED_ELEMENT_COUNT = 20;
 	private double width = INIT_WIDTH;
-	private static final Color SELECTION_COLOR = Color.DODGERBLUE;
+	static final Color SELECTION_COLOR = Color.DODGERBLUE;
 	private static final double EDGE_SPACING = 3;
+	private static final double LABEL_SPACING = 30;
 	private double boxDistance;
 	private double rotateZAngle;
 	private double rotateXAngle;
-
 
 	private Point3D startPoint;
 	private Point3D endPoint;
 	
 	private ArrowEdge arrowStart;
 	private ArrowEdge arrowEnd;
+	
+	private ArrowLabel labelStartRight;
+	private ArrowLabel labelStartLeft;
+	private ArrowLabel labelEndRight;
+	private ArrowLabel labelEndLeft;
 
 	private RelationType type = RelationType.BIDIRECTED_ASSOCIATION;
 
@@ -74,6 +81,22 @@ public class Arrow extends Group implements Selectable {
 		return arrowEnd;
 	}
  
+	public ArrowLabel getLabelStartRight() {
+		return labelStartRight;
+	}
+
+	public ArrowLabel getLabelStartLeft() {
+		return labelStartLeft;
+	}
+
+	public ArrowLabel getLabelEndRight() {
+		return labelEndRight;
+	}
+
+	public ArrowLabel getLabelEndLeft() {
+		return labelEndLeft;
+	}
+
 	public RelationType getRelationType() {
 		return type;
 	}
@@ -113,6 +136,7 @@ public class Arrow extends Group implements Selectable {
 	
 	private void buildArrow() {
 		prepareArrowLineEdge();
+		prepareArrowLabel();
 		prepareLines();
 		buildSelectionHelpers();
 		this.selection = new ArrowSelection();
@@ -122,12 +146,20 @@ public class Arrow extends Group implements Selectable {
 		getChildren().addAll(this.line, this.arrowStart, this.arrowEnd);
 		getChildren().addAll(this.dashedLines);
 		getChildren().addAll(this.lineSelectionHelper, this.startSelectionHelper, this.endSelectionHelper);
+		getChildren().addAll(this.labelStartRight, this.labelStartLeft, this.labelEndRight, this.labelEndLeft);
 	}
-
+	
 	private void prepareArrowLineEdge() {
 		this.arrowStart = new ArrowEdge(this.type.getStartType(), this.color);
 		this.arrowEnd = new ArrowEdge(this.type.getEndType(), this.color);
 		
+	}
+	
+	private void prepareArrowLabel() {
+		this.labelStartRight = new ArrowLabel();
+		this.labelStartLeft = new ArrowLabel();
+		this.labelEndRight = new ArrowLabel();
+		this.labelEndLeft = new ArrowLabel();
 	}
 	
 	private void prepareLines() {
@@ -206,6 +238,7 @@ public class Arrow extends Group implements Selectable {
 		}
 
 		setArrowLineEdge();
+		setArrowLabels();
 		
 		double endGap = this.arrowEnd.getAdditionalGap();
 		double startGap = this.arrowStart.getAdditionalGap();
@@ -231,6 +264,7 @@ public class Arrow extends Group implements Selectable {
 		setTranslateXYZ(midPoint);
 		addRotateYAxis(this.rotateZAngle);
 		addRotateXAxis(this.rotateXAngle);
+		
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 	
@@ -283,6 +317,22 @@ public class Arrow extends Group implements Selectable {
 		this.arrowStart.setTranslateZ(-this.boxDistance / 2 - EDGE_SPACING);
 		this.arrowEnd.setTranslateZ(this.boxDistance / 2 + EDGE_SPACING);
 	}
+	
+	private void setArrowLabels() {
+		this.labelStartRight.setDiffX(-LABEL_SPACING / 3 - 1);
+		this.labelStartRight.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
+		
+		double startLeftWidth = TextUtil.computeTextWidth(this.labelStartLeft.getFont(), this.labelStartLeft.getText(), 0.0D);
+		this.labelStartLeft.setDiffX(startLeftWidth + LABEL_SPACING / 3 + 13);
+		this.labelStartLeft.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
+		
+		this.labelEndRight.setDiffX(-LABEL_SPACING / 3 - 1);
+		this.labelEndRight.setDiffZ(this.boxDistance / 2 - LABEL_SPACING);
+		
+		double endLeftWidth = TextUtil.computeTextWidth(this.labelEndLeft.getFont(), this.labelEndLeft.getText(), 0.0D);
+		this.labelEndLeft.setDiffX(endLeftWidth + LABEL_SPACING / 3 + 13);
+		this.labelEndLeft.setDiffZ(this.boxDistance / 2 - LABEL_SPACING);
+	}
 
 	public void setColor(Color color) {
 		this.color = color;
@@ -292,6 +342,10 @@ public class Arrow extends Group implements Selectable {
 		}
 		this.arrowStart.setColor(color);
 		this.arrowEnd.setColor(color);
+		this.labelStartRight.setColor(color);
+		this.labelStartLeft.setColor(color);
+		this.labelEndRight.setColor(color);
+		this.labelEndLeft.setColor(color);
 	}
 
 	private void applyColor(Box box, Color color) {
@@ -303,6 +357,13 @@ public class Arrow extends Group implements Selectable {
 
 	public Color getColor() {
 		return this.color;
+	}
+	
+	public void setAllLabelSelected(boolean selected) {
+		this.labelStartLeft.setLabelSelected(selected);
+		this.labelStartRight.setLabelSelected(selected);
+		this.labelEndLeft.setLabelSelected(selected);
+		this.labelEndRight.setLabelSelected(selected);
 	}
 
 	@Override
@@ -318,6 +379,14 @@ public class Arrow extends Group implements Selectable {
 		}
 		this.arrowStart.setColor(colorToApply);
 		this.arrowEnd.setColor(colorToApply);
+		this.labelStartRight.setColor(Util.darker(colorToApply, 0.3));
+		this.labelStartLeft.setColor(Util.darker(colorToApply, 0.3));
+		this.labelEndRight.setColor(Util.darker(colorToApply, 0.3));
+		this.labelEndLeft.setColor(Util.darker(colorToApply, 0.3));
+		
+		if(!selected) {
+			setAllLabelSelected(false);
+		}
 	}
 
 	@Override

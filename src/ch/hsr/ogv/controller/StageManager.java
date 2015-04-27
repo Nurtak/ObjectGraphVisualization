@@ -246,6 +246,7 @@ public class StageManager implements Observer {
 
 	private void addArrowControls(Arrow arrow) {
 		this.selectionController.enableArrowSelection(arrow, this.subSceneAdapter);
+		this.selectionController.enableArrowLabelSelection(arrow, this.subSceneAdapter);
 	}
 
 	private void adaptBoxSettings(ModelBox modelBox) {

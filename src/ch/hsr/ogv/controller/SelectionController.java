@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.ArrowLabel;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.SubSceneAdapter;
@@ -74,6 +75,13 @@ public class SelectionController extends Observable implements Observer {
 
 	public void enableArrowSelection(Arrow arrow, SubSceneAdapter subSceneAdapter) {
 		selectOnMouseClicked(arrow, subSceneAdapter);
+	}
+	
+	public void enableArrowLabelSelection(Arrow arrow, SubSceneAdapter subSceneAdapter) {
+		selectOnMouseClicked(arrow.getLabelStartLeft(), arrow, subSceneAdapter);
+		selectOnMouseClicked(arrow.getLabelStartRight(), arrow, subSceneAdapter);
+		selectOnMouseClicked(arrow.getLabelEndLeft(), arrow, subSceneAdapter);
+		selectOnMouseClicked(arrow.getLabelEndRight(), arrow, subSceneAdapter);
 	}
 
 	private void selectOnMouseClicked(SubSceneAdapter subSceneAdapter) {
@@ -141,26 +149,44 @@ public class SelectionController extends Observable implements Observer {
 
 	private void selectOnMouseClicked(Arrow arrow, SubSceneAdapter subSceneAdapter) {
 		arrow.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && !arrow.isSelected()) {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
+				arrow.setAllLabelSelected(false);
 				setSelected(me, arrow, true, subSceneAdapter);
 			}
 		});
 		
 		arrow.getLineSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && !arrow.isSelected()) {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
+				arrow.setAllLabelSelected(false);
 				setSelected(me, arrow, true, subSceneAdapter);
 			}
 		});
 		
 		arrow.getStartSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && !arrow.isSelected()) {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
+				arrow.setAllLabelSelected(false);
 				setSelected(me, arrow, true, subSceneAdapter);
 			}
 		});
 		
 		arrow.getEndSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) && !arrow.isSelected()) {
+			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
+				arrow.setAllLabelSelected(false);
 				setSelected(me, arrow, true, subSceneAdapter);
+			}
+		});
+	}
+	
+	private void selectOnMouseClicked(ArrowLabel arrowLabel, Arrow arrow, SubSceneAdapter subSceneAdapter) {
+		arrowLabel.getContainer().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+			arrow.setAllLabelSelected(false);
+			if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
+				arrowLabel.setLabelSelected(true);
+				setSelected(me, arrow, true, subSceneAdapter);
+				me.consume(); // otherwise this centerLabel's parent = getCenter() will be called
+			}
+			if (MouseButton.PRIMARY.equals(me.getButton()) && arrow.isSelected() && me.getClickCount() >= 2) {
+				arrowLabel.allowTextInput(true);
 			}
 		});
 	}

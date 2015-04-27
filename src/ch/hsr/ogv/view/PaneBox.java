@@ -10,7 +10,6 @@ import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
@@ -167,6 +166,8 @@ public class PaneBox implements Selectable {
 	
 	public void createCenterField() {
 		Label centerLabel = new Label();
+		centerLabel.setCacheHint(CacheHint.SCALE_AND_ROTATE);
+		centerLabel.setDepthTest(DepthTest.ENABLE);
 		centerLabel.setText("field" + getCenter().getChildren().size() + 1);
 		HBox.setHgrow(centerLabel, Priority.ALWAYS);
 		centerLabel.setMaxWidth(Double.MAX_VALUE);

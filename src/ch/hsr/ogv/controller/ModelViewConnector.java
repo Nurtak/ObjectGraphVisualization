@@ -16,8 +16,8 @@ import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
-import ch.hsr.ogv.util.Persistancy;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.BoxSelection;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
@@ -29,6 +29,8 @@ import ch.hsr.ogv.view.SubSceneAdapter;
  *
  */
 public class ModelViewConnector {
+	
+	private static final double BASE_BOX_DEPTH = PaneBox.INIT_DEPTH + BoxSelection.INIT_SELECT_SIZE / 2;
 
 	private ModelManager modelManager = new ModelManager();
 
@@ -136,11 +138,11 @@ public class ModelViewConnector {
 	}
 
 	public void createDummyContent() {
-		ModelClass mcA = this.modelManager.createClass(new Point3D(-300, PaneBox.INIT_DEPTH / 2, 200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass mcA = this.modelManager.createClass(new Point3D(-300, BASE_BOX_DEPTH, 200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcA.setName("A");
-		ModelClass mcB = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass mcB = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcB.setName("B");
-		ModelClass mcC = this.modelManager.createClass(new Point3D(300, PaneBox.INIT_DEPTH / 2, -300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass mcC = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, -300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcC.setName("C");
 
 		ModelObject moA1 = this.modelManager.createObject(mcA);
@@ -148,9 +150,9 @@ public class ModelViewConnector {
 		ModelObject moB2 = this.modelManager.createObject(mcB);
 		ModelObject moB3 = this.modelManager.createObject(mcB);
 
-		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
+		Relation rAB = this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
+		Relation rCB = this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
+		Relation rCA = this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
@@ -161,10 +163,29 @@ public class ModelViewConnector {
 		mcA.createAttribute();
 		mcA.createAttribute();
 		mcB.createAttribute();
+		
+		Arrow aAB = getArrow(rAB);
+		aAB.getLabelStartLeft().setText("rolerole");
+		aAB.getLabelStartRight().setText("1..*");
+		aAB.getLabelEndLeft().setText("role");
+		aAB.getLabelEndRight().setText("1..*");
+		
+		Arrow aCB = getArrow(rCB);
+		aCB.getLabelStartLeft().setText("role");
+		aCB.getLabelStartRight().setText("*");
+		aCB.getLabelEndLeft().setText("rolerole");
+		aCB.getLabelEndRight().setText("*");
+		
+		Arrow aCA = getArrow(rCA);
+		aCA.getLabelStartLeft().setText("rolerolerole");
+		aCA.getLabelStartRight().setText("10");
+		aCA.getLabelEndLeft().setText("role");
+		aCA.getLabelEndRight().setText("1..9");
+		
 	}
 
 	public PaneBox handleCreateNewClass(Point3D mouseCoords) {
-		Point3D boxPosition = new Point3D(mouseCoords.getX(), PaneBox.INIT_DEPTH / 2, mouseCoords.getZ());
+		Point3D boxPosition = new Point3D(mouseCoords.getX(), BASE_BOX_DEPTH, mouseCoords.getZ());
 		ModelClass newClass = this.modelManager.createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		PaneBox newBox = getPaneBox(newClass);
 		if (newBox != null) {

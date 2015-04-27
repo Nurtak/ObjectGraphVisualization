@@ -55,9 +55,8 @@ public class ContextMenuController extends Observable implements Observer {
 	// Relation
 	private ContextMenu relationCM;
 	private MenuItem changeDirection;
-	private MenuItem associationClass;
-	private MenuItem addMultiplicity;
-	private MenuItem addRole;
+	private MenuItem setMultiplicity;
+	private MenuItem setRole;
 	private MenuItem deleteMultiplicity;
 	private MenuItem deleteRole;
 	private MenuItem deleteRelation;
@@ -78,7 +77,7 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem deleteAttribute;
 
 	// Value (Attribute)
-	private MenuItem changeValue;
+	private MenuItem setValue;
 	private MenuItem deleteValue;
 
 	public ContextMenuController() {
@@ -105,7 +104,7 @@ public class ContextMenuController extends Observable implements Observer {
 		objectCM = new ContextMenu();
 		renameObject = getMenuItem("Rename Object", Resource.RENAME_GIF, objectCM);
 		objectCM.getItems().add(new SeparatorMenuItem());
-		changeValue = getMenuItem("Change Value", Resource.RENAME_ATTR_GIF, objectCM);
+		setValue = getMenuItem("Set Value", Resource.RENAME_ATTR_GIF, objectCM);
 		deleteValue = getMenuItem("Delete Value", Resource.DELETE_PNG, objectCM);
 		objectCM.getItems().add(new SeparatorMenuItem());
 		deleteObject = getMenuItem("Delete Object", Resource.DELETE_PNG, objectCM);
@@ -113,12 +112,11 @@ public class ContextMenuController extends Observable implements Observer {
 		// Relation
 		relationCM = new ContextMenu();
 		changeDirection = getMenuItem("Change Direction", Resource.CHANGE_DIRECTION_GIF, relationCM);
-		associationClass = getMenuItem("To Association Class", Resource.ASSOCIATION_CLASS_GIF, relationCM);
 		relationCM.getItems().add(new SeparatorMenuItem());
-		addMultiplicity = getMenuItem("Add Multiplicity", Resource.ADD_MULTIPLICITY_GIF, relationCM);
+		setMultiplicity = getMenuItem("Set Multiplicity", Resource.ADD_MULTIPLICITY_GIF, relationCM);
 		deleteMultiplicity = getMenuItem("Delete Multiplicity", Resource.DELETE_PNG, relationCM);
 		relationCM.getItems().add(new SeparatorMenuItem());
-		addRole = getMenuItem("Add Role", Resource.ADD_ROLE_GIF, relationCM);
+		setRole = getMenuItem("Set Role", Resource.ADD_ROLE_GIF, relationCM);
 		deleteRole = getMenuItem("Delete Role", Resource.DELETE_PNG, relationCM);
 		relationCM.getItems().add(new SeparatorMenuItem());
 		deleteRelation = getMenuItem("Delete Relation", Resource.DELETE_PNG, relationCM);
@@ -171,7 +169,7 @@ public class ContextMenuController extends Observable implements Observer {
 				} else if ((modelBox instanceof ModelObject)) {
 					// Object
 					hideAllContextMenus();
-					changeValue.setDisable(true);
+					setValue.setDisable(true);
 					deleteValue.setDisable(true);
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
@@ -200,7 +198,7 @@ public class ContextMenuController extends Observable implements Observer {
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				} else if (modelBox instanceof ModelObject) {
 					// Label on Object
-					changeValue.setDisable(false);
+					setValue.setDisable(false);
 					deleteValue.setDisable(false);
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
@@ -214,8 +212,8 @@ public class ContextMenuController extends Observable implements Observer {
 		arrow.getLineSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
-				addMultiplicity.setDisable(true);
-				addRole.setDisable(true);
+				setMultiplicity.setDisable(true);
+				setRole.setDisable(true);
 				deleteMultiplicity.setDisable(true);
 				deleteRole.setDisable(true);
 				relationCM.show(arrow, me.getScreenX(), me.getScreenY());
@@ -226,8 +224,8 @@ public class ContextMenuController extends Observable implements Observer {
 		arrow.getStartSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
-				addMultiplicity.setDisable(false);
-				addRole.setDisable(false);
+				setMultiplicity.setDisable(false);
+				setRole.setDisable(false);
 				deleteMultiplicity.setDisable(false);
 				deleteRole.setDisable(false);
 				relationCM.show(arrow, me.getScreenX(), me.getScreenY());
@@ -238,8 +236,8 @@ public class ContextMenuController extends Observable implements Observer {
 		arrow.getEndSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
-				addMultiplicity.setDisable(false);
-				addRole.setDisable(false);
+				setMultiplicity.setDisable(false);
+				setRole.setDisable(false);
 				deleteMultiplicity.setDisable(false);
 				deleteRole.setDisable(false);
 				relationCM.show(arrow, me.getScreenX(), me.getScreenY());
@@ -347,7 +345,7 @@ public class ContextMenuController extends Observable implements Observer {
 		});
 
 		// Value (Attribute)
-		changeValue.setOnAction((ActionEvent e) -> {
+		setValue.setOnAction((ActionEvent e) -> {
 			mvConnector.handleRenameFieldOrValue(selected);
 		});
 		
