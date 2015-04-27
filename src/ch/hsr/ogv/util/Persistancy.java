@@ -41,6 +41,7 @@ public class Persistancy {
 	}
 
 	public void savePersonData(File file) {
+		System.out.println(file);
 	    try {
 	        JAXBContext context = JAXBContext.newInstance(ModelManager.class);
 	        Marshaller m = context.createMarshaller();
