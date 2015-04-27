@@ -81,15 +81,15 @@ public class Relation extends Observable {
 		return false;
 	}
 
-	public enum RelationChange {
-		COLOR, DIRECTION;
-	}
-
 	public void changeDirection() {
 		Endpoint tempEndpoint = this.end;
 		this.end = this.start;
 		this.start = tempEndpoint;
 		setChanged();
 		notifyObservers(RelationChange.DIRECTION);
+	}
+	
+	public enum RelationChange {
+		COLOR, DIRECTION;
 	}
 }

@@ -159,25 +159,28 @@ public class ContextMenuController extends Observable implements Observer {
 		});
 	}
 
-	public void enableContextMenu(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	public void enablePaneBoxContextMenu(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
 				if (modelBox instanceof ModelClass) {
 					// Class
 					enableAttributeSelected(false);
-					addAttribute.setDisable(paneBox.numberCenterLabelShowing() >= PaneBox.MAX_CENTER_LABELS);
+					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				} else if ((modelBox instanceof ModelObject)) {
 					// Object
 					hideAllContextMenus();
 					changeValue.setDisable(true);
+					deleteValue.setDisable(true);
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
 			}
 			me.consume();
 		});
-
+	}
+	
+	public void enableCenterFieldContextMenu(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		for (Label centerLabel : paneBox.getCenterLabels()) {
 			enableContextMenu(centerLabel, modelBox, paneBox, subSceneAdapter);
 		}
@@ -190,14 +193,15 @@ public class ContextMenuController extends Observable implements Observer {
 				if (modelBox instanceof ModelClass) {
 					// Label on Class
 					enableAttributeSelected(true);
-					addAttribute.setDisable(paneBox.numberCenterLabelShowing() >= PaneBox.MAX_CENTER_LABELS);
+					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
 					int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
-					moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.numberCenterLabelShowing() - 1);
-					moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.numberCenterLabelShowing() - 1);
+					moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.getCenterLabels().size() - 1);
+					moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.getCenterLabels().size() - 1);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				} else if (modelBox instanceof ModelObject) {
 					// Label on Object
 					changeValue.setDisable(false);
+					deleteValue.setDisable(false);
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
 				me.consume();
@@ -275,7 +279,7 @@ public class ContextMenuController extends Observable implements Observer {
 			mvConnector.handleCreateNewObject(selected);
 		});
 		renameClass.setOnAction((ActionEvent e) -> {
-			mvConnector.handleRename(selected);
+			mvConnector.handleRenameClassOrObject(selected);
 		});
 		addAttribute.setOnAction((ActionEvent e) -> {
 			mvConnector.handleCreateNewAttribute(selected);
@@ -314,7 +318,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 		// Object
 		renameObject.setOnAction((ActionEvent e) -> {
-			mvConnector.handleRename(selected);
+			mvConnector.handleRenameClassOrObject(selected);
 		});
 		deleteObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
@@ -330,7 +334,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 		// Attribute
 		renameAttribute.setOnAction((ActionEvent e) -> {
-			mvConnector.handleRename(selected);
+			mvConnector.handleRenameFieldOrValue(selected);
 		});
 		moveAttributeUp.setOnAction((ActionEvent e) -> {
 			mvConnector.handleMoveAttributeUp(selected);
@@ -344,7 +348,7 @@ public class ContextMenuController extends Observable implements Observer {
 
 		// Value (Attribute)
 		changeValue.setOnAction((ActionEvent e) -> {
-			mvConnector.handleRename(selected);
+			mvConnector.handleRenameFieldOrValue(selected);
 		});
 		
 		deleteValue.setOnAction((ActionEvent e) -> {

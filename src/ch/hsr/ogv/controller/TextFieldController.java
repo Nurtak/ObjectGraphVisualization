@@ -25,7 +25,7 @@ public class TextFieldController {
 
 	private final static Logger logger = LoggerFactory.getLogger(TextFieldController.class);
 
-	public void enableTextInput(ModelBox modelBox, PaneBox paneBox) {
+	public void enableTopTextInput(ModelBox modelBox, PaneBox paneBox) {
 		TextField topTextField = paneBox.getTopTextField();
 
 		// TODO NullPointerException at undo
@@ -56,15 +56,31 @@ public class TextFieldController {
 			}
 		});
 
+	}
+	
+	public void enableCenterTextInput(ModelBox modelBox, PaneBox paneBox) {
 		for (TextField centerTextField : paneBox.getCenterTextFields()) {
 			centerTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 				@Override
 				public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
-					if (!newHasFocus) {
+					if (!newHasFocus) { // loosing focus
 						int rowIndex = paneBox.getCenterTextFields().indexOf(centerTextField);
 						if (rowIndex >= 0) {
 							Label centerLabel = paneBox.getCenterLabels().get(rowIndex);
 							paneBox.allowCenterFieldTextInput(centerLabel, false);
+						}
+						
+						try {
+							if (modelBox instanceof ModelClass) {
+								ModelClass modelClass = (ModelClass) modelBox;
+								modelClass.changeAttributeName(rowIndex, centerTextField.getText());
+							} else if (modelBox instanceof ModelObject) {
+								ModelObject modelObject = (ModelObject) modelBox;
+								Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
+								modelObject.changeAttributeValue(attribute, centerTextField.getText());
+							}
+						} catch (IndexOutOfBoundsException ioobe) {
+							logger.debug("Changing attribute failed. IndexOutOfBoundsException: " + ioobe.getMessage());
 						}
 					}
 				}
@@ -73,18 +89,24 @@ public class TextFieldController {
 			centerTextField.textProperty().addListener(new ChangeListener<String>() {
 				@Override
 				public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-					int rowIndex = paneBox.getCenterTextFields().indexOf(centerTextField);
 					try {
+						int rowIndex = paneBox.getCenterTextFields().indexOf(centerTextField);
 						if (modelBox instanceof ModelClass) {
 							ModelClass modelClass = (ModelClass) modelBox;
-							modelClass.changeAttributeName(rowIndex, newValue);
-						} else if (modelBox instanceof ModelObject) {
-							ModelObject modelObject = (ModelObject) modelBox;
-							Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
-							modelObject.changeAttributeValue(attribute, newValue);
+							
+							double newWidth = paneBox.calcMinWidth();
+							paneBox.setMinWidth(newWidth);
+							if (newWidth > paneBox.getWidth()) {
+								modelClass.setWidth(paneBox.getMinWidth());
+							}
+							
+							Attribute attribute = modelClass.getAttributes().get(rowIndex);
+							for(ModelObject modelObject : modelClass.getModelObjects()) {
+								modelObject.changeAttributeName(attribute, centerTextField.getText());
+							}
 						}
 					} catch (IndexOutOfBoundsException ioobe) {
-						logger.debug("Changing attribute failed. IndexOutOfBoundsException: " + ioobe.getMessage());
+						logger.debug("Changing attribute value failed. IndexOutOfBoundsException: " + ioobe.getMessage());
 					}
 				}
 			});
@@ -99,7 +121,6 @@ public class TextFieldController {
 				}
 			});
 		}
-
 	}
 
 }

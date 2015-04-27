@@ -1,5 +1,6 @@
 package ch.hsr.ogv.controller;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -66,6 +67,10 @@ public class SelectionController extends Observable implements Observer {
 		selectOnMouseClicked(paneBox, subSceneAdapter);
 		selectOnDragDetected(paneBox, subSceneAdapter);
 	}
+	
+	public void enableCenterLabelSelection(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		selectOnMouseClicked(paneBox.getCenterLabels(), paneBox, subSceneAdapter);
+	}
 
 	public void enableArrowSelection(Arrow arrow, SubSceneAdapter subSceneAdapter) {
 		selectOnMouseClicked(arrow, subSceneAdapter);
@@ -117,7 +122,10 @@ public class SelectionController extends Observable implements Observer {
 			}
 		});
 
-		for (Label centerLabel : paneBox.getCenterLabels()) {
+	}
+	
+	private void selectOnMouseClicked(ArrayList<Label> centerLabels, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+		for (Label centerLabel : centerLabels) {
 			centerLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 				if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
 					paneBox.setLabelSelected(centerLabel, true);
@@ -129,7 +137,6 @@ public class SelectionController extends Observable implements Observer {
 				}
 			});
 		}
-
 	}
 
 	private void selectOnMouseClicked(Arrow arrow, SubSceneAdapter subSceneAdapter) {
