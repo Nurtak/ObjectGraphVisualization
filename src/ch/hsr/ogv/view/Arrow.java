@@ -153,7 +153,7 @@ public class Arrow extends Group implements Selectable {
 		this.lineSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
 		this.lineSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 		
-		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, lineSelectionGap / 2);
+		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, lineSelectionGap / 2);
 		this.startSelectionHelper.setMaterial(material); // for debugging
 		this.startSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
 		this.startSelectionHelper.translateYProperty().bind(this.line.translateYProperty());
@@ -161,7 +161,7 @@ public class Arrow extends Group implements Selectable {
 		this.startSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
 		this.startSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 		
-		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, lineSelectionGap / 2);
+		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, lineSelectionGap / 2);
 		this.endSelectionHelper.setMaterial(material); // for debugging
 		this.endSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
 		this.endSelectionHelper.translateYProperty().bind(this.line.translateYProperty());

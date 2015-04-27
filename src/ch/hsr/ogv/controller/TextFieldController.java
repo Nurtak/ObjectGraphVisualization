@@ -35,6 +35,7 @@ public class TextFieldController {
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
 					paneBox.allowTopTextInput(false);
+					modelBox.setName(topTextField.getText());
 				}
 			}
 		});
@@ -42,7 +43,22 @@ public class TextFieldController {
 		topTextField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-				modelBox.setName(newValue);
+				
+				if (modelBox instanceof ModelClass) {
+					ModelClass modelClass = (ModelClass) modelBox;
+					
+					double newWidth = paneBox.calcMinWidth();
+					paneBox.setMinWidth(newWidth);
+					if (newWidth > paneBox.getWidth()) {
+						modelClass.setWidth(paneBox.getMinWidth());
+					}
+					
+					// TODO remove setting it here to model and adapt object name properly
+					modelBox.setName(topTextField.getText());
+					for(ModelObject modelObject : modelClass.getModelObjects()) {
+						modelObject.setName(modelObject.getName());
+					}
+				}
 			}
 		});
 

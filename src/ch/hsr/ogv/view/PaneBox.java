@@ -9,8 +9,8 @@ import javafx.scene.CacheHint;
 import javafx.scene.DepthTest;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
@@ -133,7 +133,7 @@ public class PaneBox implements Selectable {
 	private void initLayout() {
 		this.borderPane = loadBorderPane();
 		this.topTextField = loadTopTextField();
-		this.topTextField.setContextMenu(new ContextMenu()); // overrides the bugged default contextmenu
+		//this.topTextField.setContextMenu(new ContextMenu()); // overrides the bugged default contextmenu
 		Node topNode = this.borderPane.getTop();
 		if ((topNode instanceof HBox)) {
 			HBox topHBox = (HBox) topNode;
@@ -178,7 +178,7 @@ public class PaneBox implements Selectable {
 		
 		TextField centerTextField = loadCenterTextField();
 		centerTextField.setText(centerLabel.getText());
-		centerTextField.setContextMenu(new ContextMenu()); // overrides the bugged default contextmenu
+		//centerTextField.setContextMenu(new ContextMenu()); // overrides the bugged default contextmenu
 		this.centerLabels.add(centerLabel);
 		this.centerTextFields.add(centerTextField);
 		GridPane centerGridPane = getCenter();
