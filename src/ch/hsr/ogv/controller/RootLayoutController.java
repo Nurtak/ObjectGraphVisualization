@@ -107,7 +107,7 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 
 	/**
-	 * Opens a FileChooser to let the user select an address book to load.
+	 * Opens a FileChooser to let the user select a ogv file to load.
 	 */
 	@FXML
 	private void handleOpen() {
@@ -126,6 +126,14 @@ public class RootLayoutController implements Observer, Initializable {
 			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 			// TODO
 		}
+	}
+	
+	/**
+	 * Opens a FileChooser to let the user select a xmi file to import.
+	 */
+	@FXML
+	private void handleImport() {
+		// TODO
 	}
 
 	/**

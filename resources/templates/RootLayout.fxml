@@ -50,6 +50,18 @@
                               </ImageView>
                            </graphic>
       						</MenuItem>
+                        <MenuItem id="menuitem_import" disable="true" mnemonicParsing="false" onAction="#handleImport" text="Import XMI...">
+                           <graphic>
+                              <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/application-import.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="I" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           </accelerator>
+                        </MenuItem>
       						<MenuItem id="menuitem_save" disable="true" mnemonicParsing="false" onAction="#handleSave" text="Save">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
