@@ -28,6 +28,7 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.util.FXMLResourceUtil;
+import ch.hsr.ogv.util.Persistancy;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
@@ -49,6 +50,7 @@ public class StageManager implements Observer {
 	private SubSceneAdapter subSceneAdapter;
 
 	private ModelViewConnector mvConnector;
+	private Persistancy persistancy = new Persistancy();
 
 	private RootLayoutController rootLayoutController = new RootLayoutController();
 	private CameraController cameraController = new CameraController();
@@ -58,7 +60,7 @@ public class StageManager implements Observer {
 	private DragMoveController dragMoveController = new DragMoveController();
 	private DragResizeController dragResizeController = new DragResizeController();
 	private ContextMenuController contextMenuController = new ContextMenuController();
-
+	
 	private static final int MIN_WIDTH = 1024;
 	private static final int MIN_HEIGHT = 768;
 
@@ -78,6 +80,9 @@ public class StageManager implements Observer {
 		initCameraController();
 		initDragController();
 
+		persistancy = new Persistancy();
+		persistancy.setModelManager(mvConnector.getModelManager());
+		
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
 		// TODO: Remove everything below this line:

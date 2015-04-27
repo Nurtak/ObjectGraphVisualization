@@ -16,6 +16,7 @@ import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
+import ch.hsr.ogv.util.Persistancy;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;

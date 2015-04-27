@@ -9,17 +9,22 @@ import java.util.Set;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  *
  * @author Adrian Rieser
  *
  */
+@XmlRootElement(name = "classes")
 public class ModelManager extends Observable {
 
 	private Set<ModelClass> classes = new HashSet<ModelClass>();
 	private Set<Relation> relations = new HashSet<Relation>();
 
-	public Collection<ModelClass> getClasses() {
+	@XmlElement(name = "class")
+	public Set<ModelClass> getClasses() {
 		return this.classes;
 	}
 
@@ -145,5 +150,13 @@ public class ModelManager extends Observable {
 		default:
 			return false;
 		}
+	}
+
+	public void clearClasses() {
+		classes.clear();
+	}
+
+	public void setClasses(Set<ModelClass> classes) {
+		this.classes = classes;
 	}
 }

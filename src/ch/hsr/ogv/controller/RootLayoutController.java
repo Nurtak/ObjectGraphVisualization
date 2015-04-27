@@ -36,6 +36,7 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
+import ch.hsr.ogv.util.Persistancy;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
@@ -60,6 +61,8 @@ public class RootLayoutController implements Observer, Initializable {
 	private MouseMoveController mouseMoveController;
 	private CameraController cameraController;
 	
+	private Persistancy persistancy;	
+
 	private RelationCreationProcess relationCreationProcess = new RelationCreationProcess();
 	
 	private HashMap<Object, RelationType> toggleRelationMap = new HashMap<Object, RelationType>();
@@ -115,7 +118,7 @@ public class RootLayoutController implements Observer, Initializable {
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
 			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-			// TODO
+			persistancy.loadPersonData(file);
 		}
 	}
 
@@ -126,7 +129,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleSave() {
 		File file = UserPreferences.getSavedFile();
 		if (file != null) {
-			// TODO
+			persistancy.savePersonData(file);
 		} else {
 			handleSaveAs();
 		}
@@ -156,7 +159,7 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 			UserPreferences.setSavedFilePath(file);
 			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-			// TODO
+			persistancy.savePersonData(file);
 		}
 	}
 
@@ -620,5 +623,9 @@ public class RootLayoutController implements Observer, Initializable {
 		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
 		this.colorPick.getCustomColors().add(Util.brighter(PaneBox.DEFAULT_COLOR, 0.1));
 		initToggleRelationMap();
+	}
+	
+	public void setPersistancy(Persistancy persistancy) {
+		this.persistancy = persistancy;
 	}
 }
