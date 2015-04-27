@@ -16,16 +16,11 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Adrian Rieser
  *
  */
-@XmlRootElement(name = "classes")
+@XmlRootElement(name = "modelmanager")
 public class ModelManager extends Observable {
 
 	private Set<ModelClass> classes = new HashSet<ModelClass>();
 	private Set<Relation> relations = new HashSet<Relation>();
-
-	@XmlElement(name = "class")
-	public Set<ModelClass> getClasses() {
-		return this.classes;
-	}
 
 	public ModelClass createClass(Point3D coordinates, double width, double heigth, Color color) {
 		ModelClass modelClass = new ModelClass(coordinates, width, heigth, color);
@@ -150,12 +145,30 @@ public class ModelManager extends Observable {
 			return false;
 		}
 	}
-
-	public void clearClasses() {
-		classes.clear();
+	
+	@XmlElement(name = "class")
+	public Set<ModelClass> getClasses() {
+		return this.classes;
 	}
 
 	public void setClasses(Set<ModelClass> classes) {
 		this.classes = classes;
+	}
+
+	public void clearClasses() {
+		classes.clear();
+	}
+	
+	@XmlElement(name = "relations")
+	public Set<Relation> getRelations() {
+		return this.relations;
+	}
+	
+	public void setRelations(Set<Relation> relations) {
+		this.relations = relations;
+	}
+	
+	public void clearRelations() {
+		relations.clear();
 	}
 }

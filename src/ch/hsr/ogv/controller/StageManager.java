@@ -81,14 +81,18 @@ public class StageManager implements Observer {
 		initMouseMoveController();
 		initCameraController();
 		initDragController();
-
-		persistancy = new Persistancy();
-		persistancy.setModelManager(mvConnector.getModelManager());
+		initPersistancy();
 		
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
 		// TODO: Remove everything below this line:
 		mvConnector.createDummyContent();
+	}
+
+	private void initPersistancy() {
+		persistancy = new Persistancy();
+		persistancy.setModelManager(mvConnector.getModelManager());
+		rootLayoutController.setPersistancy(persistancy);
 	}
 
 	private void setupStage() {
