@@ -263,7 +263,6 @@ public class Arrow extends Group implements Selectable {
 		setTranslateXYZ(midPoint);
 		addRotateYAxis(this.rotateZAngle);
 		addRotateXAxis(this.rotateXAngle);
-		
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 	
@@ -327,12 +326,12 @@ public class Arrow extends Group implements Selectable {
 		this.labelStartLeft.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
 		
 		this.labelEndRight.setDiffX(-LABEL_SPACING / 3 - 1);
-		this.labelEndRight.setDiffZ(this.boxDistance / 2 - LABEL_SPACING);
+		this.labelEndRight.setDiffZ(this.boxDistance / 2 - LABEL_SPACING + 10);
 		
 		double endLeftWidth = this.labelEndLeft.calcMinWidth();
 		endLeftWidth = endLeftWidth < 20 ? 20 : endLeftWidth;
 		this.labelEndLeft.setDiffX(endLeftWidth + LABEL_SPACING / 3);
-		this.labelEndLeft.setDiffZ(this.boxDistance / 2 - LABEL_SPACING);
+		this.labelEndLeft.setDiffZ(this.boxDistance / 2 - LABEL_SPACING + 10);
 	}
 
 	public void setColor(Color color) {

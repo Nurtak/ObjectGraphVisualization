@@ -178,12 +178,12 @@ public class SelectionController extends Observable implements Observer {
 	}
 	
 	private void selectOnMouseClicked(ArrowLabel arrowLabel, Arrow arrow, SubSceneAdapter subSceneAdapter) {
-		arrowLabel.getContainer().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+		arrowLabel.getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			arrow.setAllLabelSelected(false);
 			if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
 				arrowLabel.setLabelSelected(true);
 				setSelected(me, arrow, true, subSceneAdapter);
-				me.consume(); // otherwise this centerLabel's parent = getCenter() will be called
+				me.consume();
 			}
 			if (MouseButton.PRIMARY.equals(me.getButton()) && arrow.isSelected() && me.getClickCount() >= 2) {
 				arrowLabel.allowTextInput(true);
