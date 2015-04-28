@@ -59,7 +59,6 @@ public class Relation extends Observable {
 		setChanged();
 		notifyObservers(RelationChange.COLOR);
 	}
-
 	public Endpoint getFriend(Endpoint endpoint) {
 		if (endpoint.equals(start)) {
 			return end;
@@ -88,7 +87,7 @@ public class Relation extends Observable {
 		setChanged();
 		notifyObservers(RelationChange.DIRECTION);
 	}
-	
+
 	public enum RelationChange {
 		COLOR, DIRECTION;
 	}

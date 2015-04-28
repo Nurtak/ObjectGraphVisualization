@@ -7,19 +7,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
- * 
+ *
  * @author Adrian Rieser
  *
  */
 public class ModelObject extends ModelBox {
 
 	private Map<Attribute, String> attributeValues = new HashMap<Attribute, String>();
-
 	private ModelClass modelClass;
-	
+
 	public static volatile AtomicInteger modelObjectCounter = new AtomicInteger(0);
-	
+
 	public ModelObject(ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
 		super("obj" + modelObjectCounter.addAndGet(1), coordinates, width, heigth, color);
 		this.modelClass = modelClass;
@@ -32,13 +33,13 @@ public class ModelObject extends ModelBox {
 	public void setAttributeValues(Map<Attribute, String> attributeValues) {
 		this.attributeValues = attributeValues;
 	}
-	
+
 	public void changeAttributeName(Attribute attribute, String name) {
 		attribute.setName(name);
 		setChanged();
 		notifyObservers(attribute);
 	}
-	
+
 	public void changeAttributeValue(Attribute attribute, String value) {
 		String oldValue = this.attributeValues.put(attribute, value);
 		if(oldValue != null) {
@@ -56,7 +57,7 @@ public class ModelObject extends ModelBox {
 		notifyObservers(attribute);
 		return true;
 	}
-	
+
 	public String deleteAttributeValue(Attribute attribute) {
 		String deleted = attributeValues.remove(attribute);
 		if(deleted != null) {
@@ -66,6 +67,7 @@ public class ModelObject extends ModelBox {
 		return deleted;
 	}
 
+	@XmlTransient
 	public ModelClass getModelClass() {
 		return modelClass;
 	}
@@ -73,9 +75,9 @@ public class ModelObject extends ModelBox {
 	public void setModelClass(ModelClass modelClass) {
 		this.modelClass = modelClass;
 	}
-	
+
 	public void updateAttribute(Attribute attribute, String value) {
 		attributeValues.replace(attribute, value);
 	}
-	
+
 }
