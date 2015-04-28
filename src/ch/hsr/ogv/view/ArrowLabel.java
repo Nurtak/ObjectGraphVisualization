@@ -19,6 +19,11 @@ import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.util.TextUtil;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class ArrowLabel extends Group {
 	
 	private static final double MIN_WIDTH = 20;

@@ -18,6 +18,7 @@ import jfxtras.labs.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.hsr.ogv.dataaccess.Persistancy;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
@@ -28,7 +29,6 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.util.FXMLResourceUtil;
-import ch.hsr.ogv.util.Persistancy;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
