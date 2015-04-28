@@ -223,12 +223,12 @@ public class PaneBox implements Selectable {
 		return this.centerTextFields;
 	}
 
-	private void swapTopField(Node labelOrField) {
+	private void swapTopField(Node labelOrTextField) {
 		Node topNode = this.borderPane.getTop();
-		if ((topNode instanceof HBox)) {
+		if (topNode instanceof HBox) {
 			HBox topHBox = (HBox) topNode;
 			topHBox.getChildren().clear();
-			topHBox.getChildren().add(labelOrField);
+			topHBox.getChildren().add(labelOrTextField);
 		}
 	}
 

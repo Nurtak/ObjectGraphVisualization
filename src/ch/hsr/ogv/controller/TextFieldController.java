@@ -1,5 +1,7 @@
 package ch.hsr.ogv.controller;
 
+import java.util.ArrayList;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
@@ -14,6 +16,9 @@ import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
+import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.ArrowLabel;
 import ch.hsr.ogv.view.PaneBox;
 
 /**
@@ -27,8 +32,6 @@ public class TextFieldController {
 
 	public void enableTopTextInput(ModelBox modelBox, PaneBox paneBox) {
 		TextField topTextField = paneBox.getTopTextField();
-
-		// TODO NullPointerException at undo
 
 		topTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
@@ -134,6 +137,81 @@ public class TextFieldController {
 				} else if (ke.getCode() == KeyCode.ESCAPE) {
 					// TODO validate input, reset old name
 					paneBox.get().requestFocus();
+				}
+			});
+		}
+	}
+	
+	public void enableArrowLabelTextInput(Arrow arrow, Relation relation) {
+		
+		arrow.getLabelStartLeft().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
+				if (!newHasFocus) {
+					relation.setStartRoleName(arrow.getLabelStartLeft().getText());
+					arrow.drawArrow();
+					arrow.getLabelStartLeft().allowTextInput(false);
+				}
+			}
+		});
+		
+		arrow.getLabelStartRight().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
+				if (!newHasFocus) {
+					relation.setStartMultiplicity(arrow.getLabelStartRight().getText());
+					arrow.drawArrow();
+					arrow.getLabelStartRight().allowTextInput(false);
+				}
+			}
+		});
+
+		arrow.getLabelEndLeft().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
+				if (!newHasFocus) {
+					relation.setEndRoleName(arrow.getLabelEndLeft().getText());
+					arrow.drawArrow();
+					arrow.getLabelEndLeft().allowTextInput(false);
+				}
+			}
+		});
+
+		arrow.getLabelEndRight().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
+				if (!newHasFocus) {
+					relation.setEndMultiplicity(arrow.getLabelEndRight().getText());
+					arrow.drawArrow();
+					arrow.getLabelEndRight().allowTextInput(false);
+				}
+			}
+		});
+
+
+		ArrayList<ArrowLabel> tempArrowLabels = new ArrayList<ArrowLabel>();
+		tempArrowLabels.add(arrow.getLabelStartLeft());
+		tempArrowLabels.add(arrow.getLabelStartRight());
+		tempArrowLabels.add(arrow.getLabelEndLeft());
+		tempArrowLabels.add(arrow.getLabelEndRight());
+		
+		for(ArrowLabel arrowLabel : tempArrowLabels) {
+			TextField arrowTextField = arrowLabel.getArrowTextField();
+			arrowTextField.textProperty().addListener(new ChangeListener<String>() {
+				@Override
+				public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+					arrowLabel.setWidth(arrowLabel.calcMinWidth());
+					arrow.drawArrow();
+				}
+			});
+
+			arrowTextField.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent ke) -> {
+				if (ke.getCode() == KeyCode.ENTER) {
+					// TODO validate input
+					arrow.requestFocus();
+				} else if (ke.getCode() == KeyCode.ESCAPE) {
+					// TODO validate input, reset old name
+					arrow.requestFocus();
 				}
 			});
 		}

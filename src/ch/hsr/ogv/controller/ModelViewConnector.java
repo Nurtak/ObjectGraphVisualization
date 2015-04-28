@@ -17,6 +17,7 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.ArrowLabel;
 import ch.hsr.ogv.view.BoxSelection;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
@@ -150,9 +151,9 @@ public class ModelViewConnector {
 		ModelObject moB2 = this.modelManager.createObject(mcB);
 		ModelObject moB3 = this.modelManager.createObject(mcB);
 
-		Relation rAB = this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
-		Relation rCB = this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
-		Relation rCA = this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
+		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
 		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
@@ -163,25 +164,6 @@ public class ModelViewConnector {
 		mcA.createAttribute();
 		mcA.createAttribute();
 		mcB.createAttribute();
-		
-		Arrow aAB = getArrow(rAB);
-		aAB.getLabelStartLeft().setText("rolerole");
-		aAB.getLabelStartRight().setText("1..*");
-		aAB.getLabelEndLeft().setText("role");
-		aAB.getLabelEndRight().setText("1..*");
-		
-		Arrow aCB = getArrow(rCB);
-		aCB.getLabelStartLeft().setText("role");
-		aCB.getLabelStartRight().setText("*");
-		aCB.getLabelEndLeft().setText("rolerole");
-		aCB.getLabelEndRight().setText("*");
-		
-		Arrow aCA = getArrow(rCA);
-		aCA.getLabelStartLeft().setText("rolerolerole");
-		aCA.getLabelStartRight().setText("10");
-		aCA.getLabelEndLeft().setText("role");
-		aCA.getLabelEndRight().setText("1..9");
-		
 	}
 
 	public PaneBox handleCreateNewClass(Point3D mouseCoords) {
@@ -259,7 +241,13 @@ public class ModelViewConnector {
 		} else if (selected instanceof Arrow) {
 			Arrow arrow = (Arrow) selected;
 			Relation relationToDelete = getRelation(arrow);
-			this.modelManager.deleteRelation(relationToDelete);
+			boolean arrowLabelSelected = arrow.getSelectedLabel() != null;
+			if(!arrowLabelSelected) {
+				this.modelManager.deleteRelation(relationToDelete);
+			}
+			else {
+				handleDeleteMultiplicityRole(selected);
+			}
 		}
 	}
 
@@ -365,7 +353,92 @@ public class ModelViewConnector {
 			getRelation((Arrow) selected).changeDirection();
 		}
 	}
-
+	
+	public void showLabel(ArrowLabel arrowLabel) {
+		arrowLabel.showLabel(true);
+		arrowLabel.setLabelSelected(true);
+		arrowLabel.allowTextInput(true);
+	}
+	
+	public void handleSetRoleName(Selectable selected, boolean atStart) {
+		if (selected instanceof Arrow) {
+			Arrow arrow = (Arrow) selected;
+			if(atStart) {
+				showLabel(arrow.getLabelStartLeft());
+			}
+			else {
+				showLabel(arrow.getLabelEndLeft());
+			}
+		}
+	}
+	
+	public void handleSetMultiplicity(Selectable selected, boolean atStart) {
+		if (selected instanceof Arrow) {
+			Arrow arrow = (Arrow) selected;
+			if(atStart) {
+				showLabel(arrow.getLabelStartRight());
+			}
+			else {
+				showLabel(arrow.getLabelEndRight());
+			}
+		}
+	}
+	
+	public void handleSetMultiplicityRoleName(Selectable selected) {
+		if (selected instanceof Arrow) {
+			Arrow arrow = (Arrow) selected;
+			ArrowLabel selectedLabel = arrow.getSelectedLabel();
+			if(selectedLabel != null) {
+				showLabel(selectedLabel);
+			}
+		}
+	}
+	
+	public void handleDeleteRoleName(Selectable selected, boolean atStart) {
+		if (selected instanceof Arrow) {
+			if(atStart) {
+				getRelation((Arrow) selected).setStartRoleName("");
+			}
+			else {
+				getRelation((Arrow) selected).setEndRoleName("");
+			}
+		}
+	}
+	
+	public void handleDeleteMultiplicty(Selectable selected, boolean atStart) {
+		if (selected instanceof Arrow) {
+			if(atStart) {
+				getRelation((Arrow) selected).setStartMultiplicity("");
+			}
+			else {
+				getRelation((Arrow) selected).setEndMultiplicity("");
+			}
+		}
+	}
+	
+	public void handleDeleteMultiplicityRole(Selectable selected) {
+		if (selected instanceof Arrow) {
+			Arrow arrow = (Arrow) selected;
+			ArrowLabel selectedLabel = arrow.getSelectedLabel();
+			if(arrow.isStart(selectedLabel)) {
+				if(arrow.isLeft(selectedLabel)) {
+					getRelation((Arrow) selected).setStartRoleName("");
+				}
+				else {
+					getRelation((Arrow) selected).setStartMultiplicity("");
+				}
+			}
+			else {
+				if(arrow.isLeft(selectedLabel)) {
+					getRelation((Arrow) selected).setEndRoleName("");
+				}
+				else {
+					getRelation((Arrow) selected).setEndMultiplicity("");
+				}
+			}
+		}
+	}
+	
 	public void handleCreateUndirectedAssociation(Selectable selected) {
 		// TODO Auto-generated method stub
 

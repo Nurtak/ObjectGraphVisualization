@@ -14,7 +14,6 @@ import jfxtras.labs.util.Util;
 import ch.hsr.ogv.model.LineType;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.GeometryUtil;
-import ch.hsr.ogv.util.TextUtil;
 
 /**
  *
@@ -40,10 +39,10 @@ public class Arrow extends Group implements Selectable {
 	private ArrowEdge arrowStart;
 	private ArrowEdge arrowEnd;
 	
-	private ArrowLabel labelStartRight;
-	private ArrowLabel labelStartLeft;
-	private ArrowLabel labelEndRight;
-	private ArrowLabel labelEndLeft;
+	private ArrowLabel labelStartRight; // start multiplicity
+	private ArrowLabel labelStartLeft; // start role
+	private ArrowLabel labelEndRight; // end multiplicity
+	private ArrowLabel labelEndLeft; // end role
 
 	private RelationType type = RelationType.BIDIRECTED_ASSOCIATION;
 
@@ -264,7 +263,6 @@ public class Arrow extends Group implements Selectable {
 		setTranslateXYZ(midPoint);
 		addRotateYAxis(this.rotateZAngle);
 		addRotateXAxis(this.rotateXAngle);
-		
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 	
@@ -322,16 +320,18 @@ public class Arrow extends Group implements Selectable {
 		this.labelStartRight.setDiffX(-LABEL_SPACING / 3 - 1);
 		this.labelStartRight.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
 		
-		double startLeftWidth = TextUtil.computeTextWidth(this.labelStartLeft.getFont(), this.labelStartLeft.getText(), 0.0D);
-		this.labelStartLeft.setDiffX(startLeftWidth + LABEL_SPACING / 3 + 13);
+		double startLeftWidth = this.labelStartLeft.calcMinWidth();
+		startLeftWidth = startLeftWidth < 20 ? 20 : startLeftWidth;
+		this.labelStartLeft.setDiffX(startLeftWidth + LABEL_SPACING / 3);
 		this.labelStartLeft.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
 		
 		this.labelEndRight.setDiffX(-LABEL_SPACING / 3 - 1);
-		this.labelEndRight.setDiffZ(this.boxDistance / 2 - LABEL_SPACING);
+		this.labelEndRight.setDiffZ(this.boxDistance / 2 - LABEL_SPACING + 10);
 		
-		double endLeftWidth = TextUtil.computeTextWidth(this.labelEndLeft.getFont(), this.labelEndLeft.getText(), 0.0D);
-		this.labelEndLeft.setDiffX(endLeftWidth + LABEL_SPACING / 3 + 13);
-		this.labelEndLeft.setDiffZ(this.boxDistance / 2 - LABEL_SPACING);
+		double endLeftWidth = this.labelEndLeft.calcMinWidth();
+		endLeftWidth = endLeftWidth < 20 ? 20 : endLeftWidth;
+		this.labelEndLeft.setDiffX(endLeftWidth + LABEL_SPACING / 3);
+		this.labelEndLeft.setDiffZ(this.boxDistance / 2 - LABEL_SPACING + 10);
 	}
 
 	public void setColor(Color color) {
@@ -364,6 +364,52 @@ public class Arrow extends Group implements Selectable {
 		this.labelStartRight.setLabelSelected(selected);
 		this.labelEndLeft.setLabelSelected(selected);
 		this.labelEndRight.setLabelSelected(selected);
+	}
+	
+	public ArrowLabel getSelectedLabel() {
+		if(this.labelStartLeft.isLabelSelected()) {
+			return this.labelStartLeft;
+		}
+		else if(this.labelStartRight.isLabelSelected()) {
+			return this.labelStartRight;
+		}
+		else if(this.labelEndLeft.isLabelSelected()) {
+			return this.labelEndLeft;
+		}
+		else if(this.labelEndRight.isLabelSelected()) {
+			return this.labelEndRight;
+		}
+		return null;
+	}
+	
+	public boolean isStart(ArrowLabel arrowLabel) {
+		return this.labelStartLeft.equals(arrowLabel) || this.labelStartRight.equals(arrowLabel);
+	}
+	
+	public boolean isLeft(ArrowLabel arrowLabel) {
+		return this.labelStartLeft.equals(arrowLabel) || this.labelEndLeft.equals(arrowLabel);
+	}
+	
+	public boolean hasLeftText(boolean atStart) {
+		String leftText = null;
+		if(atStart) {
+			leftText = getLabelStartLeft().getArrowText().getText();
+		}
+		else {
+			leftText = getLabelEndLeft().getArrowText().getText();
+		}
+		return leftText != null && !leftText.isEmpty();
+	}
+	
+	public boolean hasRightText(boolean atStart) {
+		String rightText = null;
+		if(atStart) {
+			rightText = getLabelStartRight().getArrowText().getText();
+		}
+		else {
+			rightText = getLabelEndRight().getArrowText().getText();
+		}
+		return rightText != null && !rightText.isEmpty();
 	}
 
 	@Override

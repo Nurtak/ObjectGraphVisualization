@@ -18,6 +18,7 @@ import jfxtras.labs.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.hsr.ogv.dataaccess.Persistancy;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
@@ -28,7 +29,6 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.util.FXMLResourceUtil;
-import ch.hsr.ogv.util.Persistancy;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
@@ -226,11 +226,11 @@ public class StageManager implements Observer {
 		PaneBox endViewBox = this.mvConnector.getPaneBox(endModelBox);
 		if (startViewBox != null && endViewBox != null) {
 			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getType());
-			addArrowControls(arrow);
+			addArrowControls(arrow, relation);
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
 			this.mvConnector.putArrows(relation, arrow);
-			this.contextMenuController.enableContextMenu(relation, arrow);
+			this.contextMenuController.enableContextMenu(arrow);
 		}
 	}
 
@@ -248,9 +248,10 @@ public class StageManager implements Observer {
 		}
 	}
 
-	private void addArrowControls(Arrow arrow) {
+	private void addArrowControls(Arrow arrow, Relation relation) {
 		this.selectionController.enableArrowSelection(arrow, this.subSceneAdapter);
 		this.selectionController.enableArrowLabelSelection(arrow, this.subSceneAdapter);
+		this.textFieldController.enableArrowLabelTextInput(arrow, relation);
 	}
 
 	private void adaptBoxSettings(ModelBox modelBox) {
@@ -295,6 +296,17 @@ public class StageManager implements Observer {
 			changedArrow.setPointsBasedOnBoxes(startPaneBox, endPaneBox);
 			changedArrow.drawArrow();
 			this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
+		}
+	}
+	
+	private void adaptArrowLabel(Relation relation) {
+		Arrow changedArrow = this.mvConnector.getArrow(relation);
+		if (changedArrow != null) {
+			changedArrow.getLabelStartLeft().setText(relation.getStart().getRoleName());
+			changedArrow.getLabelStartRight().setText(relation.getStart().getMultiplicity());
+			changedArrow.getLabelEndLeft().setText(relation.getEnd().getRoleName());
+			changedArrow.getLabelEndRight().setText(relation.getEnd().getMultiplicity());
+			changedArrow.drawArrow();
 		}
 	}
 
@@ -528,8 +540,13 @@ public class StageManager implements Observer {
 			switch (relationChange) {
 			case COLOR:
 				adaptArrowColor(relation);
+				break;
 			case DIRECTION:
 				adaptArrowDirection(relation);
+				break;
+			case MULTIPLCITY_ROLE:
+				adaptArrowLabel(relation);
+				break;
 			default:
 				break;
 			}
