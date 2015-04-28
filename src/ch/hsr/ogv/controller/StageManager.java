@@ -306,6 +306,7 @@ public class StageManager implements Observer {
 			changedArrow.getLabelStartRight().setText(relation.getStart().getMultiplicity());
 			changedArrow.getLabelEndLeft().setText(relation.getEnd().getRoleName());
 			changedArrow.getLabelEndRight().setText(relation.getEnd().getMultiplicity());
+			changedArrow.drawArrow();
 		}
 	}
 

@@ -24,7 +24,7 @@ public class ArrowLabel extends Group {
 	private static final double MIN_WIDTH = 20;
 	
 	private HBox container = new HBox();
-	private Text arrowText = new Text("");
+	private Text arrowText;
 	private TextField arrowTextField;
 	private Point3D diffCoords = new Point3D(0, 0, 0);
 	
@@ -54,6 +54,7 @@ public class ArrowLabel extends Group {
 	}
 	
 	public ArrowLabel() {
+		this.arrowText = new Text("");
 		this.arrowTextField = loadTextField();
 		this.container.setStyle("-fx-border-color: transparent;\n" + "-fx-border-width: 1;");
 		this.container.setCacheHint(CacheHint.SCALE_AND_ROTATE);
@@ -68,6 +69,7 @@ public class ArrowLabel extends Group {
 		this.container.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
 		this.container.getTransforms().add(new Rotate(180, Rotate.Z_AXIS));
 		getChildren().add(this.container);
+		showLabel(false);
 	}
 	
 	private TextField loadTextField() {
@@ -192,6 +194,7 @@ public class ArrowLabel extends Group {
 			this.arrowTextField.setText("");
 		}
 		this.arrowText.setVisible(show);
+		this.arrowText.setDisable(!show);
 		this.arrowTextField.setVisible(show);
 		this.arrowTextField.setEditable(show);
 		this.arrowTextField.setDisable(!show);

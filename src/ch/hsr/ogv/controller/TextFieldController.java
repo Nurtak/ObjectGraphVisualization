@@ -148,8 +148,9 @@ public class TextFieldController {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
-					arrow.getLabelStartLeft().allowTextInput(false);
 					relation.setStartRoleName(arrow.getLabelStartLeft().getText());
+					arrow.drawArrow();
+					arrow.getLabelStartLeft().allowTextInput(false);
 				}
 			}
 		});
@@ -158,8 +159,9 @@ public class TextFieldController {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
-					arrow.getLabelStartRight().allowTextInput(false);
 					relation.setStartMultiplicity(arrow.getLabelStartRight().getText());
+					arrow.drawArrow();
+					arrow.getLabelStartRight().allowTextInput(false);
 				}
 			}
 		});
@@ -168,8 +170,9 @@ public class TextFieldController {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
-					arrow.getLabelEndLeft().allowTextInput(false);
 					relation.setEndRoleName(arrow.getLabelEndLeft().getText());
+					arrow.drawArrow();
+					arrow.getLabelEndLeft().allowTextInput(false);
 				}
 			}
 		});
@@ -178,8 +181,9 @@ public class TextFieldController {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
-					arrow.getLabelEndRight().allowTextInput(false);
 					relation.setEndMultiplicity(arrow.getLabelEndRight().getText());
+					arrow.drawArrow();
+					arrow.getLabelEndRight().allowTextInput(false);
 				}
 			}
 		});
