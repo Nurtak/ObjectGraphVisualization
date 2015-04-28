@@ -40,10 +40,10 @@ public class Arrow extends Group implements Selectable {
 	private ArrowEdge arrowStart;
 	private ArrowEdge arrowEnd;
 	
-	private ArrowLabel labelStartRight;
-	private ArrowLabel labelStartLeft;
-	private ArrowLabel labelEndRight;
-	private ArrowLabel labelEndLeft;
+	private ArrowLabel labelStartRight; // start mulitplicty
+	private ArrowLabel labelStartLeft; // start role
+	private ArrowLabel labelEndRight; // end multiplicty
+	private ArrowLabel labelEndLeft; // end role
 
 	private RelationType type = RelationType.BIDIRECTED_ASSOCIATION;
 
@@ -323,14 +323,16 @@ public class Arrow extends Group implements Selectable {
 		this.labelStartRight.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
 		
 		double startLeftWidth = TextUtil.computeTextWidth(this.labelStartLeft.getFont(), this.labelStartLeft.getText(), 0.0D);
-		this.labelStartLeft.setDiffX(startLeftWidth + LABEL_SPACING / 3 + 13);
+		startLeftWidth = startLeftWidth < 15 ? 15 : startLeftWidth;
+		this.labelStartLeft.setDiffX(startLeftWidth + LABEL_SPACING / 3 + 15);
 		this.labelStartLeft.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
 		
 		this.labelEndRight.setDiffX(-LABEL_SPACING / 3 - 1);
 		this.labelEndRight.setDiffZ(this.boxDistance / 2 - LABEL_SPACING);
 		
 		double endLeftWidth = TextUtil.computeTextWidth(this.labelEndLeft.getFont(), this.labelEndLeft.getText(), 0.0D);
-		this.labelEndLeft.setDiffX(endLeftWidth + LABEL_SPACING / 3 + 13);
+		endLeftWidth = endLeftWidth < 15 ? 15 : endLeftWidth;
+		this.labelEndLeft.setDiffX(endLeftWidth + LABEL_SPACING / 3 + 15);
 		this.labelEndLeft.setDiffZ(this.boxDistance / 2 - LABEL_SPACING);
 	}
 
@@ -364,6 +366,30 @@ public class Arrow extends Group implements Selectable {
 		this.labelStartRight.setLabelSelected(selected);
 		this.labelEndLeft.setLabelSelected(selected);
 		this.labelEndRight.setLabelSelected(selected);
+	}
+	
+	public ArrowLabel getSelectedLabel() {
+		if(this.labelStartLeft.isLabelSelected()) {
+			return this.labelStartLeft;
+		}
+		else if(this.labelStartRight.isLabelSelected()) {
+			return this.labelStartRight;
+		}
+		else if(this.labelEndLeft.isLabelSelected()) {
+			return this.labelEndLeft;
+		}
+		else if(this.labelEndRight.isLabelSelected()) {
+			return this.labelEndRight;
+		}
+		return null;
+	}
+	
+	public boolean isStart(ArrowLabel arrowLabel) {
+		return this.labelStartLeft.equals(arrowLabel) || this.labelStartRight.equals(arrowLabel);
+	}
+	
+	public boolean isLeft(ArrowLabel arrowLabel) {
+		return this.labelStartLeft.equals(arrowLabel) || this.labelEndLeft.equals(arrowLabel);
 	}
 
 	@Override

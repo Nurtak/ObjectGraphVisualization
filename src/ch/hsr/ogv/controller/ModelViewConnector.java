@@ -17,6 +17,7 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.ArrowLabel;
 import ch.hsr.ogv.view.BoxSelection;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
@@ -365,7 +366,43 @@ public class ModelViewConnector {
 			getRelation((Arrow) selected).changeDirection();
 		}
 	}
-
+	
+	public void handleSetMultiplicityRoleName(Selectable selected){
+		if (selected instanceof Arrow) {
+			Arrow arrow = (Arrow) selected;
+			ArrowLabel selectedLabel = arrow.getSelectedLabel();
+			if(selectedLabel != null) {
+				selectedLabel.showLabel(true);
+				selectedLabel.allowTextInput(true);
+			}
+		}
+	}
+	
+	public void handleDeleteMulitplcityRole(Selectable selected){
+		if (selected instanceof Arrow) {
+			Arrow arrow = (Arrow) selected;
+			ArrowLabel selectedLabel = arrow.getSelectedLabel();
+			if(selectedLabel != null) {
+				if(arrow.isStart(selectedLabel)) {
+					if(arrow.isLeft(selectedLabel)) {
+						getRelation((Arrow) selected).setStartRoleName("");
+					}
+					else {
+						getRelation((Arrow) selected).setStartMultiplicity("");
+					}
+				}
+				else {
+					if(arrow.isLeft(selectedLabel)) {
+						getRelation((Arrow) selected).setEndRoleName("");
+					}
+					else {
+						getRelation((Arrow) selected).setEndMultiplicity("");
+					}
+				}
+			}
+		}
+	}
+	
 	public void handleCreateUndirectedAssociation(Selectable selected) {
 		// TODO Auto-generated method stub
 

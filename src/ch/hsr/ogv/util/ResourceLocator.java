@@ -22,7 +22,7 @@ public class ResourceLocator {
 		TOPTEXTFIELD_FXML("templates/TopTextField.fxml"),
 		CENTERLABEL_FXML("templates/CenterLabel.fxml"),
 		CENTERTEXTFIELD_FXML("templates/CenterTextField.fxml"),
-		CLASSCONTEXTMENU_FXML("templates/ClassContextMenu.fxml"),
+		ARROWTEXTFIELD_FXML("templates/ArrowTextField.fxml"),
 
 		LUCIDASANS_TTF("fonts/LUCIDASANSREGULAR.TTF"),
 		SEGOEUI_TTF("fonts/SEGOEUI.TTF"),
@@ -56,8 +56,6 @@ public class ResourceLocator {
 		RELATION_GIF("images/menu/relation.gif"),
 		RENAME_GIF("images/menu/text_box2.gif"),
 		RENAME_ATTR_GIF("images/menu/testcase.gif"),
-//		MOVE_UP_PNG("images/menu/arrow-up-01-16.png"),
-//		MOVE_DOWN_PNG("images/menu/arrow-down-01-16.png"),
 		MOVE_UP_PNG("images/menu/bullet_arrow_up.png"),
 		MOVE_DOWN_PNG("images/menu/bullet_arrow_down.png"),
 		CHANGE_DIRECTION_GIF("images/menu/synchronize_dgm_tab.gif"),

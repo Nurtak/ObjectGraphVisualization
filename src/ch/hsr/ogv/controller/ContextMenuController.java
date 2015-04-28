@@ -56,9 +56,9 @@ public class ContextMenuController extends Observable implements Observer {
 	private ContextMenu relationCM;
 	private MenuItem changeDirection;
 	private MenuItem setMultiplicity;
-	private MenuItem setRole;
+	private MenuItem setRoleName;
 	private MenuItem deleteMultiplicity;
-	private MenuItem deleteRole;
+	private MenuItem deleteRoleName;
 	private MenuItem deleteRelation;
 	private MenuItem createUndirectedAssociation;
 	private MenuItem createDirectedAssociation;
@@ -116,8 +116,8 @@ public class ContextMenuController extends Observable implements Observer {
 		setMultiplicity = getMenuItem("Set Multiplicity", Resource.ADD_MULTIPLICITY_GIF, relationCM);
 		deleteMultiplicity = getMenuItem("Delete Multiplicity", Resource.DELETE_PNG, relationCM);
 		relationCM.getItems().add(new SeparatorMenuItem());
-		setRole = getMenuItem("Set Role", Resource.ADD_ROLE_GIF, relationCM);
-		deleteRole = getMenuItem("Delete Role", Resource.DELETE_PNG, relationCM);
+		setRoleName = getMenuItem("Set Role", Resource.ADD_ROLE_GIF, relationCM);
+		deleteRoleName = getMenuItem("Delete Role", Resource.DELETE_PNG, relationCM);
 		relationCM.getItems().add(new SeparatorMenuItem());
 		deleteRelation = getMenuItem("Delete Relation", Resource.DELETE_PNG, relationCM);
 	}
@@ -213,9 +213,9 @@ public class ContextMenuController extends Observable implements Observer {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
 				setMultiplicity.setDisable(true);
-				setRole.setDisable(true);
+				setRoleName.setDisable(true);
 				deleteMultiplicity.setDisable(true);
-				deleteRole.setDisable(true);
+				deleteRoleName.setDisable(true);
 				relationCM.show(arrow, me.getScreenX(), me.getScreenY());
 				me.consume();
 			}
@@ -225,9 +225,9 @@ public class ContextMenuController extends Observable implements Observer {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
 				setMultiplicity.setDisable(false);
-				setRole.setDisable(false);
+				setRoleName.setDisable(false);
 				deleteMultiplicity.setDisable(false);
-				deleteRole.setDisable(false);
+				deleteRoleName.setDisable(false);
 				relationCM.show(arrow, me.getScreenX(), me.getScreenY());
 				me.consume();
 			}
@@ -237,9 +237,9 @@ public class ContextMenuController extends Observable implements Observer {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
 				setMultiplicity.setDisable(false);
-				setRole.setDisable(false);
+				setRoleName.setDisable(false);
 				deleteMultiplicity.setDisable(false);
-				deleteRole.setDisable(false);
+				deleteRoleName.setDisable(false);
 				relationCM.show(arrow, me.getScreenX(), me.getScreenY());
 				me.consume();
 			}
@@ -326,6 +326,23 @@ public class ContextMenuController extends Observable implements Observer {
 		changeDirection.setOnAction((ActionEvent e) -> {
 			mvConnector.handleChangeDirection(selected);
 		});
+		
+		setMultiplicity.setOnAction((ActionEvent e) -> {
+			mvConnector.handleSetMultiplicityRoleName(selected);
+		});
+		
+		deleteMultiplicity.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDeleteMulitplcityRole(selected);
+		});
+		
+		setRoleName.setOnAction((ActionEvent e) -> {
+			mvConnector.handleSetMultiplicityRoleName(selected);
+		});
+		
+		deleteRoleName.setOnAction((ActionEvent e) -> {
+			mvConnector.handleDeleteMulitplcityRole(selected);
+		});
+		
 		deleteRelation.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
 		});

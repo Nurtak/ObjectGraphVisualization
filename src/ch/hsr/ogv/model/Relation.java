@@ -89,7 +89,31 @@ public class Relation extends Observable {
 		notifyObservers(RelationChange.DIRECTION);
 	}
 	
+	public void setStartMultiplicity(String multiplicity) {
+		this.start.setMultiplicity(multiplicity);
+		setChanged();
+		notifyObservers(RelationChange.MULTIPLCITY_ROLE);
+	}
+	
+	public void setEndMultiplicity(String multiplicity) {
+		this.end.setMultiplicity(multiplicity);
+		setChanged();
+		notifyObservers(RelationChange.MULTIPLCITY_ROLE);
+	}
+	
+	public void setStartRoleName(String roleName) {
+		this.start.setRoleName(roleName);
+		setChanged();
+		notifyObservers(RelationChange.MULTIPLCITY_ROLE);
+	}
+	
+	public void setEndRoleName(String roleName) {
+		this.end.setRoleName(roleName);
+		setChanged();
+		notifyObservers(RelationChange.MULTIPLCITY_ROLE);
+	}
+	
 	public enum RelationChange {
-		COLOR, DIRECTION;
+		COLOR, DIRECTION, MULTIPLCITY_ROLE;
 	}
 }

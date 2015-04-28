@@ -226,7 +226,7 @@ public class StageManager implements Observer {
 		PaneBox endViewBox = this.mvConnector.getPaneBox(endModelBox);
 		if (startViewBox != null && endViewBox != null) {
 			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getType());
-			addArrowControls(arrow);
+			addArrowControls(arrow, relation);
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
 			this.mvConnector.putArrows(relation, arrow);
@@ -248,9 +248,10 @@ public class StageManager implements Observer {
 		}
 	}
 
-	private void addArrowControls(Arrow arrow) {
+	private void addArrowControls(Arrow arrow, Relation relation) {
 		this.selectionController.enableArrowSelection(arrow, this.subSceneAdapter);
 		this.selectionController.enableArrowLabelSelection(arrow, this.subSceneAdapter);
+		this.textFieldController.enableArrowLabelTextInput(arrow, relation);
 	}
 
 	private void adaptBoxSettings(ModelBox modelBox) {
@@ -295,6 +296,16 @@ public class StageManager implements Observer {
 			changedArrow.setPointsBasedOnBoxes(startPaneBox, endPaneBox);
 			changedArrow.drawArrow();
 			this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
+		}
+	}
+	
+	private void adaptArrowLabel(Relation relation) {
+		Arrow changedArrow = this.mvConnector.getArrow(relation);
+		if (changedArrow != null) {
+			changedArrow.getLabelStartLeft().setText(relation.getStart().getRoleName());
+			changedArrow.getLabelStartRight().setText(relation.getStart().getMultiplicity());
+			changedArrow.getLabelEndLeft().setText(relation.getEnd().getRoleName());
+			changedArrow.getLabelEndRight().setText(relation.getEnd().getMultiplicity());
 		}
 	}
 
@@ -528,8 +539,13 @@ public class StageManager implements Observer {
 			switch (relationChange) {
 			case COLOR:
 				adaptArrowColor(relation);
+				break;
 			case DIRECTION:
 				adaptArrowDirection(relation);
+				break;
+			case MULTIPLCITY_ROLE:
+				adaptArrowLabel(relation);
+				break;
 			default:
 				break;
 			}

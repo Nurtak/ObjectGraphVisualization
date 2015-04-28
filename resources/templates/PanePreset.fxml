@@ -30,7 +30,7 @@
       </HBox>
    </top>
    <center>
-      <GridPane maxWidth="1.7976931348623157E308" minHeight="60.0" BorderPane.alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+      <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="60.0" BorderPane.alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
         <columnConstraints>
           <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" percentWidth="100.0" />
         </columnConstraints>
