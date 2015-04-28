@@ -40,9 +40,9 @@ public class Arrow extends Group implements Selectable {
 	private ArrowEdge arrowStart;
 	private ArrowEdge arrowEnd;
 	
-	private ArrowLabel labelStartRight; // start mulitplicty
+	private ArrowLabel labelStartRight; // start multiplicity
 	private ArrowLabel labelStartLeft; // start role
-	private ArrowLabel labelEndRight; // end multiplicty
+	private ArrowLabel labelEndRight; // end multiplicity
 	private ArrowLabel labelEndLeft; // end role
 
 	private RelationType type = RelationType.BIDIRECTED_ASSOCIATION;
@@ -390,6 +390,28 @@ public class Arrow extends Group implements Selectable {
 	
 	public boolean isLeft(ArrowLabel arrowLabel) {
 		return this.labelStartLeft.equals(arrowLabel) || this.labelEndLeft.equals(arrowLabel);
+	}
+	
+	public boolean hasLeftText(boolean atStart) {
+		String leftText = null;
+		if(atStart) {
+			leftText = getLabelStartLeft().getArrowText().getText();
+		}
+		else {
+			leftText = getLabelEndLeft().getArrowText().getText();
+		}
+		return leftText != null && !leftText.isEmpty();
+	}
+	
+	public boolean hasRightText(boolean atStart) {
+		String rightText = null;
+		if(atStart) {
+			rightText = getLabelStartRight().getArrowText().getText();
+		}
+		else {
+			rightText = getLabelEndRight().getArrowText().getText();
+		}
+		return rightText != null && !rightText.isEmpty();
 	}
 
 	@Override

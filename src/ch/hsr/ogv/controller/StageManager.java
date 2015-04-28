@@ -230,7 +230,7 @@ public class StageManager implements Observer {
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
 			this.mvConnector.putArrows(relation, arrow);
-			this.contextMenuController.enableContextMenu(relation, arrow);
+			this.contextMenuController.enableContextMenu(arrow);
 		}
 	}
 
