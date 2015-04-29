@@ -129,7 +129,7 @@
                            <graphic>
                               <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/menu/about.png" />
+                                    <Image url="@../images/menu/info.png" />
                                  </image>
                               </ImageView>
                            </graphic></MenuItem>

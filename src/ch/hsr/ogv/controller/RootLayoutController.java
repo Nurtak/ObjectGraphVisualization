@@ -334,9 +334,9 @@ public class RootLayoutController implements Observer, Initializable {
 	
 	@FXML
 	private void handleCreateClass() {
-		MessageBar.setText("Press", MessageLevel.ERROR);
 		if (this.subSceneAdapter != null) {
 			if(this.createClass.isSelected()) {
+				MessageBar.setText("Info", MessageLevel.INFO);
 				this.subSceneAdapter.worldRestrictMouseEvents();
 				this.subSceneAdapter.receiveMouseEvents(this.subSceneAdapter.getFloor());
 				this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
@@ -344,6 +344,7 @@ public class RootLayoutController implements Observer, Initializable {
 				this.colorPick.setDisable(true);
 			}
 			else {
+				MessageBar.setText("Error", MessageLevel.ERROR);
 				this.subSceneAdapter.worldReceiveMouseEvents();
 				this.subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 				this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
@@ -354,6 +355,7 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateObject() {
+		MessageBar.setText("Warn", MessageLevel.WARN);
 		this.createToolbar.selectToggle(null);
 		Selectable selected = this.selectionController.getCurrentSelected();
 		if (this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {

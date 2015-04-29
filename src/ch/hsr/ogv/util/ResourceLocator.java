@@ -62,7 +62,12 @@ public class ResourceLocator {
 		ASSOCIATION_CLASS_GIF("images/menu/associationClass.gif"),
 		ADD_MULTIPLICITY_GIF("images/menu/multiplicity.gif"),
 		ADD_ROLE_GIF("images/menu/ColRole.gif"),
-		DELETE_PNG("images/menu/trash.png");
+		DELETE_PNG("images/menu/trash.png"),
+		
+		MESSAGE_DEFAULT_PNG("images/menu/message_default.png"),
+		MESSAGE_INFO_PNG("images/menu/message_info.png"),
+		MESSAGE_WARN_PNG("images/menu/message_warn.png"),
+		MESSAGE_ERROR_PNG("images/menu/message_error.png");
 
 
 		private String relativePath = "./";
