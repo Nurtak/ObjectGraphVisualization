@@ -107,9 +107,37 @@ public class ModelManager extends Observable {
 		return null;
 	}
 
-	public boolean isNameTaken(String name) {
+	public boolean isClassNameTaken(String name) {
 		for (ModelClass modelClass : this.classes) {
 			if (name != null && name.equals(modelClass.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isObjectNameTaken(ModelClass modelClass, String name) {
+		for (ModelObject modelObject : modelClass.getModelObjects()) {
+			if (name != null && name.equals(modelObject.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isAttributeNameTaken(ModelClass modelClass, String name) {
+		for (Attribute attribute : modelClass.getAttributes()) {
+			if (name != null && name.equals(attribute.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isRoleNameTaken(ModelClass modelClass, String name) {
+		for (Endpoint endpoint : modelClass.getEndpoints()) {
+			Endpoint friend = endpoint.getFriend();
+			if (name != null && name.equals(friend.getRoleName())) {
 				return true;
 			}
 		}

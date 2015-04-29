@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -17,9 +18,12 @@ import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.util.MultiplicityParser;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.ArrowLabel;
+import ch.hsr.ogv.view.MessageBar;
 import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.MessageBar.MessageLevel;
 
 /**
  * 
@@ -30,15 +34,43 @@ public class TextFieldController {
 
 	private final static Logger logger = LoggerFactory.getLogger(TextFieldController.class);
 
-	public void enableTopTextInput(ModelBox modelBox, PaneBox paneBox) {
+	public void enableTopTextInput(ModelBox modelBox, PaneBox paneBox, ModelViewConnector mvConnector) {
 		TextField topTextField = paneBox.getTopTextField();
+		
+		topTextField.addEventFilter(KeyEvent.KEY_TYPED, nonAlphaUnderscoreFilter());
 
 		topTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
 					paneBox.allowTopTextInput(false);
-					modelBox.setName(topTextField.getText());
+					if(modelBox instanceof ModelClass) {
+						if(topTextField.getText() != null && !topTextField.getText().toLowerCase().equals(modelBox.getName().toLowerCase())) {
+							String firstLetter = topTextField.getText().substring(0, 1);
+							String classNameToCompare = topTextField.getText().replaceFirst(firstLetter, firstLetter.toUpperCase());
+							if(mvConnector.getModelManager().isClassNameTaken(classNameToCompare)) {
+								MessageBar.setText("Could not rename class \"" + modelBox.getName() + "\", a class \"" + classNameToCompare + "\" already exists.", MessageLevel.ERROR);
+								modelBox.setName(modelBox.getName());
+							}
+							else {
+								modelBox.setName(checkClassName(modelBox.getName(), topTextField.getText()));
+							}
+						}
+						else {
+							modelBox.setName(checkClassName(modelBox.getName(), topTextField.getText()));
+						}
+					}
+					else if(modelBox instanceof ModelObject) {
+						ModelObject modelObject = (ModelObject) modelBox;
+						if(topTextField.getText() != null && !topTextField.getText().equals(modelBox.getName())
+								&& mvConnector.getModelManager().isObjectNameTaken(modelObject.getModelClass(), topTextField.getText())) {
+							MessageBar.setText("Could not rename object \"" + modelBox.getName() + "\", an object \"" + topTextField.getText() + "\" already exists for this class.", MessageLevel.ERROR);
+							modelBox.setName(modelBox.getName());
+						}
+						else {
+							modelBox.setName(checkObjectName(modelBox.getName(), topTextField.getText()));
+						}
+					}
 				}
 			}
 		});
@@ -55,29 +87,35 @@ public class TextFieldController {
 						modelClass.setWidth(paneBox.getMinWidth());
 					}
 					
-					// TODO remove setting it here to model and adapt object name properly
-					modelBox.setName(topTextField.getText());
 					for(ModelObject modelObject : modelClass.getModelObjects()) {
 						modelObject.setName(modelObject.getName());
+						PaneBox paneBoxObject = mvConnector.getPaneBox(modelObject);
+						if(paneBoxObject != null) {
+							paneBoxObject.setTopText(modelObject.getName() + " : " + newValue);
+						}
 					}
 				}
 			}
 		});
 
 		topTextField.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent ke) -> {
-			if (ke.getCode() == KeyCode.ENTER) {
-				// TODO validate input
+			if (ke.getCode() == KeyCode.ENTER) { // apply
 				paneBox.get().requestFocus();
-			} else if (ke.getCode() == KeyCode.ESCAPE) {
-				// TODO validate input, reset old name
+			} else if (ke.getCode() == KeyCode.ESCAPE) { // abort
+				paneBox.getTopTextField().setText(paneBox.getTopLabel().getText());
 				paneBox.get().requestFocus();
 			}
 		});
 
 	}
 	
-	public void enableCenterTextInput(ModelBox modelBox, PaneBox paneBox) {
+	public void enableCenterTextInput(ModelBox modelBox, PaneBox paneBox, ModelViewConnector mvConnector) {
 		for (TextField centerTextField : paneBox.getCenterTextFields()) {
+			
+			if(modelBox instanceof ModelClass) {
+				centerTextField.addEventFilter(KeyEvent.KEY_TYPED, nonAlphaUnderscoreFilter());
+			}
+			
 			centerTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 				@Override
 				public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
@@ -86,19 +124,31 @@ public class TextFieldController {
 						if (rowIndex >= 0) {
 							Label centerLabel = paneBox.getCenterLabels().get(rowIndex);
 							paneBox.allowCenterFieldTextInput(centerLabel, false);
-						}
-						
-						try {
-							if (modelBox instanceof ModelClass) {
-								ModelClass modelClass = (ModelClass) modelBox;
-								modelClass.changeAttributeName(rowIndex, centerTextField.getText());
-							} else if (modelBox instanceof ModelObject) {
-								ModelObject modelObject = (ModelObject) modelBox;
-								Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
-								modelObject.changeAttributeValue(attribute, centerTextField.getText());
+							
+							try {
+								if (modelBox instanceof ModelClass) {
+									ModelClass modelClass = (ModelClass) modelBox;
+									if(centerTextField.getText() != null && !centerTextField.getText().equals(centerLabel.getText())
+											&& mvConnector.getModelManager().isAttributeNameTaken(modelClass, centerTextField.getText())) {
+										MessageBar.setText("Could not rename attribute \"" + centerLabel.getText() + "\", an attribute \"" + centerTextField.getText() + "\" already exists for this class.", MessageLevel.ERROR);
+										modelClass.changeAttributeName(rowIndex, centerLabel.getText());
+									}
+									else if(centerTextField.getText() != null && !centerTextField.getText().equals(centerLabel.getText())
+											&& mvConnector.getModelManager().isRoleNameTaken(modelClass, centerTextField.getText())) {
+										MessageBar.setText("Could not rename attribute \"" + centerLabel.getText() + "\", there's a role \"" + centerTextField.getText() + "\" in relation with this class.", MessageLevel.ERROR);
+										modelClass.changeAttributeName(rowIndex, centerLabel.getText());
+									}
+									else {
+										modelClass.changeAttributeName(rowIndex, checkAttributeRoleName(centerLabel.getText(), centerTextField.getText()));
+									}
+								} else if (modelBox instanceof ModelObject) {
+									ModelObject modelObject = (ModelObject) modelBox;
+									Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
+									modelObject.changeAttributeValue(attribute, centerTextField.getText()); // attribute values can be anything, so no additional check needed
+								}
+							} catch (IndexOutOfBoundsException ioobe) {
+								logger.debug("Changing attribute failed. IndexOutOfBoundsException: " + ioobe.getMessage());
 							}
-						} catch (IndexOutOfBoundsException ioobe) {
-							logger.debug("Changing attribute failed. IndexOutOfBoundsException: " + ioobe.getMessage());
 						}
 					}
 				}
@@ -118,9 +168,11 @@ public class TextFieldController {
 								modelClass.setWidth(paneBox.getMinWidth());
 							}
 							
-							Attribute attribute = modelClass.getAttributes().get(rowIndex);
 							for(ModelObject modelObject : modelClass.getModelObjects()) {
-								modelObject.changeAttributeName(attribute, centerTextField.getText());
+								PaneBox paneBoxObject = mvConnector.getPaneBox(modelObject);
+								if(paneBoxObject != null) {
+									paneBoxObject.setCenterText(rowIndex, newValue, centerTextField.getText());
+								}
 							}
 						}
 					} catch (IndexOutOfBoundsException ioobe) {
@@ -131,56 +183,92 @@ public class TextFieldController {
 
 			centerTextField.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent ke) -> {
 				if (ke.getCode() == KeyCode.ENTER) {
-					// TODO validate input
 					paneBox.get().requestFocus();
 				} else if (ke.getCode() == KeyCode.ESCAPE) {
-					// TODO validate input, reset old name
+					int rowIndex = paneBox.getCenterTextFields().indexOf(centerTextField);
+					if (rowIndex >= 0) {
+						Label centerLabel = paneBox.getCenterLabels().get(rowIndex);
+						if (modelBox instanceof ModelClass) {
+							ModelClass modelClass = (ModelClass) modelBox;
+							modelClass.changeAttributeName(rowIndex, centerLabel.getText());
+						} else if (modelBox instanceof ModelObject) {
+							ModelObject modelObject = (ModelObject) modelBox;
+							Attribute attribute = modelObject.getModelClass().getAttributes().get(rowIndex);
+							modelObject.changeAttributeValue(attribute, modelObject.getAttributeValues().get(attribute));
+						}
+					}
 					paneBox.get().requestFocus();
 				}
 			});
 		}
 	}
 	
-	public void enableArrowLabelTextInput(Arrow arrow, Relation relation) {
+	public void enableArrowLabelTextInput(Arrow arrow, Relation relation, ModelViewConnector mvConnector) {
 		
+		// start role
+		arrow.getLabelStartLeft().addEventFilter(KeyEvent.KEY_TYPED, nonAlphaUnderscoreFilter());
 		arrow.getLabelStartLeft().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
-					relation.setStartRoleName(arrow.getLabelStartLeft().getText());
+					ModelBox otherEndBox = relation.getEnd().getAppendant();
+					if(otherEndBox instanceof ModelClass && mvConnector.getModelManager().isAttributeNameTaken((ModelClass) otherEndBox, arrow.getLabelStartLeft().getTextFieldText())) {
+						MessageBar.setText("Could not set role \"" + arrow.getLabelStartLeft().getLabelText() + "\", there's an attribute in class \"" + otherEndBox.getName() + "\" with this name.", MessageLevel.ERROR);
+						relation.setStartRoleName(arrow.getLabelStartLeft().getLabelText());
+					}
+					else {
+						String role = checkRoleName(arrow.getLabelStartLeft().getLabelText(), arrow.getLabelStartLeft().getTextFieldText());
+						relation.setStartRoleName(role);
+					}
 					arrow.drawArrow();
 					arrow.getLabelStartLeft().allowTextInput(false);
 				}
 			}
 		});
 		
+		// start multiplicity
+		arrow.getLabelStartRight().addEventFilter(KeyEvent.KEY_TYPED, nonPointDigitFilter());
 		arrow.getLabelStartRight().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
-					relation.setStartMultiplicity(arrow.getLabelStartRight().getText());
+					String multiplicity = checkMultiplicity(arrow.getLabelStartRight().getLabelText(), arrow.getLabelStartRight().getTextFieldText());
+					relation.setStartMultiplicity(multiplicity);
 					arrow.drawArrow();
 					arrow.getLabelStartRight().allowTextInput(false);
 				}
 			}
 		});
 
+		// end role
+		arrow.getLabelEndLeft().addEventFilter(KeyEvent.KEY_TYPED, nonAlphaUnderscoreFilter());
 		arrow.getLabelEndLeft().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
-					relation.setEndRoleName(arrow.getLabelEndLeft().getText());
+					ModelBox otherEndBox = relation.getStart().getAppendant();
+					if(otherEndBox instanceof ModelClass && mvConnector.getModelManager().isAttributeNameTaken((ModelClass) otherEndBox, arrow.getLabelEndLeft().getTextFieldText())) {
+						MessageBar.setText("Could not set role \"" + arrow.getLabelEndLeft().getLabelText() + "\", there's an attribute in class \"" + otherEndBox.getName() + "\" with this name.", MessageLevel.ERROR);
+						relation.setEndRoleName(arrow.getLabelEndLeft().getLabelText());
+					}
+					else {
+						String role = checkRoleName(arrow.getLabelEndLeft().getLabelText(), arrow.getLabelEndLeft().getTextFieldText());
+						relation.setEndRoleName(role);
+					}
 					arrow.drawArrow();
 					arrow.getLabelEndLeft().allowTextInput(false);
 				}
 			}
 		});
 
+		// end multiplicity
+		arrow.getLabelEndRight().addEventFilter(KeyEvent.KEY_TYPED, nonPointDigitFilter());
 		arrow.getLabelEndRight().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
 				if (!newHasFocus) {
-					relation.setEndMultiplicity(arrow.getLabelEndRight().getText());
+					String multiplicity = checkMultiplicity(arrow.getLabelEndRight().getLabelText(), arrow.getLabelEndRight().getTextFieldText());
+					relation.setEndMultiplicity(multiplicity);
 					arrow.drawArrow();
 					arrow.getLabelEndRight().allowTextInput(false);
 				}
@@ -206,14 +294,125 @@ public class TextFieldController {
 
 			arrowTextField.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent ke) -> {
 				if (ke.getCode() == KeyCode.ENTER) {
-					// TODO validate input
 					arrow.requestFocus();
 				} else if (ke.getCode() == KeyCode.ESCAPE) {
-					// TODO validate input, reset old name
+					arrowLabel.setText(arrowLabel.getLabelText());
 					arrow.requestFocus();
 				}
 			});
 		}
+	}
+	
+	public static EventHandler<KeyEvent> nonAlphaUnderscoreFilter() {
+		return new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent ke) {
+				if(ke.getCharacter().matches("[\\p{Cntrl}]")) { // control characters are ok
+					return;
+				}
+				if(ke.getCharacter().equals("_")) {
+					return;
+				}
+				if(ke.isShiftDown() && ke.getCharacter().matches("[A-Z_]")) {
+					return;
+				}
+				if(ke.getCharacter().matches("[a-z0-9]")) {
+					return;
+				}
+				MessageBar.setText("Characters other than A-Z, a-z, 0-9 and underscore are not allowed.", MessageLevel.WARN);
+				ke.consume();
+			}
+		};
+	}
+	
+	public static EventHandler<KeyEvent> nonPointDigitFilter() {
+		return new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent ke) {
+				if(ke.getCharacter().matches("[\\p{Cntrl}]")) { // control characters are ok
+					return;
+				}
+				if(ke.getCharacter().equals("*") || ke.getCharacter().equals(".")) {
+					return;
+				}
+				if(ke.getCharacter().matches("[0-9]")) {
+					return;
+				}
+				MessageBar.setText("Characters other than 0-9, '*' and '.' are not allowed.", MessageLevel.WARN);
+				ke.consume();
+			}
+		};
+	}
+	
+	private String checkClassName(String oldName, String newName) {
+		if(newName == null || newName.isEmpty()) {
+			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not be empty.", MessageLevel.ERROR);
+			return oldName;
+		}
+		String firstLetter = newName.substring(0, 1);
+		if(firstLetter.equals("_")) { // beginning with underscore
+			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not begin with an underscore.", MessageLevel.ERROR);
+			return oldName;
+		}
+		if(firstLetter.matches("[0-9]")) { // beginning with digit
+			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not begin with a digit.", MessageLevel.ERROR);
+			return oldName;
+		}
+		if(!firstLetter.toUpperCase().equals(firstLetter)) { // first letter uppercase
+			MessageBar.setText("First letter of new class name \"" + newName + "\", was set to uppercase.", MessageLevel.WARN);
+			newName = newName.replaceFirst(firstLetter, firstLetter.toUpperCase());
+		}
+		return newName;
+	}
+	
+	private String checkObjectName(String oldName, String newName) {
+		if(newName == null || newName.isEmpty()) {
+			MessageBar.setText("Could not rename object \"" + oldName + "\", objectname can not be empty.", MessageLevel.ERROR);
+			return oldName;
+		}
+		return newName;
+	}
+	
+	private String checkAttributeRoleName(String oldName, String newName) {
+		if(newName == null || newName.isEmpty()) {
+			MessageBar.setText("Could not rename attribute \"" + oldName + "\", attribute name can not be empty.", MessageLevel.ERROR);
+			return oldName;
+		}
+		String firstLetter = newName.substring(0, 1);
+		if(firstLetter.matches("[0-9]")) { // beginning with digit
+			MessageBar.setText("Could not rename attribute \"" + oldName + "\", attribute name can not begin with a digit.", MessageLevel.ERROR);
+			return oldName;
+		}
+		return newName;
+	}
+	
+	private String checkRoleName(String oldName, String newName) {
+		if((oldName != null && !oldName.isEmpty()) && (newName == null || newName.isEmpty())) {
+			MessageBar.setText("Could not set role \"" + oldName + "\", role can not be empty.", MessageLevel.ERROR);
+			return oldName;
+		}
+		if(newName == null || newName.isEmpty()) {
+			return oldName;
+		}
+		String firstLetter = newName.substring(0, 1);
+		if(firstLetter.matches("[0-9]")) { // beginning with digit
+			MessageBar.setText("Could not set role \"" + oldName + "\", role can not begin with a digit.", MessageLevel.ERROR);
+			return oldName;
+		}
+		return newName;
+	}
+	
+	private String checkMultiplicity(String oldMultiplicity, String newMultiplicity) {
+		if((oldMultiplicity != null && !oldMultiplicity.isEmpty()) && (newMultiplicity == null || newMultiplicity.isEmpty())) {
+			MessageBar.setText("Could not set multiplicity \"" + oldMultiplicity + "\", multiplicity can not be empty.", MessageLevel.ERROR);
+			return oldMultiplicity;
+		}
+		if(newMultiplicity == null || newMultiplicity.isEmpty()) {
+			return oldMultiplicity;
+		}
+		if(!MultiplicityParser.isWellformed(newMultiplicity)) {
+			MessageBar.setText("Could not set multiplicity \"" + oldMultiplicity + "\", multiplicity must be of in the N-Form, where N is a digit > 0 or a '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1, a '*' and M > N.", MessageLevel.ERROR);
+			return oldMultiplicity;
+		}
+		return newMultiplicity;
 	}
 
 }

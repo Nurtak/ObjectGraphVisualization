@@ -259,7 +259,7 @@ public class PaneBox implements Selectable {
 	}
 
 	public Font getTopFont() {
-		return this.topLabel.getFont(); // doesnt matter if Font is taken from topLabel or topTextField
+		return this.topTextField.getFont(); // doesnt matter if Font is taken from topLabel or topTextField
 	}
 
 	public void setTopUnderline(boolean underline) {
@@ -315,7 +315,7 @@ public class PaneBox implements Selectable {
 	
 	public double calcMinWidth() {
 		// + 70px / 40px for some additional space to compensate padding, insets, borders etc.
-		double retWidth = TextUtil.computeTextWidth(getTopFont(), getTopLabel().getText(), 0.0D) + 70;
+		double retWidth = TextUtil.computeTextWidth(getTopFont(), getTopTextField().getText(), 0.0D) + 70;
 		for(TextField centerTextField : getCenterTextFields()) {
 			double newWidth = TextUtil.computeTextWidth(centerTextField.getFont(), centerTextField.getText(), 0.0D) + 40;
 			if(newWidth > retWidth) {

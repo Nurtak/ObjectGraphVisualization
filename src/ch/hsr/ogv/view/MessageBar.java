@@ -74,7 +74,11 @@ public class MessageBar {
 			}
 			messageBar.clear();
 			String iconStyleDefault = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_DEFAULT_PNG).toExternalForm() + "\");";
-			messageBar.setStyle(iconStyleDefault + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: transparent;");
+			try {
+				messageBar.setStyle(iconStyleDefault + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold;");
+			}
+			catch(ArrayIndexOutOfBoundsException aioobe) {
+			}
 			taskRunning.set(false);
 			return null;
 		}
