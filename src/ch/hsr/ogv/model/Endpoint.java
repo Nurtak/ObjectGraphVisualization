@@ -2,8 +2,10 @@ package ch.hsr.ogv.model;
 
 import javafx.geometry.Point3D;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
- * 
+ *
  * @author Adrian Rieser
  *
  */
@@ -54,6 +56,7 @@ public class Endpoint {
 		this.coordinates = coordinates;
 	}
 
+	@XmlTransient
 	public Relation getRelation() {
 		return relation;
 	}
@@ -61,7 +64,8 @@ public class Endpoint {
 	public void setRelation(Relation relation) {
 		this.relation = relation;
 	}
-	
+
+	@XmlTransient
 	public ModelBox getAppendant() {
 		return appendant;
 	}
@@ -70,16 +74,17 @@ public class Endpoint {
 		this.appendant = appendant;
 	}
 
+	@XmlTransient
 	public Endpoint getFriend() {
 		if (relation != null) {
-			return relation.getFriend(this);			
+			return relation.getFriend(this);
 		}
 		return null;
 	}
-	
+
 	public boolean isStart(){
 		if (relation != null) {
-			return relation.isStart(this);			
+			return relation.isStart(this);
 		}
 		return false;
 	}

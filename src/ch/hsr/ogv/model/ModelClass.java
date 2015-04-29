@@ -16,10 +16,8 @@ import jfxtras.labs.util.Util;
 public class ModelClass extends ModelBox {
 
 	public final static double OBJECT_LEVEL_DIFF = 100;
-
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
-
 	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
 
 	public ModelClass(Point3D coordinates, double width, double heigth, Color color) {
@@ -107,7 +105,7 @@ public class ModelClass extends ModelBox {
 		}
 		return removed;
 	}
-	
+
 	public Attribute createAttribute() {
 		Attribute attribute = new Attribute("field" + (this.attributes.size() + 1));
 		boolean added = addAttribute(attribute);
@@ -126,7 +124,7 @@ public class ModelClass extends ModelBox {
 		Attribute attribute = getAttributes().get(rowIndex);
 		return deleteAttribute(attribute);
 	}
-	
+
 	public boolean moveAttributeUp(int rowIndex) {
 		if (getAttributes().isEmpty() || rowIndex <= 0 || rowIndex >= getAttributes().size()) {
 			return false;
@@ -142,7 +140,7 @@ public class ModelClass extends ModelBox {
 		}
 		return true;
 	}
-	
+
 	public boolean moveAttributeDown(int rowIndex) {
 		if (getAttributes().isEmpty() || rowIndex < 0 || rowIndex >= getAttributes().size() - 1) {
 			return false;
@@ -158,7 +156,7 @@ public class ModelClass extends ModelBox {
 		}
 		return true;
 	}
-	
+
 	public void changeAttributeName(int rowIndex, String name) throws IndexOutOfBoundsException {
 		Attribute attribute = this.attributes.get(rowIndex);
 		attribute.setName(name);

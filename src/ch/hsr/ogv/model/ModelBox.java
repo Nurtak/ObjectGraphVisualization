@@ -9,6 +9,8 @@ import java.util.Observable;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  *
  * @author Adrian Rieser
@@ -119,6 +121,7 @@ public class ModelBox extends Observable {
 		}
 	}
 
+	@XmlTransient
 	public List<Endpoint> getEndpoints() {
 		return endpoints;
 	}

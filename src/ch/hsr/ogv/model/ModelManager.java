@@ -145,8 +145,8 @@ public class ModelManager extends Observable {
 			return false;
 		}
 	}
-	
-	@XmlElement(name = "class")
+
+	@XmlElement(name="class")
 	public Set<ModelClass> getClasses() {
 		return this.classes;
 	}
@@ -158,16 +158,16 @@ public class ModelManager extends Observable {
 	public void clearClasses() {
 		classes.clear();
 	}
-	
-	@XmlElement(name = "relations")
+
+	@XmlElement(name="relation")
 	public Set<Relation> getRelations() {
 		return this.relations;
 	}
-	
+
 	public void setRelations(Set<Relation> relations) {
 		this.relations = relations;
 	}
-	
+
 	public void clearRelations() {
 		relations.clear();
 	}
