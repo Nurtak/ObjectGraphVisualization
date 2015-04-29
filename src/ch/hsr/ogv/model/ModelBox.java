@@ -137,6 +137,15 @@ public class ModelBox extends Observable {
 		}
 		return result;
 	}
+	
+	public boolean replaceEndpoint(Endpoint toReplace, Endpoint replacement) {
+		int index = this.endpoints.indexOf(toReplace);
+		if(index >= 0) {
+			this.endpoints.set(index, replacement);
+			return true;
+		}
+		return false;
+	}
 
 	public enum ModelBoxChange {
 		COORDINATES, HEIGHT, WIDTH, NAME, COLOR;
