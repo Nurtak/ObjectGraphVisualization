@@ -46,6 +46,7 @@ import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.SubSceneAdapter;
 import ch.hsr.ogv.view.SubSceneCamera;
 import ch.hsr.ogv.view.TSplitMenuButton;
+import ch.hsr.ogv.view.MessageBar.MessageLevel;
 
 /**
  * The controller for the root layout. The root layout provides the basic application layout containing a menu bar and space where other JavaFX elements can be placed.
@@ -333,6 +334,7 @@ public class RootLayoutController implements Observer, Initializable {
 	
 	@FXML
 	private void handleCreateClass() {
+		MessageBar.setText("Press", MessageLevel.ERROR);
 		if (this.subSceneAdapter != null) {
 			if(this.createClass.isSelected()) {
 				this.subSceneAdapter.worldRestrictMouseEvents();

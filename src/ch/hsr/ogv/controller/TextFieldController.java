@@ -19,9 +19,7 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.ArrowLabel;
-import ch.hsr.ogv.view.MessageBar;
 import ch.hsr.ogv.view.PaneBox;
-import ch.hsr.ogv.view.MessageBar.MessageLevel;
 
 /**
  * 
@@ -62,7 +60,6 @@ public class TextFieldController {
 					for(ModelObject modelObject : modelClass.getModelObjects()) {
 						modelObject.setName(modelObject.getName());
 					}
-					MessageBar.setText("TYPING", MessageLevel.ERROR);
 				}
 			}
 		});

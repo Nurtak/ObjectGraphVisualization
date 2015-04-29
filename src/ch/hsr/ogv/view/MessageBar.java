@@ -1,5 +1,6 @@
 package ch.hsr.ogv.view;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.concurrent.Task;
@@ -10,10 +11,11 @@ import javafx.scene.layout.Priority;
 
 public class MessageBar {
 
-	private static int CLEAR_TIME_MILLIS = 5000;
+	private static int CLEAR_TIME_SECOND = 5;
 	private static TextField messageBar;
 	
-	private static AtomicInteger threadCount = new AtomicInteger(0);
+	private static AtomicInteger countDown = new AtomicInteger(0);
+	private static AtomicBoolean taskRunning = new AtomicBoolean(false);
 	
 	public static TextField getTextField() {
 		synchronized(messageBar) {
@@ -29,20 +31,6 @@ public class MessageBar {
 		messageBar.setMinHeight(28);
 		HBox.setHgrow(messageBar, Priority.ALWAYS);
 		HBox.setMargin(messageBar, new Insets(5, 5, 5, 5));
-	}
-	
-	private static Task<Void> getClearTask() {
-		Task<Void> clearTextFieldTask = new Task<Void>() {
-			@Override
-			protected Void call() throws Exception {
-				Thread.sleep(CLEAR_TIME_MILLIS);
-				synchronized(messageBar) {
-					messageBar.clear();
-				}
-				return null;
-			}
-		};
-		return clearTextFieldTask;
 	}
 	
 	public static void setText(String text, MessageLevel level) {
@@ -62,10 +50,27 @@ public class MessageBar {
 				messageBar.setStyle("-fx-font-weight: bold; -fx-text-inner-color: #000000;");
 				break;
 			}
-			if(threadCount.get() <= 0) {
-				new Thread(getClearTask()).start();
+			countDown.set(CLEAR_TIME_SECOND);
+			if(!taskRunning.get()) {
+				taskRunning.set(true);
+				new Thread(new MessageTask()).start();
 			}
 		}
+	}
+	
+	public static class MessageTask extends Task<Void> {
+		
+		@Override
+		protected Void call() throws Exception {
+			while(countDown.get() > 0) {
+				Thread.sleep(1000);
+				countDown.decrementAndGet();
+			}
+			messageBar.clear();
+			taskRunning.set(false);
+			return null;
+		}
+		
 	}
 	
 	public  enum MessageLevel {
