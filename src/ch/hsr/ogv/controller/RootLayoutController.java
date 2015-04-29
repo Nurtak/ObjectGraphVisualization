@@ -57,8 +57,6 @@ public class RootLayoutController implements Observer, Initializable {
 	private Stage primaryStage;
 	private String appTitle;
 
-	private MessageBar messageBar;
-	
 	private ModelViewConnector mvConnector;
 	private SubSceneAdapter subSceneAdapter;
 	private SelectionController selectionController;
@@ -96,9 +94,8 @@ public class RootLayoutController implements Observer, Initializable {
 		this.cameraController = cameraController;
 	}
 	
-	public void setMessageBar(MessageBar messageBar) {
-		this.messageBar = messageBar;
-		this.messageBarContainer.getChildren().add(messageBar.get());
+	public void setMessageBar() {
+		this.messageBarContainer.getChildren().add(MessageBar.getTextField());
 	}
 
 	/**
@@ -636,6 +633,7 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
+		setMessageBar(); // sets the message bar into the footer
 		addButtonAccelerators();
 		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
 		this.colorPick.getCustomColors().add(SubSceneAdapter.DEFAULT_COLOR);
