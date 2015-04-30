@@ -118,7 +118,7 @@ public class ModelManager extends Observable {
 	
 	public boolean isObjectNameTaken(ModelClass modelClass, String name) {
 		for (ModelObject modelObject : modelClass.getModelObjects()) {
-			if (name != null && name.equals(modelObject.getName())) {
+			if (name != null && !name.isEmpty() && name.equals(modelObject.getName())) {
 				return true;
 			}
 		}
@@ -127,7 +127,7 @@ public class ModelManager extends Observable {
 	
 	public boolean isAttributeNameTaken(ModelClass modelClass, String name) {
 		for (Attribute attribute : modelClass.getAttributes()) {
-			if (name != null && name.equals(attribute.getName())) {
+			if (name != null && !name.isEmpty() && name.equals(attribute.getName())) {
 				return true;
 			}
 		}
@@ -137,7 +137,7 @@ public class ModelManager extends Observable {
 	public boolean isRoleNameTaken(ModelClass modelClass, String name) {
 		for (Endpoint endpoint : modelClass.getEndpoints()) {
 			Endpoint friend = endpoint.getFriend();
-			if (name != null && name.equals(friend.getRoleName())) {
+			if (name != null && !name.isEmpty() && name.equals(friend.getRoleName())) {
 				return true;
 			}
 		}

@@ -53,13 +53,13 @@ public class StageManager implements Observer {
 	private Persistancy persistancy = new Persistancy();
 
 	private RootLayoutController rootLayoutController = new RootLayoutController();
-	private CameraController cameraController = new CameraController();
 	private SelectionController selectionController = new SelectionController();
-	private MouseMoveController mouseMoveController = new MouseMoveController();
+	private ContextMenuController contextMenuController = new ContextMenuController();
 	private TextFieldController textFieldController = new TextFieldController();
+	private MouseMoveController mouseMoveController = new MouseMoveController();
+	private CameraController cameraController = new CameraController();
 	private DragMoveController dragMoveController = new DragMoveController();
 	private DragResizeController dragResizeController = new DragResizeController();
-	private ContextMenuController contextMenuController = new ContextMenuController();
 	
 	private static final int MIN_WIDTH = 1024;
 	private static final int MIN_HEIGHT = 768;
@@ -72,14 +72,16 @@ public class StageManager implements Observer {
 
 		loadRootLayoutController();
 		setupStage();
+		
 		initMVConnector();
+		initPersistancy();
+		
 		initRootLayoutController();
-		initContextMenuController();
 		initSelectionController();
+		initContextMenuController();
 		initMouseMoveController();
 		initCameraController();
 		initDragController();
-		initPersistancy();
 		
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
@@ -140,6 +142,7 @@ public class StageManager implements Observer {
 	}
 
 	private void initContextMenuController() {
+		this.contextMenuController.enableActionEvents(this.selectionController, this.subSceneAdapter);
 		this.contextMenuController.setMVConnector(this.mvConnector);
 		this.contextMenuController.enableContextMenu(this.subSceneAdapter);
 	}
@@ -228,7 +231,7 @@ public class StageManager implements Observer {
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
 			this.mvConnector.putArrows(relation, arrow);
-			this.contextMenuController.enableContextMenu(arrow);
+			this.contextMenuController.enableContextMenu(arrow, relation);
 		}
 	}
 

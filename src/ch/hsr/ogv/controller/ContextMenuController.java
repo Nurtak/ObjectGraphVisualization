@@ -14,9 +14,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
+import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
+import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
@@ -141,8 +144,6 @@ public class ContextMenuController extends Observable implements Observer {
 		deleteRoleName = getMenuItem("Delete Role", Resource.DELETE_PNG, relationCM);
 		relationCM.getItems().add(new SeparatorMenuItem());
 		deleteRelation = getMenuItem("Delete Relation", Resource.DELETE_PNG, relationCM);
-		
-		contextMenuOnAction();
 	}
 
 	private Menu getClassRelationMenu(String title, Resource image, ContextMenu parent) {
@@ -250,63 +251,107 @@ public class ContextMenuController extends Observable implements Observer {
 
 	}
 	
-	private void enableRelationContextMenu(Arrow arrow, MouseEvent me, boolean disableMultiplicityRole, boolean atStart) {
+	private void enableRelationContextMenu(Arrow arrow, MouseEvent me, boolean disableMultiRole, boolean disableDirection, boolean atStart) {
 		hideAllContextMenus();
-		setMultiplicity.setDisable(disableMultiplicityRole);
-		setRoleName.setDisable(disableMultiplicityRole);
-		deleteMultiplicity.setDisable(!arrow.hasRightText(atStart) || disableMultiplicityRole);
-		deleteRoleName.setDisable(!arrow.hasLeftText(atStart) || disableMultiplicityRole);
+		changeDirection.setDisable(disableDirection);
+		setMultiplicity.setDisable(disableMultiRole);
+		setRoleName.setDisable(disableMultiRole);
+		deleteMultiplicity.setDisable(!arrow.hasRightText(atStart) || disableMultiRole);
+		deleteRoleName.setDisable(!arrow.hasLeftText(atStart) || disableMultiRole);
 		relationCM.show(arrow, me.getScreenX(), me.getScreenY());
 		me.consume();
 	}
+	
+	private boolean roleAttributeConflict(Arrow arrow, Relation relation) {
+		if(relation != null) {
+			ModelBox startModelBox = relation.getStart().getAppendant();
+			ModelBox endModelBox = relation.getEnd().getAppendant();
+			if(startModelBox instanceof ModelClass && endModelBox instanceof ModelClass) {
+				ModelClass startModelClass = (ModelClass) startModelBox;
+				ModelClass endModelClass = (ModelClass) endModelBox;
+				for(Attribute attribute : startModelClass.getAttributes()) {
+					boolean conflictStart = arrow.getLabelStartLeft().getLabelText().equals(attribute.getName());
+					if(conflictStart) return true;
+				}
+				for(Attribute attribute : endModelClass.getAttributes()) {
+					boolean conflictEnd = arrow.getLabelEndLeft().getLabelText().equals(attribute.getName());
+					if(conflictEnd) return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean relationTypeConflict(Arrow arrow) {
+		return arrow.getRelationType().equals(RelationType.GENERALIZATION)
+		    || arrow.getRelationType().equals(RelationType.DEPENDENCY)
+			|| arrow.getRelationType().equals(RelationType.ASSOZIATION_CLASS)
+			|| arrow.getRelationType().equals(RelationType.OBJDIAGRAM)
+			|| arrow.getRelationType().equals(RelationType.OBJGRAPH);
+	}
 
-	public void enableContextMenu(Arrow arrow) {
+	public void enableContextMenu(Arrow arrow, Relation relation) {
+		
 		arrow.getLineSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atLineSelectionHelper();
-				enableRelationContextMenu(arrow, me, true, false);
+				boolean disableMRD = relationTypeConflict(arrow);
+				boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
+				enableRelationContextMenu(arrow, me, true, disableDirection, false);
 			}
 		});
 
 		arrow.getStartSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atStartSelectionHelper();
-				enableRelationContextMenu(arrow, me, false, true);
+				boolean disableMRD = relationTypeConflict(arrow);
+				boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
+				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, true);
 			}
 		});
 
 		arrow.getEndSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atEndSelectionHelper();
-				enableRelationContextMenu(arrow, me, false, false);
+				boolean disableMRD = relationTypeConflict(arrow);
+				boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
+				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, false);
 			}
 		});
 		
 		arrow.getLabelStartLeft().getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atStartSelectionHelper();
-				enableRelationContextMenu(arrow, me, false, true);
+				boolean disableMRD = relationTypeConflict(arrow);
+				boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
+				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, true);
 			}
 		});
 		
 		arrow.getLabelStartRight().getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atStartSelectionHelper();
-				enableRelationContextMenu(arrow, me, false, true);
+				boolean disableMRD = relationTypeConflict(arrow);
+				boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
+				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, true);
 			}
 		});
 		
 		arrow.getLabelEndLeft().getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atEndSelectionHelper();
-				enableRelationContextMenu(arrow, me, false, false);
+				boolean disableMRD = relationTypeConflict(arrow);
+				boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
+				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, false);
 			}
 		});
 		
 		arrow.getLabelEndRight().getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atEndSelectionHelper();
-				enableRelationContextMenu(arrow, me, false, false);
+				boolean disableMRD = relationTypeConflict(arrow);
+				boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
+				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, false);
 			}
 		});
 	}
@@ -329,16 +374,18 @@ public class ContextMenuController extends Observable implements Observer {
 		this.mvConnector = mvConnector;
 	}
 
-	public void contextMenuOnAction() {
+	public void enableActionEvents(SelectionController selectionController, SubSceneAdapter subSceneAdapter) {
 
 		// SubScene
 		createClass.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateNewClass(position);
+			PaneBox newPaneBox = mvConnector.handleCreateNewClass(position);
+			selectionController.setSelected(newPaneBox, true, subSceneAdapter);
 		});
 
 		// Class
 		createObject.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateNewObject(selected);
+			PaneBox newPaneBox = mvConnector.handleCreateNewObject(selected);
+			selectionController.setSelected(newPaneBox, true, subSceneAdapter);
 		});
 		renameClass.setOnAction((ActionEvent e) -> {
 			mvConnector.handleRenameClassOrObject(selected);
