@@ -41,12 +41,12 @@ import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.MessageBar;
+import ch.hsr.ogv.view.MessageBar.MessageLevel;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
 import ch.hsr.ogv.view.SubSceneAdapter;
 import ch.hsr.ogv.view.SubSceneCamera;
 import ch.hsr.ogv.view.TSplitMenuButton;
-import ch.hsr.ogv.view.MessageBar.MessageLevel;
 
 /**
  * The controller for the root layout. The root layout provides the basic application layout containing a menu bar and space where other JavaFX elements can be placed.
@@ -63,13 +63,13 @@ public class RootLayoutController implements Observer, Initializable {
 	private SelectionController selectionController;
 	private MouseMoveController mouseMoveController;
 	private CameraController cameraController;
-	
-	private Persistancy persistancy;	
+
+	private Persistancy persistancy;
 
 	private RelationCreationProcess relationCreationProcess = new RelationCreationProcess();
-	
+
 	private HashMap<Object, RelationType> toggleRelationMap = new HashMap<Object, RelationType>();
-	
+
 	public void setPrimaryStage(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 		this.appTitle = primaryStage.getTitle();
@@ -78,7 +78,7 @@ public class RootLayoutController implements Observer, Initializable {
 	public void setMVConnector(ModelViewConnector mvConnector) {
 		this.mvConnector = mvConnector;
 	}
-	
+
 	public void setSubSceneAdapter(SubSceneAdapter subSceneAdapter) {
 		this.subSceneAdapter = subSceneAdapter;
 	}
@@ -86,7 +86,7 @@ public class RootLayoutController implements Observer, Initializable {
 	public void setSelectionController(SelectionController selectionController) {
 		this.selectionController = selectionController;
 	}
-	
+
 	public void setMouseMoveController(MouseMoveController mouseMoveController) {
 		this.mouseMoveController = mouseMoveController;
 	}
@@ -94,7 +94,7 @@ public class RootLayoutController implements Observer, Initializable {
 	public void setCameraController(CameraController cameraController) {
 		this.cameraController = cameraController;
 	}
-	
+
 	public void setMessageBar() {
 		this.messageBarContainer.getChildren().add(MessageBar.getTextField());
 	}
@@ -128,7 +128,7 @@ public class RootLayoutController implements Observer, Initializable {
 			persistancy.loadPersonData(file);
 		}
 	}
-	
+
 	/**
 	 * Opens a FileChooser to let the user select a xmi file to import.
 	 */
@@ -325,13 +325,13 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	ColorPicker colorPick;
-	
+
 	@FXML
 	Label pickColorLabel;
-	
+
 	@FXML
 	HBox messageBarContainer;
-	
+
 	@FXML
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
@@ -493,7 +493,7 @@ public class RootLayoutController implements Observer, Initializable {
 			});
 		}
 	}
-	
+
 	private void startRelationCreation(PaneBox selectedPaneBox) {
 		Toggle toggle = this.createToolbar.getSelectedToggle();
 		RelationType relationType = null;
@@ -509,22 +509,22 @@ public class RootLayoutController implements Observer, Initializable {
 		else if(toggle != null && toggle.equals(this.createGeneralization)) {
 			relationType = RelationType.GENERALIZATION;
 		}
-		
+
 		if(this.mouseMoveController != null && relationType != null) {
 			this.mouseMoveController.addObserver(this.relationCreationProcess);
 			this.relationCreationProcess.startProcess(this.mvConnector, this.selectionController, this.subSceneAdapter, selectedPaneBox, relationType);
 		}
 	}
-	
+
 	private void endRelationCreation(PaneBox selectedPaneBox) {
 		Arrow viewArrow = this.relationCreationProcess.getViewArrow();
 		PaneBox startBox = this.relationCreationProcess.getStartBox();
 		PaneBox endBox = this.relationCreationProcess.getEndBox();
-		
+
 		this.mouseMoveController.deleteObserver(this.relationCreationProcess);
 		this.createToolbar.selectToggle(null);
 		this.relationCreationProcess.endProcess(this.subSceneAdapter);
-		
+
 		if(viewArrow != null && startBox != null && endBox != null) {
 			Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
 			Arrow newArrow = mvConnector.getArrow(relation);
@@ -534,7 +534,7 @@ public class RootLayoutController implements Observer, Initializable {
 		}
 
 	}
-	
+
 	private void disableAllButtons(boolean value) {
 		this.createAssociation.setDisable(value);
 		this.createDependency.setDisable(value);
@@ -545,7 +545,7 @@ public class RootLayoutController implements Observer, Initializable {
 		this.colorPick.setDisable(value);
 		//if(value) this.colorPick.setValue(Color.WHITE);
 	}
-	
+
 	// TODO Refactor!!
 	@Override
 	public void update(Observable o, Object arg) {
@@ -556,9 +556,11 @@ public class RootLayoutController implements Observer, Initializable {
 				return;
 			}
 		}
-		
-		if(this.selectionController == null) return;
-		
+
+		if(this.selectionController == null) {
+			return;
+		}
+
 		if (this.createClass.isSelected() && o instanceof SelectionController && (this.selectionController.hasCurrentSelection() && arg instanceof Floor)) { // creating class
 			if(!this.relationCreationProcess.isInProcess()) {
 				this.subSceneAdapter.worldReceiveMouseEvents();
@@ -578,7 +580,7 @@ public class RootLayoutController implements Observer, Initializable {
 			// creating relations
 			if((this.selectionController.isCurrentSelected(selectable) && selectable instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) || arg instanceof Floor) {
 				PaneBox selectedPaneBox = (PaneBox) selectable;
-				
+
 				if(!this.relationCreationProcess.isInProcess()) { // first selection
 					this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 					startRelationCreation(selectedPaneBox);
@@ -589,7 +591,7 @@ public class RootLayoutController implements Observer, Initializable {
 					}
 				}
 			}
-			
+
 			// button enabling / disabling
 			if (this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProcess()) {
 				disableAllButtons(false);
@@ -606,7 +608,7 @@ public class RootLayoutController implements Observer, Initializable {
 					this.colorPick.setValue(selectedArrow.getColor());
 				}
 			}
-			
+
 			if (this.relationCreationProcess.isInProcess()) {
 				disableAllButtons(true);
 			}
@@ -622,7 +624,7 @@ public class RootLayoutController implements Observer, Initializable {
 			//this.colorPick.setValue(Color.WHITE);
 		}
 	}
-	
+
 	private void initToggleRelationMap() {
 		this.toggleRelationMap.put(this.createDependency,     		 RelationType.DEPENDENCY);
 		this.toggleRelationMap.put(this.createGeneralization,        RelationType.GENERALIZATION);
@@ -646,7 +648,7 @@ public class RootLayoutController implements Observer, Initializable {
 		this.colorPick.getCustomColors().add(Util.brighter(PaneBox.DEFAULT_COLOR, 0.1));
 		initToggleRelationMap();
 	}
-	
+
 	public void setPersistancy(Persistancy persistancy) {
 		this.persistancy = persistancy;
 	}

@@ -2,6 +2,7 @@ package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 
@@ -118,7 +119,7 @@ public class ModelManager extends Observable {
 		}
 		return false;
 	}
-	
+
 	public boolean isObjectNameTaken(ModelClass modelClass, String name) {
 		for (ModelObject modelObject : modelClass.getModelObjects()) {
 			if (name != null && name.equals(modelObject.getName())) {
@@ -127,7 +128,7 @@ public class ModelManager extends Observable {
 		}
 		return false;
 	}
-	
+
 	public boolean isAttributeNameTaken(ModelClass modelClass, String name) {
 		for (Attribute attribute : modelClass.getAttributes()) {
 			if (name != null && name.equals(attribute.getName())) {
@@ -136,7 +137,7 @@ public class ModelManager extends Observable {
 		}
 		return false;
 	}
-	
+
 	public boolean isRoleNameTaken(ModelClass modelClass, String name) {
 		for (Endpoint endpoint : modelClass.getEndpoints()) {
 			Endpoint friend = endpoint.getFriend();
@@ -188,7 +189,9 @@ public class ModelManager extends Observable {
 	}
 
 	public void clearClasses() {
-		for (ModelClass modelClass : classes) {
+		// Copy for concurrent modification
+		List<ModelClass> copy = new ArrayList<ModelClass>(classes);
+		for (ModelClass modelClass : copy) {
 			deleteClass(modelClass);
 		}
 	}

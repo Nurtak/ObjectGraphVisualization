@@ -24,18 +24,17 @@ public class Persistancy {
 			Unmarshaller um = context.createUnmarshaller();
 
 			// Reading XML from the file and unmarshalling.
-			//			ModelManager loadedModelManager = (ModelManager) um.unmarshal(file);
+			ModelManager loadedModelManager = (ModelManager) um.unmarshal(file);
 
 			modelManager.clearClasses();
 			modelManager.clearRelations();
 
-
-			//			modelManager.setClasses(loadedModelManager.getClasses());
-			//			modelManager.setRelations(loadedModelManager.getRelations());
+			modelManager.setClasses(loadedModelManager.getClasses());
+			modelManager.setRelations(loadedModelManager.getRelations());
 
 		} catch (Exception e) {
 			MessageBar.setText("Could not load data from file:\n" + file.getPath(), MessageLevel.ERROR);
-			System.out.println(e.getMessage());
+			System.out.println(e);
 		}
 	}
 
