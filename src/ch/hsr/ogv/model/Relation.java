@@ -4,6 +4,8 @@ import java.util.Observable;
 
 import javafx.scene.paint.Color;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 /**
  *
  * @author Adrian Rieser
@@ -14,8 +16,7 @@ public class Relation extends Observable {
 	private Endpoint start;
 	private Endpoint end;
 	private RelationType type;
-
-	protected Color color;
+	private Color color;
 
 	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType, Color color) {
 		this.start = new Endpoint(relationType.getStartType(), startBox);
@@ -50,6 +51,7 @@ public class Relation extends Observable {
 		this.type = type;
 	}
 
+	@XmlTransient
 	public Color getColor() {
 		return color;
 	}

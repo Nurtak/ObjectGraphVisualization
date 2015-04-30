@@ -48,6 +48,7 @@ public class Endpoint {
 		this.multiplicity = multiplicity;
 	}
 
+	@XmlTransient
 	public Point3D getCoordinates() {
 		return coordinates;
 	}

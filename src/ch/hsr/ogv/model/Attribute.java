@@ -1,7 +1,8 @@
 package ch.hsr.ogv.model;
 
+
 /**
- * 
+ *
  * @author Adrian Rieser
  *
  */

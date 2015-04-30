@@ -9,13 +9,17 @@ import java.util.Observable;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author Adrian Rieser
  *
  */
+@XmlType(propOrder = { "name", "x", "y", "z", "width", "height", "endpoints"})
 public class ModelBox extends Observable {
 
 	protected String name;
@@ -24,6 +28,10 @@ public class ModelBox extends Observable {
 	protected double height;
 	protected Color color;
 	protected List<Endpoint> endpoints = new ArrayList<Endpoint>();
+
+	// For marshaling only
+	public ModelBox(){
+	}
 
 	public ModelBox(String name, Point3D coordinates, double width, double heigth, Color color) {
 		this.name = name;
@@ -46,6 +54,7 @@ public class ModelBox extends Observable {
 		}
 	}
 
+	@XmlTransient
 	public Point3D getCoordinates() {
 		return coordinates;
 	}
@@ -109,6 +118,7 @@ public class ModelBox extends Observable {
 		}
 	}
 
+	@XmlTransient
 	public Color getColor() {
 		return color;
 	}
@@ -121,7 +131,8 @@ public class ModelBox extends Observable {
 		}
 	}
 
-	@XmlTransient
+	@XmlElementWrapper (name = "endpoints")
+	@XmlElement (name = "endpoint")
 	public List<Endpoint> getEndpoints() {
 		return endpoints;
 	}
@@ -130,6 +141,7 @@ public class ModelBox extends Observable {
 		this.endpoints = endpoints;
 	}
 
+	@XmlTransient
 	public Map<Endpoint, Endpoint> getFriends(){
 		Map<Endpoint, Endpoint> result = new HashMap<Endpoint, Endpoint>(endpoints.size());
 		for (Endpoint endpoint : endpoints) {
@@ -140,7 +152,7 @@ public class ModelBox extends Observable {
 		}
 		return result;
 	}
-	
+
 	public boolean replaceEndpoint(Endpoint toReplace, Endpoint replacement) {
 		int index = this.endpoints.indexOf(toReplace);
 		if(index >= 0) {

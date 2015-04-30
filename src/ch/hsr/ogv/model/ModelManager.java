@@ -9,7 +9,9 @@ import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -17,6 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlRootElement(name = "modelmanager")
+@XmlType(propOrder = { "classes", "relations"})
 public class ModelManager extends Observable {
 
 	private Set<ModelClass> classes = new HashSet<ModelClass>();
@@ -146,7 +149,8 @@ public class ModelManager extends Observable {
 		}
 	}
 
-	@XmlElement(name="class")
+	@XmlElementWrapper (name = "classes")
+	@XmlElement (name = "class")
 	public Set<ModelClass> getClasses() {
 		return this.classes;
 	}
@@ -156,10 +160,13 @@ public class ModelManager extends Observable {
 	}
 
 	public void clearClasses() {
-		classes.clear();
+		for (ModelClass modelClass : classes) {
+			deleteClass(modelClass);
+		}
 	}
 
-	@XmlElement(name="relation")
+	@XmlElementWrapper (name = "relations")
+	@XmlElement (name = "relation")
 	public Set<Relation> getRelations() {
 		return this.relations;
 	}
@@ -169,6 +176,8 @@ public class ModelManager extends Observable {
 	}
 
 	public void clearRelations() {
-		relations.clear();
+		for (Relation relation : relations) {
+			deleteRelation(relation);
+		}
 	}
 }
