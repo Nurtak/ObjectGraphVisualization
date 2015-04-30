@@ -131,8 +131,12 @@ public class ArrowLabel extends Group {
 		this.arrowTextField.setDisable(!value);
 	}
 	
-	public String getText() {
+	public String getTextFieldText() {
 		return this.arrowTextField.getText();
+	}
+	
+	public String getLabelText() {
+		return this.arrowText.getText();
 	}
 	
 	public void setText(String text) {
@@ -176,7 +180,7 @@ public class ArrowLabel extends Group {
 	}
 	
 	public double calcMinWidth() {
-		return TextUtil.computeTextWidth(getFont(), getText(), 0.0D) + 15;
+		return TextUtil.computeTextWidth(getFont(), getTextFieldText(), 0.0D) + 15;
 	}
 	
 	public void setWidth(double width) {

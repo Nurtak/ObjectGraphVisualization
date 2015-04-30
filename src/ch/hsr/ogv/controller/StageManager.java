@@ -235,8 +235,8 @@ public class StageManager implements Observer {
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
 		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
 		this.selectionController.enableCenterLabelSelection(paneBox, subSceneAdapter);
-		this.textFieldController.enableTopTextInput(modelBox, paneBox);
-		this.textFieldController.enableCenterTextInput(modelBox, paneBox);
+		this.textFieldController.enableTopTextInput(modelBox, paneBox, this.mvConnector);
+		this.textFieldController.enableCenterTextInput(modelBox, paneBox, this.mvConnector);
 		this.contextMenuController.enablePaneBoxContextMenu(modelBox, paneBox, this.subSceneAdapter);
 		this.contextMenuController.enableCenterFieldContextMenu(modelBox, paneBox, this.subSceneAdapter);
 		this.mouseMoveController.enableMouseMove(paneBox);
@@ -249,7 +249,7 @@ public class StageManager implements Observer {
 	private void addArrowControls(Arrow arrow, Relation relation) {
 		this.selectionController.enableArrowSelection(arrow, this.subSceneAdapter);
 		this.selectionController.enableArrowLabelSelection(arrow, this.subSceneAdapter);
-		this.textFieldController.enableArrowLabelTextInput(arrow, relation);
+		this.textFieldController.enableArrowLabelTextInput(arrow, relation, this.mvConnector);
 	}
 
 	private void adaptBoxSettings(ModelBox modelBox) {
@@ -421,7 +421,7 @@ public class StageManager implements Observer {
 			changedBox.setLabelSelected(prevSelectionIndex, true);
 			// center labels were cleared and recreated, need controls again
 			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter); 
-			this.textFieldController.enableCenterTextInput(modelClass, changedBox);
+			this.textFieldController.enableCenterTextInput(modelClass, changedBox, this.mvConnector);
 			this.contextMenuController.enableCenterFieldContextMenu(modelClass, changedBox, this.subSceneAdapter);
 			
 			double newWidth = changedBox.calcMinWidth();
@@ -459,7 +459,7 @@ public class StageManager implements Observer {
 			changedBox.setLabelSelected(prevSelectionIndex, true);
 			 // center labels were cleared and recreated, need controls again
 			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter);
-			this.textFieldController.enableCenterTextInput(modelObject, changedBox);
+			this.textFieldController.enableCenterTextInput(modelObject, changedBox, this.mvConnector);
 			this.contextMenuController.enableCenterFieldContextMenu(modelObject, changedBox, this.subSceneAdapter);
 		}
 	}

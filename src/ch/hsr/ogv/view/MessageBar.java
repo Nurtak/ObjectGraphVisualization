@@ -3,6 +3,8 @@ package ch.hsr.ogv.view;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import ch.hsr.ogv.util.ResourceLocator;
+import ch.hsr.ogv.util.ResourceLocator.Resource;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.control.TextField;
@@ -38,16 +40,20 @@ public class MessageBar {
 			messageBar.setText(text);
 			switch(level) {
 			case INFO:
-				messageBar.setStyle("-fx-font-weight: bold; -fx-text-inner-color: #000000;");
+				String iconStyleInfo = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_INFO_PNG).toExternalForm() + "\");";
+				messageBar.setStyle(iconStyleInfo + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: #000000;");
 				break;
 			case WARN:
-				messageBar.setStyle("-fx-font-weight: bold; -fx-text-inner-color: #717100;");
+				String iconStyleWarn = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_WARN_PNG).toExternalForm() + "\");";
+				messageBar.setStyle(iconStyleWarn + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: #717100;");
 				break;
 			case ERROR:
-				messageBar.setStyle("-fx-font-weight: bold; -fx-text-inner-color: #CC2900;");
+				String iconStyleError = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_ERROR_PNG).toExternalForm() + "\");";
+				messageBar.setStyle(iconStyleError + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: #CC2900;");
 				break;
 			default:
-				messageBar.setStyle("-fx-font-weight: bold; -fx-text-inner-color: #000000;");
+				String iconStyleDefault = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_DEFAULT_PNG).toExternalForm() + "\");";
+				messageBar.setStyle(iconStyleDefault + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: transparent;");
 				break;
 			}
 			countDown.set(CLEAR_TIME_SECOND);
@@ -67,6 +73,12 @@ public class MessageBar {
 				countDown.decrementAndGet();
 			}
 			messageBar.clear();
+			String iconStyleDefault = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_DEFAULT_PNG).toExternalForm() + "\");";
+			try {
+				messageBar.setStyle(iconStyleDefault + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold;");
+			}
+			catch(ArrayIndexOutOfBoundsException aioobe) {
+			}
 			taskRunning.set(false);
 			return null;
 		}
