@@ -131,7 +131,7 @@ public class RootLayoutController implements Observer, Initializable {
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
 			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-			persistancy.loadPersonData(file);
+			persistancy.loadData(file);
 		}
 	}
 
@@ -150,7 +150,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleSave() {
 		File file = UserPreferences.getSavedFile();
 		if (file != null) {
-			persistancy.savePersonData(file);
+			persistancy.saveData(file);
 		} else {
 			handleSaveAs();
 		}
@@ -180,7 +180,7 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 			UserPreferences.setSavedFilePath(file);
 			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-			persistancy.savePersonData(file);
+			persistancy.saveData(file);
 		}
 	}
 
