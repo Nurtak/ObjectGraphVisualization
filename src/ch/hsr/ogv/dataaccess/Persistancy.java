@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
+import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.view.MessageBar;
 import ch.hsr.ogv.view.MessageBar.MessageLevel;
 
@@ -48,6 +49,8 @@ public class Persistancy {
 				modelManager.createClass(new Point3D(modelClass.getX(), modelClass.getY(), modelClass.getZ()), modelClass.getWidth(), modelClass.getHeight(), new Color(0,0,0,0));
 
 			}
+			ModelClass.modelClassCounter.set(0);
+			ModelObject.modelObjectCounter.set(0);
 			MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
 		} catch (Exception e) {
 			MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ERROR);
@@ -62,6 +65,8 @@ public class Persistancy {
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			m.marshal(modelManager, file);
+			ModelClass.modelClassCounter.set(0);
+			ModelObject.modelObjectCounter.set(0);
 			MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
 		} catch (Exception e) {
 			MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ERROR);

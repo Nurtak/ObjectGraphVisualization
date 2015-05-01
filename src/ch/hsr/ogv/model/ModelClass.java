@@ -19,15 +19,15 @@ public class ModelClass extends ModelBox {
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
 	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
-
+	
 	// For marshaling only
 	public ModelClass(){
 	}
 
-	public ModelClass(Point3D coordinates, double width, double heigth, Color color) {
-		super("Class" + modelClassCounter.addAndGet(1), coordinates, width, heigth, color);
+	public ModelClass(String name, Point3D coordinates, double width, double heigth, Color color) {
+		super(name, coordinates, width, heigth, color);
 	}
-
+	
 	public List<Attribute> getAttributes() {
 		return attributes;
 	}
@@ -61,10 +61,10 @@ public class ModelClass extends ModelBox {
 		return false;
 	}
 
-	public ModelObject createModelObject() {
+	public ModelObject createModelObject(String name) {
 		double levelPlus = getTopLevel() + OBJECT_LEVEL_DIFF;
 		Point3D modelObjectCoordinates = new Point3D(this.getX(), levelPlus, this.getZ());
-		ModelObject modelObject = new ModelObject(this, modelObjectCoordinates, this.getWidth(), this.getHeight(), Util.brighter(this.getColor(), 0.1));
+		ModelObject modelObject = new ModelObject(name, this, modelObjectCoordinates, this.getWidth(), this.getHeight(), Util.brighter(this.getColor(), 0.1));
 		for (Attribute attribute : getAttributes()) {
 			modelObject.addAttributeValue(attribute, "");
 		}

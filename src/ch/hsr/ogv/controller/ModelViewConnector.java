@@ -229,6 +229,8 @@ public class ModelViewConnector {
 				handleDelete(classPaneBox);
 			}
 		}
+		ModelClass.modelClassCounter.set(0);
+		ModelObject.modelObjectCounter.set(0);
 	}
 
 	public void handleDelete(Selectable selected) {
