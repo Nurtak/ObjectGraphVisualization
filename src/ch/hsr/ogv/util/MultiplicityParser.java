@@ -21,7 +21,7 @@ public class MultiplicityParser {
 		}
 		BigInteger parsedBigInt = toBigInteger(multiString);
 		if(parsedBigInt != null) {
-			return bigIntPositive(parsedBigInt) && parsedBigInt.intValue() != 0;
+			return bigIntPositive(parsedBigInt) && !parsedBigInt.equals(new BigInteger("0"));
 		}
 		return false;
 	}
@@ -43,8 +43,8 @@ public class MultiplicityParser {
 				
 				if(firstPartStar) return false;
 				if(secondPartStar && firstPartBigInt != null) return true;
-				if(firstPartBigInt != null && !bigIntPositive(firstPartBigInt) && firstPartBigInt.intValue() != 0) return false;
-				if(secondPartBigInt != null && !bigIntPositive(secondPartBigInt) && secondPartBigInt.intValue() == 0) return false;
+				if(firstPartBigInt != null && !bigIntPositive(firstPartBigInt) && !firstPartBigInt.equals(new BigInteger("0"))) return false;
+				if(secondPartBigInt != null && !bigIntPositive(secondPartBigInt) && secondPartBigInt.equals(new BigInteger("0"))) return false;
 				if(firstPartBigInt != null && secondPartBigInt != null && firstPartBigInt.compareTo(secondPartBigInt) < 0) return true;
 			}
 		} catch(ArrayIndexOutOfBoundsException aioobe) {
