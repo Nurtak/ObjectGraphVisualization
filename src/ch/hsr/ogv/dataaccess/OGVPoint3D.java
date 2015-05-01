@@ -25,4 +25,5 @@ public class OGVPoint3D {
 	public double getZ() {
 		return z;
 	}
+	
 }
