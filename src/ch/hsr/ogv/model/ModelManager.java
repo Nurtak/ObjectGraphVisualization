@@ -14,6 +14,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import ch.hsr.ogv.util.TextUtil;
+
 /**
  *
  * @author Adrian Rieser
@@ -25,9 +27,17 @@ public class ModelManager extends Observable {
 
 	private Set<ModelClass> classes = new HashSet<ModelClass>();
 	private Set<Relation> relations = new HashSet<Relation>();
-
+	
 	public ModelClass createClass(Point3D coordinates, double width, double heigth, Color color) {
-		ModelClass modelClass = new ModelClass(coordinates, width, heigth, color);
+		int classCount = ModelClass.modelClassCounter.addAndGet(1);
+		String newClassName = "Class" + classCount;
+		while(isClassNameTaken(newClassName)) {
+			newClassName = TextUtil.countUpTrailing(newClassName, classCount);
+			if(isClassNameTaken(newClassName)) {
+				 classCount = ModelClass.modelClassCounter.addAndGet(1);
+			}
+		}
+		ModelClass modelClass = new ModelClass(newClassName, coordinates, width, heigth, color);
 		this.classes.add(modelClass);
 		setChanged();
 		notifyObservers(modelClass);
@@ -35,7 +45,15 @@ public class ModelManager extends Observable {
 	}
 
 	public ModelObject createObject(ModelClass modelClass) {
-		ModelObject modelObject = modelClass.createModelObject();
+		int objectCount = ModelObject.modelObjectCounter.addAndGet(1);
+		String newObjectName = "obj" + objectCount;
+		while(isObjectNameTaken(modelClass, newObjectName)) {
+			newObjectName = TextUtil.countUpTrailing(newObjectName, objectCount);
+			if(isClassNameTaken(newObjectName)) {
+				objectCount =  ModelObject.modelObjectCounter.addAndGet(1);
+			}
+		}
+		ModelObject modelObject = modelClass.createModelObject(newObjectName);
 		setChanged();
 		notifyObservers(modelObject);
 		return modelObject;

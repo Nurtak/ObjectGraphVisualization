@@ -30,8 +30,8 @@ public class ModelClass extends ModelBox {
 	public ModelClass(){
 	}
 
-	public ModelClass(Point3D coordinates, double width, double heigth, Color color) {
-		super("Class" + modelClassCounter.addAndGet(1), coordinates, width, heigth, color);
+	public ModelClass(String name, Point3D coordinates, double width, double heigth, Color color) {
+		super(name, coordinates, width, heigth, color);
 	}
 
 	@XmlElementWrapper (name = "attributes")
@@ -71,10 +71,10 @@ public class ModelClass extends ModelBox {
 		return false;
 	}
 
-	public ModelObject createModelObject() {
+	public ModelObject createModelObject(String name) {
 		double levelPlus = getTopLevel() + OBJECT_LEVEL_DIFF;
 		Point3D modelObjectCoordinates = new Point3D(this.getX(), levelPlus, this.getZ());
-		ModelObject modelObject = new ModelObject(this, modelObjectCoordinates, this.getWidth(), this.getHeight(), Util.brighter(this.getColor(), 0.1));
+		ModelObject modelObject = new ModelObject(name, this, modelObjectCoordinates, this.getWidth(), this.getHeight(), Util.brighter(this.getColor(), 0.1));
 		for (Attribute attribute : getAttributes()) {
 			modelObject.addAttributeValue(attribute, "");
 		}
@@ -121,7 +121,11 @@ public class ModelClass extends ModelBox {
 	}
 
 	public Attribute createAttribute() {
-		Attribute attribute = new Attribute("field" + (this.attributes.size() + 1));
+		return createAttribute("field" + (this.attributes.size() + 1));
+	}
+
+	public Attribute createAttribute(String attributeName) {
+		Attribute attribute = new Attribute(attributeName);
 		boolean added = addAttribute(attribute);
 		if (added) {
 			setChanged();

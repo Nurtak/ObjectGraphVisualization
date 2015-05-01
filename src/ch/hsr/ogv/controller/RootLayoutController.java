@@ -104,7 +104,13 @@ public class RootLayoutController implements Observer, Initializable {
 	 */
 	@FXML
 	private void handleNew() {
-		this.primaryStage.setTitle(this.appTitle);// set new app title TODO
+		this.primaryStage.setTitle(this.appTitle);
+		this.mvConnector.handleDeleteAllClasses();
+		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+		this.createToolbar.selectToggle(null);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+		handleCenterView();
+		MessageBar.setText("Initialized new workspace.", MessageLevel.INFO);
 	}
 
 	/**
@@ -125,7 +131,7 @@ public class RootLayoutController implements Observer, Initializable {
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
 			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-			persistancy.loadPersonData(file);
+			persistancy.loadData(file);
 		}
 	}
 
@@ -144,7 +150,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleSave() {
 		File file = UserPreferences.getSavedFile();
 		if (file != null) {
-			persistancy.savePersonData(file);
+			persistancy.saveData(file);
 		} else {
 			handleSaveAs();
 		}
@@ -174,7 +180,7 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 			UserPreferences.setSavedFilePath(file);
 			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-			persistancy.savePersonData(file);
+			persistancy.saveData(file);
 		}
 	}
 
@@ -357,6 +363,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateObject() {
 		MessageBar.setText("Warn", MessageLevel.WARN);
 		this.createToolbar.selectToggle(null);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		Selectable selected = this.selectionController.getCurrentSelected();
 		if (this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {
 			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject(selected);
@@ -376,12 +383,12 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleCreateAssociation() {
 		if (tSplitMenuButton.isSelected()) {
-			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			this.createToolbar.selectToggle(null);
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		} else {
-			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 			this.createToolbar.selectToggle(this.tSplitMenuButton);
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 			this.colorPick.setDisable(true);
 		}
@@ -451,6 +458,7 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleDeleteSelected() {
 		this.createToolbar.selectToggle(null);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		Selectable selected = this.selectionController.getCurrentSelected();
 		if (this.selectionController.hasCurrentSelection()) {
 			this.mvConnector.handleDelete(selected);
@@ -463,6 +471,7 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleColorPick() {
 		this.createToolbar.selectToggle(null);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		Selectable selected = this.selectionController.getCurrentSelected();
 		if (this.selectionController.hasCurrentSelection()) {
 			this.mvConnector.handleColorPick(selected, this.colorPick.getValue());
@@ -522,6 +531,7 @@ public class RootLayoutController implements Observer, Initializable {
 		PaneBox endBox = this.relationCreationProcess.getEndBox();
 
 		this.mouseMoveController.deleteObserver(this.relationCreationProcess);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		this.createToolbar.selectToggle(null);
 		this.relationCreationProcess.endProcess(this.subSceneAdapter);
 

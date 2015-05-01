@@ -1,5 +1,6 @@
 package ch.hsr.ogv.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,6 +17,7 @@ import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
+import ch.hsr.ogv.util.TextUtil;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.ArrowLabel;
 import ch.hsr.ogv.view.BoxSelection;
@@ -165,7 +167,7 @@ public class ModelViewConnector {
 		mcA.createAttribute();
 		mcB.createAttribute();
 	}
-
+	
 	public PaneBox handleCreateNewClass(Point3D mouseCoords) {
 		Point3D boxPosition = new Point3D(mouseCoords.getX(), BASE_BOX_DEPTH, mouseCoords.getZ());
 		ModelClass newClass = this.modelManager.createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
@@ -205,7 +207,12 @@ public class ModelViewConnector {
 			ModelBox selectedModelBox = this.getModelBox(selectedPaneBox);
 			if (selectedModelBox != null && selectedModelBox instanceof ModelClass) {
 				ModelClass selectedModelClass = (ModelClass) selectedModelBox;
-				Attribute newAttribute = selectedModelClass.createAttribute();
+				String newAttributeName = "field" + (selectedModelClass.getAttributes().size() + 1);
+				while(this.modelManager.isAttributeNameTaken(selectedModelClass, newAttributeName)
+				   || this.modelManager.isRoleNameTaken(selectedModelClass, newAttributeName)) {
+					newAttributeName = TextUtil.countUpTrailing(newAttributeName, selectedModelClass.getAttributes().size());
+				}
+				Attribute newAttribute = selectedModelClass.createAttribute(newAttributeName);
 				int lastCenterLabelIndex = selectedPaneBox.getCenterLabels().size() - 1;
 				Label lastCenterLabel = selectedPaneBox.getCenterLabels().get(lastCenterLabelIndex);
 				selectedPaneBox.allowCenterFieldTextInput(lastCenterLabel, true);
@@ -213,6 +220,17 @@ public class ModelViewConnector {
 			}
 		}
 		return null;
+	}
+	
+	public void handleDeleteAllClasses() {
+		for(ModelClass modelClass : new ArrayList<ModelClass>(modelManager.getClasses())) {
+			PaneBox classPaneBox = getPaneBox(modelClass);
+			if(classPaneBox != null) {
+				handleDelete(classPaneBox);
+			}
+		}
+		ModelClass.modelClassCounter.set(0);
+		ModelObject.modelObjectCounter.set(0);
 	}
 
 	public void handleDelete(Selectable selected) {

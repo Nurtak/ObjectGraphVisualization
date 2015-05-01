@@ -21,11 +21,11 @@ public class ModelObject extends ModelBox {
 
 	public static volatile AtomicInteger modelObjectCounter = new AtomicInteger(0);
 
-	public ModelObject(ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
-		super("obj" + modelObjectCounter.addAndGet(1), coordinates, width, heigth, color);
+	public ModelObject(String name, ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
+		super(name, coordinates, width, heigth, color);
 		this.modelClass = modelClass;
 	}
-
+	
 	public Map<Attribute, String> getAttributeValues() {
 		return attributeValues;
 	}
