@@ -27,6 +27,7 @@ import ch.hsr.ogv.util.TextUtil;
 public class ArrowLabel extends Group {
 	
 	private static final double MIN_WIDTH = 20;
+	private static final Color SELECTION_COLOR = Color.DODGERBLUE;
 	
 	private HBox container = new HBox();
 	private Text arrowText;
@@ -101,8 +102,8 @@ public class ArrowLabel extends Group {
 	public void setLabelSelected(boolean isLabelSelected) {
 		this.isLabelSelected = isLabelSelected;
 		if(isLabelSelected) {
-			this.container.setStyle("-fx-border-color: " + Util.colorToCssColor(Arrow.SELECTION_COLOR) + ";\n" + "-fx-border-width: 1;");
-			setColor(Arrow.SELECTION_COLOR);
+			this.container.setStyle("-fx-border-color: " + Util.colorToCssColor(SELECTION_COLOR) + ";\n" + "-fx-border-width: 1;");
+			setColor(SELECTION_COLOR);
 		}
 		else {
 			this.container.setStyle("-fx-border-color: transparent;\n" + "-fx-border-width: 1;");
@@ -175,8 +176,10 @@ public class ArrowLabel extends Group {
 		setTranslateZ(this.diffCoords.getZ());
 	}
 	
-	public void addRotateYAxis(double degree) {
-		getTransforms().add(new Rotate(degree, Rotate.Y_AXIS));
+	public void setRotateYAxis(double degree) {
+		//getTransforms().add(new Rotate(degree, Rotate.Y_AXIS));
+		setRotationAxis(Rotate.Y_AXIS);
+		setRotate(degree);
 	}
 	
 	public double calcMinWidth() {

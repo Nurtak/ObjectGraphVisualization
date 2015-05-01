@@ -35,6 +35,8 @@ import ch.hsr.ogv.view.SubSceneAdapter;
 public class ContextMenuController extends Observable implements Observer {
 
 	private ModelViewConnector mvConnector;
+	private RelationCreationProcess relationCreationProcess = new RelationCreationProcess();
+	
 	private volatile Selectable selected;
 	private volatile Point3D position;
 
@@ -102,6 +104,10 @@ public class ContextMenuController extends Observable implements Observer {
 		this.atEndSelectionHelper = true;
 		this.atLineSelectionHelper = false;
 		this.atStartSelectionHelper = false;
+	}
+	
+	public void setMVConnector(ModelViewConnector mvConnector) {
+		this.mvConnector = mvConnector;
 	}
 
 	public ContextMenuController() {
@@ -370,59 +376,88 @@ public class ContextMenuController extends Observable implements Observer {
 		deleteAttribute.setDisable(!isAttributeActive);
 	}
 
-	public void setMVConnector(ModelViewConnector mvConnector) {
-		this.mvConnector = mvConnector;
+	private void startRelationCreation(SelectionController selectionController, SubSceneAdapter subSceneAdapter,
+									   PaneBox selectedPaneBox, RelationType relationType) {
+		//TODO
+		this.relationCreationProcess.startProcess(this.mvConnector, selectionController, subSceneAdapter, selectedPaneBox, relationType);
 	}
-
+	
 	public void enableActionEvents(SelectionController selectionController, SubSceneAdapter subSceneAdapter) {
 
 		// SubScene
 		createClass.setOnAction((ActionEvent e) -> {
-			PaneBox newPaneBox = mvConnector.handleCreateNewClass(position);
+			PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(position);
 			selectionController.setSelected(newPaneBox, true, subSceneAdapter);
 		});
 
 		// Class
 		createObject.setOnAction((ActionEvent e) -> {
-			PaneBox newPaneBox = mvConnector.handleCreateNewObject(selected);
+			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject(selected);
 			selectionController.setSelected(newPaneBox, true, subSceneAdapter);
 		});
 		renameClass.setOnAction((ActionEvent e) -> {
-			mvConnector.handleRenameClassOrObject(selected);
+			this.mvConnector.handleRenameClassOrObject(selected);
 		});
 		addAttribute.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateNewAttribute(selected);
+			this.mvConnector.handleCreateNewAttribute(selected);
 
 		});
 		deleteClass.setOnAction((ActionEvent e) -> {
-			mvConnector.handleDelete(selected);
+			this.mvConnector.handleDelete(selected);
 		});
 		createUndirectedAssociation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateUndirectedAssociation(selected);
+			if(selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.UNDIRECTED_ASSOCIATION);
+			}
 		});
 		createDirectedAssociation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateDirectedAssociation(selected);
+			if(selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DIRECTED_ASSOCIATION);
+			}
 		});
 		createBidirectedAssociation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateBidirectedAssociation(selected);
+			if(selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.BIDIRECTED_ASSOCIATION);
+			}
 		});
 		createUndirectedAggregation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateUndirectedAggregation(selected);
+			if(selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.UNDIRECTED_AGGREGATION);
+			}
 		});
 		createDirectedAggregation.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateDirectedAggregation(selected);
+			if(selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DIRECTED_AGGREGATION);
+			}
 		});
 		createUndirectedComposition.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateUndirectedComposition(selected);
+			if(selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.UNDIRECTED_COMPOSITION);
+			}
 		});
 		createDirectedComposition.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateDirectedComposition(selected);
+			if(selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DIRECTED_COMPOSITION);
+			}
 		});
 		createGeneralization.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateGeneralization(selected);
+			if(selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.GENERALIZATION);
+			}
 		});
 		createDependency.setOnAction((ActionEvent e) -> {
-			mvConnector.handleCreateDependency(selected);
+			if(selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DEPENDENCY);
+			}
 		});
 
 		// Object

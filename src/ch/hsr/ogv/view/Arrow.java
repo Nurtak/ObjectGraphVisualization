@@ -26,7 +26,7 @@ public class Arrow extends Group implements Selectable {
 	private static final int SELECTION_HELPER_WIDTH = 20;
 	private static final int DASHED_ELEMENT_COUNT = 20;
 	private double width = INIT_WIDTH;
-	static final Color SELECTION_COLOR = Color.DODGERBLUE;
+	private static final Color SELECTION_COLOR = Color.DODGERBLUE;
 	private static final double EDGE_SPACING = 3;
 	private static final double LABEL_SPACING = 30;
 	private double boxDistance;
@@ -263,6 +263,12 @@ public class Arrow extends Group implements Selectable {
 		setTranslateXYZ(midPoint);
 		addRotateYAxis(this.rotateZAngle);
 		addRotateXAxis(this.rotateXAngle);
+		
+		this.labelStartLeft.setRotateYAxis(-this.rotateZAngle);
+		this.labelStartRight.setRotateYAxis(-this.rotateZAngle);
+		this.labelEndLeft.setRotateYAxis(-this.rotateZAngle);
+		this.labelEndRight.setRotateYAxis(-this.rotateZAngle);
+		
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 	

@@ -457,48 +457,4 @@ public class ModelViewConnector {
 		}
 	}
 	
-	public void handleCreateUndirectedAssociation(Selectable selected) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void handleCreateDirectedAssociation(Selectable selected) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void handleCreateBidirectedAssociation(Selectable selected) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void handleCreateUndirectedAggregation(Selectable selected) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void handleCreateDirectedAggregation(Selectable selected) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void handleCreateUndirectedComposition(Selectable selected) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void handleCreateDirectedComposition(Selectable selected) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void handleCreateGeneralization(Selectable selected) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void handleCreateDependency(Selectable selected) {
-		// TODO Auto-generated method stub
-
-	}
 }
