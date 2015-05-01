@@ -15,8 +15,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import ch.hsr.ogv.util.ColorAdapter;
-import ch.hsr.ogv.util.Point3DAdapter;
+import ch.hsr.ogv.dataaccess.ColorAdapter;
+import ch.hsr.ogv.dataaccess.Point3DAdapter;
 
 /**
  *
