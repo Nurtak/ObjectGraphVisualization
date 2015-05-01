@@ -121,7 +121,11 @@ public class ModelClass extends ModelBox {
 	}
 
 	public Attribute createAttribute() {
-		Attribute attribute = new Attribute("field" + (this.attributes.size() + 1));
+		return createAttribute("field" + (this.attributes.size() + 1));
+	}
+	
+	public Attribute createAttribute(String attributeName) {
+		Attribute attribute = new Attribute(attributeName);
 		boolean added = addAttribute(attribute);
 		if (added) {
 			setChanged();

@@ -408,8 +408,9 @@ public class TextFieldController {
 		if(newMultiplicity == null || newMultiplicity.isEmpty()) {
 			return oldMultiplicity;
 		}
-		if(!MultiplicityParser.isWellformed(newMultiplicity)) {
-			MessageBar.setText("Could not set multiplicity \"" + oldMultiplicity + "\", multiplicity must be of in the N-Form, where N is a digit > 0 or a '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1, a '*' and M > N.", MessageLevel.ERROR);
+		newMultiplicity = MultiplicityParser.getParsedMultiplicity(newMultiplicity);
+		if(newMultiplicity == null) {
+			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be of in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N.", MessageLevel.ERROR);
 			return oldMultiplicity;
 		}
 		return newMultiplicity;

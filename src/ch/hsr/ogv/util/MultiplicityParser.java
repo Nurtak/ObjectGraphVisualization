@@ -1,5 +1,7 @@
 package ch.hsr.ogv.util;
 
+import java.math.BigInteger;
+
 /**
  * 
  * @author Simon Gwerder
@@ -17,7 +19,15 @@ public class MultiplicityParser {
 		if(parsedInt != null) {
 			return parsedInt >= 1;
 		}
+		BigInteger parsedBigInt = toBigInteger(multiString);
+		if(parsedBigInt != null) {
+			return bigIntPositive(parsedBigInt) && parsedBigInt.intValue() != 0;
+		}
 		return false;
+	}
+	
+	private static boolean bigIntPositive(BigInteger bigInt) {
+		return bigInt.equals(bigInt.abs());
 	}
 	
 	public static boolean isNMForm(String multiString) {
@@ -26,16 +36,16 @@ public class MultiplicityParser {
 				String firstPart = multiString.split("[..]")[0];
 				String secondPart = multiString.split("[..]")[2];
 				if(firstPart.isEmpty() || secondPart.isEmpty()) return false;
-				Integer firstPartInteger = toInteger(firstPart);
-				Integer secondPartInteger = toInteger(secondPart);
+				BigInteger firstPartBigInt = toBigInteger(firstPart);
+				BigInteger secondPartBigInt = toBigInteger(secondPart);
 				boolean firstPartStar = isAsterisk(firstPart);
 				boolean secondPartStar = isAsterisk(secondPart);
 				
 				if(firstPartStar) return false;
-				if(secondPartStar && firstPartInteger != null) return true;
-				if(firstPartInteger != null && firstPartInteger < 0) return false;
-				if(secondPartInteger != null && secondPartInteger <= 0) return false;
-				if(firstPartInteger != null && secondPartInteger != null && firstPartInteger < secondPartInteger) return true;
+				if(secondPartStar && firstPartBigInt != null) return true;
+				if(firstPartBigInt != null && !bigIntPositive(firstPartBigInt) && firstPartBigInt.intValue() != 0) return false;
+				if(secondPartBigInt != null && !bigIntPositive(secondPartBigInt) && secondPartBigInt.intValue() == 0) return false;
+				if(firstPartBigInt != null && secondPartBigInt != null && firstPartBigInt.compareTo(secondPartBigInt) < 0) return true;
 			}
 		} catch(ArrayIndexOutOfBoundsException aioobe) {
 			return false;
@@ -47,16 +57,30 @@ public class MultiplicityParser {
 		return multiString.equals(ASTERISK);
 	}
 	
+	public static String getParsedMultiplicity(String multiString) {
+		if(isNForm(multiString)) {
+			return multiString.replaceAll("^0+", ""); // remove leading zeros
+		}
+		String n = getNInNMForm(multiString);
+		String m = getMInNMForm(multiString);
+		if(n != null && m != null) {
+			return n + ".." + m;
+		}
+		return null;
+	}
+	
 	public static String getNInNMForm(String multiString) {
 		if(isNMForm(multiString)) {
-			return multiString.split("[..]")[0];
+			String n = multiString.split("[..]")[0];
+			return n.replaceAll("^0+", ""); // remove leading zeros
 		}
 		return null;
 	}
 	
 	public static String getMInNMForm(String multiString) {
 		if(isNMForm(multiString)) {
-			return multiString.split("[..]")[2];
+			String m = multiString.split("[..]")[2];
+			return m.replaceAll("^0+", ""); // remove leading zeros
 		}
 		return null;
 	}
@@ -98,9 +122,18 @@ public class MultiplicityParser {
 	
 	public static Integer toInteger(String str) {
 		try {
-	        return Integer.parseInt( str );
+	        return Integer.parseInt(str);
 	    }
 	    catch(NumberFormatException e) {
+	        return null;
+	    }
+	}
+	
+	public static BigInteger toBigInteger(String str) {
+		try {
+			return new BigInteger(str);
+		}
+		catch(NumberFormatException e) {
 	        return null;
 	    }
 	}
