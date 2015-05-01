@@ -6,6 +6,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
+
 import jfxtras.labs.util.Util;
 
 /**
@@ -13,13 +18,14 @@ import jfxtras.labs.util.Util;
  * @author Adrian Rieser
  *
  */
+@XmlType(propOrder = { "attributes", "modelObjects" })
 public class ModelClass extends ModelBox {
 
 	public final static double OBJECT_LEVEL_DIFF = 100;
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
 	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
-	
+
 	// For marshaling only
 	public ModelClass(){
 	}
@@ -27,7 +33,9 @@ public class ModelClass extends ModelBox {
 	public ModelClass(String name, Point3D coordinates, double width, double heigth, Color color) {
 		super(name, coordinates, width, heigth, color);
 	}
-	
+
+	@XmlElementWrapper (name = "attributes")
+	@XmlElement (name = "attribute")
 	public List<Attribute> getAttributes() {
 		return attributes;
 	}
@@ -36,6 +44,8 @@ public class ModelClass extends ModelBox {
 		this.attributes = attributes;
 	}
 
+	@XmlElementWrapper (name = "objects")
+	@XmlElement (name = "object")
 	public List<ModelObject> getModelObjects() {
 		return modelObjects;
 	}
@@ -113,7 +123,7 @@ public class ModelClass extends ModelBox {
 	public Attribute createAttribute() {
 		return createAttribute("field" + (this.attributes.size() + 1));
 	}
-	
+
 	public Attribute createAttribute(String attributeName) {
 		Attribute attribute = new Attribute(attributeName);
 		boolean added = addAttribute(attribute);

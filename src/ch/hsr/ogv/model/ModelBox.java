@@ -13,6 +13,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import ch.hsr.ogv.util.ColorAdapter;
+import ch.hsr.ogv.util.Point3DAdapter;
 
 /**
  *
@@ -23,9 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 public class ModelBox extends Observable {
 
 	protected String name;
+	@XmlJavaTypeAdapter(Point3DAdapter.class)
 	protected Point3D coordinates;
 	protected double width;
 	protected double height;
+	@XmlJavaTypeAdapter(ColorAdapter.class)
 	protected Color color;
 	protected List<Endpoint> endpoints = new ArrayList<Endpoint>();
 
@@ -54,7 +60,6 @@ public class ModelBox extends Observable {
 		}
 	}
 
-	@XmlTransient
 	public Point3D getCoordinates() {
 		return coordinates;
 	}
@@ -127,7 +132,6 @@ public class ModelBox extends Observable {
 		}
 	}
 
-	@XmlTransient
 	public Color getColor() {
 		return color;
 	}

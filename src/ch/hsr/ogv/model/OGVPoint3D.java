@@ -1,12 +1,28 @@
 package ch.hsr.ogv.model;
 
-import javafx.geometry.Point3D;
-
 public class OGVPoint3D {
 
-	private Point3D point3d;
+	private double x, y, z;
+
+	public OGVPoint3D(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
 
 	public OGVPoint3D() {
-		// TODO Auto-generated constructor stub
+		this(0, 0, 0);
+	}
+
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
+	public double getZ() {
+		return z;
 	}
 }
