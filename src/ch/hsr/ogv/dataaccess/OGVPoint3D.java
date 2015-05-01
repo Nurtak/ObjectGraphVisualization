@@ -1,4 +1,4 @@
-package ch.hsr.ogv.model;
+package ch.hsr.ogv.dataaccess;
 
 public class OGVPoint3D {
 
