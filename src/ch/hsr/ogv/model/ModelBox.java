@@ -68,17 +68,26 @@ public class ModelBox extends Observable {
 	}
 
 	public void setX(double x) {
-		Point3D coords = new Point3D(x, this.coordinates.getY(), this.coordinates.getZ());
+		Point3D coords = new Point3D(x, 0, 0);
+		if (coordinates != null) {
+			coords = new Point3D(x, this.coordinates.getY(), this.coordinates.getZ());
+		}
 		setCoordinates(coords);
 	}
 
 	public void setY(double y) {
-		Point3D coords = new Point3D(this.coordinates.getX(), y, this.coordinates.getZ());
+		Point3D coords = new Point3D(0, y, 0);
+		if (coordinates != null) {
+			coords = new Point3D(this.coordinates.getX(), y, this.coordinates.getZ());
+		}
 		setCoordinates(coords);
 	}
 
 	public void setZ(double z) {
-		Point3D coords = new Point3D(this.coordinates.getX(), this.coordinates.getY(), z);
+		Point3D coords = new Point3D(0, 0, z);
+		if (coordinates != null) {
+			coords = new Point3D(this.coordinates.getX(), this.coordinates.getY(), z);
+		}
 		setCoordinates(coords);
 	}
 
