@@ -32,7 +32,7 @@ import ch.hsr.ogv.view.SubSceneAdapter;
  */
 public class ModelViewConnector {
 	
-	private static final double BASE_BOX_DEPTH = PaneBox.INIT_DEPTH + BoxSelection.INIT_SELECT_SIZE / 2;
+	public static final double BASE_BOX_DEPTH = PaneBox.INIT_DEPTH + BoxSelection.INIT_SELECT_SIZE / 2;
 
 	private ModelManager modelManager = new ModelManager();
 

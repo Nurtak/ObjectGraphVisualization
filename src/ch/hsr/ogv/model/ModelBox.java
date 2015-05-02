@@ -32,7 +32,7 @@ public class ModelBox extends Observable {
 	protected double width = 100.0;
 	protected double height = 100.0;
 	@XmlJavaTypeAdapter(ColorAdapter.class)
-	protected Color color = Color.WHITE;
+	protected Color color = Color.CORNSILK;
 	protected List<Endpoint> endpoints = new ArrayList<Endpoint>();
 
 	// For marshaling only

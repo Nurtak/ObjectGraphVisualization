@@ -136,7 +136,6 @@ public class RootLayoutController implements Observer, Initializable {
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
 			}
 			else {
-				this.primaryStage.setTitle(this.appTitle);
 				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
 		}
@@ -150,7 +149,7 @@ public class RootLayoutController implements Observer, Initializable {
 		FileChooser fileChooser = new FileChooser();
 
 		// Set extension filter
-		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XMI1.1 XML (*.xml)", "*.xml");
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XMI 1.1 (*.xml)", "*.xml");
 		fileChooser.getExtensionFilters().add(extFilter);
 		File previousFile = UserPreferences.getSavedFile();
 		if (previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
@@ -165,7 +164,6 @@ public class RootLayoutController implements Observer, Initializable {
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
 			}
 			else {
-				this.primaryStage.setTitle(this.appTitle);
 				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
 		}
@@ -184,7 +182,6 @@ public class RootLayoutController implements Observer, Initializable {
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
 			}
 			else {
-				this.primaryStage.setTitle(this.appTitle);
 				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
 		} else {
@@ -221,7 +218,6 @@ public class RootLayoutController implements Observer, Initializable {
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
 			}
 			else {
-				this.primaryStage.setTitle(this.appTitle);
 				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
 		}
