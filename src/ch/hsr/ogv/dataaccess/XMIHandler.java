@@ -58,6 +58,11 @@ public class XMIHandler extends DefaultHandler {
 			if(sourceClass != null && targetClass != null) {
 				Relation relation = new Relation(sourceClass, targetClass, xmiRelation.getType());
 				relations.add(relation);
+				relation.setName(xmiRelation.getName());
+				relation.getStart().setRoleName(xmiRelation.getSourceRoleName());
+				relation.getStart().setMultiplicity(xmiRelation.getSourceMultiplicity());
+				relation.getEnd().setRoleName(xmiRelation.getTargetRoleName());
+				relation.getEnd().setMultiplicity(xmiRelation.getTargetMultiplicity());
 			}
 		}
 		return relations;

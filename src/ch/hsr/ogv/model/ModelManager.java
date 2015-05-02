@@ -108,8 +108,8 @@ public class ModelManager extends Observable {
 		return deletedRelation;
 	}
 
-	public ModelClass getClass(String name) {
-		if (name == null) {
+	public ModelClass getModelClass(String name) {
+		if (name == null || name.isEmpty()) {
 			return null;
 		}
 		for (ModelClass modelClass : this.classes) {

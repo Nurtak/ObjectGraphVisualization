@@ -49,6 +49,18 @@ public class ModelClass extends ModelBox {
 	public List<ModelObject> getModelObjects() {
 		return modelObjects;
 	}
+	
+	public ModelObject getModelObject(String name) {
+		if (name == null || name.isEmpty()) {
+			return null;
+		}
+		for (ModelObject modelObject : this.modelObjects) {
+			if (name.equals(modelObject.getName())) {
+				return modelObject;
+			}
+		}
+		return null;
+	}
 
 	public void setModelObjects(List<ModelObject> modelObjects) {
 		this.modelObjects = modelObjects;

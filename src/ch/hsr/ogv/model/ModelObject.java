@@ -38,6 +38,15 @@ public class ModelObject extends ModelBox {
 		this.attributeValues = attributeValues;
 	}
 
+	public String getAttributeValue(String attributeName) {
+		for(Attribute attribute : attributeValues.keySet()) {
+			if(attribute.getName().equals(attributeName)) {
+				return attributeValues.get(attribute);
+			}
+		}
+		return null;
+	}
+	
 	public void changeAttributeName(Attribute attribute, String name) {
 		attribute.setName(name);
 		setChanged();
@@ -49,6 +58,14 @@ public class ModelObject extends ModelBox {
 		if(oldValue != null) {
 			setChanged();
 			notifyObservers(attribute);
+		}
+	}
+	
+	public void changeAttributeValue(String attributeName, String value) {
+		for(Attribute attribute : attributeValues.keySet()) {
+			if(attribute.getName().equals(attributeName)) {
+				changeAttributeValue(attribute, value);
+			}
 		}
 	}
 

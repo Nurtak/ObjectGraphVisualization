@@ -45,7 +45,7 @@ public class StageManager implements Observer {
 
 	private final static Logger logger = LoggerFactory.getLogger(StageManager.class);
 
-	private String appTitle = "Object Graph Visualizer v.1.5";
+	private String appTitle = "Object Graph Visualizer v.2.0";
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdapter;

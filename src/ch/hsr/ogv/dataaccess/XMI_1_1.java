@@ -71,14 +71,17 @@ public class XMI_1_1 extends XMIHandler {
 	public void startElement(String pUri, String pLName, String pQName, Attributes pAtts) {
 		characters.delete(0, characters.length());
 
-		if (pQName.equals("UML:Class")) {
+		if (pQName.equals("UML:Class") || pQName.equals("UML:Interface") ) {
 			ModelClass modelClass = new ModelClass();
 			String name = pAtts.getValue("name");
 			String classId = pAtts.getValue("xmi.id");
-			if (name != null && !name.equals("EARootClass")) {
+			if (name != null && !name.isEmpty() && !name.equals("EARootClass")) {
 				modelClass.setName(name);
 			}
-			if (classId != null) {
+			else {
+				return;
+			}
+			if (classId != null && !classId.isEmpty()) {
 				idClassMap.put(classId, modelClass);
 				classes.add(modelClass);
 			}
@@ -164,39 +167,52 @@ public class XMI_1_1 extends XMIHandler {
 			String name = pAtts.getValue("name");
 			String multi = pAtts.getValue("multiplicity");
 			String aggregation = pAtts.getValue("aggregation");
+			String notDirected = pAtts.getValue("isNavigable");
 			String classID = pAtts.getValue("type");
 			XMIRelation ca = xmiRelations.get(xmiRelations.size() - 1);
-			if (name != null) {
+			if (name != null) {  // we draw it reversed
 				if (source) {
-					ca.setSourceRoleName(name);
-				}
-				else {
 					ca.setTargetRoleName(name);
 				}
+				else {
+					ca.setSourceRoleName(name);
+				}
 			}
-			if (multi != null) {
+			if (multi != null) {  // we draw it reversed
 				if (source) {
-					ca.setSourceMultiplicity(multi);
+					if(multi.equals("1..")) multi = "1..*";
+					ca.setTargetMultiplicity(multi);
 				}
 				else {
-					ca.setTargetMultiplicity(multi);
+					if(multi.equals("1..")) multi = "1..*";
+					ca.setSourceMultiplicity(multi);
 				}
 			}
 			if ((aggregation.equals("aggregate")) || (aggregation.equals("shared"))) {
-				ca.setType(RelationType.UNDIRECTED_AGGREGATION);
+				if(notDirected.equals("false")) {
+					ca.setType(RelationType.DIRECTED_AGGREGATION);
+				}
+				else {
+					ca.setType(RelationType.UNDIRECTED_AGGREGATION);
+				}
 			}
 			else if (aggregation.equals("composite")) {
-				ca.setType(RelationType.UNDIRECTED_COMPOSITION);
+				if(notDirected.equals("false")) {
+					ca.setType(RelationType.DIRECTED_COMPOSITION);
+				}
+				else {
+					ca.setType(RelationType.UNDIRECTED_COMPOSITION);
+				}
 			}
 			else {
 				ca.setType(RelationType.UNDIRECTED_ASSOCIATION);
 			}
 			if (classID != null) {
 				if (source) {
-					ca.setSourceID(classID);
+					ca.setTargetID(classID); // we draw it reversed
 				}
 				else {
-					ca.setTargetID(classID);
+					ca.setSourceID(classID);
 				}
 			}
 			changeSourceTarget();
@@ -208,11 +224,10 @@ public class XMI_1_1 extends XMIHandler {
 				for(String mappedID : idClassMap.keySet()) {
 					if(mappedID.equals(classID)) {
 						ModelClass modelClass = idClassMap.get(mappedID);
-						modelClass.setX(getX(geometry));
-						modelClass.setZ(getY(geometry));
+						modelClass.setX(- getX(geometry) * 2 + 700);
+						modelClass.setZ(- getY(geometry) * 2 + 700);
 					}
 				}
-				
 			}
 		}
 	}
@@ -239,7 +254,7 @@ public class XMI_1_1 extends XMIHandler {
 	private double getX(String pGeometry) {
 		double d = 0;
 		String left = "";
-		String regExp = "(Left\\=)(\\d*)\\;";
+		String regExp = "(Left\\=)(\\d*)\\;"; // Example 1
 		Pattern p = Pattern.compile(regExp);
 		Matcher m = p.matcher(pGeometry);
 		while (m.find()) {
@@ -249,7 +264,7 @@ public class XMI_1_1 extends XMIHandler {
 			d = new Double(left).doubleValue();
 		}
 		else {
-			regExp = "(\\d*)\\,(\\d*)\\,(\\d*)\\,(\\d*)";
+			regExp = "(\\d*)\\,(\\d*)\\,(\\d*)\\,(\\d*)"; // Example 2
 			p = Pattern.compile(regExp);
 			m = p.matcher(pGeometry);
 			while (m.find()) {

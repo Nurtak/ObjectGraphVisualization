@@ -4,7 +4,9 @@ import java.util.Observable;
 
 import javafx.scene.paint.Color;
 
-import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import ch.hsr.ogv.dataaccess.ColorAdapter;
 
 /**
  *
@@ -17,14 +19,14 @@ public class Relation extends Observable {
 	private Endpoint start;
 	private Endpoint end;
 	private RelationType type = RelationType.UNDIRECTED_ASSOCIATION;
-	private Color color;
+	private Color color = Color.BLACK;
 
 	// for un/marshaling only
 	public Relation() {
 	}
 	
 	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType) {
-		this( startBox,  endBox, relationType, Color.BLACK);
+		this(startBox, endBox, relationType, Color.BLACK);
 	}
 	
 	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType, Color color) {
@@ -41,6 +43,8 @@ public class Relation extends Observable {
 	}
 
 	public void setName(String name) {
+		//setChanged();
+		//notifyObservers(RelationChange.NAME);
 		this.name = name;
 	}
 
@@ -68,7 +72,7 @@ public class Relation extends Observable {
 		this.type = type;
 	}
 
-	@XmlTransient
+	@XmlJavaTypeAdapter(ColorAdapter.class)
 	public Color getColor() {
 		return color;
 	}
