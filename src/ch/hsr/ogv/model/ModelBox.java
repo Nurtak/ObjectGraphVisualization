@@ -23,15 +23,13 @@ import ch.hsr.ogv.dataaccess.Point3DAdapter;
  * @author Adrian Rieser
  *
  */
-@XmlType(propOrder = { "name", "x", "y", "z", "width", "height", "endpoints"})
+@XmlType(propOrder = { "name", "coordinates", "width", "height", "color", "endpoints" })
 public class ModelBox extends Observable {
 
 	protected String name = "";
-	@XmlJavaTypeAdapter(Point3DAdapter.class)
 	protected Point3D coordinates = new Point3D(0, 0, 0);
 	protected double width = 100.0;
 	protected double height = 100.0;
-	@XmlJavaTypeAdapter(ColorAdapter.class)
 	protected Color color = Color.CORNSILK;
 	protected List<Endpoint> endpoints = new ArrayList<Endpoint>();
 
@@ -60,6 +58,7 @@ public class ModelBox extends Observable {
 		}
 	}
 
+	@XmlJavaTypeAdapter(Point3DAdapter.class)
 	public Point3D getCoordinates() {
 		return coordinates;
 	}
@@ -96,14 +95,17 @@ public class ModelBox extends Observable {
 		setCoordinates(coords);
 	}
 
+	@XmlTransient
 	public double getX() {
 		return this.coordinates.getX();
 	}
 
+	@XmlTransient
 	public double getY() {
 		return this.coordinates.getY();
 	}
 
+	@XmlTransient
 	public double getZ() {
 		return this.coordinates.getZ();
 	}
@@ -132,6 +134,7 @@ public class ModelBox extends Observable {
 		}
 	}
 
+	@XmlJavaTypeAdapter(ColorAdapter.class)
 	public Color getColor() {
 		return color;
 	}
