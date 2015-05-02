@@ -26,7 +26,7 @@ public class ModelClass extends ModelBox {
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
 	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
 
-	// For marshaling only
+	// for marshaling only
 	public ModelClass(){
 	}
 

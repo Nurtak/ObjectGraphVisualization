@@ -10,7 +10,7 @@ public class Attribute {
 
 	private String name;
 
-	public Attribute(){
+	public Attribute() {
 	}
 
 	public Attribute(String name) {

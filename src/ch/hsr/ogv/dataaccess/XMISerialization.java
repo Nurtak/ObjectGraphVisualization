@@ -87,7 +87,7 @@ public class XMISerialization implements SerializationStrategy {
 			MessageBar.setText("Unable to read XMI file: \"" + xmiFile.getPath() + "\".", MessageLevel.ALERT);
 		}
 		else if (supportedVersions.contains(version)) { // parsing file
-			xmiHandler = new XMI_V1_1();
+			xmiHandler = new XMI_1_1();
 			try {
 				mParser.parse(xmiFile, xmiHandler);
 				return true;

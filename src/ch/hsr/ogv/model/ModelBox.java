@@ -33,7 +33,7 @@ public class ModelBox extends Observable {
 	protected Color color = Color.CORNSILK;
 	protected List<Endpoint> endpoints = new ArrayList<Endpoint>();
 
-	// For marshaling only
+	// for un/marshaling only
 	public ModelBox(){
 	}
 

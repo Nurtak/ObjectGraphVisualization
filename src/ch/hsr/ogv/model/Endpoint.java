@@ -17,6 +17,10 @@ public class Endpoint {
 	private String multiplicity;
 	private Relation relation;
 	private ModelBox appendant;
+	
+	// for un/marshaling only
+	public Endpoint() {
+	}
 
 	public Endpoint(EndpointType type, ModelBox appendant) {
 		this.type = type;

@@ -19,6 +19,10 @@ public class Relation extends Observable {
 	private RelationType type = RelationType.UNDIRECTED_ASSOCIATION;
 	private Color color;
 
+	// for un/marshaling only
+	public Relation() {
+	}
+	
 	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType) {
 		this( startBox,  endBox, relationType, Color.BLACK);
 	}

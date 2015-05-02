@@ -16,7 +16,7 @@ import ch.hsr.ogv.model.RelationType;
  * @author Dario Vonaesch, Simon Gwerder
  * @version 3DCOV 3.0, May 2007 / OGV 3.0, May 2015
  */
-public class XMI_V1_1 extends XMIHandler {
+public class XMI_1_1 extends XMIHandler {
 	
 	private ArrayList<ModelClass> classes = new ArrayList<ModelClass>();
 	

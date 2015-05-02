@@ -21,6 +21,10 @@ public class ModelObject extends ModelBox {
 
 	public static volatile AtomicInteger modelObjectCounter = new AtomicInteger(0);
 
+	// for un/marshaling only
+	public ModelObject() {
+	}
+	
 	public ModelObject(String name, ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
 		super(name, coordinates, width, heigth, color);
 		this.modelClass = modelClass;
