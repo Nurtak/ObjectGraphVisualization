@@ -26,13 +26,13 @@ import ch.hsr.ogv.dataaccess.Point3DAdapter;
 @XmlType(propOrder = { "name", "x", "y", "z", "width", "height", "endpoints"})
 public class ModelBox extends Observable {
 
-	protected String name;
+	protected String name = "";
 	@XmlJavaTypeAdapter(Point3DAdapter.class)
-	protected Point3D coordinates;
-	protected double width;
-	protected double height;
+	protected Point3D coordinates = new Point3D(0, 0, 0);
+	protected double width = 100.0;
+	protected double height = 100.0;
 	@XmlJavaTypeAdapter(ColorAdapter.class)
-	protected Color color;
+	protected Color color = Color.WHITE;
 	protected List<Endpoint> endpoints = new ArrayList<Endpoint>();
 
 	// For marshaling only
