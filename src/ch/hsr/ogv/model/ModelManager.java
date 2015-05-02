@@ -2,7 +2,6 @@ package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 
@@ -207,11 +206,11 @@ public class ModelManager extends Observable {
 	}
 
 	public void clearClasses() {
-		// Copy for concurrent modification
-		List<ModelClass> copy = new ArrayList<ModelClass>(classes);
-		for (ModelClass modelClass : copy) {
+		for (ModelClass modelClass : new ArrayList<ModelClass>(classes)) {
 			deleteClass(modelClass);
 		}
+		ModelClass.modelClassCounter.set(0);
+		ModelObject.modelObjectCounter.set(0);
 	}
 
 	@XmlElementWrapper (name = "relations")
@@ -225,7 +224,7 @@ public class ModelManager extends Observable {
 	}
 
 	public void clearRelations() {
-		for (Relation relation : relations) {
+		for (Relation relation : new ArrayList<Relation>(relations)) {
 			deleteRelation(relation);
 		}
 	}

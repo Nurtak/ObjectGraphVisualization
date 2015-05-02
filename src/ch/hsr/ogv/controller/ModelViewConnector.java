@@ -1,6 +1,5 @@
 package ch.hsr.ogv.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -222,15 +221,9 @@ public class ModelViewConnector {
 		return null;
 	}
 	
-	public void handleDeleteAllClasses() {
-		for(ModelClass modelClass : new ArrayList<ModelClass>(modelManager.getClasses())) {
-			PaneBox classPaneBox = getPaneBox(modelClass);
-			if(classPaneBox != null) {
-				handleDelete(classPaneBox);
-			}
-		}
-		ModelClass.modelClassCounter.set(0);
-		ModelObject.modelObjectCounter.set(0);
+	public void handleClearAll() {
+		modelManager.clearRelations();
+		modelManager.clearClasses();
 	}
 
 	public void handleDelete(Selectable selected) {

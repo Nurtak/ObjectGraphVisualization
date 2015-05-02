@@ -105,7 +105,7 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleNew() {
 		this.primaryStage.setTitle(this.appTitle);
-		this.mvConnector.handleDeleteAllClasses();
+		this.mvConnector.handleClearAll();
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 		this.createToolbar.selectToggle(null);
 		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);

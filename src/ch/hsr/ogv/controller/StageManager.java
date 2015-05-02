@@ -50,7 +50,7 @@ public class StageManager implements Observer {
 	private SubSceneAdapter subSceneAdapter;
 
 	private ModelViewConnector mvConnector;
-	private Persistancy persistancy = new Persistancy();
+	private Persistancy persistancy;
 
 	private RootLayoutController rootLayoutController = new RootLayoutController();
 	private SelectionController selectionController = new SelectionController();
@@ -90,9 +90,8 @@ public class StageManager implements Observer {
 	}
 
 	private void initPersistancy() {
-		persistancy = new Persistancy();
-		persistancy.setModelManager(mvConnector.getModelManager());
-		rootLayoutController.setPersistancy(persistancy);
+		persistancy = new Persistancy(this.mvConnector.getModelManager());
+		rootLayoutController.setPersistancy(this.persistancy);
 	}
 
 	private void setupStage() {
