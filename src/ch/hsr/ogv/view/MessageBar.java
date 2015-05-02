@@ -47,7 +47,7 @@ public class MessageBar {
 				String iconStyleWarn = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_WARN_PNG).toExternalForm() + "\");";
 				messageBar.setStyle(iconStyleWarn + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: #717100;");
 				break;
-			case ERROR:
+			case ALERT:
 				String iconStyleError = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_ERROR_PNG).toExternalForm() + "\");";
 				messageBar.setStyle(iconStyleError + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: #CC2900;");
 				break;
@@ -86,7 +86,7 @@ public class MessageBar {
 	}
 	
 	public  enum MessageLevel {
-		INFO, WARN, ERROR;
+		INFO, WARN, ALERT;
 	}
 
 }

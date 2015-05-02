@@ -27,9 +27,9 @@ import ch.hsr.ogv.view.MessageBar.MessageLevel;
  * @author Dario Vonaesch, Simon Gwerder
  * @version 3DCOV 3.0, May 2007 / OGV 3.0, May 2015
  */
-public class XMIParser implements FileStrategy {
+public class XMISerialization implements SerializationStrategy {
 
-	private final static Logger logger = LoggerFactory.getLogger(FileStrategy.class);
+	private final static Logger logger = LoggerFactory.getLogger(SerializationStrategy.class);
 	
 	private static final String[] SUPPORTED_VERSIONS = { "1.1" };
 	
@@ -41,7 +41,7 @@ public class XMIParser implements FileStrategy {
 	 * Constructor - initialises variables.
 	 * 
 	 */
-	public XMIParser() {
+	public XMISerialization() {
 		xmiHandler = new XMIHandler();
 	}
 
@@ -67,7 +67,7 @@ public class XMIParser implements FileStrategy {
 			return parseXMI(file);
 		} catch (SAXException | IOException | ParserConfigurationException e) {
 			logger.debug(e.getMessage());
-			MessageBar.setText("Unable to read XMI file: \"" + file.getPath() + "\".", MessageLevel.ERROR);
+			MessageBar.setText("Unable to read XMI file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 		}
 		return false;
 	}
@@ -84,7 +84,7 @@ public class XMIParser implements FileStrategy {
 		ArrayList<String> supportedVersions = new ArrayList<String>(Arrays.asList(SUPPORTED_VERSIONS));
 		// version not recognised
 		if (version == null) {
-			MessageBar.setText("Unable to read XMI file: \"" + xmiFile.getPath() + "\".", MessageLevel.ERROR);
+			MessageBar.setText("Unable to read XMI file: \"" + xmiFile.getPath() + "\".", MessageLevel.ALERT);
 		}
 		else if (supportedVersions.contains(version)) { // parsing file
 			xmiHandler = new XMI_V1_1();
@@ -93,13 +93,13 @@ public class XMIParser implements FileStrategy {
 				return true;
 			} catch (org.xml.sax.SAXParseException e) {
 				logger.debug(e.getMessage());
-				MessageBar.setText("Unable to read XMI file: \"" + xmiFile.getPath() + "\".", MessageLevel.ERROR);
+				MessageBar.setText("Unable to read XMI file: \"" + xmiFile.getPath() + "\".", MessageLevel.ALERT);
 			}
 		}
 		// version not supported
 		else {
 			xmiHandler = new XMIHandler();
-			MessageBar.setText("The XMI version " + version + " is not supported. Supported XMI versions: " + String.join(",", SUPPORTED_VERSIONS), MessageLevel.ERROR);
+			MessageBar.setText("The XMI version " + version + " is not supported. Supported XMI versions: " + String.join(",", SUPPORTED_VERSIONS), MessageLevel.ALERT);
 		}
 		return false;
 	}

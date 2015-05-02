@@ -130,8 +130,15 @@ public class RootLayoutController implements Observer, Initializable {
 		// Show open file dialog
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
-			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-			persistancy.loadData(file);
+			boolean success = persistancy.loadOGVData(file);
+			if(success) {
+				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
+				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
+			}
+			else {
+				this.primaryStage.setTitle(this.appTitle);
+				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
+			}
 		}
 	}
 
@@ -140,7 +147,28 @@ public class RootLayoutController implements Observer, Initializable {
 	 */
 	@FXML
 	private void handleImport() {
-		// TODO
+		FileChooser fileChooser = new FileChooser();
+
+		// Set extension filter
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XMI1.1 XML (*.xml)", "*.xml");
+		fileChooser.getExtensionFilters().add(extFilter);
+		File previousFile = UserPreferences.getSavedFile();
+		if (previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
+			fileChooser.setInitialDirectory(previousFile.getParentFile());
+		}
+		// Show open file dialog
+		File file = fileChooser.showOpenDialog(this.primaryStage);
+		if (file != null) {
+			boolean success = persistancy.loadXMIData(file);
+			if(success) {
+				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
+				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
+			}
+			else {
+				this.primaryStage.setTitle(this.appTitle);
+				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
+			}
+		}
 	}
 
 	/**
@@ -150,7 +178,15 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleSave() {
 		File file = UserPreferences.getSavedFile();
 		if (file != null) {
-			persistancy.saveData(file);
+			boolean success = persistancy.saveOGVData(file);
+			if(success) {
+				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
+				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
+			}
+			else {
+				this.primaryStage.setTitle(this.appTitle);
+				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
+			}
 		} else {
 			handleSaveAs();
 		}
@@ -179,8 +215,15 @@ public class RootLayoutController implements Observer, Initializable {
 				file = new File(file.getPath() + ".ogv");
 			}
 			UserPreferences.setSavedFilePath(file);
-			this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-			persistancy.saveData(file);
+			boolean success = persistancy.saveOGVData(file);
+			if(success) {
+				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
+				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
+			}
+			else {
+				this.primaryStage.setTitle(this.appTitle);
+				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
+			}
 		}
 	}
 

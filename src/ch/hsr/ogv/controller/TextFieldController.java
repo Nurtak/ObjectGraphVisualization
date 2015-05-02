@@ -49,7 +49,7 @@ public class TextFieldController {
 							String firstLetter = topTextField.getText().substring(0, 1);
 							String classNameToCompare = topTextField.getText().replaceFirst(firstLetter, firstLetter.toUpperCase());
 							if(mvConnector.getModelManager().isClassNameTaken(classNameToCompare)) {
-								MessageBar.setText("Could not rename class \"" + modelBox.getName() + "\", a class \"" + classNameToCompare + "\" already exists.", MessageLevel.ERROR);
+								MessageBar.setText("Could not rename class \"" + modelBox.getName() + "\", a class \"" + classNameToCompare + "\" already exists.", MessageLevel.ALERT);
 								modelBox.setName(modelBox.getName());
 							}
 							else {
@@ -64,7 +64,7 @@ public class TextFieldController {
 						ModelObject modelObject = (ModelObject) modelBox;
 						if(topTextField.getText() != null && !topTextField.getText().equals(modelBox.getName())
 								&& mvConnector.getModelManager().isObjectNameTaken(modelObject.getModelClass(), topTextField.getText())) {
-							MessageBar.setText("Could not rename object \"" + modelBox.getName() + "\", an object \"" + topTextField.getText() + "\" already exists for this class.", MessageLevel.ERROR);
+							MessageBar.setText("Could not rename object \"" + modelBox.getName() + "\", an object \"" + topTextField.getText() + "\" already exists for this class.", MessageLevel.ALERT);
 							modelBox.setName(modelBox.getName());
 						}
 						else {
@@ -130,12 +130,12 @@ public class TextFieldController {
 									ModelClass modelClass = (ModelClass) modelBox;
 									if(centerTextField.getText() != null && !centerTextField.getText().equals(centerLabel.getText())
 											&& mvConnector.getModelManager().isAttributeNameTaken(modelClass, centerTextField.getText())) {
-										MessageBar.setText("Could not rename attribute \"" + centerLabel.getText() + "\", an attribute \"" + centerTextField.getText() + "\" already exists for this class.", MessageLevel.ERROR);
+										MessageBar.setText("Could not rename attribute \"" + centerLabel.getText() + "\", an attribute \"" + centerTextField.getText() + "\" already exists for this class.", MessageLevel.ALERT);
 										modelClass.changeAttributeName(rowIndex, centerLabel.getText());
 									}
 									else if(centerTextField.getText() != null && !centerTextField.getText().equals(centerLabel.getText())
 											&& mvConnector.getModelManager().isRoleNameTaken(modelClass, centerTextField.getText())) {
-										MessageBar.setText("Could not rename attribute \"" + centerLabel.getText() + "\", there's a role \"" + centerTextField.getText() + "\" in relation with this class.", MessageLevel.ERROR);
+										MessageBar.setText("Could not rename attribute \"" + centerLabel.getText() + "\", there's a role \"" + centerTextField.getText() + "\" in relation with this class.", MessageLevel.ALERT);
 										modelClass.changeAttributeName(rowIndex, centerLabel.getText());
 									}
 									else {
@@ -213,7 +213,7 @@ public class TextFieldController {
 				if (!newHasFocus) {
 					ModelBox otherEndBox = relation.getEnd().getAppendant();
 					if(otherEndBox instanceof ModelClass && mvConnector.getModelManager().isAttributeNameTaken((ModelClass) otherEndBox, arrow.getLabelStartLeft().getTextFieldText())) {
-						MessageBar.setText("Could not set role \"" + arrow.getLabelStartLeft().getLabelText() + "\", there's an attribute in class \"" + otherEndBox.getName() + "\" with this name.", MessageLevel.ERROR);
+						MessageBar.setText("Could not set role \"" + arrow.getLabelStartLeft().getLabelText() + "\", there's an attribute in class \"" + otherEndBox.getName() + "\" with this name.", MessageLevel.ALERT);
 						relation.setStartRoleName(arrow.getLabelStartLeft().getLabelText());
 					}
 					else {
@@ -248,7 +248,7 @@ public class TextFieldController {
 				if (!newHasFocus) {
 					ModelBox otherEndBox = relation.getStart().getAppendant();
 					if(otherEndBox instanceof ModelClass && mvConnector.getModelManager().isAttributeNameTaken((ModelClass) otherEndBox, arrow.getLabelEndLeft().getTextFieldText())) {
-						MessageBar.setText("Could not set role \"" + arrow.getLabelEndLeft().getLabelText() + "\", there's an attribute in class \"" + otherEndBox.getName() + "\" with this name.", MessageLevel.ERROR);
+						MessageBar.setText("Could not set role \"" + arrow.getLabelEndLeft().getLabelText() + "\", there's an attribute in class \"" + otherEndBox.getName() + "\" with this name.", MessageLevel.ALERT);
 						relation.setEndRoleName(arrow.getLabelEndLeft().getLabelText());
 					}
 					else {
@@ -344,16 +344,16 @@ public class TextFieldController {
 	
 	private String checkClassName(String oldName, String newName) {
 		if(newName == null || newName.isEmpty()) {
-			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not be empty.", MessageLevel.ERROR);
+			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not be empty.", MessageLevel.ALERT);
 			return oldName;
 		}
 		String firstLetter = newName.substring(0, 1);
 		if(firstLetter.equals("_")) { // beginning with underscore
-			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not begin with an underscore.", MessageLevel.ERROR);
+			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not begin with an underscore.", MessageLevel.ALERT);
 			return oldName;
 		}
 		if(firstLetter.matches("[0-9]")) { // beginning with digit
-			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not begin with a digit.", MessageLevel.ERROR);
+			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not begin with a digit.", MessageLevel.ALERT);
 			return oldName;
 		}
 		if(!firstLetter.toUpperCase().equals(firstLetter)) { // first letter uppercase
@@ -365,7 +365,7 @@ public class TextFieldController {
 	
 	private String checkObjectName(String oldName, String newName) {
 		if(newName == null || newName.isEmpty()) {
-			MessageBar.setText("Could not rename object \"" + oldName + "\", objectname can not be empty.", MessageLevel.ERROR);
+			MessageBar.setText("Could not rename object \"" + oldName + "\", objectname can not be empty.", MessageLevel.ALERT);
 			return oldName;
 		}
 		return newName;
@@ -373,12 +373,12 @@ public class TextFieldController {
 	
 	private String checkAttributeRoleName(String oldName, String newName) {
 		if(newName == null || newName.isEmpty()) {
-			MessageBar.setText("Could not rename attribute \"" + oldName + "\", attribute name can not be empty.", MessageLevel.ERROR);
+			MessageBar.setText("Could not rename attribute \"" + oldName + "\", attribute name can not be empty.", MessageLevel.ALERT);
 			return oldName;
 		}
 		String firstLetter = newName.substring(0, 1);
 		if(firstLetter.matches("[0-9]")) { // beginning with digit
-			MessageBar.setText("Could not rename attribute \"" + oldName + "\", attribute name can not begin with a digit.", MessageLevel.ERROR);
+			MessageBar.setText("Could not rename attribute \"" + oldName + "\", attribute name can not begin with a digit.", MessageLevel.ALERT);
 			return oldName;
 		}
 		return newName;
@@ -386,7 +386,7 @@ public class TextFieldController {
 	
 	private String checkRoleName(String oldName, String newName) {
 		if((oldName != null && !oldName.isEmpty()) && (newName == null || newName.isEmpty())) {
-			MessageBar.setText("Could not set role \"" + oldName + "\", role can not be empty.", MessageLevel.ERROR);
+			MessageBar.setText("Could not set role \"" + oldName + "\", role can not be empty.", MessageLevel.ALERT);
 			return oldName;
 		}
 		if(newName == null || newName.isEmpty()) {
@@ -394,7 +394,7 @@ public class TextFieldController {
 		}
 		String firstLetter = newName.substring(0, 1);
 		if(firstLetter.matches("[0-9]")) { // beginning with digit
-			MessageBar.setText("Could not set role \"" + oldName + "\", role can not begin with a digit.", MessageLevel.ERROR);
+			MessageBar.setText("Could not set role \"" + oldName + "\", role can not begin with a digit.", MessageLevel.ALERT);
 			return oldName;
 		}
 		return newName;
@@ -402,7 +402,7 @@ public class TextFieldController {
 	
 	private String checkMultiplicity(String oldMultiplicity, String newMultiplicity) {
 		if((oldMultiplicity != null && !oldMultiplicity.isEmpty()) && (newMultiplicity == null || newMultiplicity.isEmpty())) {
-			MessageBar.setText("Could not set multiplicity \"" + oldMultiplicity + "\", multiplicity can not be empty.", MessageLevel.ERROR);
+			MessageBar.setText("Could not set multiplicity \"" + oldMultiplicity + "\", multiplicity can not be empty.", MessageLevel.ALERT);
 			return oldMultiplicity;
 		}
 		if(newMultiplicity == null || newMultiplicity.isEmpty()) {
@@ -410,7 +410,7 @@ public class TextFieldController {
 		}
 		newMultiplicity = MultiplicityParser.getParsedMultiplicity(newMultiplicity);
 		if(newMultiplicity == null) {
-			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be of in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N.", MessageLevel.ERROR);
+			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be of in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N.", MessageLevel.ALERT);
 			return oldMultiplicity;
 		}
 		return newMultiplicity;

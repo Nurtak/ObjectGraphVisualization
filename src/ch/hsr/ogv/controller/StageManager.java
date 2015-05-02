@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.dataaccess.Persistancy;
+import ch.hsr.ogv.dataaccess.UserPreferences;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
@@ -69,7 +70,7 @@ public class StageManager implements Observer {
 			throw new IllegalArgumentException("The primaryStage argument can not be null!");
 		}
 		this.primaryStage = primaryStage;
-
+		
 		loadRootLayoutController();
 		setupStage();
 		
@@ -90,6 +91,7 @@ public class StageManager implements Observer {
 	}
 
 	private void initPersistancy() {
+		UserPreferences.setSavedFilePath(null); // reset user preferences of file path
 		persistancy = new Persistancy(this.mvConnector.getModelManager());
 		rootLayoutController.setPersistancy(this.persistancy);
 	}
