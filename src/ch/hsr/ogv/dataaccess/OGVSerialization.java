@@ -1,6 +1,7 @@
 package ch.hsr.ogv.dataaccess;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -16,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.model.ModelClass;
-import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.Relation;
 
 @XmlRootElement(name = "model")
@@ -25,36 +25,31 @@ public class OGVSerialization implements SerializationStrategy {
 
 	private final static Logger logger = LoggerFactory.getLogger(OGVSerialization.class);
 	
-	private ModelManager modelManager = new ModelManager();
-	
-	public ModelManager getModelManager() {
-		return modelManager;
-	}
+	private Set<ModelClass> classes = new HashSet<ModelClass>();
+	private Set<Relation> relations = new HashSet<Relation>();
 
 	@XmlElementWrapper (name = "classes")
 	@XmlElement (name = "class")
 	@Override
 	public Set<ModelClass> getClasses() {
-		return this.modelManager.getClasses();
+		return this.classes;
 	}
 
 	@Override
-	public boolean setClasses(Set<ModelClass> modelClasses) {
-		this.modelManager.setClasses(modelClasses);
-		return true;
+	public void setClasses(Set<ModelClass> classes) {
+		this.classes = classes;
 	}
 	
 	@XmlElementWrapper (name = "relations")
 	@XmlElement (name = "relation")
 	@Override
 	public Set<Relation> getRelations() {
-		return this.modelManager.getRelations();
+		return this.relations;
 	}
 	
 	@Override
-	public boolean setRelations(Set<Relation> relations) {
-		this.modelManager.setRelations(relations);
-		return true;
+	public void setRelations(Set<Relation> relations) {
+		this.relations = relations;
 	}
 
 	@Override
@@ -62,9 +57,11 @@ public class OGVSerialization implements SerializationStrategy {
 		JAXBContext context = null;
 		Unmarshaller um;
 		try {
-			context = JAXBContext.newInstance(ModelManager.class);
+			context = JAXBContext.newInstance(OGVSerialization.class);
 			um = context.createUnmarshaller();
-			this.modelManager = (ModelManager) um.unmarshal(file); // Reading XML from the file and unmarshalling.
+			OGVSerialization ogvUnmarshalled = (OGVSerialization) um.unmarshal(file); // Reading XML from the file and unmarshalling.
+			setClasses(ogvUnmarshalled.getClasses());
+			setRelations(ogvUnmarshalled.getRelations());
 			return true;
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -76,10 +73,10 @@ public class OGVSerialization implements SerializationStrategy {
 	@Override
 	public boolean serialize(File file) {
 		try {
-			JAXBContext context = JAXBContext.newInstance(ModelManager.class);
+			JAXBContext context = JAXBContext.newInstance(OGVSerialization.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			m.marshal(modelManager, file);
+			m.marshal(this, file);
 			return true;
 		} catch (JAXBException e) {
 			e.printStackTrace();

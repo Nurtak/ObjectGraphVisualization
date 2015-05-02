@@ -110,13 +110,13 @@ public class XMISerialization implements SerializationStrategy {
 	}
 
 	@Override
-	public boolean setClasses(Set<ModelClass> modelClasses) {
-		return false; // not supported (XMI export)
+	public void setClasses(Set<ModelClass> modelClasses) {
+		return; // not supported (XMI export)
 	}
 
 	@Override
-	public boolean setRelations(Set<Relation> relations) {
-		return false; // not supported (XMI export)
+	public void setRelations(Set<Relation> relations) {
+		return; // not supported (XMI export)
 	}
 
 }

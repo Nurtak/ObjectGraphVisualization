@@ -12,7 +12,7 @@ public interface SerializationStrategy {
 	public boolean serialize(File file);
 	public Set<ModelClass> getClasses();
 	public Set<Relation> getRelations();
-	public boolean setClasses(Set<ModelClass> modelClasses);
-	public boolean setRelations(Set<Relation> relations);
+	public void setClasses(Set<ModelClass> modelClasses);
+	public void setRelations(Set<Relation> relations);
 	
 }
