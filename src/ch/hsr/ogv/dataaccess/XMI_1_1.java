@@ -224,8 +224,8 @@ public class XMI_1_1 extends XMIHandler {
 				for(String mappedID : idClassMap.keySet()) {
 					if(mappedID.equals(classID)) {
 						ModelClass modelClass = idClassMap.get(mappedID);
-						modelClass.setX(- getX(geometry) * 2 + 700);
-						modelClass.setZ(- getY(geometry) * 2 + 700);
+						modelClass.setX(- getX(geometry) * 1.5 + 800);
+						modelClass.setZ(- getY(geometry) * 1.5 + 590);
 					}
 				}
 			}
