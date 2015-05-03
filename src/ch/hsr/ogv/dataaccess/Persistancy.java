@@ -1,11 +1,13 @@
 package ch.hsr.ogv.dataaccess;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import javafx.geometry.Point3D;
 import ch.hsr.ogv.controller.ModelViewConnector;
 import ch.hsr.ogv.model.Attribute;
+import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
@@ -55,8 +57,6 @@ public class Persistancy {
 		modelManager.clearClasses();
 		modelManager.clearRelations();
 		
-		System.out.println("getRelations.size: " + serialStrategy.getRelations().size());
-
 		for (ModelClass loadedClass : serialStrategy.getClasses()) {
 			loadedClassToModel(loadedClass);
 		}
@@ -72,6 +72,7 @@ public class Persistancy {
 		ModelClass newClass = modelManager.createClass(new Point3D(loadedClass.getX(), ModelViewConnector.BASE_BOX_DEPTH, loadedClass.getZ()), loadedClass.getWidth(), loadedClass.getHeight(), loadedClass.getColor());
 		if(newClass != null) {
 			newClass.setName(loadedClass.getName());
+			newClass.setEndpoints(loadedClass.getEndpoints());
 			
 			for(ModelObject loadedObject : loadedClass.getModelObjects()) {
 				loadedObjectToModel(newClass, loadedObject);
@@ -90,6 +91,7 @@ public class Persistancy {
 			newObject.setName(loadedObject.getName());
 			newObject.setY(loadedObject.getY());
 			newObject.setColor(loadedObject.getColor());
+			newObject.setEndpoints(loadedObject.getEndpoints());
 		}
 	}
 	
@@ -118,9 +120,32 @@ public class Persistancy {
 		}
 	}
 	
+	private ModelBox handleBoxByEndpoint(Endpoint endpoint) {
+		if(endpoint.getAppendant() != null) {
+			return endpoint.getAppendant();
+		}
+		for (ModelClass modelClass : this.modelManager.getClasses()) {
+			for (Endpoint classEndpoint : new ArrayList<Endpoint>(modelClass.getEndpoints())) {
+				if(classEndpoint.getUniqueID().equals(endpoint.getUniqueID())) {
+					modelClass.getEndpoints().remove(classEndpoint);
+					return modelClass;
+				}
+			}
+			for(ModelObject modelObject : modelClass.getModelObjects()) {
+				for (Endpoint objectEndpoint : new ArrayList<Endpoint>(modelObject.getEndpoints())) {
+					if(objectEndpoint.getUniqueID().equals(endpoint.getUniqueID())) {
+						modelObject.getEndpoints().remove(objectEndpoint);
+						return modelObject;
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
 	private void loadedRelationToModel(Relation loadedRelation) {
-		ModelBox loadedStartBox = loadedRelation.getStart().getAppendant();
-		ModelBox loadedEndBox = loadedRelation.getEnd().getAppendant();
+		ModelBox loadedStartBox = handleBoxByEndpoint(loadedRelation.getStart());
+		ModelBox loadedEndBox = handleBoxByEndpoint(loadedRelation.getEnd());
 		if(loadedStartBox == null || loadedEndBox == null) return;
 		ModelBox newStartBox = null;
 		ModelBox newEndBox = null;
@@ -131,7 +156,15 @@ public class Persistancy {
 		else if(loadedStartBox instanceof ModelObject && loadedEndBox instanceof ModelObject) {
 			for(ModelClass newModelClass : modelManager.getClasses()) {
 				newStartBox = newModelClass.getModelObject(loadedStartBox.getName());
+				if(newStartBox != null) {
+					break;
+				}
+			}
+			for(ModelClass newModelClass : modelManager.getClasses()) {
 				newEndBox = newModelClass.getModelObject(loadedEndBox.getName());
+				if(newEndBox != null) {
+					break;
+				}
 			}
 		}
 		

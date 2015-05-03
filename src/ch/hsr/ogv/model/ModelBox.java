@@ -34,7 +34,7 @@ public class ModelBox extends Observable {
 	protected List<Endpoint> endpoints = new ArrayList<Endpoint>();
 
 	// for un/marshaling only
-	public ModelBox(){
+	public ModelBox() {
 	}
 
 	public ModelBox(String name, Point3D coordinates, double width, double heigth, Color color) {

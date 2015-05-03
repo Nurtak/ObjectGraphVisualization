@@ -77,7 +77,7 @@ public class MessageBar {
 			try {
 				messageBar.setStyle(iconStyleDefault + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold;");
 			}
-			catch(ArrayIndexOutOfBoundsException aioobe) {
+			catch(Exception e) {
 			}
 			taskRunning.set(false);
 			return null;

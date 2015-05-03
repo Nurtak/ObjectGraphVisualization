@@ -27,7 +27,7 @@ public class ModelClass extends ModelBox {
 	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
 
 	// for marshaling only
-	public ModelClass(){
+	public ModelClass() {
 	}
 
 	public ModelClass(String name, Point3D coordinates, double width, double heigth, Color color) {

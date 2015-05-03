@@ -169,7 +169,6 @@ public class ContextMenuController extends Observable implements Observer {
 		createDependency = getMenuItem("Dependency", Resource.DEPENDENCY_GIF, relationMenu);
 		parent.getItems().add(relationMenu);
 		return relationMenu;
-
 	}
 
 	public void enableContextMenu(SubSceneAdapter subSceneAdapter) {
@@ -194,6 +193,7 @@ public class ContextMenuController extends Observable implements Observer {
 				if (modelBox instanceof ModelClass) {
 					// Class
 					enableAttributeSelected(false);
+					createObject.setDisable(((ModelClass) modelBox).getSuperClass() != null);
 					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				} else if ((modelBox instanceof ModelObject)) {
@@ -213,6 +213,7 @@ public class ContextMenuController extends Observable implements Observer {
 				if (modelBox instanceof ModelClass) {
 					// Class
 					enableAttributeSelected(false);
+					createObject.setDisable(((ModelClass) modelBox).getSuperClass() != null);
 					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				} else if ((modelBox instanceof ModelObject)) {
@@ -239,6 +240,7 @@ public class ContextMenuController extends Observable implements Observer {
 				hideAllContextMenus();
 				if (modelBox instanceof ModelClass) {
 					// Label on Class
+					createObject.setDisable(((ModelClass) modelBox).getSuperClass() != null);
 					enableAttributeSelected(true);
 					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
 					int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());

@@ -130,6 +130,7 @@ public class RootLayoutController implements Observer, Initializable {
 		// Show open file dialog
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
+			// MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
 			boolean success = persistancy.loadOGVData(file);
 			if(success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
@@ -158,6 +159,7 @@ public class RootLayoutController implements Observer, Initializable {
 		// Show open file dialog
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
+			// MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
 			boolean success = persistancy.loadXMIData(file);
 			if(success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
@@ -176,6 +178,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleSave() {
 		File file = UserPreferences.getSavedFile();
 		if (file != null) {
+			// MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
 			boolean success = persistancy.saveOGVData(file);
 			if(success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
@@ -212,6 +215,7 @@ public class RootLayoutController implements Observer, Initializable {
 				file = new File(file.getPath() + ".ogv");
 			}
 			UserPreferences.setSavedFilePath(file);
+			// MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
 			boolean success = persistancy.saveOGVData(file);
 			if(success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
@@ -220,6 +224,9 @@ public class RootLayoutController implements Observer, Initializable {
 			else {
 				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
+		}
+		else {
+			MessageBar.setText("Could not save data. No save file specified.", MessageLevel.ALERT);
 		}
 	}
 
