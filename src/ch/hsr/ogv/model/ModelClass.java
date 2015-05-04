@@ -211,10 +211,10 @@ public class ModelClass extends ModelBox {
 
 	public List<ModelClass> getSubClasses() {
 		ArrayList<ModelClass> subClassList = new ArrayList<ModelClass>();
-		for (Endpoint endpoint : this.getEndpoints()) {
-			if (endpoint.getType() == EndpointType.EMPTY_ARROW) {
+		for (Endpoint endpoint : getEndpoints()) {
+			if (endpoint.getType() == EndpointType.EMPTY_ARROW && endpoint.getFriend() != null) {
 				ModelBox modelBox = endpoint.getFriend().getAppendant();
-				if (modelBox instanceof ModelClass) {
+				if (modelBox != null && modelBox instanceof ModelClass) {
 					subClassList.add((ModelClass) modelBox);
 				}
 			}
@@ -222,13 +222,17 @@ public class ModelClass extends ModelBox {
 		return subClassList;
 	}
 
-	public ModelClass getSuperClass() {
-		for (Endpoint endpoint : this.getEndpoints()) {
-			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
-				return (ModelClass) endpoint.getAppendant();
+	public List<ModelClass> getSuperClasses() {
+		ArrayList<ModelClass> superClassList = new ArrayList<ModelClass>();
+		for (Endpoint endpoint : getEndpoints()) {
+			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW && endpoint != null) {
+				ModelBox modelBox = endpoint.getAppendant();
+				if (modelBox != null && modelBox instanceof ModelClass) {
+					superClassList.add((ModelClass) modelBox);
+				}
 			}
 		}
-		return null;
+		return superClassList;
 	}
 
 }

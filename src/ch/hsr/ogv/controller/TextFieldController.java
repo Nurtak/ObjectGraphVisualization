@@ -1,6 +1,7 @@
 package ch.hsr.ogv.controller;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,8 +23,8 @@ import ch.hsr.ogv.util.MultiplicityParser;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.ArrowLabel;
 import ch.hsr.ogv.view.MessageBar;
-import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.MessageBar.MessageLevel;
+import ch.hsr.ogv.view.PaneBox;
 
 /**
  * 
@@ -34,6 +35,12 @@ public class TextFieldController {
 
 	private final static Logger logger = LoggerFactory.getLogger(TextFieldController.class);
 
+	private final Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
+	
+	String escape(String str) {
+	    return SPECIAL_REGEX_CHARS.matcher(str).replaceAll("\\\\$0");
+	}
+	
 	public void enableTopTextInput(ModelBox modelBox, PaneBox paneBox, ModelViewConnector mvConnector) {
 		TextField topTextField = paneBox.getTopTextField();
 		
@@ -45,9 +52,9 @@ public class TextFieldController {
 				if (!newHasFocus) {
 					paneBox.allowTopTextInput(false);
 					if(modelBox instanceof ModelClass) {
-						if(topTextField.getText() != null && !topTextField.getText().toLowerCase().equals(modelBox.getName().toLowerCase())) {
+						if(topTextField.getText() != null && !topTextField.getText().isEmpty() && !topTextField.getText().toLowerCase().equals(modelBox.getName().toLowerCase())) {
 							String firstLetter = topTextField.getText().substring(0, 1);
-							String classNameToCompare = topTextField.getText().replaceFirst(firstLetter, firstLetter.toUpperCase());
+							String classNameToCompare = topTextField.getText().replaceFirst(escape(firstLetter), firstLetter.toUpperCase());
 							if(mvConnector.getModelManager().isClassNameTaken(classNameToCompare)) {
 								MessageBar.setText("Could not rename class \"" + modelBox.getName() + "\", a class \"" + classNameToCompare + "\" already exists.", MessageLevel.ALERT);
 								modelBox.setName(modelBox.getName());
@@ -62,7 +69,7 @@ public class TextFieldController {
 					}
 					else if(modelBox instanceof ModelObject) {
 						ModelObject modelObject = (ModelObject) modelBox;
-						if(topTextField.getText() != null && !topTextField.getText().equals(modelBox.getName())
+						if(topTextField.getText() != null && !topTextField.getText().isEmpty() && !topTextField.getText().equals(modelBox.getName())
 								&& mvConnector.getModelManager().isObjectNameTaken(modelObject.getModelClass(), topTextField.getText())) {
 							MessageBar.setText("Could not rename object \"" + modelBox.getName() + "\", an object \"" + topTextField.getText() + "\" already exists for this class.", MessageLevel.ALERT);
 							modelBox.setName(modelBox.getName());
@@ -227,7 +234,7 @@ public class TextFieldController {
 		});
 		
 		// start multiplicity
-		arrow.getLabelStartRight().addEventFilter(KeyEvent.KEY_TYPED, nonPointDigitFilter());
+		arrow.getLabelStartRight().addEventFilter(KeyEvent.KEY_TYPED, nonMultiplicityFilter());
 		arrow.getLabelStartRight().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
@@ -262,7 +269,7 @@ public class TextFieldController {
 		});
 
 		// end multiplicity
-		arrow.getLabelEndRight().addEventFilter(KeyEvent.KEY_TYPED, nonPointDigitFilter());
+		arrow.getLabelEndRight().addEventFilter(KeyEvent.KEY_TYPED, nonMultiplicityFilter());
 		arrow.getLabelEndRight().getArrowTextField().focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
@@ -318,25 +325,25 @@ public class TextFieldController {
 				if(ke.getCharacter().matches("[a-z0-9]")) {
 					return;
 				}
-				MessageBar.setText("Characters other than A-Z, a-z, 0-9 and underscore are not allowed.", MessageLevel.WARN);
-				ke.consume();
+				MessageBar.setText("Using characters other than A-Z, a-z, 0-9 and underscore is not recommended.", MessageLevel.WARN);
+				//ke.consume();
 			}
 		};
 	}
 	
-	public static EventHandler<KeyEvent> nonPointDigitFilter() {
+	public static EventHandler<KeyEvent> nonMultiplicityFilter() {
 		return new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent ke) {
-				if(ke.getCharacter().matches("[\\p{Cntrl}]")) { // control characters are ok
+				if(ke.getCharacter().equals("*") || ke.getCharacter().equals(".") || ke.getCharacter().equals(",")) {
 					return;
 				}
-				if(ke.getCharacter().equals("*") || ke.getCharacter().equals(".")) {
+				if(ke.getCharacter().matches("[\\p{Cntrl}]")) { // control characters are ok
 					return;
 				}
 				if(ke.getCharacter().matches("[0-9]")) {
 					return;
 				}
-				MessageBar.setText("Characters other than 0-9, '*' and '.' are not allowed.", MessageLevel.WARN);
+				MessageBar.setText("Characters other than 0-9, '*', ',' and '.' are not allowed.", MessageLevel.WARN);
 				ke.consume();
 			}
 		};
@@ -349,16 +356,14 @@ public class TextFieldController {
 		}
 		String firstLetter = newName.substring(0, 1);
 		if(firstLetter.equals("_")) { // beginning with underscore
-			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not begin with an underscore.", MessageLevel.ALERT);
-			return oldName;
+			MessageBar.setText("Beginning a classname with an underscore is not recommended.", MessageLevel.WARN);
 		}
 		if(firstLetter.matches("[0-9]")) { // beginning with digit
-			MessageBar.setText("Could not rename class \"" + oldName + "\", classname can not begin with a digit.", MessageLevel.ALERT);
-			return oldName;
+			MessageBar.setText("Beginning a classname with a digit is not recommended.", MessageLevel.WARN);
 		}
 		if(!firstLetter.toUpperCase().equals(firstLetter)) { // first letter uppercase
 			MessageBar.setText("First letter of new class name \"" + newName + "\", was set to uppercase.", MessageLevel.WARN);
-			newName = newName.replaceFirst(firstLetter, firstLetter.toUpperCase());
+			newName = newName.replaceFirst(escape(firstLetter), firstLetter.toUpperCase());
 		}
 		return newName;
 	}
@@ -378,8 +383,7 @@ public class TextFieldController {
 		}
 		String firstLetter = newName.substring(0, 1);
 		if(firstLetter.matches("[0-9]")) { // beginning with digit
-			MessageBar.setText("Could not rename attribute \"" + oldName + "\", attribute name can not begin with a digit.", MessageLevel.ALERT);
-			return oldName;
+			MessageBar.setText("Beginning an attribute with a digit is not recommended.", MessageLevel.WARN);
 		}
 		return newName;
 	}
@@ -394,8 +398,7 @@ public class TextFieldController {
 		}
 		String firstLetter = newName.substring(0, 1);
 		if(firstLetter.matches("[0-9]")) { // beginning with digit
-			MessageBar.setText("Could not set role \"" + oldName + "\", role can not begin with a digit.", MessageLevel.ALERT);
-			return oldName;
+			MessageBar.setText("Beginning a role with a digit is not recommended.", MessageLevel.WARN);
 		}
 		return newName;
 	}
@@ -410,7 +413,7 @@ public class TextFieldController {
 		}
 		newMultiplicity = MultiplicityParser.getParsedMultiplicity(newMultiplicity);
 		if(newMultiplicity == null) {
-			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be of in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N.", MessageLevel.ALERT);
+			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be of in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N. (Comma separation possible)", MessageLevel.ALERT);
 			return oldMultiplicity;
 		}
 		return newMultiplicity;

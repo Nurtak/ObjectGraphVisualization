@@ -8,16 +8,19 @@ import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author Adrian Rieser
  *
  */
+@XmlType(propOrder = { "subModelObject", "attributeValues" })
 public class ModelObject extends ModelBox {
 
 	private Map<Attribute, String> attributeValues = new HashMap<Attribute, String>();
 	private ModelClass modelClass;
+	private ModelObject subModelObject; // for generalization
 
 	public static volatile AtomicInteger modelObjectCounter = new AtomicInteger(0);
 
@@ -88,11 +91,21 @@ public class ModelObject extends ModelBox {
 		return deleted;
 	}
 
+	public ModelObject getSubModelObject() {
+		return this.subModelObject;
+	}
+	
+	public void setSubModelObject(ModelObject modelObject) {
+		if(!this.equals(modelObject)) {
+			this.subModelObject = modelObject;
+		}
+	}
+	
 	@XmlTransient
 	public ModelClass getModelClass() {
 		return modelClass;
 	}
-
+	
 	public void setModelClass(ModelClass modelClass) {
 		this.modelClass = modelClass;
 	}

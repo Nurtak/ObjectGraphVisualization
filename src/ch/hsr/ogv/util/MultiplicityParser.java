@@ -59,7 +59,10 @@ public class MultiplicityParser {
 	
 	public static String getParsedMultiplicity(String multiString) {
 		if(isNForm(multiString)) {
-			return multiString.replaceAll("^0+", ""); // remove leading zeros
+			if(multiString.length() > 1) {
+				multiString = multiString.replaceAll("^0+", ""); // remove leading zeros
+			}
+			return multiString;
 		}
 		String n = getNInNMForm(multiString);
 		String m = getMInNMForm(multiString);
@@ -72,7 +75,10 @@ public class MultiplicityParser {
 	public static String getNInNMForm(String multiString) {
 		if(isNMForm(multiString)) {
 			String n = multiString.split("[..]")[0];
-			return n.replaceAll("^0+", ""); // remove leading zeros
+			if(n.length() > 1) {
+				n = n.replaceAll("^0+", ""); // remove leading zeros
+			}
+			return n;
 		}
 		return null;
 	}
@@ -80,7 +86,10 @@ public class MultiplicityParser {
 	public static String getMInNMForm(String multiString) {
 		if(isNMForm(multiString)) {
 			String m = multiString.split("[..]")[2];
-			return m.replaceAll("^0+", ""); // remove leading zeros
+			if(m.length() > 1) {
+				m = m.replaceAll("^0+", ""); // remove leading zeros
+			}
+			return m;
 		}
 		return null;
 	}

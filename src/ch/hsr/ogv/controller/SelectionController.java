@@ -119,7 +119,7 @@ public class SelectionController extends Observable implements Observer {
 				paneBox.setAllLabelSelected(false);
 			}
 		});
-
+		
 		paneBox.getTopLabel().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
 				paneBox.setLabelSelected(paneBox.getTopLabel(), true);
@@ -129,9 +129,8 @@ public class SelectionController extends Observable implements Observer {
 				paneBox.allowTopTextInput(true);
 			}
 		});
-
 	}
-	
+
 	private void selectOnMouseClicked(ArrayList<Label> centerLabels, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		for (Label centerLabel : centerLabels) {
 			centerLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {

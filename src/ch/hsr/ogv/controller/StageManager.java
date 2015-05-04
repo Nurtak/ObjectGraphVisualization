@@ -28,6 +28,7 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator;
@@ -220,6 +221,21 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
 
+	private void addGenSubObjects(ModelClass superModelClass, ModelClass subModelClass, Relation relation) {
+		PaneBox superClassPaneBox = this.mvConnector.getPaneBox(superModelClass);
+		for(ModelObject subModelObject : subModelClass.getModelObjects()) {
+			PaneBox superObjectPaneBox = this.mvConnector.handleCreateNewObject(superClassPaneBox);
+			superObjectPaneBox.allowTopTextInput(false);
+			ModelBox superModelBox = this.mvConnector.getModelBox(superObjectPaneBox);
+			if(superModelBox != null && superModelBox instanceof ModelObject) {
+				ModelObject superModelObject = (ModelObject) superModelBox;
+				superModelObject.setSubModelObject(subModelObject);
+				superModelObject.setName("");
+				adaptBoxSettings(superModelObject);
+			}
+		}
+	}
+	
 	private void addRelationToSubScene(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
@@ -233,6 +249,9 @@ public class StageManager implements Observer {
 			addToSubScene(arrow.getSelection());
 			this.mvConnector.putArrows(relation, arrow);
 			this.contextMenuController.enableContextMenu(arrow, relation);
+			if(relation.getType().equals(RelationType.GENERALIZATION) && startModelBox instanceof ModelClass && endModelBox instanceof ModelClass) {
+				addGenSubObjects((ModelClass) endModelBox, (ModelClass) startModelBox, relation);
+			}
 		}
 	}
 
@@ -396,7 +415,7 @@ public class StageManager implements Observer {
 			}
 		}
 	}
-
+	
 	private void adaptBoxCoordinates(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null) {
@@ -405,8 +424,26 @@ public class StageManager implements Observer {
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				modelObject.setX(modelClass.getX());
-				modelObject.setZ(modelClass.getZ());
+				if(modelObject.getSubModelObject() == null) {
+					modelObject.setX(modelClass.getX());
+					modelObject.setZ(modelClass.getZ());
+				}
+				else {
+					ModelObject subModelObject = modelObject.getSubModelObject();
+					modelObject.setX(subModelObject.getModelClass().getX());
+					modelObject.setZ(subModelObject.getModelClass().getZ() + subModelObject.getModelClass().getHeight());
+				}
+			}
+			if(!modelClass.getSuperClasses().isEmpty()) {
+				for(ModelClass superModelClass : modelClass.getSuperClasses()) {
+					for(ModelObject modelObject : superModelClass.getModelObjects()) {
+						ModelObject subModelObject = modelObject.getSubModelObject();
+						if(subModelObject != null) {
+							modelObject.setX(subModelObject.getModelClass().getX());
+							modelObject.setZ(subModelObject.getModelClass().getZ() + subModelObject.getModelClass().getHeight());
+						}
+					}
+				}
 			}
 		}
 	}

@@ -150,7 +150,7 @@ public class ModelManager extends Observable {
 	public boolean isRoleNameTaken(ModelClass modelClass, String name) {
 		for (Endpoint endpoint : modelClass.getEndpoints()) {
 			Endpoint friend = endpoint.getFriend();
-			if (name != null && !name.isEmpty() && name.equals(friend.getRoleName())) {
+			if (name != null && !name.isEmpty() && friend != null && name.equals(friend.getRoleName())) {
 				return true;
 			}
 		}
