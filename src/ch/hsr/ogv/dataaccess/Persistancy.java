@@ -75,7 +75,9 @@ public class Persistancy {
 			newClass.setEndpoints(loadedClass.getEndpoints());
 			
 			for(ModelObject loadedObject : loadedClass.getModelObjects()) {
-				loadedObjectToModel(newClass, loadedObject);
+				if(!loadedObject.getIsSuperObject()) {
+					loadedObjectToModel(newClass, loadedObject);
+				}
 			}
 			
 			for(Attribute loadedAttribute : loadedClass.getAttributes()) {
@@ -92,6 +94,8 @@ public class Persistancy {
 			newObject.setY(loadedObject.getY());
 			newObject.setColor(loadedObject.getColor());
 			newObject.setEndpoints(loadedObject.getEndpoints());
+			//newObject.setIsSuperObject(loadedObject.getIsSuperObject());
+			newObject.setSuperObjects(loadedObject.getSuperObjects());
 		}
 	}
 	

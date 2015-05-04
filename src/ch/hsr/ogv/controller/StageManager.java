@@ -221,8 +221,22 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
 
-	private void addGenSubObjects(ModelClass superModelClass, ModelClass subModelClass, Relation relation) {
-		// TODO
+	private void addSuperObjects(ModelClass superModelClass, ModelClass subModelClass) {
+		for(ModelObject subModelObject : subModelClass.getModelObjects()) {
+			PaneBox superClassPaneBox = this.mvConnector.getPaneBox(superModelClass);
+			if(superClassPaneBox != null) {
+				PaneBox superObjectPaneBox = this.mvConnector.handleCreateNewObject(superClassPaneBox);
+				superObjectPaneBox.allowTopTextInput(false);
+				ModelBox superModelBox = this.mvConnector.getModelBox(superObjectPaneBox);
+				if(superModelBox != null && superModelBox instanceof ModelObject) {
+					ModelObject superModelObject = (ModelObject) superModelBox;
+					superModelObject.setIsSuperObject(true);
+					subModelObject.getSuperObjects().add(superModelObject);
+					superModelBox.setName("");
+					adaptBoxSettings(subModelClass);
+				}
+			}
+		}
 	}
 	
 	private void addRelationToSubScene(Relation relation) {
@@ -239,7 +253,7 @@ public class StageManager implements Observer {
 			this.mvConnector.putArrows(relation, arrow);
 			this.contextMenuController.enableContextMenu(arrow, relation);
 			if(relation.getType().equals(RelationType.GENERALIZATION) && startModelBox instanceof ModelClass && endModelBox instanceof ModelClass) {
-				addGenSubObjects((ModelClass) endModelBox, (ModelClass) startModelBox, relation);
+				addSuperObjects((ModelClass) endModelBox, (ModelClass) startModelBox);
 			}
 		}
 	}
@@ -275,10 +289,12 @@ public class StageManager implements Observer {
 			ModelClass modelClass = modelObject.getModelClass();
 			PaneBox paneClassBox = this.mvConnector.getPaneBox(modelClass);
 			if (paneClassBox != null) {
-				changedBox.setMinWidth(paneClassBox.getMinWidth());
+				if(!modelObject.getIsSuperObject()) {
+					changedBox.setMinWidth(paneClassBox.getMinWidth());
+				}
 				changedBox.setMinHeight(paneClassBox.getMinHeight());
 			}
-			adaptCenterFields((ModelObject) modelBox);
+			adaptCenterFields(modelObject);
 		}
 		adaptBoxTopField(modelBox);
 		adaptBoxColor(modelBox);
@@ -349,7 +365,9 @@ public class StageManager implements Observer {
 			ModelObject modelObject = (ModelObject) modelBox;
 			changedBox.getTopTextField().setText((modelObject.getName()));
 			changedBox.getTopLabel().setText(modelObject.getName() + " : " + modelObject.getModelClass().getName());
-			modelBox.setWidth(modelObject.getModelClass().getWidth());
+			if(!modelObject.getIsSuperObject()) {
+				modelBox.setWidth(modelObject.getModelClass().getWidth());
+			}
 		} else if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
 
@@ -374,8 +392,14 @@ public class StageManager implements Observer {
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				modelObject.setWidth(modelClass.getWidth());
+				if(!modelObject.getIsSuperObject()) {
+					modelObject.setWidth(modelClass.getWidth());
+				}
+				for(ModelObject superModelObject : modelObject.getSuperObjects()) {
+					superModelObject.setWidth(modelClass.getWidth());
+				}
 			}
+			
 		}
 	}
 
@@ -387,7 +411,11 @@ public class StageManager implements Observer {
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
+				double oldObjectHeight = modelObject.getHeight();
 				modelObject.setHeight(modelClass.getHeight());
+				if(modelObject.getIsSuperObject()) {
+					modelObject.setZ(modelObject.getZ() + modelClass.getHeight() / 2 - oldObjectHeight / 2);
+				}
 			}
 		}
 	}
@@ -413,8 +441,25 @@ public class StageManager implements Observer {
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				modelObject.setX(modelClass.getX());
-				modelObject.setZ(modelClass.getZ());
+				if (!modelObject.getIsSuperObject()) {
+					modelObject.setX(modelClass.getX());
+					modelObject.setZ(modelClass.getZ());
+				}
+				for (ModelObject superModelObject : modelObject.getSuperObjects()) {
+					superModelObject.setX(modelClass.getX());
+					superModelObject.setY(modelObject.getY());
+					superModelObject.setZ(modelClass.getZ() + modelClass.getHeight() / 2 + superModelObject.getHeight() / 2);
+				}
+			}
+		}
+		else if (modelBox instanceof ModelObject) { 
+			ModelObject modelObject = (ModelObject) modelBox;
+			ModelObject subObject = modelObject.getSubObject();
+			if(subObject != null) {
+				subObject.setY(modelObject.getY());
+			}
+			for (ModelObject superObjects : modelObject.getSuperObjects()) {
+				superObjects.setY(modelObject.getY());
 			}
 		}
 	}
