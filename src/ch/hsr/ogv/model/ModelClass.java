@@ -225,8 +225,8 @@ public class ModelClass extends ModelBox {
 	public List<ModelClass> getSuperClasses() {
 		ArrayList<ModelClass> superClassList = new ArrayList<ModelClass>();
 		for (Endpoint endpoint : getEndpoints()) {
-			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW && endpoint != null) {
-				ModelBox modelBox = endpoint.getAppendant();
+			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW && endpoint.getFriend() != null) {
+				ModelBox modelBox = endpoint.getFriend().getAppendant();
 				if (modelBox != null && modelBox instanceof ModelClass) {
 					superClassList.add((ModelClass) modelBox);
 				}

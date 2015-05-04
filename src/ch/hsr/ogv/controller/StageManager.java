@@ -222,18 +222,7 @@ public class StageManager implements Observer {
 	}
 
 	private void addGenSubObjects(ModelClass superModelClass, ModelClass subModelClass, Relation relation) {
-		PaneBox superClassPaneBox = this.mvConnector.getPaneBox(superModelClass);
-		for(ModelObject subModelObject : subModelClass.getModelObjects()) {
-			PaneBox superObjectPaneBox = this.mvConnector.handleCreateNewObject(superClassPaneBox);
-			superObjectPaneBox.allowTopTextInput(false);
-			ModelBox superModelBox = this.mvConnector.getModelBox(superObjectPaneBox);
-			if(superModelBox != null && superModelBox instanceof ModelObject) {
-				ModelObject superModelObject = (ModelObject) superModelBox;
-				superModelObject.setSubModelObject(subModelObject);
-				superModelObject.setName("");
-				adaptBoxSettings(superModelObject);
-			}
-		}
+		// TODO
 	}
 	
 	private void addRelationToSubScene(Relation relation) {
@@ -424,26 +413,8 @@ public class StageManager implements Observer {
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				if(modelObject.getSubModelObject() == null) {
-					modelObject.setX(modelClass.getX());
-					modelObject.setZ(modelClass.getZ());
-				}
-				else {
-					ModelObject subModelObject = modelObject.getSubModelObject();
-					modelObject.setX(subModelObject.getModelClass().getX());
-					modelObject.setZ(subModelObject.getModelClass().getZ() + subModelObject.getModelClass().getHeight());
-				}
-			}
-			if(!modelClass.getSuperClasses().isEmpty()) {
-				for(ModelClass superModelClass : modelClass.getSuperClasses()) {
-					for(ModelObject modelObject : superModelClass.getModelObjects()) {
-						ModelObject subModelObject = modelObject.getSubModelObject();
-						if(subModelObject != null) {
-							modelObject.setX(subModelObject.getModelClass().getX());
-							modelObject.setZ(subModelObject.getModelClass().getZ() + subModelObject.getModelClass().getHeight());
-						}
-					}
-				}
+				modelObject.setX(modelClass.getX());
+				modelObject.setZ(modelClass.getZ());
 			}
 		}
 	}
