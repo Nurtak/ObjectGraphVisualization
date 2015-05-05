@@ -1,6 +1,7 @@
 package ch.hsr.ogv.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -221,19 +222,22 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
 
-	private void addSuperObjects(ModelClass superModelClass, ModelClass subModelClass) {
+	private void addSuperObjects(List<ModelClass> superModelClasses, ModelClass subModelClass) {
 		for(ModelObject subModelObject : subModelClass.getModelObjects()) {
-			PaneBox superClassPaneBox = this.mvConnector.getPaneBox(superModelClass);
-			if(superClassPaneBox != null) {
-				PaneBox superObjectPaneBox = this.mvConnector.handleCreateNewObject(superClassPaneBox);
-				superObjectPaneBox.allowTopTextInput(false);
-				ModelBox superModelBox = this.mvConnector.getModelBox(superObjectPaneBox);
-				if(superModelBox != null && superModelBox instanceof ModelObject) {
-					ModelObject superModelObject = (ModelObject) superModelBox;
-					superModelObject.setIsSuperObject(true);
-					subModelObject.getSuperObjects().add(superModelObject);
-					superModelBox.setName("");
-					adaptBoxSettings(subModelClass);
+			if(subModelObject.getIsSuperObject()) continue;
+			for(ModelClass superModelClass : superModelClasses) {
+				PaneBox superClassPaneBox = this.mvConnector.getPaneBox(superModelClass);
+				if(superClassPaneBox != null) {
+					PaneBox superObjectPaneBox = this.mvConnector.handleCreateNewObject(superClassPaneBox);
+					superObjectPaneBox.allowTopTextInput(false);
+					ModelBox superModelBox = this.mvConnector.getModelBox(superObjectPaneBox);
+					if(superModelBox != null && superModelBox instanceof ModelObject && !superModelBox.equals(subModelObject)) {
+						ModelObject superModelObject = (ModelObject) superModelBox;
+						superModelObject.setIsSuperObject(true);
+						subModelObject.getSuperObjects().add(superModelObject);
+						superModelBox.setName("");
+						adaptBoxSettings(subModelClass);
+					}
 				}
 			}
 		}
@@ -253,7 +257,12 @@ public class StageManager implements Observer {
 			this.mvConnector.putArrows(relation, arrow);
 			this.contextMenuController.enableContextMenu(arrow, relation);
 			if(relation.getType().equals(RelationType.GENERALIZATION) && startModelBox instanceof ModelClass && endModelBox instanceof ModelClass) {
-				addSuperObjects((ModelClass) endModelBox, (ModelClass) startModelBox);
+				ModelClass startClass = (ModelClass) startModelBox;
+				List<ModelClass> superClasses = startClass.getSuperClasses();
+				addSuperObjects(superClasses, startClass);
+				for(ModelClass subClass : startClass.getSubClasses()) {
+					addSuperObjects(superClasses, subClass);
+				}
 			}
 		}
 	}
@@ -305,24 +314,22 @@ public class StageManager implements Observer {
 
 	private void adaptArrowColor(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
-		if (changedArrow != null) {
-			changedArrow.setColor(relation.getColor());
-		}
+		if (changedArrow == null) return;
+		changedArrow.setColor(relation.getColor());
 	}
 
 	private void adaptArrowDirection(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
-		if (changedArrow != null) {
-			ModelBox startModelBox = relation.getStart().getAppendant();
-			ModelBox endModelBox = relation.getEnd().getAppendant();
-			PaneBox startPaneBox = this.mvConnector.getPaneBox(startModelBox);
-			PaneBox endPaneBox = this.mvConnector.getPaneBox(endModelBox);
+		if (changedArrow == null) return;
+		ModelBox startModelBox = relation.getStart().getAppendant();
+		ModelBox endModelBox = relation.getEnd().getAppendant();
+		PaneBox startPaneBox = this.mvConnector.getPaneBox(startModelBox);
+		PaneBox endPaneBox = this.mvConnector.getPaneBox(endModelBox);
 
-			changedArrow.setType(relation.getType());
-			changedArrow.setPointsBasedOnBoxes(startPaneBox, endPaneBox);
-			changedArrow.drawArrow();
-			this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
-		}
+		changedArrow.setType(relation.getType());
+		changedArrow.setPointsBasedOnBoxes(startPaneBox, endPaneBox);
+		changedArrow.drawArrow();
+		this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
 	}
 	
 	private void adaptArrowLabel(Relation relation) {
@@ -368,6 +375,9 @@ public class StageManager implements Observer {
 			if(!modelObject.getIsSuperObject()) {
 				modelBox.setWidth(modelObject.getModelClass().getWidth());
 			}
+//			else {
+//				modelBox.setWidth(modelObject.getSubObject().getModelClass().getWidth());
+//			}
 		} else if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
 
@@ -386,10 +396,9 @@ public class StageManager implements Observer {
 
 	private void adaptBoxWidth(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox != null) {
-			changedBox.setWidth(modelBox.getWidth());
-		}
+		if (changedBox == null) return;
 		if (modelBox instanceof ModelClass) {
+			changedBox.setWidth(modelBox.getWidth());
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				if(!modelObject.getIsSuperObject()) {
@@ -399,7 +408,9 @@ public class StageManager implements Observer {
 					superModelObject.setWidth(modelClass.getWidth());
 				}
 			}
-			
+		}
+		else if(modelBox instanceof ModelObject) {
+			changedBox.setWidth(modelBox.getWidth());
 		}
 	}
 
@@ -411,10 +422,15 @@ public class StageManager implements Observer {
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				double oldObjectHeight = modelObject.getHeight();
 				modelObject.setHeight(modelClass.getHeight());
-				if(modelObject.getIsSuperObject()) {
-					modelObject.setZ(modelObject.getZ() + modelClass.getHeight() / 2 - oldObjectHeight / 2);
+			}
+			for(ModelClass subClass : modelClass.getSubClasses()) {
+				for(ModelObject subObject : subClass.getModelObjects()) {
+					double cascadingHeight = 0.0;
+					for(ModelObject superModelObject : subObject.getSuperObjects()) {
+						superModelObject.setZ(subClass.getZ() + subClass.getHeight() / 2 + cascadingHeight + superModelObject.getHeight() / 2);
+						cascadingHeight += superModelObject.getHeight();
+					}
 				}
 			}
 		}
@@ -435,29 +451,31 @@ public class StageManager implements Observer {
 	
 	private void adaptBoxCoordinates(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox != null) {
-			changedBox.setTranslateXYZ(modelBox.getCoordinates());
-		}
+		if (changedBox == null) return;
 		if (modelBox instanceof ModelClass) {
+			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				if (!modelObject.getIsSuperObject()) {
 					modelObject.setX(modelClass.getX());
 					modelObject.setZ(modelClass.getZ());
 				}
+				double cascadingHeight = 0.0;
 				for (ModelObject superModelObject : modelObject.getSuperObjects()) {
 					superModelObject.setX(modelClass.getX());
 					superModelObject.setY(modelObject.getY());
-					superModelObject.setZ(modelClass.getZ() + modelClass.getHeight() / 2 + superModelObject.getHeight() / 2);
+					superModelObject.setZ(modelClass.getZ() + modelClass.getHeight() / 2  + cascadingHeight + superModelObject.getHeight() / 2);
+					cascadingHeight += superModelObject.getHeight();
 				}
 			}
 		}
-		else if (modelBox instanceof ModelObject) { 
+		else if (modelBox instanceof ModelObject) {
+			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelObject modelObject = (ModelObject) modelBox;
-			ModelObject subObject = modelObject.getSubObject();
-			if(subObject != null) {
-				subObject.setY(modelObject.getY());
-			}
+//				ModelObject subObject = modelObject.getSubObject();
+//				if(subObject != null) {
+//					subObject.setY(modelObject.getY());
+//				}
 			for (ModelObject superObjects : modelObject.getSuperObjects()) {
 				superObjects.setY(modelObject.getY());
 			}
