@@ -120,7 +120,7 @@ public class ContextMenuController extends Observable implements Observer {
 		classCM = new ContextMenu();
 		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF, classCM);
 		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF, classCM);
-		getClassRelationMenu("Create Relation", Resource.RELATION_GIF, classCM);
+		//getClassRelationMenu("Create Relation", Resource.RELATION_GIF, classCM);
 		addAttribute = getMenuItem("Add Attribute", Resource.ADD_ATTR_GIF, classCM);
 		classCM.getItems().add(new SeparatorMenuItem());
 		renameAttribute = getMenuItem("Rename Attribute", Resource.RENAME_ATTR_GIF, classCM);
@@ -404,6 +404,7 @@ public class ContextMenuController extends Observable implements Observer {
 		deleteClass.setOnAction((ActionEvent e) -> {
 			this.mvConnector.handleDelete(selected);
 		});
+		/**
 		createUndirectedAssociation.setOnAction((ActionEvent e) -> {
 			if(selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
@@ -457,7 +458,7 @@ public class ContextMenuController extends Observable implements Observer {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DEPENDENCY);
 			}
-		});
+		});**/
 
 		// Object
 		renameObject.setOnAction((ActionEvent e) -> {

@@ -2,9 +2,6 @@ package ch.hsr.ogv.view;
 
 import java.util.ArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
@@ -27,8 +24,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import jfxtras.labs.util.Util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
+import ch.hsr.ogv.util.TextUtil;
 
 /**
  * 
@@ -36,101 +38,101 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
  *
  */
 public class PaneBox implements Selectable {
-	
+
 	private final static Logger logger = LoggerFactory.getLogger(PaneBox.class);
-	
+
 	public final static int CLASSBOX_DEPTH = 10;
 	public final static int OBJECTBOX_DEPTH = 20;
 	public final static int INIT_DEPTH = 10;
 
 	public final static Color DEFAULT_COLOR = Color.CORNSILK;
+
+	public final static double MIN_WIDTH = 100.0;
+	public final static double MIN_HEIGHT = 100.0;
+
+	public final static double MAX_WIDTH = Double.MAX_VALUE; // was at 464 before
+	public final static double MAX_HEIGHT = Double.MAX_VALUE;
 	
-	public final static int MIN_WIDTH = 100;
-	public final static int MIN_HEIGHT = 100;
-	
-	public final static int MAX_WIDTH = 495;
-	public final static int MAX_HEIGHT = 495;
-	
+	public final static double BASE_HEIGHT = 72.0; // required min height with one centerlabel (experience value)
+	private final static double CENTER_LABEL_HEIGHT = 28.0;
+	public final static int MAX_CENTER_LABELS = Integer.MAX_VALUE; // was at 15 before
+
 	private Group paneBox = new Group();
 	private BoxSelection selection = null;
 	private BorderPane borderPane = null;
 
 	private Label topLabel = null;
 	private TextField topTextField = null;
-	
+
 	private ArrayList<Label> centerLabels = new ArrayList<Label>();
 	private ArrayList<TextField> centerTextFields = new ArrayList<TextField>();
-	
+
+	private volatile Label selectedLabel = null;
+
 	private volatile boolean showCenterGrid = false;
-	
+
 	private Color color;
 	private Cuboid box;
-	
+
 	public Group get() {
 		return this.paneBox;
 	}
-	
+
 	public Cuboid getBox() {
 		return this.box;
 	}
 
-	public BoxSelection getSelection() {
-		return this.selection;
-	}
-	
 	public Color getColor() {
 		return this.color;
 	}
-	
+
 	public void setColor(Color color) {
 		this.color = color;
 		this.borderPane.setStyle(getPaneStyle());
 		this.box.setColor(color);
 	}
-	
+
 	public PaneBox() {
 		this(DEFAULT_COLOR);
 	}
-	
+
 	public PaneBox(Color color) {
 		initLayout();
-        this.borderPane.setCache(true);
-        this.borderPane.setCacheHint(CacheHint.SCALE_AND_ROTATE);
-        this.borderPane.setDepthTest(DepthTest.ENABLE);
-        
-        // rotate the pane correctly
-        this.borderPane.getTransforms().add(new Rotate(180, Rotate.Y_AXIS));
-        this.borderPane.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
-        
-        // position the pane so, that the center is at the scene's origin (0, 0, 0)
-        this.borderPane.translateXProperty().bind(this.borderPane.widthProperty().divide(2));
-        this.borderPane.translateZProperty().bind(this.borderPane.heightProperty().divide(2));
-        
-        // build the box that stays beneath the borderPane
-        buildBox();
-        
-        // create the selection objects that stays with this box
-        this.selection = new BoxSelection(getBox());
-        this.selection.setVisible(false);
-        
-        //this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection.getNode());
-        this.paneBox.getChildren().addAll(this.borderPane, this.box);
-        
-        // position the whole group so, that the center is at scene's origin (0, 0, 0)
-        setTranslateY(INIT_DEPTH / 2);
-        setColor(color);
+		this.borderPane.setCache(true);
+		this.borderPane.setCacheHint(CacheHint.SCALE_AND_ROTATE);
+		this.borderPane.setDepthTest(DepthTest.ENABLE);
+
+		// rotate the pane correctly
+		this.borderPane.getTransforms().add(new Rotate(180, Rotate.Y_AXIS));
+		this.borderPane.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
+
+		// position the pane so, that the center is at the scene's origin (0, 0, 0)
+		this.borderPane.translateXProperty().bind(this.borderPane.widthProperty().divide(2));
+		this.borderPane.translateZProperty().bind(this.borderPane.heightProperty().divide(2));
+
+		// build the box that stays beneath the borderPane
+		buildBox();
+
+		// create the selection objects that stays with this box
+		this.selection = new BoxSelection(getBox());
+		this.selection.setVisible(false);
+
+		// this.paneBoxSelection.getChildren().addAll(this.borderPane, this.box.getNode(), this.selection.getNode());
+		this.paneBox.getChildren().addAll(this.borderPane, this.box);
+
+		// position the whole group so, that the center is at scene's origin (0, 0, 0)
+		setTranslateY(INIT_DEPTH / 2);
+		setColor(color);
 	}
-	
+
 	private String getPaneStyle() {
-		return "-fx-background-color: " + Util.colorToCssColor(getColor()) + ";\n"
-		+ "-fx-border-color: black;\n"
-		+ "-fx-border-width: 2;";
+		return "-fx-background-color: " + Util.colorToCssColor(getColor()) + ";\n" + "-fx-border-color: black;\n" + "-fx-border-width: 2;";
 	}
-	
+
 	private void initLayout() {
 		this.borderPane = loadBorderPane();
-        this.topTextField = loadTopTextField();
-
+		this.topTextField = loadTopTextField();
+		//this.topTextField.setContextMenu(new ContextMenu()); // overrides the bugged default contextmenu
 		Node topNode = this.borderPane.getTop();
 		if ((topNode instanceof HBox)) {
 			HBox topHBox = (HBox) topNode;
@@ -142,46 +144,58 @@ public class PaneBox implements Selectable {
 			HBox.setMargin(this.topLabel, new Insets(-1, -1, 0, -1));
 			HBox.setHgrow(this.topLabel, Priority.ALWAYS);
 		}
-		
-		GridPane centerGridPane = getCenter();
-		if(centerGridPane != null) {
-			for(Node rowNode : centerGridPane.getChildren()) {
-				if(rowNode instanceof Label) {
-					Label centerLabel = (Label) rowNode;
-					TextField centerTextField = loadCenterTextField();
-					centerTextField.setText(centerLabel.getText());
-					this.centerLabels.add(centerLabel);
-					this.centerTextFields.add(centerTextField);
-				}
-			}
-		}
+
 	}
-	
+
 	private BorderPane loadBorderPane() {
 		Object loadedPreset = FXMLResourceUtil.loadPreset(Resource.PANEPRESET_FXML); // load pane preset from fxml file
-		if(loadedPreset != null && loadedPreset instanceof BorderPane) {
+		if (loadedPreset != null && loadedPreset instanceof BorderPane) {
 			return (BorderPane) loadedPreset;
 		}
 		return new BorderPane();
 	}
-	
-	//TODO Move the loaders to code, to improve performance!
+
+	// TODO Move the loaders to code, to improve performance!
 	private TextField loadTopTextField() {
 		Object loadedPreset = FXMLResourceUtil.loadPreset(Resource.TOPTEXTFIELD_FXML); // load top textfield preset from fxml file
-		if(loadedPreset != null && loadedPreset instanceof TextField) {
+		if (loadedPreset != null && loadedPreset instanceof TextField) {
 			return (TextField) loadedPreset;
 		}
 		return new TextField();
 	}
 	
+	public void createCenterField() {
+		Label centerLabel = new Label();
+		centerLabel.setCacheHint(CacheHint.SCALE_AND_ROTATE);
+		centerLabel.setDepthTest(DepthTest.ENABLE);
+		centerLabel.setText("field" + getCenter().getChildren().size() + 1);
+		HBox.setHgrow(centerLabel, Priority.ALWAYS);
+		centerLabel.setMaxWidth(Double.MAX_VALUE);
+		centerLabel.setPrefWidth(Double.MAX_VALUE);
+		centerLabel.setWrapText(false);
+		centerLabel.setPadding(new Insets(0, 5, 0, 5));
+		centerLabel.setMinHeight(28);
+		centerLabel.setStyle("-fx-font-size: 16;");
+		
+		TextField centerTextField = loadCenterTextField();
+		centerTextField.setText(centerLabel.getText());
+		//centerTextField.setContextMenu(new ContextMenu()); // overrides the bugged default contextmenu
+		this.centerLabels.add(centerLabel);
+		this.centerTextFields.add(centerTextField);
+		GridPane centerGridPane = getCenter();
+		if (centerGridPane != null) {
+			centerGridPane.add(centerLabel, 0, getCenter().getChildren().size());
+		}
+	}
+
 	private TextField loadCenterTextField() {
 		Object loadedPreset = FXMLResourceUtil.loadPreset(Resource.CENTERTEXTFIELD_FXML); // load center textfield preset from fxml file
-		if(loadedPreset != null && loadedPreset instanceof TextField) {
+		if (loadedPreset != null && loadedPreset instanceof TextField) {
 			return (TextField) loadedPreset;
 		}
 		return new TextField();
 	}
-		
+
 	private void buildBox() {
 		this.box = new Cuboid(INIT_DEPTH);
 		this.box.setDrawTopFace(false);
@@ -192,38 +206,60 @@ public class PaneBox implements Selectable {
 		this.box.translateZProperty().bind(this.borderPane.translateZProperty().subtract(this.borderPane.heightProperty().divide(2)));
 		this.box.translateYProperty().bind(this.borderPane.translateYProperty().subtract(INIT_DEPTH / 2));
 	}
-	
+
 	public TextField getTopTextField() {
 		return this.topTextField;
 	}
-	
+
 	public Label getTopLabel() {
 		return this.topLabel;
 	}
-	
-	private void swapTop(Node labelOrField) {
+
+	public ArrayList<Label> getCenterLabels() {
+		return this.centerLabels;
+	}
+
+	public ArrayList<TextField> getCenterTextFields() {
+		return this.centerTextFields;
+	}
+
+	private void swapTopField(Node labelOrTextField) {
 		Node topNode = this.borderPane.getTop();
-		if ((topNode instanceof HBox)) {
+		if (topNode instanceof HBox) {
 			HBox topHBox = (HBox) topNode;
 			topHBox.getChildren().clear();
-			topHBox.getChildren().add(labelOrField);
+			topHBox.getChildren().add(labelOrTextField);
 		}
 	}
-	
+
+	private void swapCenterField(Node labelOrField, int rowIndex) {
+		GridPane centerGridPane = getCenter();
+		if (centerGridPane != null) {
+			try {
+				centerGridPane.getChildren().set(rowIndex, labelOrField);
+				GridPane.setRowIndex(labelOrField, rowIndex);
+			} catch (IndexOutOfBoundsException ioobe) {
+				logger.debug("Swapping center field failed. IndexOutOfBoundsException: " + ioobe.getMessage());
+			}
+		}
+	}
+
 	public void setTopText(String text) {
-		if (this.topTextField == null || this.topLabel == null) return;
+		if (this.topTextField == null || this.topLabel == null)
+			return;
 		this.topTextField.setText(text);
 		this.topLabel.setText(text);
 	}
 
 	public void setTopFont(Font font) {
-		if (this.topTextField == null || this.topLabel == null) return;
+		if (this.topTextField == null || this.topLabel == null)
+			return;
 		this.topTextField.setFont(font);
 		this.topLabel.setFont(font);
 	}
-	
+
 	public Font getTopFont() {
-		return this.topLabel.getFont(); // doesnt matter if Font is taken from topLabel or topTextField
+		return this.topTextField.getFont(); // doesnt matter if Font is taken from topLabel or topTextField
 	}
 
 	public void setTopUnderline(boolean underline) {
@@ -232,17 +268,73 @@ public class PaneBox implements Selectable {
 
 	public void allowTopTextInput(boolean value) {
 		if (value) {
-			swapTop(this.topTextField);
+			swapTopField(this.topTextField);
 			Platform.runLater(() -> {
 				this.topTextField.requestFocus();
 				this.topTextField.selectAll();
 				this.topTextField.applyCss();
 			});
 		} else {
-			swapTop(this.topLabel);
+			swapTopField(this.topLabel);
+			if (isSelected()) {
+				setLabelSelected(this.topLabel, true);
+			}
 		}
 		this.topTextField.setEditable(value);
 		this.topTextField.setDisable(!value);
+	}
+	
+	public void allowCenterFieldTextInput(Label centerLabel, boolean value) {
+		int rowIndex = this.centerLabels.indexOf(centerLabel);
+		if (rowIndex < 0) {
+			return;
+		}
+		
+		try {
+			TextField centerTextField = this.centerTextFields.get(rowIndex);
+			centerTextField.setDisable(!value);
+			centerTextField.setEditable(value);
+			centerTextField.setVisible(value);
+			if (value) {
+				swapCenterField(centerTextField, rowIndex);
+				Platform.runLater(() -> {
+					centerTextField.requestFocus();
+					centerTextField.selectAll();
+					centerTextField.applyCss();
+				});
+			} else {
+				swapCenterField(centerLabel, rowIndex);
+				if (isSelected()) {
+					setLabelSelected(centerLabel, true);
+				}
+			}
+		} catch (IndexOutOfBoundsException ioobe) {
+			logger.debug("Allowing textinput failed for center field. IndexOutOfBoundsException: " + ioobe.getMessage());
+		}
+	}
+	
+	public double calcMinWidth() {
+		// + 70px / 40px for some additional space to compensate padding, insets, borders etc.
+		double retWidth = TextUtil.computeTextWidth(getTopFont(), getTopTextField().getText(), 0.0D) + 70;
+		for(TextField centerTextField : getCenterTextFields()) {
+			double newWidth = TextUtil.computeTextWidth(centerTextField.getFont(), centerTextField.getText(), 0.0D) + 40;
+			if(newWidth > retWidth) {
+				retWidth = newWidth;
+			}
+		}
+		return restrictedWidth(retWidth);
+	}
+	
+	public double calcMinHeight() {
+		double newMinHeight =  minHeightPer(getCenterLabels().size());
+		return restrictedHeight(newMinHeight);
+	}
+	
+	private double minHeightPer(int countCenterLabels) {
+		if(this.centerLabels.isEmpty()) {
+			return 0.0;
+		}
+		return BASE_HEIGHT + (countCenterLabels - 1) * CENTER_LABEL_HEIGHT;
 	}
 
 	public GridPane getCenter() {
@@ -252,105 +344,137 @@ public class PaneBox implements Selectable {
 		}
 		return null;
 	}
-	
+
 	public boolean isShowCenterGrid() {
 		return this.showCenterGrid;
 	}
-	
+
 	public void showCenterGrid(boolean value) {
 		this.showCenterGrid = value;
 		recalcHasCenterGrid();
 	}
-	
-	private void recalcHasCenterGrid() {
-		for(int i = 0; i < this.centerLabels.size(); i++) {
+
+	public void recalcHasCenterGrid() {
+		for (int i = 0; i < this.centerLabels.size(); i++) {
 			Label centerLabel = this.centerLabels.get(i);
 			boolean isLast = true;
-			if(i < this.centerLabels.size() - 1) {
+			if (i < this.centerLabels.size() - 1) {
 				Label nextCenterLabel = this.centerLabels.get(i + 1);
 				isLast = !nextCenterLabel.isVisible();
 			}
-			if(isLast) {
+			if (isLast) {
 				showCenterGrid(centerLabel, true);
-			}
-			else {
+			} else {
 				showCenterGrid(centerLabel, false);
 			}
 		}
 	}
-	
+
 	private void showCenterGrid(Label centerLabel, boolean isLast) {
 		Border border = null;
-		if(isShowCenterGrid()) {
-			BorderStroke bsMiddle = new BorderStroke(Color.BLACK, Color.BLACK, Color.TRANSPARENT, Color.BLACK, 
-					BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-					CornerRadii.EMPTY, new BorderWidths(1), null);
-			BorderStroke bsLast = new BorderStroke(Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK, 
-					BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-					CornerRadii.EMPTY, new BorderWidths(1), null);
-			if(!isLast) {
+		if (isShowCenterGrid()) {
+			BorderStroke bsMiddle = new BorderStroke(Color.BLACK, Color.BLACK, Color.TRANSPARENT, Color.BLACK, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+					BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1), null);
+			BorderStroke bsLast = new BorderStroke(Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+					BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1), null);
+			if (!isLast) {
 				border = new Border(bsMiddle);
-			}
-			else {
+			} else {
 				border = new Border(bsLast);
 			}
 		}
 		centerLabel.setBorder(border);
 	}
 	
-	public void showAllCenterRows(boolean value) {
-		for(Label centerLabel : this.centerLabels) {
-			centerLabel.setDisable(!value);
-			centerLabel.setVisible(value);
-		}
-		for(TextField centerTextField : this.centerTextFields) {
-			centerTextField.setDisable(!value);
-			centerTextField.setVisible(value);
-		}
-		recalcHasCenterGrid();
+	public void clearCenterFields() {
+		this.centerLabels.clear();
+		this.centerTextFields.clear();
+		getCenter().getChildren().clear();
 	}
 	
-	public void showCenterField(int rowIndex, boolean value) {
-		try {
-			Label centerLabel = this.centerLabels.get(rowIndex);
-			centerLabel.setDisable(!value);
-			centerLabel.setVisible(value);
-			
-			TextField centerTextField = this.centerTextFields.get(rowIndex);
-			centerTextField.setDisable(!value);
-			centerTextField.setVisible(value);
+	private void fillCreateCenterLabels(int upToRowIndex) {
+		boolean hasIndex = upToRowIndex >= 0 && upToRowIndex < this.centerLabels.size();
+		while(!hasIndex) {
+			createCenterField();
+			hasIndex = upToRowIndex >= 0 && upToRowIndex < this.centerLabels.size();
 		}
-		catch(IndexOutOfBoundsException iobe) {
-			logger.debug("Showing center field failed. IndexOutOfBoundsException: " + iobe.getMessage());
-		}
-		recalcHasCenterGrid();
-	}
-	
-	public void setCenterText(int rowIndex, String text) {
-		Label centerLabel = null;
-		TextField centerTextField = null;
-		try {
-			centerLabel = this.centerLabels.get(rowIndex);
-			centerTextField = this.centerTextFields.get(rowIndex);
-		}
-		catch(IndexOutOfBoundsException iobe) {
-			logger.debug("Setting text: " + text + " failed. IndexOutOfBoundsException: " + iobe.getMessage());
-		}
-		if(centerLabel != null && centerTextField != null) {
-			centerLabel.setText(text);
-			centerTextField.setText(text);
+		if(getSelectedLabel() != null && this.centerLabels.contains(getSelectedLabel())) {
+			setLabelSelected(getSelectedLabel(), true);
 		}
 	}
 	
+	public void setCenterText(int rowIndex, String labelText, String textFieldText) {
+		fillCreateCenterLabels(rowIndex);
+		Label centerLabel = this.centerLabels.get(rowIndex);
+		TextField centerTextField = this.centerTextFields.get(rowIndex);
+		centerLabel.setText(labelText);
+		centerTextField.setText(textFieldText);
+	}
+
+	@Override
 	public void setSelected(boolean selected) {
 		this.selection.setVisible(selected);
-		if (!selected) {
-			allowTopTextInput(false);
+		if(selected) {
+			get().toFront();
+		}
+		else {
+			setAllLabelSelected(false);
+		}
+	}
+
+	@Override
+	public boolean isSelected() {
+		return this.selection.isVisible();
+	}
+
+	@Override
+	public BoxSelection getSelection() {
+		return this.selection;
+	}
+
+	@Override
+	public void requestFocus() {
+		get().requestFocus();
+	}
+
+	public void setAllLabelSelected(boolean selected) {
+		setLabelSelected(this.topLabel, selected);
+		for (Label centerLabel : this.centerLabels) {
+			setLabelSelected(centerLabel, selected);
 		}
 	}
 	
-	public boolean isSelected() {
-		return this.selection.isVisible();
+	public void setLabelSelected(int rowIndex, boolean selected) {
+		if(rowIndex >= 0 && rowIndex < this.centerLabels.size()) {
+			setLabelSelected(this.centerLabels.get(rowIndex), selected);
+		}
+	}
+
+	public void setLabelSelected(Label label, boolean selected) {
+		if (selected) {
+			if (this.selectedLabel != null && this.centerLabels.contains(this.selectedLabel)) {
+				setLabelSelected(this.selectedLabel, false);
+			}
+			this.selectedLabel = label;
+			BorderStroke bs = new BorderStroke(Color.DODGERBLUE, Color.DODGERBLUE, Color.DODGERBLUE, Color.DODGERBLUE, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+					BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1), null);
+			label.setBorder(new Border(bs));
+		} else {
+			this.selectedLabel = null;
+			label.setBorder(null);
+			showCenterGrid(isShowCenterGrid());
+		}
+	}
+
+	public boolean isLabelSelected(Label label) {
+		if (this.selectedLabel != null && this.centerLabels.contains(label)) {
+			return this.selectedLabel.equals(label);
+		}
+		return false;
+	}
+
+	public Label getSelectedLabel() {
+		return this.selectedLabel;
 	}
 	
 	private double restrictedWidth(double width) {
@@ -382,8 +506,7 @@ public class PaneBox implements Selectable {
 	}
 
 	/**
-	 * Sets the minimum width of this box. Note that it can not be set blow
-	 * {@link PaneBox#MIN_WIDTH}.
+	 * Sets the minimum width of this box. Note that it can not be set blow {@link PaneBox#MIN_WIDTH}.
 	 * 
 	 * @param width
 	 */
@@ -404,8 +527,7 @@ public class PaneBox implements Selectable {
 	}
 
 	/**
-	 * Sets the maximum width of this box. Note that it can not be set blow
-	 * {@link PaneBox#MAX_WIDTH}.
+	 * Sets the maximum width of this box. Note that it can not be set blow {@link PaneBox#MAX_WIDTH}.
 	 * 
 	 * @param width
 	 */
@@ -418,8 +540,7 @@ public class PaneBox implements Selectable {
 	}
 
 	/**
-	 * Sets the minimum height of this box. Note that it can not be set above
-	 * {@link PaneBox#MIN_HEIGHT}.
+	 * Sets the minimum height of this box. Note that it can not be set above {@link PaneBox#MIN_HEIGHT}.
 	 * 
 	 * @param height
 	 */
@@ -430,10 +551,9 @@ public class PaneBox implements Selectable {
 	public double getMinHeight() {
 		return this.borderPane.getMinHeight();
 	}
-
+	
 	/**
-	 * Sets the maximum height of this box. Note that it can not be set above
-	 * {@link PaneBox#MAX_HEIGHT}.
+	 * Sets the maximum height of this box. Note that it can not be set above {@link PaneBox#MAX_HEIGHT}.
 	 * 
 	 * @param width
 	 */

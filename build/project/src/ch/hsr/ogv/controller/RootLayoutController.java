@@ -2,6 +2,7 @@ package ch.hsr.ogv.controller;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
@@ -9,45 +10,111 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point3D;
+import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import ch.hsr.ogv.controller.ThemeMenuController.Style;
+import jfxtras.labs.util.Util;
+import ch.hsr.ogv.dataaccess.Persistancy;
 import ch.hsr.ogv.dataaccess.UserPreferences;
+import ch.hsr.ogv.model.Endpoint;
+import ch.hsr.ogv.model.ModelBox;
+import ch.hsr.ogv.model.ModelClass;
+import ch.hsr.ogv.model.ModelObject;
+import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.model.RelationType;
+import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.Floor;
+import ch.hsr.ogv.view.MessageBar;
+import ch.hsr.ogv.view.MessageBar.MessageLevel;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.Selectable;
+import ch.hsr.ogv.view.SubSceneAdapter;
+import ch.hsr.ogv.view.SubSceneCamera;
 import ch.hsr.ogv.view.TSplitMenuButton;
 
 /**
- * The controller for the root layout. The root layout provides the basic
- * application layout containing a menu bar and space where other JavaFX
- * elements can be placed.
- * 
+ * The controller for the root layout. The root layout provides the basic application layout containing a menu bar and space where other JavaFX elements can be placed.
+ *
  * @author Simon Gwerder
  */
 public class RootLayoutController implements Observer, Initializable {
-	
-	private StageManager stageManager; // reference back to the stage manager
-	
+
+	private Stage primaryStage;
+	private String appTitle;
+
+	private ModelViewConnector mvConnector;
+	private SubSceneAdapter subSceneAdapter;
+	private SelectionController selectionController;
+	private MouseMoveController mouseMoveController;
+	private CameraController cameraController;
+
+	private Persistancy persistancy;
+
+	private RelationCreationProcess relationCreationProcess = new RelationCreationProcess();
+
+	private HashMap<Object, RelationType> toggleRelationMap = new HashMap<Object, RelationType>();
+
+	public void setPrimaryStage(Stage primaryStage) {
+		this.primaryStage = primaryStage;
+		this.appTitle = primaryStage.getTitle();
+	}
+
+	public void setMVConnector(ModelViewConnector mvConnector) {
+		this.mvConnector = mvConnector;
+	}
+
+	public void setSubSceneAdapter(SubSceneAdapter subSceneAdapter) {
+		this.subSceneAdapter = subSceneAdapter;
+	}
+
+	public void setSelectionController(SelectionController selectionController) {
+		this.selectionController = selectionController;
+	}
+
+	public void setMouseMoveController(MouseMoveController mouseMoveController) {
+		this.mouseMoveController = mouseMoveController;
+	}
+
+	public void setCameraController(CameraController cameraController) {
+		this.cameraController = cameraController;
+	}
+
+	public void setMessageBar() {
+		this.messageBarContainer.getChildren().add(MessageBar.getTextField());
+	}
+
 	/**
 	 * Creates an empty view.
 	 */
 	@FXML
 	private void handleNew() {
-		this.stageManager.setAppTitle(this.stageManager.getAppTitle()); // set new app title TODO
+		this.primaryStage.setTitle(this.appTitle);
+		this.mvConnector.handleClearAll();
+		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+		this.createToolbar.selectToggle(null);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+		handleCenterView();
+		MessageBar.setText("Initialized new workspace.", MessageLevel.INFO);
 	}
 
 	/**
-	 * Opens a FileChooser to let the user select an address book to load.
+	 * Opens a FileChooser to let the user select a ogv file to load.
 	 */
 	@FXML
 	private void handleOpen() {
@@ -61,23 +128,65 @@ public class RootLayoutController implements Observer, Initializable {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show open file dialog
-		File file = fileChooser.showOpenDialog(stageManager.getPrimaryStage());
-
+		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
-			this.stageManager.setAppTitle(this.stageManager.getAppTitle() + " - " + file.getName()); // set new app title
-			//TODO
+			// MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
+			boolean success = persistancy.loadOGVData(file);
+			if(success) {
+				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
+				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
+			}
+			else {
+				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
+			}
 		}
 	}
 
 	/**
-	 * Saves the file to the ogv file that is currently open. If there is no
-	 * open file, the "save as" dialog is shown.
+	 * Opens a FileChooser to let the user select a xmi file to import.
+	 */
+	@FXML
+	private void handleImport() {
+		FileChooser fileChooser = new FileChooser();
+
+		// Set extension filter
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XMI 1.1 (*.xml)", "*.xml");
+		fileChooser.getExtensionFilters().add(extFilter);
+		File previousFile = UserPreferences.getSavedFile();
+		if (previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
+			fileChooser.setInitialDirectory(previousFile.getParentFile());
+		}
+		// Show open file dialog
+		File file = fileChooser.showOpenDialog(this.primaryStage);
+		if (file != null) {
+			// MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
+			boolean success = persistancy.loadXMIData(file);
+			if(success) {
+				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
+				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
+			}
+			else {
+				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
+			}
+		}
+	}
+
+	/**
+	 * Saves the file to the ogv file that is currently open. If there is no open file, the "save as" dialog is shown.
 	 */
 	@FXML
 	private void handleSave() {
 		File file = UserPreferences.getSavedFile();
 		if (file != null) {
-			//TODO
+			// MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
+			boolean success = persistancy.saveOGVData(file);
+			if(success) {
+				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
+				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
+			}
+			else {
+				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
+			}
 		} else {
 			handleSaveAs();
 		}
@@ -98,7 +207,7 @@ public class RootLayoutController implements Observer, Initializable {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show save file dialog
-		File file = fileChooser.showSaveDialog(this.stageManager.getPrimaryStage());
+		File file = fileChooser.showSaveDialog(this.primaryStage);
 
 		if (file != null) {
 			// Make sure it has the correct extension
@@ -106,8 +215,18 @@ public class RootLayoutController implements Observer, Initializable {
 				file = new File(file.getPath() + ".ogv");
 			}
 			UserPreferences.setSavedFilePath(file);
-			this.stageManager.setAppTitle(this.stageManager.getAppTitle() + " - " + file.getName()); // set new app title
-			//TODO
+			// MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
+			boolean success = persistancy.saveOGVData(file);
+			if(success) {
+				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
+				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
+			}
+			else {
+				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
+			}
+		}
+		else {
+			MessageBar.setText("Could not save data. No save file specified.", MessageLevel.ALERT);
 		}
 	}
 
@@ -122,7 +241,7 @@ public class RootLayoutController implements Observer, Initializable {
 		alert.setContentText("Authors: Simon Gwerder, Adrian Rieser");
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image("file:resources/images/application_icon.gif")); // add a custom icon
-		alert.initOwner(this.stageManager.getPrimaryStage());
+		// alert.initOwner(this.stageManager.getPrimaryStage());
 		alert.showAndWait();
 	}
 
@@ -133,83 +252,85 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleExit() {
 		Platform.exit();
 	}
-	
+
 	@FXML
 	MenuItem centerView;
-	
+
 	@FXML
 	CheckMenuItem lockedTopView;
-	
+
 	@FXML
 	CheckMenuItem showObjects;
-	
+
 	@FXML
 	CheckMenuItem showModelAxis;
-	
+
 	@FXML
 	private void handleCenterView() {
-		this.stageManager.handleCenterView();
+		if (this.cameraController != null) {
+			SubSceneCamera ssCamera = this.subSceneAdapter.getSubSceneCamera();
+			this.cameraController.handleCenterView(ssCamera);
+		}
 	}
-	
+
 	@FXML
 	private void handleLockedTopView() {
-		this.stageManager.handleLockedTopView(this.lockedTopView.isSelected());
+		if (this.cameraController != null) {
+			SubSceneCamera ssCamera = this.subSceneAdapter.getSubSceneCamera();
+			this.cameraController.handleLockedTopView(ssCamera, this.lockedTopView.isSelected());
+		}
 	}
-	
+
 	@FXML
 	private void handleShowObjects() {
-		if(this.showObjects.isSelected()) {
+		if (this.showObjects.isSelected()) {
 			this.createObject.setDisable(false);
-		}
-		else {
-			this.createObject.setSelected(false);
+		} else {
 			this.createObject.setDisable(true);
+			this.subSceneAdapter.getVerticalHelper().setVisible(false);
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		}
-		this.stageManager.handleShowObjects(this.showObjects.isSelected());
-	}
-	
-	@FXML
-	private void handleShowModelAxis() {
-		this.stageManager.handleShowModelAxis(this.showModelAxis.isSelected());
-	}
-	
-	@FXML
-	private CheckMenuItem modena;
-	
-	@FXML
-	private CheckMenuItem caspian;
-	
-	@FXML
-	private CheckMenuItem aqua;
-	
-	private void setMenuSelection(CheckMenuItem choosenMenu) {
-		Menu theme = choosenMenu.getParentMenu();
-		for(MenuItem menuItem : theme.getItems()) {
-			if(menuItem instanceof CheckMenuItem) {
-				CheckMenuItem cMenuItem = (CheckMenuItem) menuItem;
-				cMenuItem.setSelected(false);
+
+		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
+			if (modelBox instanceof ModelObject) {
+				PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
+				paneBox.setVisible(this.showObjects.isSelected());
+
+				if (paneBox.isSelected() && this.selectionController != null) {
+					this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+				}
+
+				for (Endpoint endpoint : modelBox.getEndpoints()) {
+					Arrow arrow = this.mvConnector.getArrow(endpoint.getRelation());
+					arrow.setVisible(this.showObjects.isSelected());
+					if (arrow.isSelected() && this.selectionController != null) {
+						this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+					}
+				}
 			}
 		}
-		choosenMenu.setSelected(true);
 	}
-	
+
 	@FXML
-	private void handleSetModena() {
-		setMenuSelection(this.modena);
-		this.stageManager.handleSetTheme(Style.MODENA);
+	private void handleShowModelAxis() {
+		if (this.subSceneAdapter != null) {
+			Group axis = this.subSceneAdapter.getAxis();
+			if (this.showModelAxis.isSelected()) {
+				axis.setVisible(true);
+			} else {
+				axis.setVisible(false);
+			}
+		}
 	}
-	
+
 	@FXML
-	private void handleSetCaspian() {
-		setMenuSelection(this.caspian);
-		this.stageManager.handleSetTheme(Style.CASPIANDARK);
-	}
-	
+	private CheckMenuItem modena;
+
 	@FXML
-	private void handleSetAqua() {
-		setMenuSelection(this.aqua);
-		this.stageManager.handleSetTheme(Style.AQUA);
-	}
+	private CheckMenuItem caspian;
+
+	@FXML
+	private CheckMenuItem aqua;
 
 	@FXML
 	private ToggleGroup createToolbar;
@@ -218,7 +339,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private ToggleButton createClass;
 
 	@FXML
-	private ToggleButton createObject;
+	private Button createObject;
 
 	@FXML
 	private SplitMenuButton createAssociation;
@@ -252,26 +373,67 @@ public class RootLayoutController implements Observer, Initializable {
 	private ToggleButton createDependency;
 
 	@FXML
+	Button deleteSelected;
+
+	@FXML
+	ColorPicker colorPick;
+
+	@FXML
+	Label pickColorLabel;
+
+	@FXML
+	HBox messageBarContainer;
+
+	@FXML
 	private void handleCreateClass() {
-		this.stageManager.onlyFloorMouseEvent(this.createClass.isSelected());
+		if (this.subSceneAdapter != null) {
+			if(this.createClass.isSelected()) {
+				this.subSceneAdapter.worldRestrictMouseEvents();
+				this.subSceneAdapter.receiveMouseEvents(this.subSceneAdapter.getFloor());
+				this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
+				this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+				this.colorPick.setDisable(true);
+			}
+			else {
+				this.subSceneAdapter.worldReceiveMouseEvents();
+				this.subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
+				this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+				this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
+			}
+		}
 	}
 
 	@FXML
 	private void handleCreateObject() {
-		// Nothing
+		this.createToolbar.selectToggle(null);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+		Selectable selected = this.selectionController.getCurrentSelected();
+		if (this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {
+			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject(selected);
+			if (newPaneBox != null) {
+				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
+			}
+		}
 	}
-	
+
 	private void splitMenuButtonSelect(MenuItem choosenItem) {
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 		this.tSplitMenuButton.setChoice(choosenItem);
 		this.createToolbar.selectToggle(this.tSplitMenuButton);
+		this.colorPick.setDisable(true);
 	}
 
 	@FXML
 	private void handleCreateAssociation() {
 		if (tSplitMenuButton.isSelected()) {
 			this.createToolbar.selectToggle(null);
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		} else {
 			this.createToolbar.selectToggle(this.tSplitMenuButton);
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			this.colorPick.setDisable(true);
 		}
 	}
 
@@ -312,39 +474,235 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateGeneralization() {
-		// TODO
+		if(this.createGeneralization.isSelected()) {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			this.colorPick.setDisable(true);
+		}
+		else {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
+		}
 	}
 
 	@FXML
 	private void handleCreateDependency() {
-		// TODO
+		if(this.createDependency.isSelected()) {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			this.colorPick.setDisable(true);
+		}
+		else {
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
+		}
 	}
-	
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof StageManager && arg instanceof StageManager) { // give a reference back to the StageManager.
-			StageManager stageManager = (StageManager) arg;
-			this.stageManager = stageManager;
-			this.stageManager.getSubSceneController().addObserver(this);
-			this.stageManager.getSelectionController().addObserver(this);
-		} else if (o instanceof SubSceneController && arg instanceof Point3D) {
-			Point3D mouseCoords = (Point3D) arg;
-			if (createClass != null && createClass.isSelected()) {
-				this.stageManager.handleCreateNewClass(mouseCoords);
-				this.createClass.setSelected(false);
-			}
-		} else if (o instanceof SelectionController && arg instanceof PaneBox) {
-			SelectionController selectionController = (SelectionController) o;
-			Selectable selected = selectionController.getSelected();
-			if (selectionController.hasSelection() && selected instanceof PaneBox && createObject != null && createObject.isSelected()) {
-				this.stageManager.handleCreateNewObject((PaneBox) selected);
-				this.createObject.setSelected(false);
+
+	@FXML
+	private void handleDeleteSelected() {
+		this.createToolbar.selectToggle(null);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+		Selectable selected = this.selectionController.getCurrentSelected();
+		if (this.selectionController.hasCurrentSelection()) {
+			this.mvConnector.handleDelete(selected);
+			if(!this.mvConnector.containsSelectable(selected)) {
+				this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 			}
 		}
 	}
 
+	@FXML
+	private void handleColorPick() {
+		this.createToolbar.selectToggle(null);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+		Selectable selected = this.selectionController.getCurrentSelected();
+		if (this.selectionController.hasCurrentSelection()) {
+			this.mvConnector.handleColorPick(selected, this.colorPick.getValue());
+		}
+	}
+
+	private void addButtonAccelerators() {
+		if(this.createClass != null && this.createObject != null && this.deleteSelected != null) {
+			Platform.runLater(() -> {
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> {
+					if(!this.createClass.isDisable()) {
+						this.createClass.requestFocus();
+						this.createClass.fire();
+					}
+				});
+
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.O), () -> {
+					if (!this.createObject.isDisable()) {
+						this.createObject.fire();
+					}
+				});
+
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.DELETE), () -> {
+					if (!this.deleteSelected.isDisable()) {
+						this.deleteSelected.fire();
+					}
+				});
+			});
+		}
+	}
+
+	private void startRelationCreation(PaneBox selectedPaneBox) {
+		Toggle toggle = this.createToolbar.getSelectedToggle();
+		RelationType relationType = null;
+		if(toggle != null && toggle.equals(this.tSplitMenuButton)) {
+			MenuItem selectedChoice = this.tSplitMenuButton.selectedChoice();
+			if(selectedChoice != null && this.toggleRelationMap.containsKey(selectedChoice)) {
+				relationType = this.toggleRelationMap.get(selectedChoice);
+			}
+		}
+		else if(toggle != null && toggle.equals(this.createDependency)) {
+			relationType = RelationType.DEPENDENCY;
+		}
+		else if(toggle != null && toggle.equals(this.createGeneralization)) {
+			relationType = RelationType.GENERALIZATION;
+		}
+
+		if(this.mouseMoveController != null && relationType != null) {
+			this.mouseMoveController.addObserver(this.relationCreationProcess);
+			this.relationCreationProcess.startProcess(this.mvConnector, this.selectionController, this.subSceneAdapter, selectedPaneBox, relationType);
+		}
+	}
+
+	private void endRelationCreation(PaneBox selectedPaneBox) {
+		Arrow viewArrow = this.relationCreationProcess.getViewArrow();
+		PaneBox startBox = this.relationCreationProcess.getStartBox();
+		PaneBox endBox = this.relationCreationProcess.getEndBox();
+
+		this.mouseMoveController.deleteObserver(this.relationCreationProcess);
+		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+		this.createToolbar.selectToggle(null);
+		this.relationCreationProcess.endProcess(this.subSceneAdapter);
+
+		if(viewArrow != null && startBox != null && endBox != null) {
+			Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
+			Arrow newArrow = mvConnector.getArrow(relation);
+			if(newArrow != null) {
+				this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
+			}
+		}
+
+	}
+
+	private void disableAllButtons(boolean value) {
+		this.createAssociation.setDisable(value);
+		this.createDependency.setDisable(value);
+		this.createGeneralization.setDisable(value);
+		this.createClass.setDisable(value);
+		this.createObject.setDisable(value);
+		this.deleteSelected.setDisable(value);
+		this.colorPick.setDisable(value);
+		//if(value) this.colorPick.setValue(Color.WHITE);
+	}
+
+	// TODO Refactor!!
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof DragController) {
+			DragController dragController = (DragController) o;
+			if(dragController.isDragInProgress()) {
+				disableAllButtons(true);
+				return;
+			}
+		}
+
+		if(this.selectionController == null) {
+			return;
+		}
+
+		if (this.createClass.isSelected() && o instanceof SelectionController && (this.selectionController.hasCurrentSelection() && arg instanceof Floor)) { // creating class
+			if(!this.relationCreationProcess.isInProcess()) {
+				this.subSceneAdapter.worldReceiveMouseEvents();
+				subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
+				if (createClass != null && createClass.isSelected()) {
+					PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getCurrentSelectionCoord());
+					this.createClass.setSelected(false);
+					this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
+				}
+			}
+		}
+		if(o instanceof SelectionController && arg instanceof Floor && this.selectionController.hasCurrentSelection() && this.relationCreationProcess.isInProcess()) {
+			this.selectionController.setSelected(this.relationCreationProcess.getViewArrow(), true, this.subSceneAdapter);
+		}
+		else if (o instanceof SelectionController && arg instanceof PaneBox || arg instanceof Arrow) { // PaneBox, Arrow selected
+			Selectable selectable = this.selectionController.getCurrentSelected();
+			// creating relations
+			if((this.selectionController.isCurrentSelected(selectable) && selectable instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) || arg instanceof Floor) {
+				PaneBox selectedPaneBox = (PaneBox) selectable;
+
+				if(!this.relationCreationProcess.isInProcess()) { // first selection
+					this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
+					startRelationCreation(selectedPaneBox);
+				}
+				else { // second selection
+					if(!this.relationCreationProcess.getStartBox().equals(selectedPaneBox)) { // TODO: reflexive relation
+						endRelationCreation(selectedPaneBox);
+					}
+				}
+			}
+
+			// button enabling / disabling
+			if (this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProcess()) {
+				disableAllButtons(false);
+				this.createObject.setDisable(true);
+				if(selectable instanceof PaneBox && this.selectionController.isCurrentSelected(selectable)) {
+					PaneBox selectedPaneBox = (PaneBox) selectable;
+					this.colorPick.setValue(selectedPaneBox.getColor());
+					if(mvConnector.getModelBox(selectedPaneBox) instanceof ModelClass) {
+						this.createObject.setDisable(false);
+					}
+				}
+				else if(selectable instanceof Arrow && this.selectionController.isCurrentSelected(selectable)) {
+					Arrow selectedArrow = (Arrow) selectable;
+					this.colorPick.setValue(selectedArrow.getColor());
+				}
+			}
+
+			if (this.relationCreationProcess.isInProcess()) {
+				disableAllButtons(true);
+			}
+		}
+		else if(this.selectionController.hasCurrentSelection() && (this.selectionController.getCurrentSelected().equals(this.subSceneAdapter) || this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter selected
+			this.createObject.setDisable(true);
+			this.deleteSelected.setDisable(true);
+			this.colorPick.setDisable(false);
+			this.colorPick.setValue(this.subSceneAdapter.getFloor().getColor());
+		}
+		else {
+			//this.colorPick.setDisable(true);
+			//this.colorPick.setValue(Color.WHITE);
+		}
+	}
+
+	private void initToggleRelationMap() {
+		this.toggleRelationMap.put(this.createDependency,     		 RelationType.DEPENDENCY);
+		this.toggleRelationMap.put(this.createGeneralization,        RelationType.GENERALIZATION);
+		this.toggleRelationMap.put(this.createUndirectedAssociation, RelationType.UNDIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createDirectedAssociation,	 RelationType.DIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createBidirectedAssociation, RelationType.BIDIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createUndirectedAggregation, RelationType.UNDIRECTED_AGGREGATION);
+		this.toggleRelationMap.put(this.createDirectedAggregation,	 RelationType.DIRECTED_AGGREGATION);
+		this.toggleRelationMap.put(this.createUndirectedComposition, RelationType.UNDIRECTED_COMPOSITION);
+		this.toggleRelationMap.put(this.createDirectedComposition,	 RelationType.DIRECTED_COMPOSITION);
+	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
+		setMessageBar(); // sets the message bar into the footer
+		addButtonAccelerators();
 		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.createToolbar);
+		this.colorPick.getCustomColors().add(SubSceneAdapter.DEFAULT_COLOR);
+		this.colorPick.getCustomColors().add(Floor.DEFAULT_COLOR);
+		this.colorPick.getCustomColors().add(PaneBox.DEFAULT_COLOR);
+		this.colorPick.getCustomColors().add(Util.brighter(PaneBox.DEFAULT_COLOR, 0.1));
+		initToggleRelationMap();
+	}
+
+	public void setPersistancy(Persistancy persistancy) {
+		this.persistancy = persistancy;
 	}
 }

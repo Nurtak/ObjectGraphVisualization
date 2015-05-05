@@ -1,16 +1,16 @@
 package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
 
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import ch.hsr.ogv.util.TextUtil;
 
 /**
- * 
+ *
  * @author Adrian Rieser
  *
  */
@@ -18,29 +18,41 @@ public class ModelManager extends Observable {
 
 	private Set<ModelClass> classes = new HashSet<ModelClass>();
 	private Set<Relation> relations = new HashSet<Relation>();
-
-	public Collection<ModelClass> getClasses() {
-		return this.classes;
-	}
-
+	
 	public ModelClass createClass(Point3D coordinates, double width, double heigth, Color color) {
-		ModelClass modelClass = new ModelClass(coordinates, width, heigth, color);
+		int classCount = ModelClass.modelClassCounter.addAndGet(1);
+		String newClassName = "Class" + classCount;
+		while(isClassNameTaken(newClassName)) {
+			newClassName = TextUtil.countUpTrailing(newClassName, classCount);
+			if(isClassNameTaken(newClassName)) {
+				 classCount = ModelClass.modelClassCounter.addAndGet(1);
+			}
+		}
+		ModelClass modelClass = new ModelClass(newClassName, coordinates, width, heigth, color);
 		this.classes.add(modelClass);
 		setChanged();
 		notifyObservers(modelClass);
 		return modelClass;
 	}
-	
+
 	public ModelObject createObject(ModelClass modelClass) {
-		ModelObject modelObject = modelClass.createModelObject();
+		int objectCount = ModelObject.modelObjectCounter.addAndGet(1);
+		String newObjectName = "obj" + objectCount;
+		while(isObjectNameTaken(modelClass, newObjectName)) {
+			newObjectName = TextUtil.countUpTrailing(newObjectName, objectCount);
+			if(isClassNameTaken(newObjectName)) {
+				objectCount =  ModelObject.modelObjectCounter.addAndGet(1);
+			}
+		}
+		ModelObject modelObject = modelClass.createModelObject(newObjectName);
 		setChanged();
 		notifyObservers(modelObject);
 		return modelObject;
 	}
 
-	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType) {
+	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType, Color color) {
 		if (isRelationAllowed(start, end, relationType)) {
-			Relation relation = new Relation(start, end, relationType);
+			Relation relation = new Relation(start, end, relationType, color);
 			start.getEndpoints().add(relation.getStart());
 			end.getEndpoints().add(relation.getEnd());
 			relations.add(relation);
@@ -56,6 +68,11 @@ public class ModelManager extends Observable {
 		for (Endpoint endPoint : classesEndPoints) {
 			deleteRelation(endPoint.getRelation());
 		}
+		ArrayList<ModelObject> classesObjects = new ArrayList<ModelObject>(modelClass.getModelObjects());
+		for(ModelObject modelObject : classesObjects) {
+			deleteObject(modelObject);
+		}
+		modelClass.deleteModelObjects();
 		boolean deletedClass = classes.remove(modelClass);
 		if (deletedClass) {
 			setChanged();
@@ -91,9 +108,10 @@ public class ModelManager extends Observable {
 		return deletedRelation;
 	}
 
-	public ModelClass getClass(String name) {
-		if (name == null)
+	public ModelClass getModelClass(String name) {
+		if (name == null || name.isEmpty()) {
 			return null;
+		}
 		for (ModelClass modelClass : this.classes) {
 			if (name.equals(modelClass.getName())) {
 				return modelClass;
@@ -102,7 +120,7 @@ public class ModelManager extends Observable {
 		return null;
 	}
 
-	public boolean isNameTaken(String name) {
+	public boolean isClassNameTaken(String name) {
 		for (ModelClass modelClass : this.classes) {
 			if (name != null && name.equals(modelClass.getName())) {
 				return true;
@@ -111,40 +129,56 @@ public class ModelManager extends Observable {
 		return false;
 	}
 
-	public boolean isClass(Object object) {
-		return (object instanceof ModelClass);
+	public boolean isObjectNameTaken(ModelClass modelClass, String name) {
+		for (ModelObject modelObject : modelClass.getModelObjects()) {
+			if (name != null && !name.isEmpty() && name.equals(modelObject.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	public boolean isObject(Object object) {
-		return (object instanceof ModelObject);
+	public boolean isAttributeNameTaken(ModelClass modelClass, String name) {
+		for (Attribute attribute : modelClass.getAttributes()) {
+			if (name != null && !name.isEmpty() && name.equals(attribute.getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	public boolean isRelation(Object object) {
-		return (object instanceof Relation);
+	public boolean isRoleNameTaken(ModelClass modelClass, String name) {
+		for (Endpoint endpoint : modelClass.getEndpoints()) {
+			Endpoint friend = endpoint.getFriend();
+			if (name != null && !name.isEmpty() && friend != null && name.equals(friend.getRoleName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isRelationAllowed(ModelBox start, ModelBox end, RelationType relationType) {
 		switch (relationType) {
 		case GENERALIZATION:
-			if (isClass(start) && isClass(end) && !start.equals(end)) {
+			if ((start instanceof ModelClass) && (end instanceof ModelClass) && !start.equals(end)) {
 				return true;
 			}
 			return false;
-		case UNDIRECTED_ASSOZIATION:
-		case DIRECTED_ASSOZIATION:
-		case BIDIRECTED_ASSOZIATION:
+		case UNDIRECTED_ASSOCIATION:
+		case DIRECTED_ASSOCIATION:
+		case BIDIRECTED_ASSOCIATION:
 		case UNDIRECTED_AGGREGATION:
 		case DIRECTED_AGGREGATION:
 		case UNDIRECTED_COMPOSITION:
 		case DIRECTED_COMPOSITION:
 		case DEPENDENCY:
-			if (isClass(start) && isClass(end)) {
+			if ((start instanceof ModelClass) && (end instanceof ModelClass)) {
 				return true;
 			}
 			return false;
 		case OBJDIAGRAM:
 		case OBJGRAPH:
-			if (isObject(start) && isObject(end)) {
+			if ((start instanceof ModelObject) && (end instanceof ModelObject)) {
 				return true;
 			}
 			return false;
@@ -153,4 +187,34 @@ public class ModelManager extends Observable {
 		}
 	}
 
+	public Set<ModelClass> getClasses() {
+		return this.classes;
+	}
+
+	public void setClasses(Set<ModelClass> classes) {
+		this.classes = classes;
+	}
+
+	public void clearClasses() {
+		for (ModelClass modelClass : new ArrayList<ModelClass>(classes)) {
+			deleteClass(modelClass);
+		}
+		ModelClass.modelClassCounter.set(0);
+		ModelObject.modelObjectCounter.set(0);
+	}
+
+	public Set<Relation> getRelations() {
+		return this.relations;
+	}
+
+	public void setRelations(Set<Relation> relations) {
+		this.relations = relations;
+	}
+
+	public void clearRelations() {
+		for (Relation relation : new ArrayList<Relation>(relations)) {
+			deleteRelation(relation);
+		}
+	}
+	
 }

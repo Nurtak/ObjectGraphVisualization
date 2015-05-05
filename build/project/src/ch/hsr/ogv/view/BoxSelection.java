@@ -11,7 +11,7 @@ import javafx.scene.transform.Rotate;
  */
 public class BoxSelection extends Group {
 	
-	private final static int INIT_SELECT_SIZE = 4;
+	public final static int INIT_SELECT_SIZE = 4;
 	private final static Color SELECTION_COLOR = Color.DODGERBLUE;
 	
 	private Group selection = new Group();
