@@ -10,45 +10,93 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../css/LightTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.hsr.ogv.controller.RootLayoutController">
+<BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../css/LightTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<top>
       <GridPane>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-      		<MenuBar id="menubar" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER">
+      		<MenuBar id="menubar" prefHeight="25.0" prefWidth="956.0" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER" GridPane.columnSpan="2">
       			<menus>
       				<Menu id="menu_file" mnemonicParsing="false" text="File">
       					<items>
-      						<MenuItem id="menuitem_new" disable="true" mnemonicParsing="false" onAction="#handleNew" text="New">
+      						<MenuItem id="menuitem_new" mnemonicParsing="false" onAction="#handleNew" text="New">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="N" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/new.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
-      						<MenuItem id="menuitem_open" disable="true" mnemonicParsing="false" onAction="#handleOpen" text="Open...">
+      						<MenuItem id="menuitem_open" mnemonicParsing="false" onAction="#handleOpen" text="Open...">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/open.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
-      						<MenuItem id="menuitem_save" disable="true" mnemonicParsing="false" onAction="#handleSave" text="Save">
+      						<MenuItem id="menuitem_import" mnemonicParsing="false" onAction="#handleImport" text="Import XMI...">
+                           		<graphic>
+                             		<ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                 		<image>
+                                    		<Image url="@../images/menu/application-import.png" />
+                                 		</image>
+                              		</ImageView>
+                           		</graphic>
+                           		<accelerator>
+                              		<KeyCodeCombination alt="UP" code="I" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                           		</accelerator>
+                        	</MenuItem>
+      						<MenuItem id="menuitem_save" mnemonicParsing="false" onAction="#handleSave" text="Save">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
       							</accelerator>
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/mm_pc_fd.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
-      						<MenuItem id="menuitem_saveas" disable="true" mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
+      						<MenuItem id="menuitem_saveas" mnemonicParsing="false" onAction="#handleSaveAs" text="Save As...">
       							<accelerator>
       								<KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
       							</accelerator>
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/mm_pc_fd.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
       						<MenuItem id="menuitem_exit" mnemonicParsing="false" onAction="#handleExit" text="Exit">
       							<accelerator>
       								<KeyCodeCombination alt="DOWN" code="F4" control="UP" meta="UP" shift="UP" shortcut="UP" />
       							</accelerator>
+                           <graphic>
+                              <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/close.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
       						</MenuItem>
       					</items>
       				</Menu>
@@ -66,7 +114,7 @@
                         </CheckMenuItem>
                         <CheckMenuItem id="checkmenuitem_objectview" fx:id="showObjects" mnemonicParsing="false" onAction="#handleShowObjects" selected="true" text="Show Objects">
                            <accelerator>
-                              <KeyCodeCombination alt="UP" code="O" control="UP" meta="ANY" shift="UP" shortcut="UP" />
+                              <KeyCodeCombination alt="UP" code="V" control="UP" meta="ANY" shift="UP" shortcut="UP" />
                            </accelerator></CheckMenuItem>
                         <CheckMenuItem fx:id="showModelAxis" mnemonicParsing="false" onAction="#handleShowModelAxis" selected="true" text="Show Model Axis">
                            <accelerator>
@@ -75,53 +123,55 @@
                         </CheckMenuItem>
                     </items>
                   </Menu>
-                  <Menu id="menu_window" disable="true" mnemonicParsing="false" text="Window">
-                    <items>
-                        <Menu id="menu_theme" mnemonicParsing="false" text="Theme">
-                           <items>
-                              <CheckMenuItem id="cmenuitem_modena" fx:id="modena" mnemonicParsing="false" onAction="#handleSetModena" selected="true" text="Modena" />
-                              <CheckMenuItem id="cmenuitem_caspian" fx:id="caspian" mnemonicParsing="false" onAction="#handleSetCaspian" text="Caspian Dark" />
-                              <CheckMenuItem id="cmenuitem_aqua" fx:id="aqua" mnemonicParsing="false" onAction="#handleSetAqua" text="Aqua" />
-                           </items>
-                        </Menu>
-                    </items>
-                  </Menu>
       				<Menu id="menu_help" mnemonicParsing="false" text="Help">
       					<items>
-      						<MenuItem id="menuitem_about" mnemonicParsing="false" onAction="#handleAbout" text="About" />
+      						<MenuItem id="menuitem_about" mnemonicParsing="false" onAction="#handleAbout" text="About">
+                           <graphic>
+                              <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/info.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></MenuItem>
       					</items>
       				</Menu>
       			</menus>
       		</MenuBar>
-            <ToolBar prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
+            <ToolBar prefHeight="40.0" prefWidth="1167.0" GridPane.rowIndex="1">
                <items>
-                  <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" text="Class">
+                  <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" text="Create Class">
                      <toggleGroup>
                         <ToggleGroup fx:id="createToolbar" />
                      </toggleGroup>
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/structureclass.gif" />
+                              <Image url="@../images/menu/structureclass.gif" />
                            </image>
                         </ImageView>
-                     </graphic></ToggleButton>
-                  <ToggleButton fx:id="createObject" mnemonicParsing="false" onAction="#handleCreateObject" text="Object" toggleGroup="$createToolbar">
+                     </graphic>
+                  </ToggleButton>
+                  <Button fx:id="createObject" disable="true" mnemonicParsing="false" onAction="#handleCreateObject" text="Create Object">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/instance.gif" />
+                              <Image url="@../images/menu/instance.gif" />
                            </image>
                         </ImageView>
-                     </graphic></ToggleButton>
-                  <Separator orientation="VERTICAL" />
+                     </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL">
+                     <padding>
+                        <Insets left="3.0" />
+                     </padding>
+                  </Separator>
                   <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
                     <items>
                         <MenuItem fx:id="createUndirectedAssociation" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/assoc.gif" />
+                                    <Image url="@../images/menu/assoc.gif" />
                                  </image>
                               </ImageView>
                            </graphic>
@@ -130,22 +180,24 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/assoWithNav.gif" />
+                                    <Image url="@../images/menu/assoWithNav.gif" />
                                  </image>
                               </ImageView>
-                           </graphic></MenuItem>
+                           </graphic>
+                        </MenuItem>
                       <MenuItem fx:id="createBidirectedAssociation" mnemonicParsing="false" onAction="#handleCreateBidirectedAssociation" text="Bidirected Association">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/assoNavToNav.gif" />
+                                    <Image url="@../images/menu/assoNavToNav.gif" />
                                  </image>
-                              </ImageView>                           </graphic></MenuItem>
+                              </ImageView>                           </graphic>
+                        </MenuItem>
                         <MenuItem fx:id="createUndirectedAggregation" mnemonicParsing="false" onAction="#handleCreateUndirectedAggregation" text="Aggregation">
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/aggregation.gif" />
+                                    <Image url="@../images/menu/aggregation.gif" />
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
@@ -153,7 +205,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/aggregationToNavi.gif" />
+                                    <Image url="@../images/menu/aggregationToNavi.gif" />
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
@@ -161,7 +213,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/composite.gif" />
+                                    <Image url="@../images/menu/composite.gif" />
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
@@ -169,7 +221,7 @@
                            <graphic>
                               <ImageView pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../images/toolbar/compositeToNavi.gif" />
+                                    <Image url="@../images/menu/compositeToNavi.gif" />
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
@@ -177,33 +229,66 @@
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/assoc.gif" />
+                              <Image url="@../images/menu/assoc.gif" />
                            </image>
                         </ImageView>
                      </graphic>
                   </SplitMenuButton>
-                  <ToggleButton fx:id="createGeneralization" disable="true" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization" toggleGroup="$createToolbar">
+                  <ToggleButton fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization" toggleGroup="$createToolbar">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/general.gif" />
+                              <Image url="@../images/menu/general.gif" />
                            </image>
                         </ImageView>
-                     </graphic></ToggleButton>
-                  <ToggleButton fx:id="createDependency" disable="true" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar">
+                     </graphic>
+                  </ToggleButton>
+                  <ToggleButton fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/toolbar/depend.gif" />
+                              <Image url="@../images/menu/depend.gif" />
                            </image>
                         </ImageView>
-                     </graphic></ToggleButton>
+                     </graphic>
+                  </ToggleButton>
+                  <Separator orientation="VERTICAL">
+                     <padding>
+                        <Insets left="3.0" />
+                     </padding>
+                  </Separator>
+                  <Button fx:id="deleteSelected" disable="true" mnemonicParsing="false" onAction="#handleDeleteSelected" text="Delete Selected">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/menu/trash.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL">
+                     <padding>
+                        <Insets left="3.0" />
+                     </padding>
+                  </Separator>
                </items>
+            </ToolBar>
+            <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+              <items>
+                  <ColorPicker fx:id="colorPick" disable="true" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleColorPick" promptText="Set Color" />
+                  <Label fx:id="pickColorLabel" text="Pick color: " />
+              </items>
             </ToolBar>
          </children>
       </GridPane>
 	</top>
    <center>
-		<Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: black;" BorderPane.alignment="CENTER" />
+		<Pane style="-fx-background-color: black;" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin></Pane>
    </center>
+   <bottom>
+      <HBox fx:id="messageBarContainer" alignment="CENTER_LEFT" layoutY="4.0" minHeight="38.0" />
+   </bottom>
 </BorderPane>

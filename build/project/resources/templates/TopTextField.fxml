@@ -5,7 +5,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.text.*?>
 
-<TextField alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Class" snapToPixel="false" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" text="Class" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<TextField alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Class" snapToPixel="false" style="-fx-font-weight: bold; -fx-font-smoothing-type: gray;" stylesheets="@../css/TextInput.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <font>
       <Font size="16.0" />
    </font>

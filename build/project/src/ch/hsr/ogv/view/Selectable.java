@@ -12,5 +12,5 @@ public interface Selectable {
 	public void setSelected(boolean selected);
 	public boolean isSelected();
 	public Group getSelection();
-	
+	public void requestFocus();	
 }

@@ -12,14 +12,18 @@ import javafx.scene.paint.Color;
  * @author Simon Gwerder
  *
  */
-public class SubSceneAdapter {
+public class SubSceneAdapter implements Selectable {
 	
-	private Color color = Color.LIGHTCYAN;
+	public final static Color DEFAULT_COLOR = Color.LIGHTCYAN;
+	private Color color = DEFAULT_COLOR;
 	
 	private SubScene subScene;
 	private SubSceneCamera subSceneCamera;
 	private Axis axis;
 	private Floor floor;
+	private VerticalHelper verticalHelper;
+	
+	private volatile boolean selected = false;
 
 	private final Group root = new Group();
 
@@ -39,6 +43,10 @@ public class SubSceneAdapter {
 	
 	public Floor getFloor() {
 		return this.floor;
+	}
+	
+	public VerticalHelper getVerticalHelper() {
+		return this.verticalHelper;
 	}
 	
 	public Color getColor() {
@@ -63,6 +71,9 @@ public class SubSceneAdapter {
         // create ground floor and add it to the world Xform
         this.floor = new Floor();
         this.world.getChildren().add(floor);
+        
+		this.verticalHelper = new VerticalHelper();
+		this.world.getChildren().add(this.verticalHelper);
 
         // add a camera for the subscene
         this.subSceneCamera = new SubSceneCamera();
@@ -73,26 +84,55 @@ public class SubSceneAdapter {
     	this.root.getChildren().add(world);
     }
 	
-	/**
-	 * If set to true, only the floor will receive Mouse Events and every other added
-	 * Node will have MouseTransparent disabled. Reversed if false.
-	 * @param value
-	 */
-	public void onlyFloorMouseEvent(boolean value) {
-		for(Node n: world.getChildren()) {
-			n.setMouseTransparent(value);
+	public void receiveMouseEvents(Node...nodes) {
+		for(Node n : nodes) {
+			n.setMouseTransparent(false);
 		}
-		this.floor.setMouseTransparent(!value);
+	}
+	
+	public void worldReceiveMouseEvents() {
+		receiveMouseEvents(world.getChildren().toArray(new Node[world.getChildren().size()]));
+	}
+	
+	public void restrictMouseEvents(Node...nodes) {
+		for(Node n : nodes) {
+			n.setMouseTransparent(true);
+		}
+	}
+	
+	public void worldRestrictMouseEvents() {
+		restrictMouseEvents(world.getChildren().toArray(new Node[world.getChildren().size()]));
 	}
 	
 	public boolean add(Node node) {
 		boolean retAdd = this.world.getChildren().add(node);
 		this.floor.toFront();
+		this.verticalHelper.toFront();
 		return retAdd;
 	}
 	
 	public boolean remove(Node node) {
 		return this.world.getChildren().remove(node);
+	}
+
+	@Override
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	@Override
+	public boolean isSelected() {
+		return this.selected;
+	}
+
+	@Override
+	public Group getSelection() {
+		return null; // SubScene has no real (visible) selection
+	}
+
+	@Override
+	public void requestFocus() {
+		this.subScene.requestFocus();
 	}
 	
 }

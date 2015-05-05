@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://org.eclipse.fx.ide.jdt/1.0" buildDirectory="${project}/build">
-  <deploy packagingFormat="dmg">
-    <application name="ObjectGraphVisualization" mainclass="ch.hsr.ogv.MainApp" version="1.0" toolkit="fx"/>
+  <deploy splashImage="C:\Users\Simon Gwerder\git\GitHub\ObjectGraphVisualization\ObjectGraphVisualization\build\dist\resources\images\OGV.png" packagingFormat="dmg">
+    <application name="ObjectGraphVisualization" mainclass="ch.hsr.ogv.MainApp" version="2.0" toolkit="fx"/>
     <info title="OGV" vendor="hsr.ch"/>
   </deploy>
   <signjar/>

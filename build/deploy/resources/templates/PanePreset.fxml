@@ -8,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="495.0" maxWidth="500.0" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" snapToPixel="false" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white; -fx-font-smoothing-type: gray;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="120.0" prefHeight="100.0" prefWidth="120.0" snapToPixel="false" style="-fx-border-color: black; -fx-border-width: 2; -fx-background-color: white; -fx-font-smoothing-type: gray;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <HBox alignment="CENTER" cache="true" cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" prefHeight="30.0" snapToPixel="false" style="-fx-border-color: transparent transparent black transparent;" BorderPane.alignment="CENTER">
          <children>
@@ -30,156 +30,13 @@
       </HBox>
    </top>
    <center>
-      <GridPane maxWidth="1.7976931348623157E308" minHeight="60.0" BorderPane.alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
+      <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="60.0" BorderPane.alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
         <columnConstraints>
           <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" percentWidth="100.0" />
         </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="28.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints minHeight="28.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
-        </rowConstraints>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
-         <children>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field1" visible="false" GridPane.hgrow="ALWAYS">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field2" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field3" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field4" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field5" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field6" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field7" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="6">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field8" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field9" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="8">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field10" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="9">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field11" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="10">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field12" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="11">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field13" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="12">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field14" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="13">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-            <Label disable="true" maxWidth="1.7976931348623157E308" prefHeight="28.0" text="field15" visible="false" GridPane.hgrow="ALWAYS" GridPane.rowIndex="14">
-               <font>
-                  <Font size="16.0" />
-               </font>
-               <padding>
-                  <Insets left="5.0" right="5.0" />
-               </padding>
-            </Label>
-         </children>
       </GridPane>
    </center>
 </BorderPane>

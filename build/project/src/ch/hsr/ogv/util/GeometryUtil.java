@@ -6,9 +6,9 @@ import javafx.geometry.Point3D;
 public class GeometryUtil {
 
 	public static Point2D lineIntersect(Point2D firstLineStart, Point2D firstLineEnd, Point2D secondLineStart, Point2D secondLineEnd) {
-		double x1 = firstLineStart.getX(), y1 = firstLineStart.getY(), x2 = firstLineEnd.getX(), y2 = firstLineEnd.getY(),
-			   x3 = secondLineStart.getX(), y3 = secondLineStart.getY(), x4 = secondLineEnd.getX(), y4 = secondLineEnd.getY();
-    	return GeometryUtil.lineIntersect(x1, y1, x2, y2, x3, y3, x4, y4);
+		double x1 = firstLineStart.getX(), y1 = firstLineStart.getY(), x2 = firstLineEnd.getX(), y2 = firstLineEnd.getY(), x3 = secondLineStart.getX(), y3 = secondLineStart.getY(), x4 = secondLineEnd
+				.getX(), y4 = secondLineEnd.getY();
+		return GeometryUtil.lineIntersect(x1, y1, x2, y2, x3, y3, x4, y4);
 	}
 
 	public static Point2D lineIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
@@ -24,20 +24,33 @@ public class GeometryUtil {
 		}
 		return null;
 	}
-		
+
 	public static double rotateZAngle(Point3D p1, Point3D p2) {
 		double xDiff = p2.getX() - p1.getX();
 		double zDiff = p2.getZ() - p1.getZ();
 		return Math.toDegrees(Math.atan2(xDiff, zDiff));
 	}
-	
+
 	public static double rotateXAngle(Point3D p1, Point3D p2) {
 		double height = p2.getY() - p1.getY();
 		double hypothenuse = p1.distance(p2);
-		if(hypothenuse == 0.0) {
+		if (hypothenuse == 0.0) {
 			return 0.0;
 		}
 		return Math.toDegrees(Math.asin(height / hypothenuse));
 	}
-		
+
+	public static Point2D divideLineFraction(Point2D start, Point2D end, double fraction) {
+		double x = start.getX() + fraction * (end.getX() - start.getX());
+		double y = start.getY() + fraction * (end.getY() - start.getY());
+		return new Point2D(x, y);
+	}
+
+	public static Point3D divideLineFraction(Point3D start, Point3D end, double fraction) {
+		double x = start.getX() + fraction * (end.getX() - start.getX());
+		double y = start.getY() + fraction * (end.getY() - start.getY());
+		double z = start.getZ() + fraction * (end.getZ() - start.getZ());
+		return new Point3D(x, y, z);
+	}
+
 }

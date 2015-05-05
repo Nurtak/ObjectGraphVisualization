@@ -89,7 +89,7 @@ public class StageManager implements Observer {
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
 		// TODO: Remove everything below this line:
-		mvConnector.createDummyContent();
+		//mvConnector.createDummyContent();
 	}
 
 	private void initPersistancy() {
