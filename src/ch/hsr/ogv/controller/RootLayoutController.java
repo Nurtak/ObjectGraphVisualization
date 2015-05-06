@@ -132,11 +132,10 @@ public class RootLayoutController implements Observer, Initializable {
 		if (file != null) {
 			// MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
 			boolean success = persistancy.loadOGVData(file);
-			if(success) {
+			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
-			}
-			else {
+			} else {
 				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
 		}
@@ -161,11 +160,10 @@ public class RootLayoutController implements Observer, Initializable {
 		if (file != null) {
 			// MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
 			boolean success = persistancy.loadXMIData(file);
-			if(success) {
+			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
-			}
-			else {
+			} else {
 				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
 		}
@@ -180,11 +178,10 @@ public class RootLayoutController implements Observer, Initializable {
 		if (file != null) {
 			// MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
 			boolean success = persistancy.saveOGVData(file);
-			if(success) {
+			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
-			}
-			else {
+			} else {
 				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
 		} else {
@@ -217,15 +214,13 @@ public class RootLayoutController implements Observer, Initializable {
 			UserPreferences.setSavedFilePath(file);
 			// MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
 			boolean success = persistancy.saveOGVData(file);
-			if(success) {
+			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
-			}
-			else {
+			} else {
 				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
-		}
-		else {
+		} else {
 			MessageBar.setText("Could not save data. No save file specified.", MessageLevel.ALERT);
 		}
 	}
@@ -387,14 +382,13 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
-			if(this.createClass.isSelected()) {
+			if (this.createClass.isSelected()) {
 				this.subSceneAdapter.worldRestrictMouseEvents();
 				this.subSceneAdapter.receiveMouseEvents(this.subSceneAdapter.getFloor());
 				this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 				this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 				this.colorPick.setDisable(true);
-			}
-			else {
+			} else {
 				this.subSceneAdapter.worldReceiveMouseEvents();
 				this.subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 				this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
@@ -474,12 +468,11 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateGeneralization() {
-		if(this.createGeneralization.isSelected()) {
+		if (this.createGeneralization.isSelected()) {
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 			this.colorPick.setDisable(true);
-		}
-		else {
+		} else {
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		}
@@ -487,12 +480,11 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateDependency() {
-		if(this.createDependency.isSelected()) {
+		if (this.createDependency.isSelected()) {
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 			this.colorPick.setDisable(true);
-		}
-		else {
+		} else {
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		}
@@ -505,7 +497,7 @@ public class RootLayoutController implements Observer, Initializable {
 		Selectable selected = this.selectionController.getCurrentSelected();
 		if (this.selectionController.hasCurrentSelection()) {
 			this.mvConnector.handleDelete(selected);
-			if(!this.mvConnector.containsSelectable(selected)) {
+			if (!this.mvConnector.containsSelectable(selected)) {
 				this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 			}
 		}
@@ -522,10 +514,10 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 
 	private void addButtonAccelerators() {
-		if(this.createClass != null && this.createObject != null && this.deleteSelected != null) {
+		if (this.createClass != null && this.createObject != null && this.deleteSelected != null) {
 			Platform.runLater(() -> {
 				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.C), () -> {
-					if(!this.createClass.isDisable()) {
+					if (!this.createClass.isDisable()) {
 						this.createClass.requestFocus();
 						this.createClass.fire();
 					}
@@ -549,20 +541,18 @@ public class RootLayoutController implements Observer, Initializable {
 	private void startRelationCreation(PaneBox selectedPaneBox) {
 		Toggle toggle = this.createToolbar.getSelectedToggle();
 		RelationType relationType = null;
-		if(toggle != null && toggle.equals(this.tSplitMenuButton)) {
+		if (toggle != null && toggle.equals(this.tSplitMenuButton)) {
 			MenuItem selectedChoice = this.tSplitMenuButton.selectedChoice();
-			if(selectedChoice != null && this.toggleRelationMap.containsKey(selectedChoice)) {
+			if (selectedChoice != null && this.toggleRelationMap.containsKey(selectedChoice)) {
 				relationType = this.toggleRelationMap.get(selectedChoice);
 			}
-		}
-		else if(toggle != null && toggle.equals(this.createDependency)) {
+		} else if (toggle != null && toggle.equals(this.createDependency)) {
 			relationType = RelationType.DEPENDENCY;
-		}
-		else if(toggle != null && toggle.equals(this.createGeneralization)) {
+		} else if (toggle != null && toggle.equals(this.createGeneralization)) {
 			relationType = RelationType.GENERALIZATION;
 		}
 
-		if(this.mouseMoveController != null && relationType != null) {
+		if (this.mouseMoveController != null && relationType != null) {
 			this.mouseMoveController.addObserver(this.relationCreationProcess);
 			this.relationCreationProcess.startProcess(this.mvConnector, this.selectionController, this.subSceneAdapter, selectedPaneBox, relationType);
 		}
@@ -578,10 +568,10 @@ public class RootLayoutController implements Observer, Initializable {
 		this.createToolbar.selectToggle(null);
 		this.relationCreationProcess.endProcess(this.subSceneAdapter);
 
-		if(viewArrow != null && startBox != null && endBox != null) {
+		if (viewArrow != null && startBox != null && endBox != null) {
 			Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
 			Arrow newArrow = mvConnector.getArrow(relation);
-			if(newArrow != null) {
+			if (newArrow != null) {
 				this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
 			}
 		}
@@ -596,7 +586,7 @@ public class RootLayoutController implements Observer, Initializable {
 		this.createObject.setDisable(value);
 		this.deleteSelected.setDisable(value);
 		this.colorPick.setDisable(value);
-		//if(value) this.colorPick.setValue(Color.WHITE);
+		// if(value) this.colorPick.setValue(Color.WHITE);
 	}
 
 	// TODO Refactor!!
@@ -604,18 +594,18 @@ public class RootLayoutController implements Observer, Initializable {
 	public void update(Observable o, Object arg) {
 		if (o instanceof DragController) {
 			DragController dragController = (DragController) o;
-			if(dragController.isDragInProgress()) {
+			if (dragController.isDragInProgress()) {
 				disableAllButtons(true);
 				return;
 			}
 		}
 
-		if(this.selectionController == null) {
+		if (this.selectionController == null) {
 			return;
 		}
 
 		if (this.createClass.isSelected() && o instanceof SelectionController && (this.selectionController.hasCurrentSelection() && arg instanceof Floor)) { // creating class
-			if(!this.relationCreationProcess.isInProcess()) {
+			if (!this.relationCreationProcess.isInProcess()) {
 				this.subSceneAdapter.worldReceiveMouseEvents();
 				subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 				if (createClass != null && createClass.isSelected()) {
@@ -625,21 +615,19 @@ public class RootLayoutController implements Observer, Initializable {
 				}
 			}
 		}
-		if(o instanceof SelectionController && arg instanceof Floor && this.selectionController.hasCurrentSelection() && this.relationCreationProcess.isInProcess()) {
+		if (o instanceof SelectionController && arg instanceof Floor && this.selectionController.hasCurrentSelection() && this.relationCreationProcess.isInProcess()) {
 			this.selectionController.setSelected(this.relationCreationProcess.getViewArrow(), true, this.subSceneAdapter);
-		}
-		else if (o instanceof SelectionController && arg instanceof PaneBox || arg instanceof Arrow) { // PaneBox, Arrow selected
+		} else if (o instanceof SelectionController && arg instanceof PaneBox || arg instanceof Arrow) { // PaneBox, Arrow selected
 			Selectable selectable = this.selectionController.getCurrentSelected();
 			// creating relations
-			if((this.selectionController.isCurrentSelected(selectable) && selectable instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) || arg instanceof Floor) {
+			if ((this.selectionController.isCurrentSelected(selectable) && selectable instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) || arg instanceof Floor) {
 				PaneBox selectedPaneBox = (PaneBox) selectable;
 
-				if(!this.relationCreationProcess.isInProcess()) { // first selection
+				if (!this.relationCreationProcess.isInProcess()) { // first selection
 					this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 					startRelationCreation(selectedPaneBox);
-				}
-				else { // second selection
-					if(!this.relationCreationProcess.getStartBox().equals(selectedPaneBox)) { // TODO: reflexive relation
+				} else { // second selection
+					if (!this.relationCreationProcess.getStartBox().equals(selectedPaneBox)) { // TODO: reflexive relation
 						endRelationCreation(selectedPaneBox);
 					}
 				}
@@ -649,14 +637,13 @@ public class RootLayoutController implements Observer, Initializable {
 			if (this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProcess()) {
 				disableAllButtons(false);
 				this.createObject.setDisable(true);
-				if(selectable instanceof PaneBox && this.selectionController.isCurrentSelected(selectable)) {
+				if (selectable instanceof PaneBox && this.selectionController.isCurrentSelected(selectable)) {
 					PaneBox selectedPaneBox = (PaneBox) selectable;
 					this.colorPick.setValue(selectedPaneBox.getColor());
-					if(mvConnector.getModelBox(selectedPaneBox) instanceof ModelClass) {
+					if (mvConnector.getModelBox(selectedPaneBox) instanceof ModelClass) {
 						this.createObject.setDisable(false);
 					}
-				}
-				else if(selectable instanceof Arrow && this.selectionController.isCurrentSelected(selectable)) {
+				} else if (selectable instanceof Arrow && this.selectionController.isCurrentSelected(selectable)) {
 					Arrow selectedArrow = (Arrow) selectable;
 					this.colorPick.setValue(selectedArrow.getColor());
 				}
@@ -665,29 +652,29 @@ public class RootLayoutController implements Observer, Initializable {
 			if (this.relationCreationProcess.isInProcess()) {
 				disableAllButtons(true);
 			}
-		}
-		else if(this.selectionController.hasCurrentSelection() && (this.selectionController.getCurrentSelected().equals(this.subSceneAdapter) || this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter selected
+		} else if (this.selectionController.hasCurrentSelection()
+				&& (this.selectionController.getCurrentSelected().equals(this.subSceneAdapter) || this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter
+			// selected
 			this.createObject.setDisable(true);
 			this.deleteSelected.setDisable(true);
 			this.colorPick.setDisable(false);
 			this.colorPick.setValue(this.subSceneAdapter.getFloor().getColor());
-		}
-		else {
-			//this.colorPick.setDisable(true);
-			//this.colorPick.setValue(Color.WHITE);
+		} else {
+			// this.colorPick.setDisable(true);
+			// this.colorPick.setValue(Color.WHITE);
 		}
 	}
 
 	private void initToggleRelationMap() {
-		this.toggleRelationMap.put(this.createDependency,     		 RelationType.DEPENDENCY);
-		this.toggleRelationMap.put(this.createGeneralization,        RelationType.GENERALIZATION);
+		this.toggleRelationMap.put(this.createDependency, RelationType.DEPENDENCY);
+		this.toggleRelationMap.put(this.createGeneralization, RelationType.GENERALIZATION);
 		this.toggleRelationMap.put(this.createUndirectedAssociation, RelationType.UNDIRECTED_ASSOCIATION);
-		this.toggleRelationMap.put(this.createDirectedAssociation,	 RelationType.DIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createDirectedAssociation, RelationType.DIRECTED_ASSOCIATION);
 		this.toggleRelationMap.put(this.createBidirectedAssociation, RelationType.BIDIRECTED_ASSOCIATION);
 		this.toggleRelationMap.put(this.createUndirectedAggregation, RelationType.UNDIRECTED_AGGREGATION);
-		this.toggleRelationMap.put(this.createDirectedAggregation,	 RelationType.DIRECTED_AGGREGATION);
+		this.toggleRelationMap.put(this.createDirectedAggregation, RelationType.DIRECTED_AGGREGATION);
 		this.toggleRelationMap.put(this.createUndirectedComposition, RelationType.UNDIRECTED_COMPOSITION);
-		this.toggleRelationMap.put(this.createDirectedComposition,	 RelationType.DIRECTED_COMPOSITION);
+		this.toggleRelationMap.put(this.createDirectedComposition, RelationType.DIRECTED_COMPOSITION);
 	}
 
 	@Override

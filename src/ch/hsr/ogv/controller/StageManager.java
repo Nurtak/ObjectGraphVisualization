@@ -29,8 +29,8 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
-import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.model.Relation.RelationChange;
+import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
@@ -63,7 +63,7 @@ public class StageManager implements Observer {
 	private CameraController cameraController = new CameraController();
 	private DragMoveController dragMoveController = new DragMoveController();
 	private DragResizeController dragResizeController = new DragResizeController();
-	
+
 	private static final int MIN_WIDTH = 1024;
 	private static final int MIN_HEIGHT = 768;
 
@@ -72,20 +72,20 @@ public class StageManager implements Observer {
 			throw new IllegalArgumentException("The primaryStage argument can not be null!");
 		}
 		this.primaryStage = primaryStage;
-		
+
 		loadRootLayoutController();
 		setupStage();
-		
+
 		initMVConnector();
 		initPersistancy();
-		
+
 		initRootLayoutController();
 		initSelectionController();
 		initContextMenuController();
 		initMouseMoveController();
 		initCameraController();
 		initDragController();
-		
+
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
 		// TODO: Remove everything below this line:
@@ -147,6 +147,7 @@ public class StageManager implements Observer {
 	private void initContextMenuController() {
 		this.contextMenuController.enableActionEvents(this.selectionController, this.subSceneAdapter);
 		this.contextMenuController.setMVConnector(this.mvConnector);
+		this.contextMenuController.setMouseMoveController(this.mouseMoveController);
 		this.contextMenuController.enableContextMenu(this.subSceneAdapter);
 	}
 
@@ -224,7 +225,9 @@ public class StageManager implements Observer {
 
 	private void addSuperObjects(List<ModelClass> superModelClasses, ModelClass subModelClass) {
 		for(ModelObject subModelObject : subModelClass.getModelObjects()) {
-			if(subModelObject.getIsSuperObject()) continue;
+			if(subModelObject.getIsSuperObject()) {
+				continue;
+			}
 			for(ModelClass superModelClass : superModelClasses) {
 				PaneBox superClassPaneBox = this.mvConnector.getPaneBox(superModelClass);
 				if(superClassPaneBox != null) {
@@ -242,7 +245,7 @@ public class StageManager implements Observer {
 			}
 		}
 	}
-	
+
 	private void addRelationToSubScene(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
@@ -314,13 +317,17 @@ public class StageManager implements Observer {
 
 	private void adaptArrowColor(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
-		if (changedArrow == null) return;
+		if (changedArrow == null) {
+			return;
+		}
 		changedArrow.setColor(relation.getColor());
 	}
 
 	private void adaptArrowDirection(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
-		if (changedArrow == null) return;
+		if (changedArrow == null) {
+			return;
+		}
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
 		PaneBox startPaneBox = this.mvConnector.getPaneBox(startModelBox);
@@ -331,7 +338,7 @@ public class StageManager implements Observer {
 		changedArrow.drawArrow();
 		this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
 	}
-	
+
 	private void adaptArrowLabel(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow != null) {
@@ -375,9 +382,9 @@ public class StageManager implements Observer {
 			if(!modelObject.getIsSuperObject()) {
 				modelBox.setWidth(modelObject.getModelClass().getWidth());
 			}
-//			else {
-//				modelBox.setWidth(modelObject.getSubObject().getModelClass().getWidth());
-//			}
+			//			else {
+			//				modelBox.setWidth(modelObject.getSubObject().getModelClass().getWidth());
+			//			}
 		} else if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
 
@@ -396,7 +403,9 @@ public class StageManager implements Observer {
 
 	private void adaptBoxWidth(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox == null) return;
+		if (changedBox == null) {
+			return;
+		}
 		if (modelBox instanceof ModelClass) {
 			changedBox.setWidth(modelBox.getWidth());
 			ModelClass modelClass = (ModelClass) modelBox;
@@ -448,10 +457,12 @@ public class StageManager implements Observer {
 			}
 		}
 	}
-	
+
 	private void adaptBoxCoordinates(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox == null) return;
+		if (changedBox == null) {
+			return;
+		}
 		if (modelBox instanceof ModelClass) {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelClass modelClass = (ModelClass) modelBox;
@@ -472,10 +483,10 @@ public class StageManager implements Observer {
 		else if (modelBox instanceof ModelObject) {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelObject modelObject = (ModelObject) modelBox;
-//				ModelObject subObject = modelObject.getSubObject();
-//				if(subObject != null) {
-//					subObject.setY(modelObject.getY());
-//				}
+			//				ModelObject subObject = modelObject.getSubObject();
+			//				if(subObject != null) {
+			//					subObject.setY(modelObject.getY());
+			//				}
 			for (ModelObject superObjects : modelObject.getSuperObjects()) {
 				superObjects.setY(modelObject.getY());
 			}
@@ -495,10 +506,10 @@ public class StageManager implements Observer {
 			}
 			changedBox.setLabelSelected(prevSelectionIndex, true);
 			// center labels were cleared and recreated, need controls again
-			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter); 
+			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter);
 			this.textFieldController.enableCenterTextInput(modelClass, changedBox, this.mvConnector);
 			this.contextMenuController.enableCenterFieldContextMenu(modelClass, changedBox, this.subSceneAdapter);
-			
+
 			double newWidth = changedBox.calcMinWidth();
 			changedBox.setMinWidth(newWidth);
 			if (newWidth > changedBox.getWidth()) {
@@ -532,7 +543,7 @@ public class StageManager implements Observer {
 			}
 			changedBox.recalcHasCenterGrid();
 			changedBox.setLabelSelected(prevSelectionIndex, true);
-			 // center labels were cleared and recreated, need controls again
+			// center labels were cleared and recreated, need controls again
 			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter);
 			this.textFieldController.enableCenterTextInput(modelObject, changedBox, this.mvConnector);
 			this.contextMenuController.enableCenterFieldContextMenu(modelObject, changedBox, this.subSceneAdapter);
