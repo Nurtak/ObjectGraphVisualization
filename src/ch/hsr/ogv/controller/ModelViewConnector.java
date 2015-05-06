@@ -177,16 +177,6 @@ public class ModelViewConnector {
 		return newBox;
 	}
 	
-	public PaneBox handleCreateNewSuperObject(ModelClass baseModelClass, ModelObject subModelObject) {
-		ModelObject newSuperObject = this.modelManager.createSuperObject(baseModelClass, subModelObject);
-		PaneBox newBox = this.getPaneBox(newSuperObject);
-		if (newBox != null) {
-			newBox.allowTopTextInput(false);
-			return newBox;
-		}
-		return null;
-	}
-
 	public PaneBox handleCreateNewObject(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			ModelBox selectedModelBox = this.getModelBox((PaneBox) selected);
@@ -235,7 +225,7 @@ public class ModelViewConnector {
 		modelManager.clearRelations();
 		modelManager.clearClasses();
 	}
-
+	
 	public void handleDelete(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			PaneBox paneBox = (PaneBox) selected;

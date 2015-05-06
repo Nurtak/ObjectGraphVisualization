@@ -100,7 +100,7 @@ public class ModelClass extends ModelBox {
 	public void resetObjectLevel() {
 		int levelCount = 1;
 		for (ModelObject modelObject : this.modelObjects) {
-			if(modelObject.getIsSuperObject()) {
+			if(modelObject.isSuperObject()) {
 				continue;
 			}
 			double level = (levelCount) * OBJECT_LEVEL_DIFF;
@@ -113,7 +113,7 @@ public class ModelClass extends ModelBox {
 	private double getTopLevel() {
 		double y = 0.0;
 		for (ModelObject modelObject : this.modelObjects) {
-			if (!modelObject.getIsSuperObject() && modelObject.getY() > y) {
+			if (!modelObject.isSuperObject() && modelObject.getY() > y) {
 				y = modelObject.getY();
 			}
 		}
@@ -216,7 +216,7 @@ public class ModelClass extends ModelBox {
 	public List<ModelClass> getSubClasses() {
 		ArrayList<ModelClass> subClassList = new ArrayList<ModelClass>();
 		for (Endpoint endpoint : getEndpoints()) {
-			if (endpoint.getType() == EndpointType.EMPTY_ARROW && endpoint.getFriend() != null) {
+			if (endpoint.getFriend() != null && endpoint.getType() == EndpointType.EMPTY_ARROW) {
 				ModelBox modelBox = endpoint.getFriend().getAppendant();
 				if (modelBox != null && modelBox instanceof ModelClass) {
 					ModelClass subClass = (ModelClass) modelBox;
@@ -233,7 +233,7 @@ public class ModelClass extends ModelBox {
 	public List<ModelClass> getSuperClasses() {
 		ArrayList<ModelClass> superClassList = new ArrayList<ModelClass>();
 		for (Endpoint endpoint : getEndpoints()) {
-			if (endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW && endpoint.getFriend() != null) {
+			if (endpoint.getFriend() != null && endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
 				ModelBox modelBox = endpoint.getFriend().getAppendant();
 				if (modelBox != null && modelBox instanceof ModelClass) {
 					ModelClass superClass = (ModelClass) modelBox;

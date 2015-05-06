@@ -1,7 +1,6 @@
 package ch.hsr.ogv.controller;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -30,7 +29,6 @@ import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.Relation.RelationChange;
-import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
@@ -63,7 +61,7 @@ public class StageManager implements Observer {
 	private CameraController cameraController = new CameraController();
 	private DragMoveController dragMoveController = new DragMoveController();
 	private DragResizeController dragResizeController = new DragResizeController();
-	
+
 	private static final int MIN_WIDTH = 1024;
 	private static final int MIN_HEIGHT = 768;
 
@@ -72,20 +70,20 @@ public class StageManager implements Observer {
 			throw new IllegalArgumentException("The primaryStage argument can not be null!");
 		}
 		this.primaryStage = primaryStage;
-		
+
 		loadRootLayoutController();
 		setupStage();
-		
+
 		initMVConnector();
 		initPersistancy();
-		
+
 		initRootLayoutController();
 		initSelectionController();
 		initContextMenuController();
 		initMouseMoveController();
 		initCameraController();
 		initDragController();
-		
+
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
 		// TODO: Remove everything below this line:
@@ -147,6 +145,7 @@ public class StageManager implements Observer {
 	private void initContextMenuController() {
 		this.contextMenuController.enableActionEvents(this.selectionController, this.subSceneAdapter);
 		this.contextMenuController.setMVConnector(this.mvConnector);
+		this.contextMenuController.setMouseMoveController(this.mouseMoveController);
 		this.contextMenuController.enableContextMenu(this.subSceneAdapter);
 	}
 
@@ -196,7 +195,7 @@ public class StageManager implements Observer {
 		this.rootLayout.applyCss();
 	}
 
-	private void addClass(ModelClass modelClass) {
+	private void createClassInView(ModelClass modelClass) {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
@@ -209,7 +208,7 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelClass, paneBox);
 	}
 
-	private void addObject(ModelObject modelObject) {
+	private void createObjectInView(ModelObject modelObject) {
 		modelObject.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
@@ -222,19 +221,7 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
 
-	private void addSuperObjects(List<ModelClass> superModelClasses, ModelClass subModelClass) {
-		for(ModelObject subModelObject : subModelClass.getModelObjects()) {
-			if(subModelObject.getIsSuperObject()) continue;
-			for(ModelClass superModelClass : superModelClasses) {
-				PaneBox newPaneBox = this.mvConnector.handleCreateNewSuperObject(superModelClass, subModelObject);
-				if(newPaneBox != null) {
-					adaptBoxSettings(subModelClass);
-				}
-			}
-		}
-	}
-	
-	private void addRelation(Relation relation) {
+	private void createArrowInView(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
@@ -247,14 +234,6 @@ public class StageManager implements Observer {
 			addToSubScene(arrow.getSelection());
 			this.mvConnector.putArrows(relation, arrow);
 			this.contextMenuController.enableContextMenu(arrow, relation);
-			if(relation.getType().equals(RelationType.GENERALIZATION) && startModelBox instanceof ModelClass && endModelBox instanceof ModelClass) {
-				ModelClass startClass = (ModelClass) startModelBox;
-				List<ModelClass> superClasses = startClass.getSuperClasses();
-				addSuperObjects(superClasses, startClass);
-				for(ModelClass subClass : startClass.getSubClasses()) {
-					addSuperObjects(superClasses, subClass);
-				}
-			}
 		}
 	}
 
@@ -289,7 +268,7 @@ public class StageManager implements Observer {
 			ModelClass modelClass = modelObject.getModelClass();
 			PaneBox paneClassBox = this.mvConnector.getPaneBox(modelClass);
 			if (paneClassBox != null) {
-				if(!modelObject.getIsSuperObject()) {
+				if(!modelObject.isSuperObject()) {
 					changedBox.setMinWidth(paneClassBox.getMinWidth());
 				}
 				changedBox.setMinHeight(paneClassBox.getMinHeight());
@@ -322,7 +301,7 @@ public class StageManager implements Observer {
 		changedArrow.drawArrow();
 		this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
 	}
-	
+
 	private void adaptArrowLabel(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow != null) {
@@ -363,7 +342,7 @@ public class StageManager implements Observer {
 			ModelObject modelObject = (ModelObject) modelBox;
 			changedBox.getTopTextField().setText((modelObject.getName()));
 			changedBox.getTopLabel().setText(modelObject.getName() + " : " + modelObject.getModelClass().getName());
-			if(!modelObject.getIsSuperObject()) {
+			if(!modelObject.isSuperObject()) {
 				modelBox.setWidth(modelObject.getModelClass().getWidth());
 			}
 //			else {
@@ -392,7 +371,7 @@ public class StageManager implements Observer {
 			changedBox.setWidth(modelBox.getWidth());
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				if(!modelObject.getIsSuperObject()) {
+				if(!modelObject.isSuperObject()) {
 					modelObject.setWidth(modelClass.getWidth());
 				}
 				for(ModelObject superModelObject : modelObject.getSuperObjects()) {
@@ -439,7 +418,7 @@ public class StageManager implements Observer {
 			}
 		}
 	}
-	
+
 	private void adaptBoxCoordinates(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox == null) return;
@@ -447,7 +426,7 @@ public class StageManager implements Observer {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				if (!modelObject.getIsSuperObject()) {
+				if (!modelObject.isSuperObject()) {
 					modelObject.setX(modelClass.getX());
 					modelObject.setZ(modelClass.getZ());
 				}
@@ -486,10 +465,10 @@ public class StageManager implements Observer {
 			}
 			changedBox.setLabelSelected(prevSelectionIndex, true);
 			// center labels were cleared and recreated, need controls again
-			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter); 
+			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter);
 			this.textFieldController.enableCenterTextInput(modelClass, changedBox, this.mvConnector);
 			this.contextMenuController.enableCenterFieldContextMenu(modelClass, changedBox, this.subSceneAdapter);
-			
+
 			double newWidth = changedBox.calcMinWidth();
 			changedBox.setMinWidth(newWidth);
 			if (newWidth > changedBox.getWidth()) {
@@ -523,7 +502,7 @@ public class StageManager implements Observer {
 			}
 			changedBox.recalcHasCenterGrid();
 			changedBox.setLabelSelected(prevSelectionIndex, true);
-			 // center labels were cleared and recreated, need controls again
+			// center labels were cleared and recreated, need controls again
 			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter);
 			this.textFieldController.enableCenterTextInput(modelObject, changedBox, this.mvConnector);
 			this.contextMenuController.enableCenterFieldContextMenu(modelObject, changedBox, this.subSceneAdapter);
@@ -535,7 +514,7 @@ public class StageManager implements Observer {
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) arg;
 			if (!this.mvConnector.containsModelBox(modelClass)) { // class is new
-				addClass(modelClass);
+				createClassInView(modelClass);
 				adaptBoxSettings(modelClass);
 				adaptArrowToBox(modelClass);
 			} else {
@@ -546,7 +525,7 @@ public class StageManager implements Observer {
 		} else if (o instanceof ModelManager && arg instanceof Relation) {
 			Relation relation = (Relation) arg;
 			if (!this.mvConnector.containsRelation(relation)) { // relation is new
-				addRelation(relation);
+				createArrowInView(relation);
 				adaptArrowColor(relation);
 				// adaptRelation(relation);
 			} else {
@@ -556,10 +535,16 @@ public class StageManager implements Observer {
 			}
 		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) arg;
-			if (!this.mvConnector.containsModelBox(modelObject)) { // instance is new
-				addObject(modelObject);
+			if (!this.mvConnector.containsModelBox(modelObject)) { // object is new
+				createObjectInView(modelObject);
 				adaptBoxSettings(modelObject);
 				adaptArrowToBox(modelObject);
+				if(modelObject.isSuperObject()) {
+					ModelObject subObject = modelObject.getSubObject();
+					if(subObject != null) {
+						adaptBoxSettings(subObject.getModelClass());
+					}
+				}
 			} else {
 				PaneBox toDelete = this.mvConnector.removeBoxes(modelObject);
 				removeFromSubScene(toDelete.get());

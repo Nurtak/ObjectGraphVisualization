@@ -9,8 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -19,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Adrian Rieser
  *
  */
-@XmlType(propOrder = { "attributeValues", "isSuperObject", "superObjects" })
+@XmlType(propOrder = { "attributeValues" })
 public class ModelObject extends ModelBox {
 
 	private Map<Attribute, String> attributeValues = new HashMap<Attribute, String>();
@@ -55,7 +53,7 @@ public class ModelObject extends ModelBox {
 		this.modelClass = modelClass;
 	}
 	
-	public boolean getIsSuperObject() {
+	public boolean isSuperObject() {
 		return isSuperObject;
 	}
 
@@ -63,8 +61,7 @@ public class ModelObject extends ModelBox {
 		this.isSuperObject = isSuperObject;
 	}
 	
-	@XmlElementWrapper (name = "superObjects")
-	@XmlElement (name = "superObject")
+	@XmlTransient
 	public List<ModelObject> getSuperObjects() {
 		return superObjects;
 	}
