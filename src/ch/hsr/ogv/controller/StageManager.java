@@ -29,8 +29,8 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
-import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.model.Relation.RelationChange;
+import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
@@ -196,7 +196,7 @@ public class StageManager implements Observer {
 		this.rootLayout.applyCss();
 	}
 
-	private void addClassToSubScene(ModelClass modelClass) {
+	private void addClass(ModelClass modelClass) {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
@@ -209,7 +209,7 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelClass, paneBox);
 	}
 
-	private void addObjectToSubScene(ModelObject modelObject) {
+	private void addObject(ModelObject modelObject) {
 		modelObject.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
@@ -226,24 +226,15 @@ public class StageManager implements Observer {
 		for(ModelObject subModelObject : subModelClass.getModelObjects()) {
 			if(subModelObject.getIsSuperObject()) continue;
 			for(ModelClass superModelClass : superModelClasses) {
-				PaneBox superClassPaneBox = this.mvConnector.getPaneBox(superModelClass);
-				if(superClassPaneBox != null) {
-					PaneBox superObjectPaneBox = this.mvConnector.handleCreateNewObject(superClassPaneBox);
-					superObjectPaneBox.allowTopTextInput(false);
-					ModelBox superModelBox = this.mvConnector.getModelBox(superObjectPaneBox);
-					if(superModelBox != null && superModelBox instanceof ModelObject && !superModelBox.equals(subModelObject)) {
-						ModelObject superModelObject = (ModelObject) superModelBox;
-						superModelObject.setIsSuperObject(true);
-						subModelObject.getSuperObjects().add(superModelObject);
-						superModelBox.setName("");
-						adaptBoxSettings(subModelClass);
-					}
+				PaneBox newPaneBox = this.mvConnector.handleCreateNewSuperObject(superModelClass, subModelObject);
+				if(newPaneBox != null) {
+					adaptBoxSettings(subModelClass);
 				}
 			}
 		}
 	}
 	
-	private void addRelationToSubScene(Relation relation) {
+	private void addRelation(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
@@ -544,7 +535,7 @@ public class StageManager implements Observer {
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) arg;
 			if (!this.mvConnector.containsModelBox(modelClass)) { // class is new
-				addClassToSubScene(modelClass);
+				addClass(modelClass);
 				adaptBoxSettings(modelClass);
 				adaptArrowToBox(modelClass);
 			} else {
@@ -555,7 +546,7 @@ public class StageManager implements Observer {
 		} else if (o instanceof ModelManager && arg instanceof Relation) {
 			Relation relation = (Relation) arg;
 			if (!this.mvConnector.containsRelation(relation)) { // relation is new
-				addRelationToSubScene(relation);
+				addRelation(relation);
 				adaptArrowColor(relation);
 				// adaptRelation(relation);
 			} else {
@@ -566,7 +557,7 @@ public class StageManager implements Observer {
 		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) arg;
 			if (!this.mvConnector.containsModelBox(modelObject)) { // instance is new
-				addObjectToSubScene(modelObject);
+				addObject(modelObject);
 				adaptBoxSettings(modelObject);
 				adaptArrowToBox(modelObject);
 			} else {

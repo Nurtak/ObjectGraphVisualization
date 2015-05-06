@@ -49,6 +49,17 @@ public class ModelManager extends Observable {
 		notifyObservers(modelObject);
 		return modelObject;
 	}
+	
+	public ModelObject createSuperObject(ModelClass modelClass, ModelObject subModelObject) {
+		ModelObject.modelObjectCounter.addAndGet(1);
+		String newObjectName = "";
+		ModelObject modelObject = modelClass.createModelObject(newObjectName);
+		modelObject.setIsSuperObject(true);
+		subModelObject.getSuperObjects().add(modelObject);
+		setChanged();
+		notifyObservers(modelObject);
+		return modelObject;
+	}
 
 	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType, Color color) {
 		if (isRelationAllowed(start, end, relationType)) {
@@ -89,13 +100,34 @@ public class ModelManager extends Observable {
 		}
 		boolean deletedObject = modelObject.getModelClass().deleteModelObject(modelObject);
 		if (deletedObject) {
+			if(modelObject.getIsSuperObject()) {
+				ModelObject subObject = modelObject.getSubObject();
+				if(subObject != null) {
+					subObject.getSuperObjects().remove(modelObject);
+				}
+			}
 			setChanged();
 			notifyObservers(modelObject);
 		}
 		return deletedObject;
 	}
 
+	private void cleanupGeneralization(Relation relation) {
+		ModelBox superModelBox = relation.getEnd().getAppendant();
+		if(superModelBox instanceof ModelClass) {
+			ModelClass superClass = (ModelClass) superModelBox;
+			for(ModelObject modelObject : new ArrayList<ModelObject>(superClass.getModelObjects())) {
+				if(modelObject.getIsSuperObject()) {
+					deleteObject(modelObject);
+				}
+			}
+		}
+	}
+	
 	public boolean deleteRelation(Relation relation) {
+		if(RelationType.GENERALIZATION.equals(relation.getType())) {
+			cleanupGeneralization(relation);
+		}
 		boolean deletedRelation = relations.remove(relation);
 		if (deletedRelation) {
 			Endpoint start = relation.getStart();

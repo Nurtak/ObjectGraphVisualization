@@ -127,10 +127,6 @@ public class ModelClass extends ModelBox {
 
 	public boolean deleteModelObject(ModelObject modelObject) {
 		// ModelObject.modelObjectCounter.decrementAndGet();
-//		if(modelObject.getIsSuperObject()) {
-//			ModelObject subObject = modelObject.getSubObject();
-//			subObject.getSuperObjects().remove(modelObject);
-//		}
 		boolean removed = modelObjects.remove(modelObject);
 		if (removed) {
 			double level = getTopLevel() + OBJECT_LEVEL_DIFF;
