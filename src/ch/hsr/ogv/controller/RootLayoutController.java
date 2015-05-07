@@ -123,16 +123,16 @@ public class RootLayoutController implements Observer, Initializable {
 		// Set extension filter
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("OGV (*.ogv)", "*.ogv");
 		fileChooser.getExtensionFilters().add(extFilter);
-		File previousFile = UserPreferences.getSavedFile();
+		File previousFile = UserPreferences.getOGVFilePath();
 		if (previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show open file dialog
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
-			UserPreferences.setSavedFilePath(file);
-			// MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.loadOGVData(file);
+			UserPreferences.setOGVFilePath(file);
+			MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
+			boolean success = persistancy.loadOGVDataAsync(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -152,16 +152,16 @@ public class RootLayoutController implements Observer, Initializable {
 		// Set extension filter
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XMI 1.1 (*.xml)", "*.xml");
 		fileChooser.getExtensionFilters().add(extFilter);
-		File previousFile = UserPreferences.getSavedFile();
+		File previousFile = UserPreferences.getXMIFilePath();
 		if (previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
 		// Show open file dialog
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
-			UserPreferences.setSavedFilePath(file);
-			// MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.loadXMIData(file);
+			UserPreferences.setXMIFilePath(file);
+			MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
+			boolean success = persistancy.loadXMIDataAsync(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -176,10 +176,10 @@ public class RootLayoutController implements Observer, Initializable {
 	 */
 	@FXML
 	private void handleSave() {
-		File file = UserPreferences.getSavedFile();
+		File file = UserPreferences.getOGVFilePath();
 		if (file != null) {
-			// MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.saveOGVData(file);
+			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
+			boolean success = persistancy.saveOGVDataAsync(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -201,7 +201,7 @@ public class RootLayoutController implements Observer, Initializable {
 		// Set extension filter
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("OGV (*.ogv)", "*.ogv");
 		fileChooser.getExtensionFilters().add(extFilter);
-		File previousFile = UserPreferences.getSavedFile();
+		File previousFile = UserPreferences.getOGVFilePath();
 		if (previousFile != null && previousFile.getParentFile() != null && previousFile.getParentFile().isDirectory()) {
 			fileChooser.setInitialDirectory(previousFile.getParentFile());
 		}
@@ -213,9 +213,9 @@ public class RootLayoutController implements Observer, Initializable {
 			if (!file.getPath().endsWith(".ogv")) {
 				file = new File(file.getPath() + ".ogv");
 			}
-			UserPreferences.setSavedFilePath(file);
-			// MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.saveOGVData(file);
+			UserPreferences.setOGVFilePath(file);
+			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
+			boolean success = persistancy.saveOGVDataAsync(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);

@@ -1,6 +1,7 @@
 package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -9,6 +10,7 @@ import javafx.scene.paint.Color;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import jfxtras.labs.util.Util;
@@ -24,6 +26,8 @@ public class ModelClass extends ModelBox {
 	public final static double OBJECT_LEVEL_DIFF = 100;
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
+	private HashMap<ModelObject, ArrayList<ModelObject>> superModelObjects = new HashMap<ModelObject, ArrayList<ModelObject>>();
+	
 	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
 
 	// for marshaling only
@@ -67,16 +71,104 @@ public class ModelClass extends ModelBox {
 	}
 
 	private boolean addModelObject(ModelObject modelObject) {
-		if (!modelObjects.contains(modelObject)) {
+		if (modelObject != null && !modelObjects.contains(modelObject)) {
 			return modelObjects.add(modelObject);
 		}
 		return false;
+	}
+	
+	public void addSuperModelObject(ModelObject subObject, ModelObject superObject) {
+		if(subObject == null || superObject == null) return;
+		ArrayList<ModelObject> superObjectContainer = new ArrayList<ModelObject>();
+		if(this.superModelObjects.containsKey(subObject)) {
+			superObjectContainer = this.superModelObjects.get(subObject);
+		}
+		superObjectContainer.add(superObject);
+		this.superModelObjects.put(subObject, superObjectContainer);
+	}
+	
+	public void removeSuperModelObject(ModelObject superModelObject) {
+		for(ModelObject subObject : this.superModelObjects.keySet()) {
+			this.superModelObjects.get(subObject).remove(superModelObject);
+		}
+	}
+	
+	public void removeAllSuperModelObjects(ModelObject subModelObject) {
+		this.superModelObjects.remove(subModelObject);
+	}
+	
+	public void removeAllSuperModelObjects(ModelClass superClass) {
+		for(ModelObject subObject : this.superModelObjects.keySet()) {
+			ArrayList<ModelObject> superObjectList = this.superModelObjects.get(subObject);
+			for(ModelObject superObject : superObjectList) {
+				if(superObject.getModelClass().equals(superClass)) {
+					superObjectList.remove(superObject);
+				}
+			}
+		}
+	}
+	
+	@XmlTransient
+	public ModelObject getSubModelObject(ModelObject superObject) {
+		for(ModelObject subObject : this.superModelObjects.keySet()) {
+			if(this.superModelObjects.get(subObject).contains(superObject)) {
+				return subObject;
+			}
+		}
+		return null;
+	}
+	
+	@XmlTransient
+	public List<ModelObject> getSuperModelObjects(ModelObject subObject) {
+		ArrayList<ModelObject> emptyList = new ArrayList<ModelObject>();
+		if(subObject == null) return emptyList;
+		ArrayList<ModelObject> superObjectList = this.superModelObjects.get(subObject);
+		if(superObjectList != null) {
+			return superObjectList;
+		}
+		return emptyList;
+	}
+	
+	@XmlTransient
+	public List<ModelObject> getSuperModelObjects(ModelClass superClass) {
+		ArrayList<ModelObject> retList = new ArrayList<ModelObject>();
+		if(superClass == null) return retList;
+		for(ModelObject subObject : this.superModelObjects.keySet()) {
+			ArrayList<ModelObject> superObjectList = this.superModelObjects.get(subObject);
+			for(ModelObject superObject : superObjectList) {
+				if(superObject.getModelClass().equals(superClass)) {
+					retList.add(superObject);
+				}
+			}
+		}
+		return retList;
+	}
+	
+	@XmlTransient
+	public List<ModelObject> getSuperModelObjects() {
+		ArrayList<ModelObject> retList = new ArrayList<ModelObject>();
+		for(ModelObject subObject : this.superModelObjects.keySet()) {
+			retList.addAll(this.superModelObjects.get(subObject));
+		}
+		return retList;
+	}
+	
+	@XmlTransient
+	public List<ModelObject> getInheritingObjects() {
+		ArrayList<ModelObject> retList = new ArrayList<ModelObject>();
+		for(ModelClass subClass : getSubClasses()) {
+			retList.addAll(subClass.getSuperModelObjects(this));
+		}
+		return retList;
 	}
 
 	private boolean addAttribute(Attribute attribute) {
 		if (!attributes.contains(attribute) && attributes.add(attribute)) {
 			for (ModelObject modelObject : getModelObjects()) {
 				modelObject.addAttributeValue(attribute, "");
+			}
+			for (ModelObject inheritingObject : getInheritingObjects()) {
+				inheritingObject.addAttributeValue(attribute, "");
 			}
 			return true;
 		}
@@ -100,9 +192,6 @@ public class ModelClass extends ModelBox {
 	public void resetObjectLevel() {
 		int levelCount = 1;
 		for (ModelObject modelObject : this.modelObjects) {
-			if(modelObject.isSuperObject()) {
-				continue;
-			}
 			double level = (levelCount) * OBJECT_LEVEL_DIFF;
 			Point3D modelObjectCoordinates = new Point3D(modelObject.getX(), level, this.getZ());
 			modelObject.setCoordinates(modelObjectCoordinates);
@@ -113,7 +202,7 @@ public class ModelClass extends ModelBox {
 	private double getTopLevel() {
 		double y = 0.0;
 		for (ModelObject modelObject : this.modelObjects) {
-			if (!modelObject.isSuperObject() && modelObject.getY() > y) {
+			if (modelObject.getY() > y) {
 				y = modelObject.getY();
 			}
 		}
@@ -121,21 +210,27 @@ public class ModelClass extends ModelBox {
 	}
 
 	public void deleteModelObjects() {
-		// ModelObject.modelObjectCounter.decrementAndGet();
-		modelObjects.clear();
+		this.modelObjects.clear();
 	}
-
+	
 	public boolean deleteModelObject(ModelObject modelObject) {
-		// ModelObject.modelObjectCounter.decrementAndGet();
-		boolean removed = modelObjects.remove(modelObject);
-		if (removed) {
-			double level = getTopLevel() + OBJECT_LEVEL_DIFF;
-			Point3D modelObjectCoordinates = new Point3D(modelObject.getX(), level, this.getZ());
-			modelObject.setCoordinates(modelObjectCoordinates);
+		return this.modelObjects.remove(modelObject);
+	}
+	
+	public void deleteSuperModelObjects() {
+		this.superModelObjects.clear();
+	}
+	
+	public boolean deleteSuperModelObject(ModelObject superObject) {
+		boolean removed = false;
+		for(ArrayList<ModelObject> superObjectList : this.superModelObjects.values()) {
+			if(superObjectList.remove(superObject)) {
+				removed = true;
+			}
 		}
 		return removed;
 	}
-
+	
 	public Attribute createAttribute() {
 		return createAttribute("field" + (this.attributes.size() + 1));
 	}
@@ -172,6 +267,9 @@ public class ModelClass extends ModelBox {
 			modelObject.changeAttributeName(thisAttribute, thisAttribute.getName());
 			// modelObject.changeAttributeName(upperAttribute, upperAttribute.getName());
 		}
+		for (ModelObject inheritingObject : getInheritingObjects()) {
+			inheritingObject.changeAttributeName(thisAttribute, thisAttribute.getName());
+		}
 		return true;
 	}
 
@@ -188,6 +286,9 @@ public class ModelClass extends ModelBox {
 			modelObject.changeAttributeName(thisAttribute, thisAttribute.getName());
 			// modelObject.changeAttributeName(lowerAttribute, lowerAttribute.getName());
 		}
+		for (ModelObject inheritingObject : getInheritingObjects()) {
+			inheritingObject.changeAttributeName(thisAttribute, thisAttribute.getName());
+		}
 		return true;
 	}
 
@@ -199,12 +300,18 @@ public class ModelClass extends ModelBox {
 		for (ModelObject modelObject : this.modelObjects) {
 			modelObject.changeAttributeName(attribute, name);
 		}
+		for (ModelObject inheritingObject : getInheritingObjects()) {
+			inheritingObject.changeAttributeName(attribute, name);
+		}
 	}
 
 	private boolean deleteAttribute(Attribute attribute) {
 		boolean deleted = attributes.remove(attribute);
 		for (ModelObject modelObject : getModelObjects()) {
 			modelObject.deleteAttributeValue(attribute);
+		}
+		for (ModelObject inheritingObject : getInheritingObjects()) {
+			inheritingObject.deleteAttributeValue(attribute);
 		}
 		if (deleted) {
 			setChanged();

@@ -87,11 +87,11 @@ public class StageManager implements Observer {
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
 		// TODO: Remove everything below this line:
-		//mvConnector.createDummyContent();
+		mvConnector.createDummyContent();
 	}
 
 	private void initPersistancy() {
-		UserPreferences.setSavedFilePath(null); // reset user preferences of file path
+		UserPreferences.setOGVFilePath(null); // reset user preferences of file path
 		persistancy = new Persistancy(this.mvConnector.getModelManager());
 		rootLayoutController.setPersistancy(this.persistancy);
 	}
@@ -268,9 +268,7 @@ public class StageManager implements Observer {
 			ModelClass modelClass = modelObject.getModelClass();
 			PaneBox paneClassBox = this.mvConnector.getPaneBox(modelClass);
 			if (paneClassBox != null) {
-				if(!modelObject.isSuperObject()) {
-					changedBox.setMinWidth(paneClassBox.getMinWidth());
-				}
+				changedBox.setMinWidth(paneClassBox.getMinWidth());
 				changedBox.setMinHeight(paneClassBox.getMinHeight());
 			}
 			adaptCenterFields(modelObject);
@@ -343,12 +341,7 @@ public class StageManager implements Observer {
 			ModelObject modelObject = (ModelObject) modelBox;
 			changedBox.getTopTextField().setText((modelObject.getName()));
 			changedBox.getTopLabel().setText(modelObject.getName() + " : " + modelObject.getModelClass().getName());
-			if(!modelObject.isSuperObject()) {
-				modelBox.setWidth(modelObject.getModelClass().getWidth());
-			}
-//			else {
-//				modelBox.setWidth(modelObject.getSubObject().getModelClass().getWidth());
-//			}
+			modelBox.setWidth(modelObject.getModelClass().getWidth());
 		} else if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
 
@@ -372,12 +365,10 @@ public class StageManager implements Observer {
 			changedBox.setWidth(modelBox.getWidth());
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				if(!modelObject.isSuperObject()) {
-					modelObject.setWidth(modelClass.getWidth());
-				}
-				for(ModelObject superModelObject : modelObject.getSuperObjects()) {
-					superModelObject.setWidth(modelClass.getWidth());
-				}
+				modelObject.setWidth(modelClass.getWidth());
+			}
+			for(ModelObject superModelObject : modelClass.getSuperModelObjects()) {
+				superModelObject.setWidth(modelClass.getWidth());
 			}
 		}
 		else if(modelBox instanceof ModelObject) {
@@ -395,12 +386,16 @@ public class StageManager implements Observer {
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setHeight(modelClass.getHeight());
 			}
-			for(ModelClass subClass : modelClass.getSubClasses()) {
-				for(ModelObject subObject : subClass.getModelObjects()) {
+			for (ModelClass subClass : modelClass.getSubClasses()) {
+				for (ModelObject subModelObject : subClass.getModelObjects()) {
 					double cascadingHeight = 0.0;
-					for(ModelObject superModelObject : subObject.getSuperObjects()) {
-						superModelObject.setZ(subClass.getZ() + subClass.getHeight() / 2 + cascadingHeight + superModelObject.getHeight() / 2);
-						cascadingHeight += superModelObject.getHeight();
+					for (ModelObject subSuperObject : subClass.getSuperModelObjects(subModelObject)) {
+						if(subSuperObject.getModelClass().equals(modelClass)) {
+							subSuperObject.setHeight(modelClass.getHeight());
+						}
+						subSuperObject.setX(subClass.getX());
+						subSuperObject.setZ(subClass.getZ() + subClass.getHeight() / 2  + cascadingHeight + subSuperObject.getHeight() / 2);
+						cascadingHeight += subSuperObject.getHeight();
 					}
 				}
 			}
@@ -417,6 +412,9 @@ public class StageManager implements Observer {
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setColor(Util.brighter(modelClass.getColor(), 0.1));
 			}
+			for(ModelObject inheritingObject : modelClass.getInheritingObjects()) {
+				inheritingObject.setColor(Util.brighter(modelClass.getColor(), 0.1));
+			}
 		}
 	}
 
@@ -427,14 +425,11 @@ public class StageManager implements Observer {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				if (!modelObject.isSuperObject()) {
-					modelObject.setX(modelClass.getX());
-					modelObject.setZ(modelClass.getZ());
-				}
+				modelObject.setX(modelClass.getX());
+				modelObject.setZ(modelClass.getZ());
 				double cascadingHeight = 0.0;
-				for (ModelObject superModelObject : modelObject.getSuperObjects()) {
+				for (ModelObject superModelObject : modelClass.getSuperModelObjects(modelObject)) {
 					superModelObject.setX(modelClass.getX());
-					superModelObject.setY(modelObject.getY());
 					superModelObject.setZ(modelClass.getZ() + modelClass.getHeight() / 2  + cascadingHeight + superModelObject.getHeight() / 2);
 					cascadingHeight += superModelObject.getHeight();
 				}
@@ -443,11 +438,7 @@ public class StageManager implements Observer {
 		else if (modelBox instanceof ModelObject) {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelObject modelObject = (ModelObject) modelBox;
-//				ModelObject subObject = modelObject.getSubObject();
-//				if(subObject != null) {
-//					subObject.setY(modelObject.getY());
-//				}
-			for (ModelObject superObjects : modelObject.getSuperObjects()) {
+			for (ModelObject superObjects : modelObject.getSuperModelObjects()) {
 				superObjects.setY(modelObject.getY());
 			}
 		}
@@ -540,12 +531,6 @@ public class StageManager implements Observer {
 				createObjectInView(modelObject);
 				adaptBoxSettings(modelObject);
 				adaptArrowToBox(modelObject);
-				if(modelObject.isSuperObject()) {
-					ModelObject subObject = modelObject.getSubObject();
-					if(subObject != null) {
-						adaptBoxSettings(subObject.getModelClass());
-					}
-				}
 			} else {
 				PaneBox toDelete = this.mvConnector.removeBoxes(modelObject);
 				removeFromSubScene(toDelete.get());

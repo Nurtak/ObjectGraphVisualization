@@ -21,8 +21,6 @@ import javax.xml.bind.annotation.XmlType;
 public class ModelObject extends ModelBox {
 
 	private Map<Attribute, String> attributeValues = new HashMap<Attribute, String>();
-	private boolean isSuperObject = false;
-	private List<ModelObject> superObjects = new ArrayList<ModelObject>();
 	private ModelClass modelClass;
 
 	public static volatile AtomicInteger modelObjectCounter = new AtomicInteger(0);
@@ -53,34 +51,15 @@ public class ModelObject extends ModelBox {
 		this.modelClass = modelClass;
 	}
 	
-	public boolean isSuperObject() {
-		return isSuperObject;
-	}
-
-	public void setIsSuperObject(boolean isSuperObject) {
-		this.isSuperObject = isSuperObject;
+	@XmlTransient
+	public List<ModelObject> getSuperModelObjects() {
+		if(this.modelClass == null) return new ArrayList<ModelObject>();
+		return this.modelClass.getSuperModelObjects(this);
 	}
 	
-	@XmlTransient
-	public List<ModelObject> getSuperObjects() {
-		return superObjects;
-	}
-
-	public void setSuperObjects(List<ModelObject> superObjects) {
-		this.superObjects = superObjects;
-	}
-	
-	@XmlTransient
-	public ModelObject getSubObject() {
-		if(!this.isSuperObject || getModelClass() == null) return null;
-		for(ModelClass subClasses : getModelClass().getSubClasses()) {
-			for(ModelObject subObject : subClasses.getModelObjects()) {
-				if(subObject.getSuperObjects().contains(this)) {
-					return subObject;
-				}
-			}
-		}
-		return null;
+	public void addSuperModelObject(ModelObject superObject) {
+		if(this.modelClass == null) return;
+		this.modelClass.addSuperModelObject(this, superObject);
 	}
 	
 	// for un/marshaling only
