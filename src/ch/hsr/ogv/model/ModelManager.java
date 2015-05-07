@@ -51,7 +51,6 @@ public class ModelManager extends Observable {
 			buildGeneralizationObjects((ModelClass) modelClass);
 		}
 		
-		
 		setChanged();
 		notifyObservers(modelObject);
 		return modelObject;
@@ -59,9 +58,17 @@ public class ModelManager extends Observable {
 	
 	private void createSuperObjects(List<ModelClass> superModelClasses, ModelClass subModelClass) {
 		for(ModelObject subModelObject : subModelClass.getModelObjects()) {
-			if(subModelObject.isSuperObject()) continue;
-			for(ModelClass superModelClass : superModelClasses) {
-				createSuperObject(superModelClass, subModelObject);
+			boolean covered = false;
+			for(ModelObject superObject : subModelObject.getSuperObjects()) {
+				if(superModelClasses.contains(superObject.getModelClass())) {
+					covered = true;
+					break;
+				}
+			}
+			if(!covered) {
+				for(ModelClass superModelClass : superModelClasses) {
+					createSuperObject(superModelClass, subModelObject);
+				}
 			}
 		}
 	}
@@ -147,14 +154,13 @@ public class ModelManager extends Observable {
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
 		if(!(startModelBox instanceof ModelClass) || !(endModelBox instanceof ModelClass)) return;
-		ModelClass endClass = (ModelClass) endModelBox;
 		ModelClass startClass = (ModelClass) startModelBox;
 		List<ModelClass> subClasses = new ArrayList<ModelClass>(startClass.getSubClasses());
 		subClasses.add(startClass);
 		for(ModelClass subClass : subClasses) {
 			for(ModelObject modelObject : subClass.getModelObjects()) {
 				for(ModelObject superModelObject : new ArrayList<ModelObject>(modelObject.getSuperObjects())) {
-					if(endClass.equals(superModelObject.getModelClass()) || endClass.getSuperClasses().contains(superModelObject.getModelClass())) {
+					if(startClass.getSuperClasses().contains(superModelObject.getModelClass())) {
 						deleteObject(superModelObject);
 					}
 				}

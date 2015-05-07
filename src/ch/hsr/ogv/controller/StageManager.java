@@ -314,6 +314,7 @@ public class StageManager implements Observer {
 	}
 
 	private void adaptArrowToBox(ModelBox modelBox) {
+		if(modelBox.getEndpoints().isEmpty()) return;
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		Map<Endpoint, Endpoint> endpointMap = modelBox.getFriends();
 		for (Endpoint endpoint : endpointMap.keySet()) {
