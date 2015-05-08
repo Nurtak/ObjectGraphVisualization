@@ -642,8 +642,15 @@ public class RootLayoutController implements Observer, Initializable {
 				if (selectable instanceof PaneBox && this.selectionController.isCurrentSelected(selectable)) {
 					PaneBox selectedPaneBox = (PaneBox) selectable;
 					this.colorPick.setValue(selectedPaneBox.getColor());
-					if (mvConnector.getModelBox(selectedPaneBox) instanceof ModelClass) {
+					ModelBox modelBox = mvConnector.getModelBox(selectedPaneBox);
+					if (modelBox instanceof ModelClass) {
 						this.createObject.setDisable(false);
+					}
+					else if (modelBox instanceof ModelObject) {
+						ModelObject modelObject = (ModelObject) modelBox;
+						if(modelObject.isSuperObject() && (selectedPaneBox.getSelectedLabel() == null || selectedPaneBox.getSelectedLabel().equals(selectedPaneBox.getTopLabel()))) {
+							this.deleteSelected.setDisable(true);
+						}
 					}
 				} else if (selectable instanceof Arrow && this.selectionController.isCurrentSelected(selectable)) {
 					Arrow selectedArrow = (Arrow) selectable;
@@ -655,7 +662,8 @@ public class RootLayoutController implements Observer, Initializable {
 				disableAllButtons(true);
 			}
 		} else if (this.selectionController.hasCurrentSelection()
-				&& (this.selectionController.getCurrentSelected().equals(this.subSceneAdapter) || this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter
+				&& (this.selectionController.getCurrentSelected().equals(this.subSceneAdapter)
+				|| this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter
 			// selected
 			this.createObject.setDisable(true);
 			this.deleteSelected.setDisable(true);
