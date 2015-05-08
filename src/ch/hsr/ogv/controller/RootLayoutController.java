@@ -36,7 +36,6 @@ import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
-import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.Floor;
@@ -61,12 +60,10 @@ public class RootLayoutController implements Observer, Initializable {
 	private ModelViewConnector mvConnector;
 	private SubSceneAdapter subSceneAdapter;
 	private SelectionController selectionController;
-	private MouseMoveController mouseMoveController;
 	private CameraController cameraController;
+	private RelationCreationController relationCreationController;
 
 	private Persistancy persistancy;
-
-	private RelationCreationProcess relationCreationProcess = new RelationCreationProcess();
 
 	private HashMap<Object, RelationType> toggleRelationMap = new HashMap<Object, RelationType>();
 
@@ -87,16 +84,21 @@ public class RootLayoutController implements Observer, Initializable {
 		this.selectionController = selectionController;
 	}
 
-	public void setMouseMoveController(MouseMoveController mouseMoveController) {
-		this.mouseMoveController = mouseMoveController;
-	}
-
 	public void setCameraController(CameraController cameraController) {
 		this.cameraController = cameraController;
 	}
 
 	public void setMessageBar() {
 		this.messageBarContainer.getChildren().add(MessageBar.getTextField());
+	}
+
+	public void setRelationCreationController(RelationCreationController relationCreationController) {
+		this.relationCreationController = relationCreationController;
+
+	}
+
+	public void setPersistancy(Persistancy persistancy) {
+		this.persistancy = persistancy;
 	}
 
 	/**
@@ -554,30 +556,16 @@ public class RootLayoutController implements Observer, Initializable {
 			relationType = RelationType.GENERALIZATION;
 		}
 
-		if (this.mouseMoveController != null && relationType != null) {
-			this.mouseMoveController.addObserver(this.relationCreationProcess);
-			this.relationCreationProcess.startProcess(this.mvConnector, this.selectionController, this.subSceneAdapter, selectedPaneBox, relationType);
+		if (relationType != null) {
+			this.relationCreationController.startProcess(selectedPaneBox, relationType);
 		}
 	}
 
 	private void endRelationCreation(PaneBox selectedPaneBox) {
-		Arrow viewArrow = this.relationCreationProcess.getViewArrow();
-		PaneBox startBox = this.relationCreationProcess.getStartBox();
-		PaneBox endBox = this.relationCreationProcess.getEndBox();
-
-		this.mouseMoveController.deleteObserver(this.relationCreationProcess);
+		//this.mouseMoveController.deleteObserver(this.relationCreationController);
 		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		this.createToolbar.selectToggle(null);
-		this.relationCreationProcess.endProcess(this.subSceneAdapter);
-
-		if (viewArrow != null && startBox != null && endBox != null) {
-			Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
-			Arrow newArrow = mvConnector.getArrow(relation);
-			if (newArrow != null) {
-				this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
-			}
-		}
-
+		this.relationCreationController.endProcess(this.subSceneAdapter);
 	}
 
 	private void disableAllButtons(boolean value) {
@@ -607,7 +595,7 @@ public class RootLayoutController implements Observer, Initializable {
 		}
 
 		if (this.createClass.isSelected() && o instanceof SelectionController && (this.selectionController.hasCurrentSelection() && arg instanceof Floor)) { // creating class
-			if (!this.relationCreationProcess.isInProcess()) {
+			if (!this.relationCreationController.isInProcess()) {
 				this.subSceneAdapter.worldReceiveMouseEvents();
 				subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 				if (createClass != null && createClass.isSelected()) {
@@ -617,26 +605,26 @@ public class RootLayoutController implements Observer, Initializable {
 				}
 			}
 		}
-		if (o instanceof SelectionController && arg instanceof Floor && this.selectionController.hasCurrentSelection() && this.relationCreationProcess.isInProcess()) {
-			this.selectionController.setSelected(this.relationCreationProcess.getViewArrow(), true, this.subSceneAdapter);
+		if (o instanceof SelectionController && arg instanceof Floor && this.selectionController.hasCurrentSelection() && this.relationCreationController.isInProcess()) {
+			this.selectionController.setSelected(this.relationCreationController.getViewArrow(), true, this.subSceneAdapter);
 		} else if (o instanceof SelectionController && arg instanceof PaneBox || arg instanceof Arrow) { // PaneBox, Arrow selected
 			Selectable selectable = this.selectionController.getCurrentSelected();
 			// creating relations
 			if ((this.selectionController.isCurrentSelected(selectable) && selectable instanceof PaneBox && this.createToolbar.getSelectedToggle() != null) || arg instanceof Floor) {
 				PaneBox selectedPaneBox = (PaneBox) selectable;
 
-				if (!this.relationCreationProcess.isInProcess()) { // first selection
+				if (!this.relationCreationController.isInProcess()) { // first selection
 					this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 					startRelationCreation(selectedPaneBox);
 				} else { // second selection
-					if (!this.relationCreationProcess.getStartBox().equals(selectedPaneBox)) { // TODO: reflexive relation
+					if (!this.relationCreationController.getStartBox().equals(selectedPaneBox)) { // TODO: reflexive relation
 						endRelationCreation(selectedPaneBox);
 					}
 				}
 			}
 
 			// button enabling / disabling
-			if (this.selectionController.hasCurrentSelection() && !this.relationCreationProcess.isInProcess()) {
+			if (this.selectionController.hasCurrentSelection() && !this.relationCreationController.isInProcess()) {
 				disableAllButtons(false);
 				this.createObject.setDisable(true);
 				if (selectable instanceof PaneBox && this.selectionController.isCurrentSelected(selectable)) {
@@ -651,7 +639,7 @@ public class RootLayoutController implements Observer, Initializable {
 				}
 			}
 
-			if (this.relationCreationProcess.isInProcess()) {
+			if (this.relationCreationController.isInProcess()) {
 				disableAllButtons(true);
 			}
 		} else if (this.selectionController.hasCurrentSelection()
@@ -691,7 +679,4 @@ public class RootLayoutController implements Observer, Initializable {
 		initToggleRelationMap();
 	}
 
-	public void setPersistancy(Persistancy persistancy) {
-		this.persistancy = persistancy;
-	}
 }

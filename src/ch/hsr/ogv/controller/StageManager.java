@@ -61,6 +61,7 @@ public class StageManager implements Observer {
 	private CameraController cameraController = new CameraController();
 	private DragMoveController dragMoveController = new DragMoveController();
 	private DragResizeController dragResizeController = new DragResizeController();
+	private RelationCreationController relationCreationController = new RelationCreationController();
 
 	private static final int MIN_WIDTH = 1024;
 	private static final int MIN_HEIGHT = 768;
@@ -83,17 +84,12 @@ public class StageManager implements Observer {
 		initMouseMoveController();
 		initCameraController();
 		initDragController();
+		initRelationCreationController();
 
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
 		// TODO: Remove everything below this line:
 		mvConnector.createDummyContent();
-	}
-
-	private void initPersistancy() {
-		UserPreferences.setOGVFilePath(null); // reset user preferences of file path
-		persistancy = new Persistancy(this.mvConnector.getModelManager());
-		rootLayoutController.setPersistancy(this.persistancy);
 	}
 
 	private void setupStage() {
@@ -133,20 +129,19 @@ public class StageManager implements Observer {
 		this.mvConnector.getModelManager().addObserver(this);
 	}
 
+	private void initPersistancy() {
+		UserPreferences.setOGVFilePath(null); // reset user preferences of file path
+		persistancy = new Persistancy(this.mvConnector.getModelManager());
+		rootLayoutController.setPersistancy(this.persistancy);
+	}
+
 	private void initRootLayoutController() {
 		this.rootLayoutController.setPrimaryStage(this.primaryStage);
 		this.rootLayoutController.setMVConnector(this.mvConnector);
 		this.rootLayoutController.setSubSceneAdapter(this.subSceneAdapter);
 		this.rootLayoutController.setSelectionController(this.selectionController);
-		this.rootLayoutController.setMouseMoveController(this.mouseMoveController);
 		this.rootLayoutController.setCameraController(this.cameraController);
-	}
-
-	private void initContextMenuController() {
-		this.contextMenuController.enableActionEvents(this.selectionController, this.subSceneAdapter);
-		this.contextMenuController.setMVConnector(this.mvConnector);
-		this.contextMenuController.setMouseMoveController(this.mouseMoveController);
-		this.contextMenuController.enableContextMenu(this.subSceneAdapter);
+		this.rootLayoutController.setRelationCreationController(this.relationCreationController);
 	}
 
 	private void initSelectionController() {
@@ -155,8 +150,16 @@ public class StageManager implements Observer {
 		this.selectionController.addObserver(this.contextMenuController);
 	}
 
+	private void initContextMenuController() {
+		this.contextMenuController.enableActionEvents(this.selectionController, this.subSceneAdapter);
+		this.contextMenuController.setMVConnector(this.mvConnector);
+		this.contextMenuController.setRelationCreationController(this.relationCreationController);
+		this.contextMenuController.enableContextMenu(this.subSceneAdapter);
+	}
+
 	private void initMouseMoveController() {
 		this.mouseMoveController.enableMouseMove(this.subSceneAdapter.getFloor());
+		this.mouseMoveController.addObserver(relationCreationController);
 	}
 
 	private void initCameraController() {
@@ -171,6 +174,12 @@ public class StageManager implements Observer {
 		this.dragResizeController.addObserver(this.cameraController);
 		this.dragResizeController.addObserver(this.rootLayoutController);
 		this.dragResizeController.addObserver(this.selectionController);
+	}
+
+	private void initRelationCreationController() {
+		relationCreationController.setSelectionController(selectionController);
+		relationCreationController.setSubSceneAdapter(subSceneAdapter);
+		relationCreationController.setMvConnector(mvConnector);
 	}
 
 	/**
@@ -282,13 +291,17 @@ public class StageManager implements Observer {
 
 	private void adaptArrowColor(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
-		if (changedArrow == null) return;
+		if (changedArrow == null) {
+			return;
+		}
 		changedArrow.setColor(relation.getColor());
 	}
 
 	private void adaptArrowDirection(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
-		if (changedArrow == null) return;
+		if (changedArrow == null) {
+			return;
+		}
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
 		PaneBox startPaneBox = this.mvConnector.getPaneBox(startModelBox);
@@ -312,7 +325,9 @@ public class StageManager implements Observer {
 	}
 
 	private void adaptArrowToBox(ModelBox modelBox) {
-		if(modelBox.getEndpoints().isEmpty()) return;
+		if(modelBox.getEndpoints().isEmpty()) {
+			return;
+		}
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		Map<Endpoint, Endpoint> endpointMap = modelBox.getFriends();
 		for (Endpoint endpoint : endpointMap.keySet()) {
@@ -360,7 +375,9 @@ public class StageManager implements Observer {
 
 	private void adaptBoxWidth(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox == null) return;
+		if (changedBox == null) {
+			return;
+		}
 		if (modelBox instanceof ModelClass) {
 			changedBox.setWidth(modelBox.getWidth());
 			ModelClass modelClass = (ModelClass) modelBox;
@@ -420,7 +437,9 @@ public class StageManager implements Observer {
 
 	private void adaptBoxCoordinates(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox == null) return;
+		if (changedBox == null) {
+			return;
+		}
 		if (modelBox instanceof ModelClass) {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelClass modelClass = (ModelClass) modelBox;
