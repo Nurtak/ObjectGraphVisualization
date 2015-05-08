@@ -273,8 +273,11 @@ public class StageManager implements Observer {
 				changedBox.setMinHeight(paneClassBox.getMinHeight());
 			}
 			else if (paneClassBox != null && !isNotSuperObject) {
-//				modelClass.get
-//				changedBox.setMinWidth(width);
+				for(ModelClass subClass : modelClass.getSubClasses()) {
+					if(subClass.getSubModelObject(modelObject) != null) {
+						changedBox.setMinWidth(subClass.getWidth());
+					}
+				}
 			}
 			adaptCenterFields(modelObject);
 		}
@@ -362,6 +365,10 @@ public class StageManager implements Observer {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setName(modelObject.getName());
+			}
+			
+			for (ModelObject inheritingObject : modelClass.getInheritingObjects()) {
+				inheritingObject.setName(inheritingObject.getName());
 			}
 		}
 	}
