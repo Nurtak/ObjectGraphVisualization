@@ -52,14 +52,19 @@ public class ModelObject extends ModelBox {
 	}
 	
 	@XmlTransient
-	public List<ModelObject> getSuperModelObjects() {
+	public List<ModelObject> getSuperObjects() {
 		if(this.modelClass == null) return new ArrayList<ModelObject>();
-		return this.modelClass.getSuperModelObjects(this);
+		return this.modelClass.getSuperObjects(this);
 	}
 	
-	public void addSuperModelObject(ModelObject superObject) {
+	public void addSuperObject(ModelObject superObject) {
 		if(this.modelClass == null) return;
-		this.modelClass.addSuperModelObject(this, superObject);
+		this.modelClass.addSuperObject(this, superObject);
+	}
+	
+	public boolean isSuperObject() {
+		if(this.modelClass == null) return false;
+		return !this.modelClass.getModelObjects().contains(this);
 	}
 	
 	// for un/marshaling only

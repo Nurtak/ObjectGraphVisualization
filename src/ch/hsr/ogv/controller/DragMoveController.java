@@ -55,7 +55,7 @@ public class DragMoveController extends DragController {
 				else if(modelBox instanceof ModelObject) {
 					VerticalHelper verticalHelper = subSceneAdapter.getVerticalHelper();
 					if(verticalHelper == null) return;
-					verticalHelper.setBasePaneBox(paneBox);
+					verticalHelper.setSpan(paneBox);
 					verticalHelper.setVisible(true);
 					verticalHelper.toFront();
 					subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
@@ -68,7 +68,7 @@ public class DragMoveController extends DragController {
 						}
 						Point3D objectCoordinates = new Point3D(modelBox.getX(), newY, modelBox.getZ());
 						modelBox.setCoordinates(objectCoordinates);
-						verticalHelper.setBasePaneBox(paneBox);
+						verticalHelper.setSpan(paneBox);
 					}
 				}
 			}

@@ -10,7 +10,6 @@ import javafx.scene.paint.Color;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import jfxtras.labs.util.Util;
@@ -26,7 +25,7 @@ public class ModelClass extends ModelBox {
 	public final static double OBJECT_LEVEL_DIFF = 100;
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
-	private HashMap<ModelObject, ArrayList<ModelObject>> superModelObjects = new HashMap<ModelObject, ArrayList<ModelObject>>();
+	private HashMap<ModelObject, ArrayList<ModelObject>> superObjects = new HashMap<ModelObject, ArrayList<ModelObject>>();
 	
 	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
 
@@ -77,29 +76,29 @@ public class ModelClass extends ModelBox {
 		return false;
 	}
 	
-	public void addSuperModelObject(ModelObject subObject, ModelObject superObject) {
+	public void addSuperObject(ModelObject subObject, ModelObject superObject) {
 		if(subObject == null || superObject == null) return;
 		ArrayList<ModelObject> superObjectContainer = new ArrayList<ModelObject>();
-		if(this.superModelObjects.containsKey(subObject)) {
-			superObjectContainer = this.superModelObjects.get(subObject);
+		if(this.superObjects.containsKey(subObject)) {
+			superObjectContainer = this.superObjects.get(subObject);
 		}
 		superObjectContainer.add(superObject);
-		this.superModelObjects.put(subObject, superObjectContainer);
+		this.superObjects.put(subObject, superObjectContainer);
 	}
 	
-	public void removeSuperModelObject(ModelObject superModelObject) {
-		for(ModelObject subObject : this.superModelObjects.keySet()) {
-			this.superModelObjects.get(subObject).remove(superModelObject);
+	public void removeSuperObject(ModelObject superObject) {
+		for(ModelObject subObject : this.superObjects.keySet()) {
+			this.superObjects.get(subObject).remove(superObject);
 		}
 	}
 	
-	public void removeAllSuperModelObjects(ModelObject subModelObject) {
-		this.superModelObjects.remove(subModelObject);
+	protected void removeAllSuperObjects(ModelObject subModelObject) {
+		this.superObjects.remove(subModelObject);
 	}
 	
-	public void removeAllSuperModelObjects(ModelClass superClass) {
-		for(ModelObject subObject : this.superModelObjects.keySet()) {
-			ArrayList<ModelObject> superObjectList = this.superModelObjects.get(subObject);
+	protected void removeAllSuperObjects(ModelClass superClass) {
+		for(ModelObject subObject : this.superObjects.keySet()) {
+			ArrayList<ModelObject> superObjectList = this.superObjects.get(subObject);
 			for(ModelObject superObject : superObjectList) {
 				if(superObject.getModelClass().equals(superClass)) {
 					superObjectList.remove(superObject);
@@ -108,33 +107,30 @@ public class ModelClass extends ModelBox {
 		}
 	}
 	
-	@XmlTransient
 	public ModelObject getSubModelObject(ModelObject superObject) {
-		for(ModelObject subObject : this.superModelObjects.keySet()) {
-			if(this.superModelObjects.get(subObject).contains(superObject)) {
+		for(ModelObject subObject : this.superObjects.keySet()) {
+			if(this.superObjects.get(subObject).contains(superObject)) {
 				return subObject;
 			}
 		}
 		return null;
 	}
 	
-	@XmlTransient
-	public List<ModelObject> getSuperModelObjects(ModelObject subObject) {
+	public List<ModelObject> getSuperObjects(ModelObject subObject) {
 		ArrayList<ModelObject> emptyList = new ArrayList<ModelObject>();
 		if(subObject == null) return emptyList;
-		ArrayList<ModelObject> superObjectList = this.superModelObjects.get(subObject);
+		ArrayList<ModelObject> superObjectList = this.superObjects.get(subObject);
 		if(superObjectList != null) {
 			return superObjectList;
 		}
 		return emptyList;
 	}
 	
-	@XmlTransient
-	public List<ModelObject> getSuperModelObjects(ModelClass superClass) {
+	public List<ModelObject> getSuperObjects(ModelClass superClass) {
 		ArrayList<ModelObject> retList = new ArrayList<ModelObject>();
 		if(superClass == null) return retList;
-		for(ModelObject subObject : this.superModelObjects.keySet()) {
-			ArrayList<ModelObject> superObjectList = this.superModelObjects.get(subObject);
+		for(ModelObject subObject : this.superObjects.keySet()) {
+			ArrayList<ModelObject> superObjectList = this.superObjects.get(subObject);
 			for(ModelObject superObject : superObjectList) {
 				if(superObject.getModelClass().equals(superClass)) {
 					retList.add(superObject);
@@ -144,20 +140,18 @@ public class ModelClass extends ModelBox {
 		return retList;
 	}
 	
-	@XmlTransient
-	public List<ModelObject> getSuperModelObjects() {
+	public List<ModelObject> getSuperObjects() {
 		ArrayList<ModelObject> retList = new ArrayList<ModelObject>();
-		for(ModelObject subObject : this.superModelObjects.keySet()) {
-			retList.addAll(this.superModelObjects.get(subObject));
+		for(ModelObject subObject : this.superObjects.keySet()) {
+			retList.addAll(this.superObjects.get(subObject));
 		}
 		return retList;
 	}
 	
-	@XmlTransient
 	public List<ModelObject> getInheritingObjects() {
 		ArrayList<ModelObject> retList = new ArrayList<ModelObject>();
 		for(ModelClass subClass : getSubClasses()) {
-			retList.addAll(subClass.getSuperModelObjects(this));
+			retList.addAll(subClass.getSuperObjects(this));
 		}
 		return retList;
 	}
@@ -217,13 +211,13 @@ public class ModelClass extends ModelBox {
 		return this.modelObjects.remove(modelObject);
 	}
 	
-	public void deleteSuperModelObjects() {
-		this.superModelObjects.clear();
+	public void deleteSuperObjects() {
+		this.superObjects.clear();
 	}
 	
-	public boolean deleteSuperModelObject(ModelObject superObject) {
+	public boolean deleteSuperObject(ModelObject superObject) {
 		boolean removed = false;
-		for(ArrayList<ModelObject> superObjectList : this.superModelObjects.values()) {
+		for(ArrayList<ModelObject> superObjectList : this.superObjects.values()) {
 			if(superObjectList.remove(superObject)) {
 				removed = true;
 			}

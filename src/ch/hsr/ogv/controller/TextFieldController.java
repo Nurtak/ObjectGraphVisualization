@@ -95,7 +95,7 @@ public class TextFieldController {
 					}
 					
 					for(ModelObject modelObject : modelClass.getModelObjects()) {
-						modelObject.setName(modelObject.getName());
+						modelObject.setName(modelObject.getName()); // this will trigger reset!
 						PaneBox paneBoxObject = mvConnector.getPaneBox(modelObject);
 						if(paneBoxObject != null) {
 							paneBoxObject.setTopText(modelObject.getName() + " : " + newValue);
@@ -103,7 +103,7 @@ public class TextFieldController {
 					}
 					
 					for(ModelObject inheritingObject : modelClass.getInheritingObjects()) {
-						inheritingObject.setName(inheritingObject.getName());
+						inheritingObject.setName(inheritingObject.getName()); // this will trigger reset!
 						PaneBox paneBoxObject = mvConnector.getPaneBox(inheritingObject);
 						if(paneBoxObject != null) {
 							paneBoxObject.setTopText(inheritingObject.getName() + " : " + newValue);

@@ -201,6 +201,15 @@ public class ContextMenuController extends Observable implements Observer {
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				} else if ((modelBox instanceof ModelObject)) {
 					// Object
+					ModelObject modelObject = (ModelObject) modelBox;
+					if(modelObject.isSuperObject()) {
+						renameObject.setDisable(true);
+						deleteObject.setDisable(true);
+					}
+					else {
+						renameObject.setDisable(false);
+						deleteObject.setDisable(false);
+					}
 					hideAllContextMenus();
 					setValue.setDisable(true);
 					deleteValue.setDisable(true);

@@ -241,8 +241,11 @@ public class ModelViewConnector {
 				}
 
 			} else if (modelToDelete instanceof ModelObject) {
-				if(!centerlabelSelected) { // delete the whole object
-					ModelObject objectToDelete = (ModelObject) modelToDelete;
+				ModelObject objectToDelete = (ModelObject) modelToDelete;
+				if (objectToDelete.isSuperObject() && !centerlabelSelected) {
+					return; // do nothing
+				}
+				else if(!centerlabelSelected) { // delete the whole object
 					this.modelManager.deleteObject(objectToDelete);
 				}
 				else { // clear attribute value

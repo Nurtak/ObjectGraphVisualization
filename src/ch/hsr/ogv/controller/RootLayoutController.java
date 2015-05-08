@@ -134,7 +134,7 @@ public class RootLayoutController implements Observer, Initializable {
 		if (file != null) {
 			UserPreferences.setOGVFilePath(file);
 			MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.loadOGVDataAsync(file);
+			boolean success = persistancy.loadOGVData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -163,7 +163,7 @@ public class RootLayoutController implements Observer, Initializable {
 		if (file != null) {
 			UserPreferences.setXMIFilePath(file);
 			MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.loadXMIDataAsync(file);
+			boolean success = persistancy.loadXMIData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -181,7 +181,7 @@ public class RootLayoutController implements Observer, Initializable {
 		File file = UserPreferences.getOGVFilePath();
 		if (file != null) {
 			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.saveOGVDataAsync(file);
+			boolean success = persistancy.saveOGVData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -217,7 +217,7 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 			UserPreferences.setOGVFilePath(file);
 			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.saveOGVDataAsync(file);
+			boolean success = persistancy.saveOGVData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -630,8 +630,15 @@ public class RootLayoutController implements Observer, Initializable {
 				if (selectable instanceof PaneBox && this.selectionController.isCurrentSelected(selectable)) {
 					PaneBox selectedPaneBox = (PaneBox) selectable;
 					this.colorPick.setValue(selectedPaneBox.getColor());
-					if (mvConnector.getModelBox(selectedPaneBox) instanceof ModelClass) {
+					ModelBox modelBox = mvConnector.getModelBox(selectedPaneBox);
+					if (modelBox instanceof ModelClass) {
 						this.createObject.setDisable(false);
+					}
+					else if (modelBox instanceof ModelObject) {
+						ModelObject modelObject = (ModelObject) modelBox;
+						if(modelObject.isSuperObject() && (selectedPaneBox.getSelectedLabel() == null || selectedPaneBox.getSelectedLabel().equals(selectedPaneBox.getTopLabel()))) {
+							this.deleteSelected.setDisable(true);
+						}
 					}
 				} else if (selectable instanceof Arrow && this.selectionController.isCurrentSelected(selectable)) {
 					Arrow selectedArrow = (Arrow) selectable;
@@ -643,7 +650,8 @@ public class RootLayoutController implements Observer, Initializable {
 				disableAllButtons(true);
 			}
 		} else if (this.selectionController.hasCurrentSelection()
-				&& (this.selectionController.getCurrentSelected().equals(this.subSceneAdapter) || this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter
+				&& (this.selectionController.getCurrentSelected().equals(this.subSceneAdapter)
+				|| this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter
 			// selected
 			this.createObject.setDisable(true);
 			this.deleteSelected.setDisable(true);

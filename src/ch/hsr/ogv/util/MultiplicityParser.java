@@ -14,11 +14,11 @@ public class MultiplicityParser {
 	private static final String ASTERISK = "*";
 
 	// ^(\d+|\*)(\.\.(\d+|\*))?(,(\d+|\*)(\.\.(\d+|\*))?)*$
-	private static final String multipRegex = "^(\\d+|\\*)(\\.\\.(\\d+|\\*))?(,(\\d+|\\*)(\\.\\.(\\d+|\\*))?)*$";
-	private static final Pattern mutlipPattern = Pattern.compile(multipRegex);
+	private static final String MUTLIP_REGEX = "^(\\d+|\\*)(\\.\\.(\\d+|\\*))?(,(\\d+|\\*)(\\.\\.(\\d+|\\*))?)*$";
+	private static final Pattern MUTLIP_PATTERN = Pattern.compile(MUTLIP_REGEX);
 
 	public static String getParsedMultiplicity(String multiString) {
-		Matcher matcher = mutlipPattern.matcher(multiString);
+		Matcher matcher = MUTLIP_PATTERN.matcher(multiString);
 		if (matcher.matches()) {
 			return multiString;
 		} else {
@@ -26,7 +26,7 @@ public class MultiplicityParser {
 		}
 	}
 
-	private static String deleteLeadingZeros(String multiString) {
+	public static String deleteLeadingZeros(String multiString) {
 		StringBuffer sb = new StringBuffer();
 
 		String[] split = multiString.split("\\.\\.|,");
@@ -136,7 +136,7 @@ public class MultiplicityParser {
 	}
 
 	// by Jonas Klemming
-	private static boolean isInteger(String str) {
+	public static boolean isInteger(String str) {
 		if (str == null || str.isEmpty()) {
 			return false;
 		}
