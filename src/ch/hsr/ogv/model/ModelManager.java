@@ -60,7 +60,7 @@ public class ModelManager extends Observable {
 	private void createSuperObjects(List<ModelClass> superClasses, ModelClass subClass) {
 		ArrayList<ModelObject> uncoveredObjects = new ArrayList<ModelObject>(subClass.getModelObjects());
 		for(ModelClass superClass : superClasses) {
-			List<ModelObject> superObjectList = subClass.getSuperModelObjects(superClass);
+			List<ModelObject> superObjectList = subClass.getSuperObjects(superClass);
 			for(ModelObject superObject : superObjectList) {
 				uncoveredObjects.remove(subClass.getSubModelObject(superObject));
 			}
@@ -72,18 +72,19 @@ public class ModelManager extends Observable {
 	
 	private ModelObject createSuperObject(ModelClass superClass, ModelObject subObject) {
 		ModelObject.modelObjectCounter.addAndGet(1);
+		ModelClass subClass = subObject.getModelClass();
 		double newZ = subObject.getModelClass().getZ();
 		newZ += subObject.getModelClass().getHeight() / 2;
-		for(ModelObject superObject : subObject.getSuperModelObjects()) {
+		for(ModelObject superObject : subObject.getSuperObjects()) {
 			newZ += superObject.getHeight();
 		}
 		newZ += superClass.getHeight() / 2;
 		Point3D modelObjectCoordinates = new Point3D(subObject.getX(), subObject.getY(), newZ);
-		ModelObject superObject = new ModelObject("", superClass, modelObjectCoordinates, superClass.getWidth(), superClass.getHeight(), Util.brighter(superClass.getColor(), 0.1));
+		ModelObject superObject = new ModelObject("", superClass, modelObjectCoordinates, subClass.getWidth(), superClass.getHeight(), Util.brighter(superClass.getColor(), 0.1));
 		for (Attribute attribute : superClass.getAttributes()) {
 			superObject.addAttributeValue(attribute, "");
 		}
-		subObject.addSuperModelObject(superObject);
+		subObject.addSuperObject(superObject);
 		setChanged();
 		notifyObservers(superObject);
 		return superObject;
@@ -109,12 +110,12 @@ public class ModelManager extends Observable {
 	
 	public boolean deleteClass(ModelClass modelClass) {
 		for(ModelClass subClass : modelClass.getSubClasses()) {
-			for(ModelObject subSuperObject : subClass.getSuperModelObjects(modelClass)) {
+			for(ModelObject subSuperObject : subClass.getSuperObjects(modelClass)) {
 				deleteSuperObject(subClass, subSuperObject);
 			}
 		}
 		
-		for(ModelObject superObject : modelClass.getSuperModelObjects()) {
+		for(ModelObject superObject : modelClass.getSuperObjects()) {
 			deleteSuperObject(modelClass, superObject);
 		}
 		
@@ -140,7 +141,7 @@ public class ModelManager extends Observable {
 		for (Endpoint endPoint : objectsEndPoints) {
 			deleteRelation(endPoint.getRelation());
 		}
-		boolean deletedObject = subClass.deleteSuperModelObject(superObject);
+		boolean deletedObject = subClass.deleteSuperObject(superObject);
 		if (deletedObject) {
 			setChanged();
 			notifyObservers(superObject);
@@ -153,6 +154,11 @@ public class ModelManager extends Observable {
 		for (Endpoint endPoint : objectsEndPoints) {
 			deleteRelation(endPoint.getRelation());
 		}
+		
+		for (ModelObject superObject : new ArrayList<ModelObject>(modelObject.getSuperObjects())) {
+			deleteSuperObject(modelObject.getModelClass(), superObject);
+		}
+		
 		boolean deletedObject = modelObject.getModelClass().deleteModelObject(modelObject);
 		if (deletedObject) {
 			setChanged();
@@ -181,7 +187,7 @@ public class ModelManager extends Observable {
 		subClasses.add(startClass);
 		for(ModelClass subClass : subClasses) {
 			for(ModelClass superClass : superClasses) {
-				for(ModelObject subSuperObject : subClass.getSuperModelObjects(superClass)) {
+				for(ModelObject subSuperObject : subClass.getSuperObjects(superClass)) {
 					deleteSuperObject(subClass, subSuperObject);
 				}
 			}

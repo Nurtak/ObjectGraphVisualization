@@ -132,7 +132,7 @@ public class RootLayoutController implements Observer, Initializable {
 		if (file != null) {
 			UserPreferences.setOGVFilePath(file);
 			MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.loadOGVDataAsync(file);
+			boolean success = persistancy.loadOGVData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -161,7 +161,7 @@ public class RootLayoutController implements Observer, Initializable {
 		if (file != null) {
 			UserPreferences.setXMIFilePath(file);
 			MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.loadXMIDataAsync(file);
+			boolean success = persistancy.loadXMIData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -179,7 +179,7 @@ public class RootLayoutController implements Observer, Initializable {
 		File file = UserPreferences.getOGVFilePath();
 		if (file != null) {
 			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.saveOGVDataAsync(file);
+			boolean success = persistancy.saveOGVData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
@@ -215,7 +215,7 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 			UserPreferences.setOGVFilePath(file);
 			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.saveOGVDataAsync(file);
+			boolean success = persistancy.saveOGVData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
 				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);

@@ -87,7 +87,7 @@ public class StageManager implements Observer {
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 
 		// TODO: Remove everything below this line:
-		mvConnector.createDummyContent();
+		// mvConnector.createDummyContent();
 	}
 
 	private void initPersistancy() {
@@ -267,9 +267,14 @@ public class StageManager implements Observer {
 			ModelObject modelObject = (ModelObject) modelBox;
 			ModelClass modelClass = modelObject.getModelClass();
 			PaneBox paneClassBox = this.mvConnector.getPaneBox(modelClass);
-			if (paneClassBox != null) {
+			boolean isNotSuperObject = modelClass.getModelObjects().contains(modelObject);
+			if (paneClassBox != null && isNotSuperObject) {
 				changedBox.setMinWidth(paneClassBox.getMinWidth());
 				changedBox.setMinHeight(paneClassBox.getMinHeight());
+			}
+			else if (paneClassBox != null && !isNotSuperObject) {
+//				modelClass.get
+//				changedBox.setMinWidth(width);
 			}
 			adaptCenterFields(modelObject);
 		}
@@ -341,7 +346,10 @@ public class StageManager implements Observer {
 			ModelObject modelObject = (ModelObject) modelBox;
 			changedBox.getTopTextField().setText((modelObject.getName()));
 			changedBox.getTopLabel().setText(modelObject.getName() + " : " + modelObject.getModelClass().getName());
-			modelBox.setWidth(modelObject.getModelClass().getWidth());
+			boolean isNotSuperObject = modelObject.getModelClass().getModelObjects().contains(modelObject);
+			if (isNotSuperObject) {
+				modelBox.setWidth(modelObject.getModelClass().getWidth());
+			}
 		} else if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
 
@@ -367,8 +375,12 @@ public class StageManager implements Observer {
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setWidth(modelClass.getWidth());
 			}
-			for(ModelObject superModelObject : modelClass.getSuperModelObjects()) {
-				superModelObject.setWidth(modelClass.getWidth());
+			for(ModelObject superObject : modelClass.getSuperObjects()) {
+				superObject.setWidth(modelClass.getWidth());
+//				PaneBox superPaneBox = this.mvConnector.getPaneBox(modelBox);
+//				if(superPaneBox != null) {
+//					superPaneBox.setMinWidth(changedBox.getMinWidth());
+//				}
 			}
 		}
 		else if(modelBox instanceof ModelObject) {
@@ -389,7 +401,7 @@ public class StageManager implements Observer {
 			for (ModelClass subClass : modelClass.getSubClasses()) {
 				for (ModelObject subModelObject : subClass.getModelObjects()) {
 					double cascadingHeight = 0.0;
-					for (ModelObject subSuperObject : subClass.getSuperModelObjects(subModelObject)) {
+					for (ModelObject subSuperObject : subClass.getSuperObjects(subModelObject)) {
 						if(subSuperObject.getModelClass().equals(modelClass)) {
 							subSuperObject.setHeight(modelClass.getHeight());
 						}
@@ -428,17 +440,17 @@ public class StageManager implements Observer {
 				modelObject.setX(modelClass.getX());
 				modelObject.setZ(modelClass.getZ());
 				double cascadingHeight = 0.0;
-				for (ModelObject superModelObject : modelClass.getSuperModelObjects(modelObject)) {
-					superModelObject.setX(modelClass.getX());
-					superModelObject.setZ(modelClass.getZ() + modelClass.getHeight() / 2  + cascadingHeight + superModelObject.getHeight() / 2);
-					cascadingHeight += superModelObject.getHeight();
+				for (ModelObject superObject : modelClass.getSuperObjects(modelObject)) {
+					superObject.setX(modelClass.getX());
+					superObject.setZ(modelClass.getZ() + modelClass.getHeight() / 2  + cascadingHeight + superObject.getHeight() / 2);
+					cascadingHeight += superObject.getHeight();
 				}
 			}
 		}
 		else if (modelBox instanceof ModelObject) {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelObject modelObject = (ModelObject) modelBox;
-			for (ModelObject superObjects : modelObject.getSuperModelObjects()) {
+			for (ModelObject superObjects : modelObject.getSuperObjects()) {
 				superObjects.setY(modelObject.getY());
 			}
 		}
