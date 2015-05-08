@@ -238,17 +238,27 @@ public class StageManager implements Observer {
 	}
 
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
-		this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter);
+		if (modelBox instanceof ModelClass) {
+			this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter, true);
+			this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
+			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
+		}
+		else if (modelBox instanceof ModelObject) {
+			ModelObject modelObject = (ModelObject) modelBox;
+			if (!modelObject.isSuperObject()) {
+				this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter, true);
+				this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
+			}
+			else {
+				this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter, false);
+			}
+		}
 		this.selectionController.enableCenterLabelSelection(paneBox, subSceneAdapter);
 		this.textFieldController.enableTopTextInput(modelBox, paneBox, this.mvConnector);
 		this.textFieldController.enableCenterTextInput(modelBox, paneBox, this.mvConnector);
 		this.contextMenuController.enablePaneBoxContextMenu(modelBox, paneBox, this.subSceneAdapter);
 		this.contextMenuController.enableCenterFieldContextMenu(modelBox, paneBox, this.subSceneAdapter);
 		this.mouseMoveController.enableMouseMove(paneBox);
-		this.dragMoveController.enableDragMove(modelBox, paneBox, this.subSceneAdapter);
-		if (modelBox instanceof ModelClass) {
-			this.dragResizeController.enableDragResize(modelBox, paneBox, this.subSceneAdapter);
-		}
 	}
 
 	private void addArrowControls(Arrow arrow, Relation relation) {
@@ -263,18 +273,18 @@ public class StageManager implements Observer {
 			changedBox.setMinWidth(modelBox.getWidth());
 			changedBox.setMinHeight(modelBox.getHeight());
 			adaptCenterFields((ModelClass) modelBox);
-		} else if (changedBox != null && modelBox instanceof ModelObject) {
+		}
+		else if (changedBox != null && modelBox instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) modelBox;
 			ModelClass modelClass = modelObject.getModelClass();
 			PaneBox paneClassBox = this.mvConnector.getPaneBox(modelClass);
-			boolean isNotSuperObject = modelClass.getModelObjects().contains(modelObject);
-			if (paneClassBox != null && isNotSuperObject) {
+			if (paneClassBox != null && !modelObject.isSuperObject()) {
 				changedBox.setMinWidth(paneClassBox.getMinWidth());
 				changedBox.setMinHeight(paneClassBox.getMinHeight());
 			}
-			else if (paneClassBox != null && !isNotSuperObject) {
-				for(ModelClass subClass : modelClass.getSubClasses()) {
-					if(subClass.getSubModelObject(modelObject) != null) {
+			else if (paneClassBox != null && modelObject.isSuperObject()) {
+				for (ModelClass subClass : modelClass.getSubClasses()) {
+					if (subClass.getSubModelObject(modelObject) != null) {
 						changedBox.setMinWidth(subClass.getWidth());
 					}
 				}
@@ -290,13 +300,15 @@ public class StageManager implements Observer {
 
 	private void adaptArrowColor(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
-		if (changedArrow == null) return;
+		if (changedArrow == null)
+			return;
 		changedArrow.setColor(relation.getColor());
 	}
 
 	private void adaptArrowDirection(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
-		if (changedArrow == null) return;
+		if (changedArrow == null)
+			return;
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
 		PaneBox startPaneBox = this.mvConnector.getPaneBox(startModelBox);
@@ -320,7 +332,8 @@ public class StageManager implements Observer {
 	}
 
 	private void adaptArrowToBox(ModelBox modelBox) {
-		if(modelBox.getEndpoints().isEmpty()) return;
+		if (modelBox.getEndpoints().isEmpty())
+			return;
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		Map<Endpoint, Endpoint> endpointMap = modelBox.getFriends();
 		for (Endpoint endpoint : endpointMap.keySet()) {
@@ -333,7 +346,8 @@ public class StageManager implements Observer {
 					changedArrow.setPointsBasedOnBoxes(changedBox, friendChangedBox);
 					endpoint.setCoordinates(changedArrow.getStartPoint());
 					friendEndpoint.setCoordinates(changedArrow.getEndPoint());
-				} else {
+				}
+				else {
 					changedArrow.setPointsBasedOnBoxes(friendChangedBox, changedBox);
 					friendEndpoint.setCoordinates(changedArrow.getStartPoint());
 					endpoint.setCoordinates(changedArrow.getEndPoint());
@@ -349,11 +363,11 @@ public class StageManager implements Observer {
 			ModelObject modelObject = (ModelObject) modelBox;
 			changedBox.getTopTextField().setText((modelObject.getName()));
 			changedBox.getTopLabel().setText(modelObject.getName() + " : " + modelObject.getModelClass().getName());
-			boolean isNotSuperObject = modelObject.getModelClass().getModelObjects().contains(modelObject);
-			if (isNotSuperObject) {
+			if (!modelObject.isSuperObject()) {
 				modelBox.setWidth(modelObject.getModelClass().getWidth());
 			}
-		} else if (changedBox != null && modelBox instanceof ModelClass) {
+		}
+		else if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
 
 			double newWidth = changedBox.calcMinWidth();
@@ -366,7 +380,7 @@ public class StageManager implements Observer {
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setName(modelObject.getName());
 			}
-			
+
 			for (ModelObject inheritingObject : modelClass.getInheritingObjects()) {
 				inheritingObject.setName(inheritingObject.getName());
 			}
@@ -375,22 +389,23 @@ public class StageManager implements Observer {
 
 	private void adaptBoxWidth(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox == null) return;
+		if (changedBox == null)
+			return;
 		if (modelBox instanceof ModelClass) {
 			changedBox.setWidth(modelBox.getWidth());
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setWidth(modelClass.getWidth());
 			}
-			for(ModelObject superObject : modelClass.getSuperObjects()) {
+			for (ModelObject superObject : modelClass.getSuperObjects()) {
 				superObject.setWidth(modelClass.getWidth());
-//				PaneBox superPaneBox = this.mvConnector.getPaneBox(modelBox);
-//				if(superPaneBox != null) {
-//					superPaneBox.setMinWidth(changedBox.getMinWidth());
-//				}
+				// PaneBox superPaneBox = this.mvConnector.getPaneBox(modelBox);
+				// if(superPaneBox != null) {
+				// superPaneBox.setMinWidth(changedBox.getMinWidth());
+				// }
 			}
 		}
-		else if(modelBox instanceof ModelObject) {
+		else if (modelBox instanceof ModelObject) {
 			changedBox.setWidth(modelBox.getWidth());
 		}
 	}
@@ -409,11 +424,11 @@ public class StageManager implements Observer {
 				for (ModelObject subModelObject : subClass.getModelObjects()) {
 					double cascadingHeight = 0.0;
 					for (ModelObject subSuperObject : subClass.getSuperObjects(subModelObject)) {
-						if(subSuperObject.getModelClass().equals(modelClass)) {
+						if (subSuperObject.getModelClass().equals(modelClass)) {
 							subSuperObject.setHeight(modelClass.getHeight());
 						}
 						subSuperObject.setX(subClass.getX());
-						subSuperObject.setZ(subClass.getZ() + subClass.getHeight() / 2  + cascadingHeight + subSuperObject.getHeight() / 2);
+						subSuperObject.setZ(subClass.getZ() + subClass.getHeight() / 2 + cascadingHeight + subSuperObject.getHeight() / 2);
 						cascadingHeight += subSuperObject.getHeight();
 					}
 				}
@@ -431,7 +446,7 @@ public class StageManager implements Observer {
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setColor(Util.brighter(modelClass.getColor(), 0.1));
 			}
-			for(ModelObject inheritingObject : modelClass.getInheritingObjects()) {
+			for (ModelObject inheritingObject : modelClass.getInheritingObjects()) {
 				inheritingObject.setColor(Util.brighter(modelClass.getColor(), 0.1));
 			}
 		}
@@ -439,7 +454,8 @@ public class StageManager implements Observer {
 
 	private void adaptBoxCoordinates(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox == null) return;
+		if (changedBox == null)
+			return;
 		if (modelBox instanceof ModelClass) {
 			changedBox.setTranslateXYZ(modelBox.getCoordinates());
 			ModelClass modelClass = (ModelClass) modelBox;
@@ -449,7 +465,7 @@ public class StageManager implements Observer {
 				double cascadingHeight = 0.0;
 				for (ModelObject superObject : modelClass.getSuperObjects(modelObject)) {
 					superObject.setX(modelClass.getX());
-					superObject.setZ(modelClass.getZ() + modelClass.getHeight() / 2  + cascadingHeight + superObject.getHeight() / 2);
+					superObject.setZ(modelClass.getZ() + modelClass.getHeight() / 2 + cascadingHeight + superObject.getHeight() / 2);
 					cascadingHeight += superObject.getHeight();
 				}
 			}
@@ -506,7 +522,8 @@ public class StageManager implements Observer {
 					String attributeValue = modelObject.getAttributeValues().get(attribute);
 					if (attributeValue != null && !attributeValue.isEmpty()) {
 						changedBox.setCenterText(i, attributeName + " = " + attributeValue, attributeValue);
-					} else {
+					}
+					else {
 						changedBox.setCenterText(i, attributeName, attributeValue);
 					}
 				}
@@ -528,40 +545,48 @@ public class StageManager implements Observer {
 				createClassInView(modelClass);
 				adaptBoxSettings(modelClass);
 				adaptArrowToBox(modelClass);
-			} else {
+			}
+			else {
 				PaneBox toDelete = this.mvConnector.removeBoxes(modelClass);
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
 			}
-		} else if (o instanceof ModelManager && arg instanceof Relation) {
+		}
+		else if (o instanceof ModelManager && arg instanceof Relation) {
 			Relation relation = (Relation) arg;
 			if (!this.mvConnector.containsRelation(relation)) { // relation is new
 				createArrowInView(relation);
 				adaptArrowColor(relation);
 				// adaptRelation(relation);
-			} else {
+			}
+			else {
 				Arrow toDelete = this.mvConnector.removeArrows(relation);
 				removeFromSubScene(toDelete);
 				removeFromSubScene(toDelete.getSelection());
 			}
-		} else if (o instanceof ModelManager && arg instanceof ModelObject) {
+		}
+		else if (o instanceof ModelManager && arg instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) arg;
 			if (!this.mvConnector.containsModelBox(modelObject)) { // object is new
 				createObjectInView(modelObject);
 				adaptBoxSettings(modelObject);
 				adaptArrowToBox(modelObject);
-			} else {
+			}
+			else {
 				PaneBox toDelete = this.mvConnector.removeBoxes(modelObject);
 				removeFromSubScene(toDelete.get());
 				removeFromSubScene(toDelete.getSelection());
 			}
-		} else if (o instanceof ModelClass && arg instanceof Attribute) {
+		}
+		else if (o instanceof ModelClass && arg instanceof Attribute) {
 			ModelClass modelClass = (ModelClass) o;
 			adaptCenterFields(modelClass);
-		} else if (o instanceof ModelObject && arg instanceof Attribute) {
+		}
+		else if (o instanceof ModelObject && arg instanceof Attribute) {
 			ModelObject modelObject = (ModelObject) o;
 			adaptCenterFields(modelObject);
-		} else if (o instanceof ModelBox && arg instanceof ModelBoxChange) {
+		}
+		else if (o instanceof ModelBox && arg instanceof ModelBoxChange) {
 			ModelBox modelBox = (ModelBox) o;
 			ModelBoxChange modelBoxChange = (ModelBoxChange) arg;
 			switch (modelBoxChange) {
@@ -588,7 +613,8 @@ public class StageManager implements Observer {
 			default:
 				break;
 			}
-		} else if (o instanceof Relation && arg instanceof RelationChange) {
+		}
+		else if (o instanceof Relation && arg instanceof RelationChange) {
 			Relation relation = (Relation) o;
 			RelationChange relationChange = (RelationChange) arg;
 			switch (relationChange) {

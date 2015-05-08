@@ -62,6 +62,11 @@ public class ModelObject extends ModelBox {
 		this.modelClass.addSuperObject(this, superObject);
 	}
 	
+	public boolean isSuperObject() {
+		if(this.modelClass == null) return false;
+		return !this.modelClass.getModelObjects().contains(this);
+	}
+	
 	// for un/marshaling only
 	public ModelObject() {
 	}

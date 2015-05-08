@@ -14,12 +14,6 @@ public class VerticalHelper extends Group {
 
 	private final static double PLUS_SIZE = 2;
 
-	private PaneBox basePaneBox;
-
-	public PaneBox getBasePaneBox() {
-		return basePaneBox;
-	}
-
 	private Rectangle northRectangle = new Rectangle(PLUS_SIZE, DEPTH, DEFAULT_COLOR);
 	private Rectangle southRectangle = new Rectangle(PLUS_SIZE, DEPTH, DEFAULT_COLOR);
 	private Rectangle eastRectangle = new Rectangle(PLUS_SIZE, DEPTH, DEFAULT_COLOR);
@@ -46,25 +40,27 @@ public class VerticalHelper extends Group {
 		setMouseTransparent(true);
 		setVisible(false);
 	}
-	
-	public void setBasePaneBox(PaneBox paneBox) {
-		this.basePaneBox = paneBox;
-		if(paneBox == null) return;
-		this.northRectangle.setWidth(paneBox.getWidth() + PLUS_SIZE);
-		this.northRectangle.setTranslateX(paneBox.getTranslateX() - paneBox.getWidth() / 2 - PLUS_SIZE / 2);
-		this.northRectangle.setTranslateZ(paneBox.getTranslateZ() + paneBox.getHeight() / 2 + PLUS_SIZE / 2);
-		
-		this.southRectangle.setWidth(paneBox.getWidth() + PLUS_SIZE);
-		this.southRectangle.setTranslateX(paneBox.getTranslateX() - paneBox.getWidth() / 2 - PLUS_SIZE / 2);
-		this.southRectangle.setTranslateZ(paneBox.getTranslateZ() - paneBox.getHeight() / 2 - PLUS_SIZE / 2);
-		
-		this.eastRectangle.setWidth(paneBox.getHeight() + PLUS_SIZE);
-		this.eastRectangle.setTranslateX(paneBox.getTranslateX() + paneBox.getWidth() / 2 + PLUS_SIZE / 2);
-		this.eastRectangle.setTranslateZ(paneBox.getTranslateZ() + paneBox.getHeight() / 2 + PLUS_SIZE / 2);
 
-		this.westRectangle.setWidth(paneBox.getHeight() + PLUS_SIZE);
-		this.westRectangle.setTranslateX(paneBox.getTranslateX() - paneBox.getWidth() / 2 - PLUS_SIZE / 2);
-		this.westRectangle.setTranslateZ(paneBox.getTranslateZ() + paneBox.getHeight() / 2 + PLUS_SIZE / 2);
+	public void setSpan(PaneBox paneBox) {
+		setSpan(paneBox.getTranslateX(), paneBox.getTranslateZ(), paneBox.getWidth(), paneBox.getHeight());
+	}
+	
+	public void setSpan(double x, double z, double width, double height) {
+		this.northRectangle.setWidth(width + PLUS_SIZE);
+		this.northRectangle.setTranslateX(x - width / 2 - PLUS_SIZE / 2);
+		this.northRectangle.setTranslateZ(z + height / 2 + PLUS_SIZE / 2);
+		
+		this.southRectangle.setWidth(width + PLUS_SIZE);
+		this.southRectangle.setTranslateX(x - width / 2 - PLUS_SIZE / 2);
+		this.southRectangle.setTranslateZ(z - height / 2 - PLUS_SIZE / 2);
+		
+		this.eastRectangle.setWidth(height + PLUS_SIZE);
+		this.eastRectangle.setTranslateX(x + width / 2 + PLUS_SIZE / 2);
+		this.eastRectangle.setTranslateZ(z + height / 2 + PLUS_SIZE / 2);
+
+		this.westRectangle.setWidth(height + PLUS_SIZE);
+		this.westRectangle.setTranslateX(x - width / 2 - PLUS_SIZE / 2);
+		this.westRectangle.setTranslateZ(z + height / 2 + PLUS_SIZE / 2);
 	}
 
 	private boolean isVerticalHelper(Rectangle rectangle) {
