@@ -409,6 +409,7 @@ public class RootLayoutController implements Observer, Initializable {
 		if (this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {
 			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject(selected);
 			if (newPaneBox != null) {
+				new SpeedCreationController(newPaneBox, this.mvConnector);
 				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 			}
 		}
@@ -600,8 +601,11 @@ public class RootLayoutController implements Observer, Initializable {
 				subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 				if (createClass != null && createClass.isSelected()) {
 					PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(this.selectionController.getCurrentSelectionCoord());
-					this.createClass.setSelected(false);
-					this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
+					if(newPaneBox != null) {
+						new SpeedCreationController(newPaneBox, this.mvConnector);
+						this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
+						this.createClass.setSelected(false);
+					}
 				}
 			}
 		}

@@ -35,7 +35,7 @@ public class ModelViewConnector {
 	public static final double BASE_BOX_DEPTH = PaneBox.INIT_DEPTH + BoxSelection.INIT_SELECT_SIZE / 2;
 
 	private ModelManager modelManager = new ModelManager();
-
+	
 	private Map<ModelBox, PaneBox> boxes = new HashMap<ModelBox, PaneBox>();
 	private Map<Relation, Arrow> arrows = new HashMap<Relation, Arrow>();
 
@@ -140,8 +140,8 @@ public class ModelViewConnector {
 	}
 
 	public void createDummyContent() {
-//		ModelClass mcA = this.modelManager.createClass(new Point3D(-300, BASE_BOX_DEPTH, 200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-//		mcA.setName("A");
+		ModelClass mcA = this.modelManager.createClass(new Point3D(-300, BASE_BOX_DEPTH, 200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		mcA.setName("A");
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcB.setName("B");
 		ModelClass mcC = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, -300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
