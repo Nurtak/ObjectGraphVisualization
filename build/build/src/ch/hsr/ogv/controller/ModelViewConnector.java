@@ -140,31 +140,31 @@ public class ModelViewConnector {
 	}
 
 	public void createDummyContent() {
-		ModelClass mcA = this.modelManager.createClass(new Point3D(-300, BASE_BOX_DEPTH, 200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-		mcA.setName("A");
+//		ModelClass mcA = this.modelManager.createClass(new Point3D(-300, BASE_BOX_DEPTH, 200), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+//		mcA.setName("A");
 		ModelClass mcB = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcB.setName("B");
 		ModelClass mcC = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, -300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcC.setName("C");
 
-		ModelObject moA1 = this.modelManager.createObject(mcA);
-		ModelObject moB1 = this.modelManager.createObject(mcB);
-		ModelObject moB2 = this.modelManager.createObject(mcB);
-		ModelObject moB3 = this.modelManager.createObject(mcB);
-
-		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-
-		mcA.createAttribute();
-		mcA.createAttribute();
-		mcA.createAttribute();
-		mcA.createAttribute();
-		mcA.createAttribute();
-		mcB.createAttribute();
+//		ModelObject moA1 = this.modelManager.createObject(mcA);
+//		ModelObject moB1 = this.modelManager.createObject(mcB);
+//		ModelObject moB2 = this.modelManager.createObject(mcB);
+//		ModelObject moB3 = this.modelManager.createObject(mcB);
+//
+//		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
+//		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
+//		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
+//		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+//		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+//		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+//
+//		mcA.createAttribute();
+//		mcA.createAttribute();
+//		mcA.createAttribute();
+//		mcA.createAttribute();
+//		mcA.createAttribute();
+//		mcB.createAttribute();
 	}
 	
 	public PaneBox handleCreateNewClass(Point3D mouseCoords) {
@@ -176,7 +176,7 @@ public class ModelViewConnector {
 		}
 		return newBox;
 	}
-
+	
 	public PaneBox handleCreateNewObject(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			ModelBox selectedModelBox = this.getModelBox((PaneBox) selected);
@@ -225,7 +225,7 @@ public class ModelViewConnector {
 		modelManager.clearRelations();
 		modelManager.clearClasses();
 	}
-
+	
 	public void handleDelete(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			PaneBox paneBox = (PaneBox) selected;
@@ -241,8 +241,11 @@ public class ModelViewConnector {
 				}
 
 			} else if (modelToDelete instanceof ModelObject) {
-				if(!centerlabelSelected) { // delete the whole object
-					ModelObject objectToDelete = (ModelObject) modelToDelete;
+				ModelObject objectToDelete = (ModelObject) modelToDelete;
+				if (objectToDelete.isSuperObject() && !centerlabelSelected) {
+					return; // do nothing
+				}
+				else if(!centerlabelSelected) { // delete the whole object
 					this.modelManager.deleteObject(objectToDelete);
 				}
 				else { // clear attribute value

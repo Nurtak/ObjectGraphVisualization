@@ -226,7 +226,7 @@ public class ModelClass extends ModelBox {
 	}
 	
 	public Attribute createAttribute() {
-		return createAttribute("field" + (this.attributes.size() + 1));
+		return createAttribute("attr" + (this.attributes.size() + 1));
 	}
 
 	public Attribute createAttribute(String attributeName) {

@@ -206,7 +206,7 @@ public class ModelViewConnector {
 			ModelBox selectedModelBox = this.getModelBox(selectedPaneBox);
 			if (selectedModelBox != null && selectedModelBox instanceof ModelClass) {
 				ModelClass selectedModelClass = (ModelClass) selectedModelBox;
-				String newAttributeName = "field" + (selectedModelClass.getAttributes().size() + 1);
+				String newAttributeName = "attr" + (selectedModelClass.getAttributes().size() + 1);
 				while(this.modelManager.isAttributeNameTaken(selectedModelClass, newAttributeName)
 				   || this.modelManager.isRoleNameTaken(selectedModelClass, newAttributeName)) {
 					newAttributeName = TextUtil.countUpTrailing(newAttributeName, selectedModelClass.getAttributes().size());

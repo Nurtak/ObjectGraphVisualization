@@ -36,7 +36,9 @@ public class ContextMenuController extends Observable implements Observer {
 
 	private ModelViewConnector mvConnector;
 	private RelationCreationProcess relationCreationProcess = new RelationCreationProcess();
-	
+
+	private MouseMoveController mouseMoveController;
+
 	private volatile Selectable selected;
 	private volatile Point3D position;
 
@@ -73,7 +75,7 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem createDirectedComposition;
 	private MenuItem createGeneralization;
 	private MenuItem createDependency;
-	
+
 	private volatile boolean atLineSelectionHelper = false;
 	private volatile boolean atStartSelectionHelper = false;
 	private volatile boolean atEndSelectionHelper = false;
@@ -87,7 +89,11 @@ public class ContextMenuController extends Observable implements Observer {
 	// Value (Attribute)
 	private MenuItem setValue;
 	private MenuItem deleteValue;
-	
+
+	public void setMouseMoveController(MouseMoveController mouseMoveController) {
+		this.mouseMoveController = mouseMoveController;
+	}
+
 	private void atLineSelectionHelper() {
 		this.atLineSelectionHelper = true;
 		this.atStartSelectionHelper = false;
@@ -105,7 +111,7 @@ public class ContextMenuController extends Observable implements Observer {
 		this.atLineSelectionHelper = false;
 		this.atStartSelectionHelper = false;
 	}
-	
+
 	public void setMVConnector(ModelViewConnector mvConnector) {
 		this.mvConnector = mvConnector;
 	}
@@ -120,7 +126,7 @@ public class ContextMenuController extends Observable implements Observer {
 		classCM = new ContextMenu();
 		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF, classCM);
 		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF, classCM);
-		//getClassRelationMenu("Create Relation", Resource.RELATION_GIF, classCM);
+		getClassRelationMenu("Create Relation", Resource.RELATION_GIF, classCM);
 		addAttribute = getMenuItem("Add Attribute", Resource.ADD_ATTR_GIF, classCM);
 		classCM.getItems().add(new SeparatorMenuItem());
 		renameAttribute = getMenuItem("Rename Attribute", Resource.RENAME_ATTR_GIF, classCM);
@@ -197,6 +203,15 @@ public class ContextMenuController extends Observable implements Observer {
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				} else if ((modelBox instanceof ModelObject)) {
 					// Object
+					ModelObject modelObject = (ModelObject) modelBox;
+					if(modelObject.isSuperObject()) {
+						renameObject.setDisable(true);
+						deleteObject.setDisable(true);
+					}
+					else {
+						renameObject.setDisable(false);
+						deleteObject.setDisable(false);
+					}
 					hideAllContextMenus();
 					setValue.setDisable(true);
 					deleteValue.setDisable(true);
@@ -205,7 +220,7 @@ public class ContextMenuController extends Observable implements Observer {
 			}
 			me.consume();
 		});
-		
+
 		paneBox.getSelection().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
@@ -225,7 +240,7 @@ public class ContextMenuController extends Observable implements Observer {
 			me.consume();
 		});
 	}
-	
+
 	public void enableCenterFieldContextMenu(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		for (Label centerLabel : paneBox.getCenterLabels()) {
 			enableContextMenu(centerLabel, modelBox, paneBox, subSceneAdapter);
@@ -255,7 +270,7 @@ public class ContextMenuController extends Observable implements Observer {
 		});
 
 	}
-	
+
 	private void enableRelationContextMenu(Arrow arrow, MouseEvent me, boolean disableMultiRole, boolean disableDirection, boolean atStart) {
 		hideAllContextMenus();
 		changeDirection.setDisable(disableDirection);
@@ -266,7 +281,7 @@ public class ContextMenuController extends Observable implements Observer {
 		relationCM.show(arrow, me.getScreenX(), me.getScreenY());
 		me.consume();
 	}
-	
+
 	private boolean roleAttributeConflict(Arrow arrow, Relation relation) {
 		if(relation != null) {
 			ModelBox startModelBox = relation.getStart().getAppendant();
@@ -276,27 +291,31 @@ public class ContextMenuController extends Observable implements Observer {
 				ModelClass endModelClass = (ModelClass) endModelBox;
 				for(Attribute attribute : startModelClass.getAttributes()) {
 					boolean conflictStart = arrow.getLabelStartLeft().getLabelText().equals(attribute.getName());
-					if(conflictStart) return true;
+					if(conflictStart) {
+						return true;
+					}
 				}
 				for(Attribute attribute : endModelClass.getAttributes()) {
 					boolean conflictEnd = arrow.getLabelEndLeft().getLabelText().equals(attribute.getName());
-					if(conflictEnd) return true;
+					if(conflictEnd) {
+						return true;
+					}
 				}
 			}
 		}
 		return false;
 	}
-	
+
 	private boolean relationTypeConflict(Arrow arrow) {
 		return arrow.getRelationType().equals(RelationType.GENERALIZATION)
-		    || arrow.getRelationType().equals(RelationType.DEPENDENCY)
-			|| arrow.getRelationType().equals(RelationType.ASSOZIATION_CLASS)
-			|| arrow.getRelationType().equals(RelationType.OBJDIAGRAM)
-			|| arrow.getRelationType().equals(RelationType.OBJGRAPH);
+				|| arrow.getRelationType().equals(RelationType.DEPENDENCY)
+				|| arrow.getRelationType().equals(RelationType.ASSOZIATION_CLASS)
+				|| arrow.getRelationType().equals(RelationType.OBJDIAGRAM)
+				|| arrow.getRelationType().equals(RelationType.OBJGRAPH);
 	}
 
 	public void enableContextMenu(Arrow arrow, Relation relation) {
-		
+
 		arrow.getLineSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atLineSelectionHelper();
@@ -323,7 +342,7 @@ public class ContextMenuController extends Observable implements Observer {
 				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, false);
 			}
 		});
-		
+
 		arrow.getLabelStartLeft().getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atStartSelectionHelper();
@@ -332,7 +351,7 @@ public class ContextMenuController extends Observable implements Observer {
 				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, true);
 			}
 		});
-		
+
 		arrow.getLabelStartRight().getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atStartSelectionHelper();
@@ -341,7 +360,7 @@ public class ContextMenuController extends Observable implements Observer {
 				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, true);
 			}
 		});
-		
+
 		arrow.getLabelEndLeft().getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atEndSelectionHelper();
@@ -350,7 +369,7 @@ public class ContextMenuController extends Observable implements Observer {
 				enableRelationContextMenu(arrow, me, disableMRD, disableDirection, false);
 			}
 		});
-		
+
 		arrow.getLabelEndRight().getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				atEndSelectionHelper();
@@ -375,12 +394,12 @@ public class ContextMenuController extends Observable implements Observer {
 		deleteAttribute.setDisable(!isAttributeActive);
 	}
 
-	private void startRelationCreation(SelectionController selectionController, SubSceneAdapter subSceneAdapter,
-									   PaneBox selectedPaneBox, RelationType relationType) {
+	private void startRelationCreation(SelectionController selectionController, SubSceneAdapter subSceneAdapter, PaneBox selectedPaneBox, RelationType relationType) {
 		//TODO
+		this.mouseMoveController.addObserver(this.relationCreationProcess);
 		this.relationCreationProcess.startProcess(this.mvConnector, selectionController, subSceneAdapter, selectedPaneBox, relationType);
 	}
-	
+
 	public void enableActionEvents(SelectionController selectionController, SubSceneAdapter subSceneAdapter) {
 
 		// SubScene
@@ -404,7 +423,6 @@ public class ContextMenuController extends Observable implements Observer {
 		deleteClass.setOnAction((ActionEvent e) -> {
 			this.mvConnector.handleDelete(selected);
 		});
-		/**
 		createUndirectedAssociation.setOnAction((ActionEvent e) -> {
 			if(selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
@@ -458,7 +476,7 @@ public class ContextMenuController extends Observable implements Observer {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DEPENDENCY);
 			}
-		});**/
+		});
 
 		// Object
 		renameObject.setOnAction((ActionEvent e) -> {
@@ -472,9 +490,11 @@ public class ContextMenuController extends Observable implements Observer {
 		changeDirection.setOnAction((ActionEvent e) -> {
 			mvConnector.handleChangeDirection(selected);
 		});
-		
+
 		setMultiplicity.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) return;
+			if(atLineSelectionHelper) {
+				return;
+			}
 			if(atStartSelectionHelper) {
 				mvConnector.handleSetMultiplicity(selected, true);
 			}
@@ -482,9 +502,11 @@ public class ContextMenuController extends Observable implements Observer {
 				mvConnector.handleSetMultiplicity(selected, false);
 			}
 		});
-		
+
 		deleteMultiplicity.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) return;
+			if(atLineSelectionHelper) {
+				return;
+			}
 			if(atStartSelectionHelper) {
 				mvConnector.handleDeleteMultiplicty(selected, true);
 			}
@@ -492,9 +514,11 @@ public class ContextMenuController extends Observable implements Observer {
 				mvConnector.handleDeleteMultiplicty(selected, false);
 			}
 		});
-		
+
 		setRoleName.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) return;
+			if(atLineSelectionHelper) {
+				return;
+			}
 			if(atStartSelectionHelper) {
 				mvConnector.handleSetRoleName(selected, true);
 			}
@@ -502,9 +526,11 @@ public class ContextMenuController extends Observable implements Observer {
 				mvConnector.handleSetRoleName(selected, false);
 			}
 		});
-		
+
 		deleteRoleName.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) return;
+			if(atLineSelectionHelper) {
+				return;
+			}
 			if(atStartSelectionHelper) {
 				mvConnector.handleDeleteRoleName(selected, true);
 			}
@@ -513,7 +539,7 @@ public class ContextMenuController extends Observable implements Observer {
 			}
 
 		});
-		
+
 		deleteRelation.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
 		});
@@ -536,7 +562,7 @@ public class ContextMenuController extends Observable implements Observer {
 		setValue.setOnAction((ActionEvent e) -> {
 			mvConnector.handleRenameFieldOrValue(selected);
 		});
-		
+
 		deleteValue.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDeleteAttributeValue(selected);
 		});

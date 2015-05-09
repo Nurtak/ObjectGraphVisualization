@@ -168,7 +168,7 @@ public class PaneBox implements Selectable {
 		Label centerLabel = new Label();
 		centerLabel.setCacheHint(CacheHint.SCALE_AND_ROTATE);
 		centerLabel.setDepthTest(DepthTest.ENABLE);
-		centerLabel.setText("field" + getCenter().getChildren().size() + 1);
+		centerLabel.setText("attr" + getCenter().getChildren().size() + 1);
 		HBox.setHgrow(centerLabel, Priority.ALWAYS);
 		centerLabel.setMaxWidth(Double.MAX_VALUE);
 		centerLabel.setPrefWidth(Double.MAX_VALUE);

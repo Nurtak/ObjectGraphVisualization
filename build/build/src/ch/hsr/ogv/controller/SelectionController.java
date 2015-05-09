@@ -64,8 +64,8 @@ public class SelectionController extends Observable implements Observer {
 		selectOnMouseClicked(subSceneAdapter);
 	}
 
-	public void enablePaneBoxSelection(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
-		selectOnMouseClicked(paneBox, subSceneAdapter);
+	public void enablePaneBoxSelection(PaneBox paneBox, SubSceneAdapter subSceneAdapter, boolean allowTopTextInput) {
+		selectOnMouseClicked(paneBox, subSceneAdapter, allowTopTextInput);
 		selectOnDragDetected(paneBox, subSceneAdapter);
 	}
 	
@@ -98,7 +98,7 @@ public class SelectionController extends Observable implements Observer {
 		});
 	}
 
-	private void selectOnMouseClicked(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	private void selectOnMouseClicked(PaneBox paneBox, SubSceneAdapter subSceneAdapter, boolean allowTopTextInput) {
 
 		paneBox.getBox().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
@@ -125,7 +125,7 @@ public class SelectionController extends Observable implements Observer {
 				paneBox.setLabelSelected(paneBox.getTopLabel(), true);
 				setSelected(me, paneBox, true, subSceneAdapter);
 			}
-			if (MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected() && me.getClickCount() >= 2) {
+			if (allowTopTextInput && MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected() && me.getClickCount() >= 2) {
 				paneBox.allowTopTextInput(true);
 			}
 		});
