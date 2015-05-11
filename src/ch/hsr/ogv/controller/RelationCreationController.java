@@ -5,6 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.geometry.Point3D;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
@@ -127,6 +128,7 @@ public class RelationCreationController extends Observable implements Observer {
 				Arrow newArrow = mvConnector.getArrow(relation);
 				if (newArrow != null) {
 					this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
+					this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 				}
 			}
 		}

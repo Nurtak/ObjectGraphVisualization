@@ -483,7 +483,6 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleDeleteSelected() {
 		this.createToolbar.selectToggle(null);
-		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		Selectable selected = this.selectionController.getCurrentSelected();
 		if (this.selectionController.hasCurrentSelection()) {
 			this.mvConnector.handleDelete(selected);
@@ -496,7 +495,6 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleColorPick() {
 		this.createToolbar.selectToggle(null);
-		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		Selectable selected = this.selectionController.getCurrentSelected();
 		if (this.selectionController.hasCurrentSelection()) {
 			this.mvConnector.handleColorPick(selected, this.colorPick.getValue());
@@ -535,17 +533,17 @@ public class RootLayoutController implements Observer, Initializable {
 			MenuItem selectedChoice = this.tSplitMenuButton.selectedChoice();
 			if (selectedChoice != null && this.toggleRelationMap.containsKey(selectedChoice)) {
 				relationType = this.toggleRelationMap.get(selectedChoice);
+				this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			}
 		}
-
 		if (relationType != null) {
 			this.relationCreationController.startProcess(selectedPaneBox, relationType);
 		}
 	}
 
 	private void endRelationCreation(PaneBox selectedPaneBox) {
-		//this.mouseMoveController.deleteObserver(this.relationCreationController);
-		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+		selectionController.deleteObserver(this);
+		//this.mouseMoveController.deleteObserver(this.relationCreationController);		
 		this.createToolbar.selectToggle(null);
 		this.relationCreationController.endProcess(selectedPaneBox);
 	}
@@ -638,9 +636,8 @@ public class RootLayoutController implements Observer, Initializable {
 			this.deleteSelected.setDisable(true);
 			this.colorPick.setDisable(false);
 			this.colorPick.setValue(this.subSceneAdapter.getFloor().getColor());
-		} else {
-			// this.colorPick.setDisable(true);
-			// this.colorPick.setValue(Color.WHITE);
+		} else if (o instanceof SelectionController && arg instanceof PaneBox) {
+			this.endRelationCreation((PaneBox) arg);
 		}
 	}
 
