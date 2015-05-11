@@ -323,15 +323,6 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 
 	@FXML
-	private CheckMenuItem modena;
-
-	@FXML
-	private CheckMenuItem caspian;
-
-	@FXML
-	private CheckMenuItem aqua;
-
-	@FXML
 	private ToggleGroup createToolbar;
 
 	@FXML
@@ -366,10 +357,10 @@ public class RootLayoutController implements Observer, Initializable {
 	private MenuItem createDirectedComposition;
 
 	@FXML
-	private ToggleButton createGeneralization;
+	private MenuItem createGeneralization;
 
 	@FXML
-	private ToggleButton createDependency;
+	private MenuItem createDependency;
 
 	@FXML
 	Button deleteSelected;
@@ -473,26 +464,12 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateGeneralization() {
-		if (this.createGeneralization.isSelected()) {
-			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
-			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-			this.colorPick.setDisable(true);
-		} else {
-			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
-			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
-		}
+		splitMenuButtonSelect(this.createGeneralization);
 	}
 
 	@FXML
 	private void handleCreateDependency() {
-		if (this.createDependency.isSelected()) {
-			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
-			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-			this.colorPick.setDisable(true);
-		} else {
-			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
-			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
-		}
+		splitMenuButtonSelect(this.createDependency);
 	}
 
 	@FXML
@@ -551,10 +528,6 @@ public class RootLayoutController implements Observer, Initializable {
 			if (selectedChoice != null && this.toggleRelationMap.containsKey(selectedChoice)) {
 				relationType = this.toggleRelationMap.get(selectedChoice);
 			}
-		} else if (toggle != null && toggle.equals(this.createDependency)) {
-			relationType = RelationType.DEPENDENCY;
-		} else if (toggle != null && toggle.equals(this.createGeneralization)) {
-			relationType = RelationType.GENERALIZATION;
 		}
 
 		if (relationType != null) {
@@ -675,6 +648,8 @@ public class RootLayoutController implements Observer, Initializable {
 		this.toggleRelationMap.put(this.createDirectedAggregation, RelationType.DIRECTED_AGGREGATION);
 		this.toggleRelationMap.put(this.createUndirectedComposition, RelationType.UNDIRECTED_COMPOSITION);
 		this.toggleRelationMap.put(this.createDirectedComposition, RelationType.DIRECTED_COMPOSITION);
+		this.toggleRelationMap.put(this.createGeneralization, RelationType.GENERALIZATION);
+		this.toggleRelationMap.put(this.createDependency, RelationType.DEPENDENCY);
 	}
 
 	@Override

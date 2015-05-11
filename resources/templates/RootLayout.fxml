@@ -225,6 +225,26 @@
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/general.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/depend.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
                     </items>
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -234,24 +254,6 @@
                         </ImageView>
                      </graphic>
                   </SplitMenuButton>
-                  <ToggleButton fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization" toggleGroup="$createToolbar">
-                     <graphic>
-                        <ImageView pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/menu/general.gif" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </ToggleButton>
-                  <ToggleButton fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar">
-                     <graphic>
-                        <ImageView pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/menu/depend.gif" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </ToggleButton>
                   <Separator orientation="VERTICAL">
                      <padding>
                         <Insets left="3.0" />
@@ -271,13 +273,14 @@
                         <Insets left="3.0" />
                      </padding>
                   </Separator>
+                  <Label fx:id="pickColorLabel" text="Pick color: " />
+                  <ColorPicker fx:id="colorPick" disable="true" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleColorPick" />
                </items>
             </ToolBar>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-              <items>
-                  <ColorPicker fx:id="colorPick" disable="true" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleColorPick" promptText="Set Color" />
-                  <Label fx:id="pickColorLabel" text="Pick color: " />
-              </items>
+               <items>
+                  <ToggleButton mnemonicParsing="false" text="Object Graph Mode" />
+               </items>
             </ToolBar>
          </children>
       </GridPane>
