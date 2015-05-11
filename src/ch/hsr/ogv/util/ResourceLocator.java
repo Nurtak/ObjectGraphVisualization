@@ -48,9 +48,10 @@ public class ResourceLocator {
 		DIRECTED_COMPOSITION_GIF("images/menu/compositeToNavi.gif"),
 		GENERALIZATION_GIF("images/menu/general.gif"),
 		DEPENDENCY_GIF("images/menu/depend.gif"),
+		OBJRELATION_GIF("images/menu/rightAngleOff.gif"),
 
 		IMPORT_PNG("images/menu/application-import.png"),
-		ADD_ATTR_GIF("images/menu/artifactPrj.gif"),	
+		ADD_ATTR_GIF("images/menu/artifactPrj.gif"),
 		CLASS_GIF("images/menu/structureclass.gif"),
 		OBJECT_GIF("images/menu/instance.gif"),
 		RELATION_GIF("images/menu/relation.gif"),
@@ -63,12 +64,11 @@ public class ResourceLocator {
 		ADD_MULTIPLICITY_GIF("images/menu/multiplicity.gif"),
 		ADD_ROLE_GIF("images/menu/ColRole.gif"),
 		DELETE_PNG("images/menu/trash.png"),
-		
+
 		MESSAGE_DEFAULT_PNG("images/menu/message_default.png"),
 		MESSAGE_INFO_PNG("images/menu/message_info.png"),
 		MESSAGE_WARN_PNG("images/menu/message_warn.png"),
 		MESSAGE_ERROR_PNG("images/menu/message_error.png");
-
 
 		private String relativePath = "./";
 

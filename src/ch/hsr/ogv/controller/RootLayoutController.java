@@ -363,16 +363,19 @@ public class RootLayoutController implements Observer, Initializable {
 	private MenuItem createDependency;
 
 	@FXML
-	Button deleteSelected;
+	private ToggleButton createObjectRelation;
 
 	@FXML
-	ColorPicker colorPick;
+	private Button deleteSelected;
 
 	@FXML
-	Label pickColorLabel;
+	private ColorPicker colorPick;
 
 	@FXML
-	HBox messageBarContainer;
+	private Label pickColorLabel;
+
+	@FXML
+	private HBox messageBarContainer;
 
 	@FXML
 	private void handleCreateClass() {
@@ -473,6 +476,11 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 
 	@FXML
+	private void handleCreateObjectRelation() {
+		System.out.println("Obj Rel");
+	}
+
+	@FXML
 	private void handleDeleteSelected() {
 		this.createToolbar.selectToggle(null);
 		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
@@ -543,14 +551,12 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 
 	private void disableAllButtons(boolean value) {
-		this.createAssociation.setDisable(value);
-		this.createDependency.setDisable(value);
-		this.createGeneralization.setDisable(value);
 		this.createClass.setDisable(value);
 		this.createObject.setDisable(value);
+		this.createAssociation.setDisable(value);
+		this.createObjectRelation.setDisable(value);
 		this.deleteSelected.setDisable(value);
 		this.colorPick.setDisable(value);
-		// if(value) this.colorPick.setValue(Color.WHITE);
 	}
 
 	// TODO Refactor!!

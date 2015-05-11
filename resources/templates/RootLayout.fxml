@@ -15,7 +15,7 @@
       <GridPane>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -254,6 +254,15 @@
                         </ImageView>
                      </graphic>
                   </SplitMenuButton>
+                  <ToggleButton fx:id="createObjectRelation" mnemonicParsing="false" onAction="#handleCreateObjectRelation" text="Object Relation" toggleGroup="$createToolbar">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/menu/rightAngleOff.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </ToggleButton>
                   <Separator orientation="VERTICAL">
                      <padding>
                         <Insets left="3.0" />
@@ -279,7 +288,15 @@
             </ToolBar>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <items>
-                  <ToggleButton mnemonicParsing="false" text="Object Graph Mode" />
+                  <ToggleButton fx:id="objectGraphMode" mnemonicParsing="false" text="Object Graph Mode">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/menu/ActivityClassDiagram.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </ToggleButton>
                </items>
             </ToolBar>
          </children>
