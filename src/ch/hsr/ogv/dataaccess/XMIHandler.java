@@ -55,7 +55,7 @@ public class XMIHandler extends DefaultHandler {
 		for (XMIRelation xmiRelation : xmiRelations) {
 			ModelClass sourceClass = idClassMap.get(xmiRelation.getSourceID());
 			ModelClass targetClass = idClassMap.get(xmiRelation.getTargetID());
-			if(sourceClass != null && targetClass != null) {
+			if (sourceClass != null && targetClass != null) {
 				Relation relation = new Relation(sourceClass, targetClass, xmiRelation.getType());
 				relations.add(relation);
 				relation.setName(xmiRelation.getName());

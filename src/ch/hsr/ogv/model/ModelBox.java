@@ -51,7 +51,7 @@ public class ModelBox extends Observable {
 
 	public void setName(String name) {
 		// not doing the equals check here for when ModelObject needs a name change event
-		if(this.name != null) {
+		if (this.name != null) {
 			this.name = name;
 			setChanged();
 			notifyObservers(ModelBoxChange.NAME);
@@ -64,7 +64,7 @@ public class ModelBox extends Observable {
 	}
 
 	public void setCoordinates(Point3D coordinates) {
-		if(this.coordinates != null && !this.coordinates.equals(coordinates)) {
+		if (this.coordinates != null && !this.coordinates.equals(coordinates)) {
 			this.coordinates = coordinates;
 			setChanged();
 			notifyObservers(ModelBoxChange.COORDINATES);
@@ -115,7 +115,7 @@ public class ModelBox extends Observable {
 	}
 
 	public void setWidth(double width) {
-		if(this.width != width) {
+		if (this.width != width) {
 			this.width = width;
 			setChanged();
 			notifyObservers(ModelBoxChange.WIDTH);
@@ -127,7 +127,7 @@ public class ModelBox extends Observable {
 	}
 
 	public void setHeight(double height) {
-		if(this.height != height) {
+		if (this.height != height) {
 			this.height = height;
 			setChanged();
 			notifyObservers(ModelBoxChange.HEIGHT);
@@ -140,15 +140,15 @@ public class ModelBox extends Observable {
 	}
 
 	public void setColor(Color color) {
-		if(this.color != null && !this.color.equals(color)) {
+		if (this.color != null && !this.color.equals(color)) {
 			this.color = color;
 			setChanged();
 			notifyObservers(ModelBoxChange.COLOR);
 		}
 	}
 
-	@XmlElementWrapper (name = "endpoints")
-	@XmlElement (name = "endpoint")
+	@XmlElementWrapper(name = "endpoints")
+	@XmlElement(name = "endpoint")
 	public List<Endpoint> getEndpoints() {
 		return endpoints;
 	}
@@ -158,11 +158,11 @@ public class ModelBox extends Observable {
 	}
 
 	@XmlTransient
-	public Map<Endpoint, Endpoint> getFriends(){
+	public Map<Endpoint, Endpoint> getFriends() {
 		Map<Endpoint, Endpoint> result = new HashMap<Endpoint, Endpoint>(endpoints.size());
 		for (Endpoint endpoint : endpoints) {
 			Endpoint friend = endpoint.getFriend();
-			if(friend != null) {
+			if (friend != null) {
 				result.put(endpoint, endpoint.getFriend());
 			}
 		}
@@ -171,7 +171,7 @@ public class ModelBox extends Observable {
 
 	public boolean replaceEndpoint(Endpoint toReplace, Endpoint replacement) {
 		int index = this.endpoints.indexOf(toReplace);
-		if(index >= 0) {
+		if (index >= 0) {
 			this.endpoints.set(index, replacement);
 			return true;
 		}

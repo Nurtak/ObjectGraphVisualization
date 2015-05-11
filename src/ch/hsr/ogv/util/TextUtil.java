@@ -17,6 +17,7 @@ public class TextUtil {
 	private static final double DEFAULT_WRAPPING_WIDTH = helper.getWrappingWidth();
 	private static final double DEFAULT_LINE_SPACING = helper.getLineSpacing();
 	private static final String DEFAULT_TEXT = helper.getText();
+
 	// private static final TextBoundsType DEFAULT_BOUNDS_TYPE = helper.getBoundsType();
 
 	public static double computeTextWidth(Font font, String text, double help) {
@@ -34,29 +35,29 @@ public class TextUtil {
 		helper.setText(DEFAULT_TEXT);
 		return d;
 	}
-	
+
 	public static String countUpTrailing(String str, int startValue) {
 		Pattern p = Pattern.compile("[0-9]+$");
 		Matcher m = p.matcher(str);
-		if(m.find()) {
-		    String trailingNumber = m.group();
-		    if(trailingNumber != null) {
-		    	try {
-		    		int parsedNumber = Integer.parseInt(trailingNumber);
-		    		int retNumber = 0;
-		    		if(parsedNumber < startValue) {
-		    			retNumber = startValue;
-		    		}
-		    		else {
-		    			retNumber = parsedNumber += 1;
-		    		}
-		    		int digitCount = ("" + parsedNumber).length();
-		    		return str.substring(0, str.length() - digitCount) + retNumber;
-		    	}
-		    	catch(NumberFormatException nfe) {
-		    		return str + startValue;
-		    	}
-		    }
+		if (m.find()) {
+			String trailingNumber = m.group();
+			if (trailingNumber != null) {
+				try {
+					int parsedNumber = Integer.parseInt(trailingNumber);
+					int retNumber = 0;
+					if (parsedNumber < startValue) {
+						retNumber = startValue;
+					}
+					else {
+						retNumber = parsedNumber += 1;
+					}
+					int digitCount = ("" + parsedNumber).length();
+					return str.substring(0, str.length() - digitCount) + retNumber;
+				}
+				catch (NumberFormatException nfe) {
+					return str + startValue;
+				}
+			}
 		}
 		return str + startValue;
 	}

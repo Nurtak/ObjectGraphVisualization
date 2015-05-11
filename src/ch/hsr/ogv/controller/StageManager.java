@@ -118,7 +118,8 @@ public class StageManager implements Observer {
 		try {
 			loader.setController(rootLayoutController);
 			this.rootLayout = (BorderPane) loader.load();
-		} catch (IOException | ClassCastException e) {
+		}
+		catch (IOException | ClassCastException e) {
 			logger.debug(e.getMessage());
 			e.printStackTrace();
 		}
@@ -343,7 +344,7 @@ public class StageManager implements Observer {
 	}
 
 	private void adaptArrowToBox(ModelBox modelBox) {
-		if(modelBox.getEndpoints().isEmpty()) {
+		if (modelBox.getEndpoints().isEmpty()) {
 			return;
 		}
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);

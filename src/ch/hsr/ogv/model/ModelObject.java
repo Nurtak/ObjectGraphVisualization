@@ -34,8 +34,8 @@ public class ModelObject extends ModelBox {
 	}
 
 	public String getAttributeValue(String attributeName) {
-		for(Attribute attribute : attributeValues.keySet()) {
-			if(attribute.getName().equals(attributeName)) {
+		for (Attribute attribute : attributeValues.keySet()) {
+			if (attribute.getName().equals(attributeName)) {
 				return attributeValues.get(attribute);
 			}
 		}
@@ -46,36 +46,39 @@ public class ModelObject extends ModelBox {
 	public ModelClass getModelClass() {
 		return modelClass;
 	}
-	
+
 	public void setModelClass(ModelClass modelClass) {
 		this.modelClass = modelClass;
 	}
-	
+
 	@XmlTransient
 	public List<ModelObject> getSuperObjects() {
-		if(this.modelClass == null) return new ArrayList<ModelObject>();
+		if (this.modelClass == null)
+			return new ArrayList<ModelObject>();
 		return this.modelClass.getSuperObjects(this);
 	}
-	
+
 	public void addSuperObject(ModelObject superObject) {
-		if(this.modelClass == null) return;
+		if (this.modelClass == null)
+			return;
 		this.modelClass.addSuperObject(this, superObject);
 	}
-	
+
 	public boolean isSuperObject() {
-		if(this.modelClass == null) return false;
+		if (this.modelClass == null)
+			return false;
 		return !this.modelClass.getModelObjects().contains(this);
 	}
-	
+
 	// for un/marshaling only
 	public ModelObject() {
 	}
-	
+
 	public ModelObject(String name, ModelClass modelClass, Point3D coordinates, double width, double heigth, Color color) {
 		super(name, coordinates, width, heigth, color);
 		this.modelClass = modelClass;
 	}
-	
+
 	public void changeAttributeName(Attribute attribute, String name) {
 		attribute.setName(name);
 		setChanged();
@@ -84,15 +87,15 @@ public class ModelObject extends ModelBox {
 
 	public void changeAttributeValue(Attribute attribute, String value) {
 		String oldValue = this.attributeValues.put(attribute, value);
-		if(oldValue != null) {
+		if (oldValue != null) {
 			setChanged();
 			notifyObservers(attribute);
 		}
 	}
-	
+
 	public void changeAttributeValue(String attributeName, String value) {
-		for(Attribute attribute : attributeValues.keySet()) {
-			if(attribute.getName().equals(attributeName)) {
+		for (Attribute attribute : attributeValues.keySet()) {
+			if (attribute.getName().equals(attributeName)) {
 				changeAttributeValue(attribute, value);
 			}
 		}
@@ -110,7 +113,7 @@ public class ModelObject extends ModelBox {
 
 	public String deleteAttributeValue(Attribute attribute) {
 		String deleted = attributeValues.remove(attribute);
-		if(deleted != null) {
+		if (deleted != null) {
 			setChanged();
 			notifyObservers(attribute);
 		}

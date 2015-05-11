@@ -17,9 +17,9 @@ import ch.hsr.ogv.model.RelationType;
  * @version 3DCOV 3.0, May 2007 / OGV 3.0, May 2015
  */
 public class XMI_1_1 extends XMIHandler {
-	
+
 	private ArrayList<ModelClass> classes = new ArrayList<ModelClass>();
-	
+
 	private boolean inDependencyClient = false;
 	private boolean inDependencySupplier = false;
 	private boolean scaling = false;
@@ -71,7 +71,7 @@ public class XMI_1_1 extends XMIHandler {
 	public void startElement(String pUri, String pLName, String pQName, Attributes pAtts) {
 		characters.delete(0, characters.length());
 
-		if (pQName.equals("UML:Class") || pQName.equals("UML:Interface") ) {
+		if (pQName.equals("UML:Class") || pQName.equals("UML:Interface")) {
 			ModelClass modelClass = new ModelClass();
 			String name = pAtts.getValue("name");
 			String classId = pAtts.getValue("xmi.id");
@@ -91,7 +91,7 @@ public class XMI_1_1 extends XMIHandler {
 			if (name != null && !classes.isEmpty()) {
 				Attribute attribute = new Attribute(name);
 				ModelClass modelClass = classes.get(classes.size() - 1);
-				if(modelClass != null) {
+				if (modelClass != null) {
 					modelClass.getAttributes().add(attribute);
 				}
 			}
@@ -150,7 +150,8 @@ public class XMI_1_1 extends XMIHandler {
 			inDependencySupplier = true;
 		}
 		else if (pQName.equals("Foundation.Core.ModelElement")) {
-			if(xmiRelations.isEmpty()) return;
+			if (xmiRelations.isEmpty())
+				return;
 			XMIRelation xmiRelation = xmiRelations.get(xmiRelations.size() - 1);
 			String classID = pAtts.getValue("xmi.idref");
 
@@ -163,14 +164,15 @@ public class XMI_1_1 extends XMIHandler {
 		}
 
 		else if (pQName.equals("UML:AssociationEnd")) {
-			if(xmiRelations.isEmpty()) return;
+			if (xmiRelations.isEmpty())
+				return;
 			String name = pAtts.getValue("name");
 			String multi = pAtts.getValue("multiplicity");
 			String aggregation = pAtts.getValue("aggregation");
 			String notDirected = pAtts.getValue("isNavigable");
 			String classID = pAtts.getValue("type");
 			XMIRelation ca = xmiRelations.get(xmiRelations.size() - 1);
-			if (name != null) {  // we draw it reversed
+			if (name != null) { // we draw it reversed
 				if (source) {
 					ca.setTargetRoleName(name);
 				}
@@ -178,18 +180,20 @@ public class XMI_1_1 extends XMIHandler {
 					ca.setSourceRoleName(name);
 				}
 			}
-			if (multi != null) {  // we draw it reversed
+			if (multi != null) { // we draw it reversed
 				if (source) {
-					if(multi.equals("1..")) multi = "1..*";
+					if (multi.equals("1.."))
+						multi = "1..*";
 					ca.setTargetMultiplicity(multi);
 				}
 				else {
-					if(multi.equals("1..")) multi = "1..*";
+					if (multi.equals("1.."))
+						multi = "1..*";
 					ca.setSourceMultiplicity(multi);
 				}
 			}
 			if ((aggregation.equals("aggregate")) || (aggregation.equals("shared"))) {
-				if(notDirected.equals("false")) {
+				if (notDirected.equals("false")) {
 					ca.setType(RelationType.DIRECTED_AGGREGATION);
 				}
 				else {
@@ -197,7 +201,7 @@ public class XMI_1_1 extends XMIHandler {
 				}
 			}
 			else if (aggregation.equals("composite")) {
-				if(notDirected.equals("false")) {
+				if (notDirected.equals("false")) {
 					ca.setType(RelationType.DIRECTED_COMPOSITION);
 				}
 				else {
@@ -221,11 +225,11 @@ public class XMI_1_1 extends XMIHandler {
 			String classID = pAtts.getValue("subject");
 			String geometry = pAtts.getValue("geometry");
 			if (classID != null) {
-				for(String mappedID : idClassMap.keySet()) {
-					if(mappedID.equals(classID)) {
+				for (String mappedID : idClassMap.keySet()) {
+					if (mappedID.equals(classID)) {
 						ModelClass modelClass = idClassMap.get(mappedID);
-						modelClass.setX(- getX(geometry) * 1.5 + 800);
-						modelClass.setZ(- getY(geometry) * 1.5 + 590);
+						modelClass.setX(-getX(geometry) * 1.5 + 800);
+						modelClass.setZ(-getY(geometry) * 1.5 + 590);
 					}
 				}
 			}

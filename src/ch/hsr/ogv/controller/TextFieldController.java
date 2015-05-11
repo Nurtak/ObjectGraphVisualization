@@ -77,7 +77,8 @@ public class TextFieldController {
 							if(topTextField.getText().isEmpty()) {
 								MessageBar.setText("Former Object \"" + modelBox.getName() + "\" is now anonyous.", MessageLevel.INFO);
 							}
-							else if(!topTextField.getText().isEmpty() && !topTextField.getText().equals(modelBox.getName()) && mvConnector.getModelManager().isObjectNameTaken(modelObject.getModelClass(), topTextField.getText())) {
+							else if (!topTextField.getText().isEmpty() && !topTextField.getText().equals(modelBox.getName())
+									&& mvConnector.getModelManager().isObjectNameTaken(modelObject.getModelClass(), topTextField.getText())) {
 								MessageBar.setText("Object \"" + topTextField.getText() + "\" is not unique for its class.", MessageLevel.WARN);
 							}
 							modelBox.setName(checkObjectName(modelBox.getName(), topTextField.getText()));

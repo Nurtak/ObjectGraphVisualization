@@ -25,7 +25,7 @@ public class Endpoint {
 	private String multiplicity;
 	private Relation relation;
 	private ModelBox appendant;
-	
+
 	// for un/marshaling only
 	public Endpoint() {
 	}
@@ -35,7 +35,7 @@ public class Endpoint {
 		this.appendant = appendant;
 		this.coordinates = appendant.getCoordinates();
 	}
-	
+
 	public String getUniqueID() {
 		return uniqueID;
 	}
@@ -103,7 +103,7 @@ public class Endpoint {
 		return null;
 	}
 
-	public boolean isStart(){
+	public boolean isStart() {
 		if (relation != null) {
 			return relation.isStart(this);
 		}

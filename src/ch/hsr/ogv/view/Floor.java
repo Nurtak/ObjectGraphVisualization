@@ -15,9 +15,9 @@ public class Floor extends Group implements Selectable {
 	private final double TILE_SIZE = 1000;
 	private final int TILE_DIMENSION = 10;
 	public final static Color DEFAULT_COLOR = Color.WHITESMOKE;
-	
+
 	private Color color = DEFAULT_COLOR;
-	
+
 	private volatile boolean selected = false;
 
 	public Floor() {
@@ -46,7 +46,8 @@ public class Floor extends Group implements Selectable {
 		for (Rectangle tile : this.tiles) {
 			if (value) {
 				tile.setFill(getColor());
-			} else {
+			}
+			else {
 				tile.setFill(Color.TRANSPARENT);
 			}
 		}

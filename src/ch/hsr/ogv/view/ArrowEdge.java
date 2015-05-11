@@ -26,15 +26,15 @@ import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
  *
  */
 public class ArrowEdge extends Group {
-	
+
 	private final static Logger logger = LoggerFactory.getLogger(ArrowEdge.class);
-	
+
 	private Color color = Color.BLACK;
 	private List<MeshView> meshViews = new ArrayList<MeshView>();
 	private double additionalGap;
-	
+
 	private EndpointType endpointType;
-	
+
 	public double getAdditionalGap() {
 		return this.additionalGap;
 	}
@@ -42,16 +42,16 @@ public class ArrowEdge extends Group {
 	public ArrowEdge(Color color) {
 		this(EndpointType.NONE, color);
 	}
-	
+
 	public ArrowEdge(EndpointType endpointType, Color color) {
 		this.endpointType = endpointType;
 		this.color = color;
 		loadModel();
 	}
-	
+
 	private void loadModel() {
 		URL modelUrl = null;
-		switch(this.endpointType) {
+		switch (this.endpointType) {
 		case EMPTY_ARROW:
 			modelUrl = ResourceLocator.getResourcePath(Resource.EMPTY_ARROW_OBJ);
 			this.additionalGap = 30;
@@ -81,22 +81,22 @@ public class ArrowEdge extends Group {
 		}
 		loadModel(modelUrl);
 	}
-	
+
 	private void loadModel(URL modelUrl) {
 		ObjModelImporter tdsImporter = new ObjModelImporter();
 		Node[] rootNodes = {};
-		if(modelUrl != null) {
+		if (modelUrl != null) {
 			try {
-			    tdsImporter.read(modelUrl);            
+				tdsImporter.read(modelUrl);
 			}
 			catch (ImportException e) {
-			    e.printStackTrace();
-			    logger.debug(e.getMessage());
+				e.printStackTrace();
+				logger.debug(e.getMessage());
 			}
 			rootNodes = tdsImporter.getImport();
-			
-			for(Node n : rootNodes) {
-				MeshView  mv = (MeshView) n;
+
+			for (Node n : rootNodes) {
+				MeshView mv = (MeshView) n;
 				this.meshViews.add(mv);
 			}
 		}
@@ -104,22 +104,21 @@ public class ArrowEdge extends Group {
 		getChildren().clear();
 		getChildren().addAll(Arrays.asList(rootNodes));
 	}
-	
-	
+
 	public Color getColor() {
 		return this.color;
 	}
-	
+
 	public void setColor(Color color) {
 		this.color = color;
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(this.color);
 		material.setSpecularColor(this.color.brighter());
-		for(MeshView mv : this.meshViews) {
+		for (MeshView mv : this.meshViews) {
 			mv.setMaterial(material);
 		}
 	}
-	
+
 	public EndpointType getEndpointType() {
 		return endpointType;
 	}
@@ -128,5 +127,5 @@ public class ArrowEdge extends Group {
 		this.endpointType = endpointType;
 		loadModel();
 	}
-	
+
 }

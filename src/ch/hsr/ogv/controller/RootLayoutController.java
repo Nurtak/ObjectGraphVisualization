@@ -137,7 +137,7 @@ public class RootLayoutController implements Observer, Initializable {
 			boolean success = persistancy.loadOGVData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
+				MessageBar.setText("Loaded file: \"" + file.getPath() + "\".", MessageLevel.INFO);
 			} else {
 				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}
@@ -166,7 +166,7 @@ public class RootLayoutController implements Observer, Initializable {
 			boolean success = persistancy.loadXMIData(file);
 			if (success) {
 				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-				MessageBar.setText("Loaded file:\"" + file.getPath() + "\".", MessageLevel.INFO);
+				MessageBar.setText("Loaded file: \"" + file.getPath() + "\".", MessageLevel.INFO);
 			} else {
 				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
 			}

@@ -20,14 +20,14 @@ public class ModelManager extends Observable {
 
 	private Set<ModelClass> classes = new HashSet<ModelClass>();
 	private Set<Relation> relations = new HashSet<Relation>();
-	
+
 	public ModelClass createClass(Point3D coordinates, double width, double heigth, Color color) {
 		int classCount = ModelClass.modelClassCounter.addAndGet(1);
 		String newClassName = "Class" + classCount;
-		while(isClassNameTaken(newClassName)) {
+		while (isClassNameTaken(newClassName)) {
 			newClassName = TextUtil.countUpTrailing(newClassName, classCount);
-			if(isClassNameTaken(newClassName)) {
-				 classCount = ModelClass.modelClassCounter.addAndGet(1);
+			if (isClassNameTaken(newClassName)) {
+				classCount = ModelClass.modelClassCounter.addAndGet(1);
 			}
 		}
 		ModelClass modelClass = new ModelClass(newClassName, coordinates, width, heigth, color);
@@ -40,42 +40,42 @@ public class ModelManager extends Observable {
 	public ModelObject createObject(ModelClass modelClass) {
 		int objectCount = ModelObject.modelObjectCounter.addAndGet(1);
 		String newObjectName = "obj" + objectCount;
-		while(isObjectNameTaken(modelClass, newObjectName)) {
+		while (isObjectNameTaken(modelClass, newObjectName)) {
 			newObjectName = TextUtil.countUpTrailing(newObjectName, objectCount);
-			if(isClassNameTaken(newObjectName)) {
-				objectCount =  ModelObject.modelObjectCounter.addAndGet(1);
+			if (isClassNameTaken(newObjectName)) {
+				objectCount = ModelObject.modelObjectCounter.addAndGet(1);
 			}
 		}
 		ModelObject modelObject = modelClass.createModelObject(newObjectName);
-	
-		if(!modelClass.getSuperClasses().isEmpty()) { // if class has superclasses
+
+		if (!modelClass.getSuperClasses().isEmpty()) { // if class has superclasses
 			buildGeneralizationObjects((ModelClass) modelClass);
 		}
-		
+
 		setChanged();
 		notifyObservers(modelObject);
 		return modelObject;
 	}
-	
+
 	private void createSuperObjects(List<ModelClass> superClasses, ModelClass subClass) {
-		ArrayList<ModelObject> uncoveredObjects = new ArrayList<ModelObject>(subClass.getModelObjects());
-		for(ModelClass superClass : superClasses) {
+		for (ModelClass superClass : superClasses) {
+			ArrayList<ModelObject> uncoveredObjects = new ArrayList<ModelObject>(subClass.getModelObjects());
 			List<ModelObject> superObjectList = subClass.getSuperObjects(superClass);
-			for(ModelObject superObject : superObjectList) {
+			for (ModelObject superObject : superObjectList) {
 				uncoveredObjects.remove(subClass.getSubModelObject(superObject));
 			}
-			for(ModelObject subObject : uncoveredObjects) {
+			for (ModelObject subObject : uncoveredObjects) {
 				createSuperObject(superClass, subObject);
 			}
 		}
 	}
-	
+
 	private ModelObject createSuperObject(ModelClass superClass, ModelObject subObject) {
 		ModelObject.modelObjectCounter.addAndGet(1);
 		ModelClass subClass = subObject.getModelClass();
 		double newZ = subObject.getModelClass().getZ();
 		newZ += subObject.getModelClass().getHeight() / 2;
-		for(ModelObject superObject : subObject.getSuperObjects()) {
+		for (ModelObject superObject : subObject.getSuperObjects()) {
 			newZ += superObject.getHeight();
 		}
 		newZ += superClass.getHeight() / 2;
@@ -96,38 +96,38 @@ public class ModelManager extends Observable {
 			start.getEndpoints().add(relation.getStart());
 			end.getEndpoints().add(relation.getEnd());
 			relations.add(relation);
-			
-			if(RelationType.GENERALIZATION.equals(relation.getType()) && start instanceof ModelClass) {
+
+			if (RelationType.GENERALIZATION.equals(relation.getType()) && start instanceof ModelClass) {
 				buildGeneralizationObjects((ModelClass) start);
 			}
-			
+
 			setChanged();
 			notifyObservers(relation);
 			return relation;
 		}
 		return null;
 	}
-	
+
 	public boolean deleteClass(ModelClass modelClass) {
-		for(ModelClass subClass : modelClass.getSubClasses()) {
-			for(ModelObject subSuperObject : subClass.getSuperObjects(modelClass)) {
+		for (ModelClass subClass : modelClass.getSubClasses()) {
+			for (ModelObject subSuperObject : subClass.getSuperObjects(modelClass)) {
 				deleteSuperObject(subClass, subSuperObject);
 			}
 		}
-		
-		for(ModelObject superObject : modelClass.getSuperObjects()) {
+
+		for (ModelObject superObject : modelClass.getSuperObjects()) {
 			deleteSuperObject(modelClass, superObject);
 		}
-		
-		for(ModelObject modelObject : new ArrayList<ModelObject>(modelClass.getModelObjects())) {
+
+		for (ModelObject modelObject : new ArrayList<ModelObject>(modelClass.getModelObjects())) {
 			deleteObject(modelObject);
 		}
-		
+
 		ArrayList<Endpoint> classesEndPoints = new ArrayList<Endpoint>(modelClass.getEndpoints());
 		for (Endpoint endPoint : classesEndPoints) {
 			deleteRelation(endPoint.getRelation());
 		}
-		
+
 		boolean deletedClass = classes.remove(modelClass);
 		if (deletedClass) {
 			setChanged();
@@ -148,17 +148,17 @@ public class ModelManager extends Observable {
 		}
 		return deletedObject;
 	}
-	
+
 	public boolean deleteObject(ModelObject modelObject) {
 		ArrayList<Endpoint> objectsEndPoints = new ArrayList<Endpoint>(modelObject.getEndpoints());
 		for (Endpoint endPoint : objectsEndPoints) {
 			deleteRelation(endPoint.getRelation());
 		}
-		
+
 		for (ModelObject superObject : new ArrayList<ModelObject>(modelObject.getSuperObjects())) {
 			deleteSuperObject(modelObject.getModelClass(), superObject);
 		}
-		
+
 		boolean deletedObject = modelObject.getModelClass().deleteModelObject(modelObject);
 		if (deletedObject) {
 			setChanged();
@@ -166,13 +166,13 @@ public class ModelManager extends Observable {
 		}
 		return deletedObject;
 	}
-	
+
 	private void buildGeneralizationObjects(ModelClass start) {
 		ModelClass startClass = (ModelClass) start;
 		List<ModelClass> superClasses = startClass.getSuperClasses();
 		List<ModelClass> subClasses = startClass.getSubClasses();
 		subClasses.add(startClass);
-		for(ModelClass subClass : subClasses) {
+		for (ModelClass subClass : subClasses) {
 			createSuperObjects(superClasses, subClass);
 		}
 	}
@@ -180,22 +180,23 @@ public class ModelManager extends Observable {
 	private void cleanupGeneralizationObjects(Relation relation) {
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
-		if(!(startModelBox instanceof ModelClass) || !(endModelBox instanceof ModelClass)) return;
+		if (!(startModelBox instanceof ModelClass) || !(endModelBox instanceof ModelClass))
+			return;
 		ModelClass startClass = (ModelClass) startModelBox;
 		List<ModelClass> subClasses = new ArrayList<ModelClass>(startClass.getSubClasses());
 		List<ModelClass> superClasses = new ArrayList<ModelClass>(startClass.getSuperClasses());
 		subClasses.add(startClass);
-		for(ModelClass subClass : subClasses) {
-			for(ModelClass superClass : superClasses) {
-				for(ModelObject subSuperObject : subClass.getSuperObjects(superClass)) {
+		for (ModelClass subClass : subClasses) {
+			for (ModelClass superClass : superClasses) {
+				for (ModelObject subSuperObject : subClass.getSuperObjects(superClass)) {
 					deleteSuperObject(subClass, subSuperObject);
 				}
 			}
 		}
 	}
-	
+
 	public boolean deleteRelation(Relation relation) {
-		if(RelationType.GENERALIZATION.equals(relation.getType())) {
+		if (RelationType.GENERALIZATION.equals(relation.getType())) {
 			cleanupGeneralizationObjects(relation);
 		}
 		boolean deletedRelation = relations.remove(relation);
@@ -318,5 +319,5 @@ public class ModelManager extends Observable {
 			deleteRelation(relation);
 		}
 	}
-	
+
 }

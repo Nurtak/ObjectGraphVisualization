@@ -47,7 +47,8 @@ public class TSplitMenuButton implements Toggle {
 		toggleButton.selectedProperty().set(value);
 		if (toggleButton.selectedProperty().get()) {
 			splitMenuButton.getStyleClass().add("tsplit-menu-button");
-		} else {
+		}
+		else {
 			splitMenuButton.getStyleClass().remove("tsplit-menu-button");
 		}
 	}

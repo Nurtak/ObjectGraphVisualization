@@ -15,27 +15,27 @@ public class MouseMoveController extends Observable {
 
 		floor.addEventHandler(MouseEvent.MOUSE_MOVED, (MouseEvent me) -> {
 			PickResult pick = me.getPickResult();
-				Point3D movePoint = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
-				setChanged();
-				notifyObservers(movePoint);
+			Point3D movePoint = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
+			setChanged();
+			notifyObservers(movePoint);
 		});
-		
+
 	}
-	
+
 	public void enableMouseMove(VerticalHelper verticalHelper) {
 		verticalHelper.addEventHandler(MouseEvent.MOUSE_MOVED, (MouseEvent me) -> {
 			PickResult pick = me.getPickResult();
-				Point3D movePoint = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
-				setChanged();
-				notifyObservers(movePoint);
+			Point3D movePoint = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
+			setChanged();
+			notifyObservers(movePoint);
 		});
 	}
-	
+
 	public void enableMouseMove(PaneBox paneBox) {
 		paneBox.get().addEventHandler(MouseEvent.MOUSE_MOVED, (MouseEvent me) -> {
 			setChanged();
 			notifyObservers(paneBox);
 		});
 	}
-	
+
 }
