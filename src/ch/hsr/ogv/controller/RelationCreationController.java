@@ -12,6 +12,8 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.MessageBar;
+import ch.hsr.ogv.view.MessageBar.MessageLevel;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
@@ -89,7 +91,8 @@ public class RelationCreationController extends Observable implements Observer {
 			return false;
 		} else if (start instanceof ModelClass && (
 				relationType == RelationType.OBJDIAGRAM ||
-				relationType == RelationType.OBJGRAPH
+				relationType == RelationType.OBJGRAPH ||
+				(relationType == RelationType.GENERALIZATION && !isFreeOfCycle((ModelClass) start, (ModelClass) end))
 				)) {
 			return false;
 		} else if (start instanceof ModelObject && (
@@ -105,6 +108,17 @@ public class RelationCreationController extends Observable implements Observer {
 				relationType == RelationType.ASSOZIATION_CLASS
 				)) {
 			return false;
+		}
+		return true;
+	}
+
+	private boolean isFreeOfCycle(ModelClass startClass, ModelClass endClass){
+		for (ModelClass endSuperClass : endClass.getSuperClasses()) {
+			if (endSuperClass.equals(startClass)){
+				MessageBar.setText("Cycle dedected in polymorphism. Cycles are not allowed.", MessageLevel.WARN);
+				return false;
+			}
+			return isFreeOfCycle(startClass, endSuperClass);
 		}
 		return true;
 	}
