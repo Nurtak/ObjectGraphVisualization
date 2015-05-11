@@ -16,7 +16,7 @@ public class OGVPoint3D {
 	}
 
 	public OGVPoint3D() {
-		
+
 	}
 
 	public double getX() {
@@ -42,5 +42,5 @@ public class OGVPoint3D {
 	public void setZ(double z) {
 		this.z = z;
 	}
-	
+
 }

@@ -150,5 +150,5 @@ public class DragResizeController extends DragController {
 		}
 		return retHeight;
 	}
-		
+
 }

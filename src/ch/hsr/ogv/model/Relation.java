@@ -24,11 +24,11 @@ public class Relation extends Observable {
 	// for un/marshaling only
 	public Relation() {
 	}
-	
+
 	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType) {
 		this(startBox, endBox, relationType, Color.BLACK);
 	}
-	
+
 	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType, Color color) {
 		this.start = new Endpoint(relationType.getStartType(), startBox);
 		this.end = new Endpoint(relationType.getEndType(), endBox);
@@ -43,8 +43,8 @@ public class Relation extends Observable {
 	}
 
 	public void setName(String name) {
-		//setChanged();
-		//notifyObservers(RelationChange.NAME);
+		// setChanged();
+		// notifyObservers(RelationChange.NAME);
 		this.name = name;
 	}
 
@@ -82,6 +82,7 @@ public class Relation extends Observable {
 		setChanged();
 		notifyObservers(RelationChange.COLOR);
 	}
+
 	public Endpoint getFriend(Endpoint endpoint) {
 		if (endpoint.equals(start)) {
 			return end;
@@ -104,7 +105,8 @@ public class Relation extends Observable {
 	}
 
 	public void changeDirection() {
-		if(this.start == null || this.end == null) return;
+		if (this.start == null || this.end == null)
+			return;
 		this.start.getAppendant().replaceEndpoint(this.start, this.end);
 		this.end.getAppendant().replaceEndpoint(this.end, this.start);
 		ModelBox tempModelBox = this.end.getAppendant();
@@ -115,28 +117,32 @@ public class Relation extends Observable {
 	}
 
 	public void setStartMultiplicity(String multiplicity) {
-		if(this.start == null) return;
+		if (this.start == null)
+			return;
 		this.start.setMultiplicity(multiplicity);
 		setChanged();
 		notifyObservers(RelationChange.MULTIPLCITY_ROLE);
 	}
 
 	public void setEndMultiplicity(String multiplicity) {
-		if(this.end == null) return;
+		if (this.end == null)
+			return;
 		this.end.setMultiplicity(multiplicity);
 		setChanged();
 		notifyObservers(RelationChange.MULTIPLCITY_ROLE);
 	}
 
 	public void setStartRoleName(String roleName) {
-		if(this.start == null) return;
+		if (this.start == null)
+			return;
 		this.start.setRoleName(roleName);
 		setChanged();
 		notifyObservers(RelationChange.MULTIPLCITY_ROLE);
 	}
 
 	public void setEndRoleName(String roleName) {
-		if(this.end == null) return;
+		if (this.end == null)
+			return;
 		this.end.setRoleName(roleName);
 		setChanged();
 		notifyObservers(RelationChange.MULTIPLCITY_ROLE);

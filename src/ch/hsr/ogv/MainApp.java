@@ -23,7 +23,7 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
 public class MainApp extends Application {
 
 	private final static Logger logger = LoggerFactory.getLogger(MainApp.class);
-	
+
 	private final static UncaughtExceptionHandler ueHandler = new UncaughtExceptionHandler() {
 		public void uncaughtException(Thread thread, final Throwable throwable) {
 			logger.debug("Error in thread " + thread + ": " + throwable.getMessage());

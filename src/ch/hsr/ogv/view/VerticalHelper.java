@@ -71,7 +71,7 @@ public class VerticalHelper extends Group {
 			Rectangle southRectangle = oneDimension.get(1);
 			Rectangle eastRectangle = oneDimension.get(2);
 			Rectangle westRectangle = oneDimension.get(3);
-			
+
 			northRectangle.setWidth(width + PLUS_SIZE);
 			northRectangle.setTranslateX(x - width / 2 - PLUS_SIZE / 2);
 			northRectangle.setTranslateZ(z + height / 2 + PLUS_SIZE / 2);

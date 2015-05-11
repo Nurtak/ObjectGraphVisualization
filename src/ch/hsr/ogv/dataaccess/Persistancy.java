@@ -29,7 +29,7 @@ import ch.hsr.ogv.model.Relation;
  *
  */
 public class Persistancy {
-	
+
 	private final static Logger logger = LoggerFactory.getLogger(Persistancy.class);
 
 	private ModelManager modelManager;
@@ -42,12 +42,12 @@ public class Persistancy {
 		OGVSerialization ogvSerialization = new OGVSerialization();
 		return saveDataAsync(ogvSerialization, file);
 	}
-	
+
 	public boolean saveOGVData(File file) {
 		OGVSerialization ogvSerialization = new OGVSerialization();
 		return saveData(ogvSerialization, file);
 	}
-	
+
 	public boolean saveDataAsync(SerializationStrategy serialStrategy, File file) {
 		serialStrategy.setClasses(new HashSet<ModelClass>(modelManager.getClasses()));
 		serialStrategy.setRelations(new HashSet<Relation>(modelManager.getRelations()));
@@ -57,11 +57,12 @@ public class Persistancy {
 				return serialStrategy.serialize(file);
 			}
 		});
-		
+
 		boolean saved = false;
 		try {
 			saved = asyncResult.get();
-		} catch (InterruptedException | ExecutionException e) {
+		}
+		catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());
 		}
@@ -84,7 +85,7 @@ public class Persistancy {
 		XMISerialization xmiSerialization = new XMISerialization();
 		return loadDataAsync(xmiSerialization, file);
 	}
-	
+
 	public boolean loadOGVData(File file) {
 		OGVSerialization ogvSerialization = new OGVSerialization();
 		return loadData(ogvSerialization, file);
@@ -102,24 +103,25 @@ public class Persistancy {
 				return serialStrategy.parse(file);
 			}
 		});
-		
+
 		boolean loaded = false;
 		try {
 			loaded = asyncResult.get();
-		} catch (InterruptedException | ExecutionException e) {
+		}
+		catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());
 		}
 		threadPool.shutdown();
-		
-		if(!loaded) {
+
+		if (!loaded) {
 			return false;
 		}
-		
+
 		loadedToModel(serialStrategy);
 		return true;
 	}
-	
+
 	public boolean loadData(SerializationStrategy serialStrategy, File file) {
 		boolean loaded = serialStrategy.parse(file);
 		if (!loaded) {
@@ -128,7 +130,7 @@ public class Persistancy {
 		loadedToModel(serialStrategy);
 		return true;
 	}
-	
+
 	private void loadedToModel(SerializationStrategy serialStrategy) {
 		modelManager.clearClasses();
 		modelManager.clearRelations();
@@ -141,7 +143,7 @@ public class Persistancy {
 			loadedRelationToModel(loadedRelation);
 		}
 	}
-	
+
 	private void loadedClassToModel(ModelClass loadedClass) {
 		ModelClass newClass = modelManager.createClass(new Point3D(loadedClass.getX(), ModelViewConnector.BASE_BOX_DEPTH, loadedClass.getZ()), loadedClass.getWidth(), loadedClass.getHeight(),
 				loadedClass.getColor());
@@ -188,7 +190,8 @@ public class Persistancy {
 						newObject.changeAttributeValue(newAttribute.getName(), newAttributeValue);
 					}
 				}
-			} catch (IndexOutOfBoundsException ioobe) {
+			}
+			catch (IndexOutOfBoundsException ioobe) {
 				continue;
 			}
 		}

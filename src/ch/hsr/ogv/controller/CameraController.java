@@ -59,8 +59,9 @@ public class CameraController implements Observer {
 		SubSceneCamera ssCamera = subSceneAdapter.getSubSceneCamera();
 
 		subScene.setOnMousePressed((MouseEvent me) -> {
-			if (!moveCamera)
+			if (!moveCamera) {
 				return;
+			}
 
 			mousePosX = me.getSceneX();
 			mousePosY = me.getSceneY();
@@ -69,8 +70,9 @@ public class CameraController implements Observer {
 		});
 
 		subScene.setOnMouseDragged((MouseEvent me) -> {
-			if (!moveCamera)
+			if (!moveCamera) {
 				return;
+			}
 			mouseOldX = mousePosX;
 			mouseOldY = mousePosY;
 			mousePosX = me.getSceneX();
@@ -102,8 +104,9 @@ public class CameraController implements Observer {
 		});
 
 		subScene.setOnScroll((ScrollEvent se) -> {
-			if (!moveCamera)
+			if (!moveCamera) {
 				return;
+			}
 			double z = ssCamera.get().getTranslateZ();
 			double newZ = z;
 			double modifier = MODIFIER;
@@ -126,8 +129,9 @@ public class CameraController implements Observer {
 		SubSceneCamera ssCamera = subSceneAdapter.getSubSceneCamera();
 
 		subScene.setOnKeyPressed((KeyEvent ke) -> {
-			if (!moveCamera)
+			if (!moveCamera) {
 				return;
+			}
 			switch (ke.getCode()) {
 			case UP:
 				double oldY_UP = ssCamera.get().getTranslateY();

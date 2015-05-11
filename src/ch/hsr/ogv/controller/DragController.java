@@ -17,7 +17,7 @@ public abstract class DragController extends Observable {
 
 	private volatile PaneBox selected = null;
 	private volatile boolean dragInProgress = false;
-	
+
 	protected void endOnMouseReleased(Group g, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		g.setOnMouseReleased((MouseEvent me) -> {
 			setDragInProgress(subSceneAdapter, false);
@@ -29,7 +29,7 @@ public abstract class DragController extends Observable {
 
 	protected void setDragInProgress(SubSceneAdapter subSceneAdapter, boolean value) {
 		this.dragInProgress = value;
-		if(value) {
+		if (value) {
 			subSceneAdapter.worldRestrictMouseEvents();
 			subSceneAdapter.receiveMouseEvents(subSceneAdapter.getFloor(), subSceneAdapter.getVerticalHelper());
 		}

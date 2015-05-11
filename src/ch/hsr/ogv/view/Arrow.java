@@ -35,10 +35,10 @@ public class Arrow extends Group implements Selectable {
 
 	private Point3D startPoint;
 	private Point3D endPoint;
-	
+
 	private ArrowEdge arrowStart;
 	private ArrowEdge arrowEnd;
-	
+
 	private ArrowLabel labelStartRight; // start multiplicity
 	private ArrowLabel labelStartLeft; // start role
 	private ArrowLabel labelEndRight; // end multiplicity
@@ -48,14 +48,14 @@ public class Arrow extends Group implements Selectable {
 
 	private Box line;
 	private ArrayList<Box> dashedLines = new ArrayList<Box>();
-	
+
 	public static final Color DEFAULT_COLOR = Color.BLACK;
 	private Color color = DEFAULT_COLOR;
 	private ArrowSelection selection = null;
 	private Box lineSelectionHelper;
 	private Box startSelectionHelper;
 	private Box endSelectionHelper;
-	
+
 	public Point3D getStartPoint() {
 		return startPoint;
 	}
@@ -79,7 +79,7 @@ public class Arrow extends Group implements Selectable {
 	public ArrowEdge getArrowEnd() {
 		return arrowEnd;
 	}
- 
+
 	public ArrowLabel getLabelStartRight() {
 		return labelStartRight;
 	}
@@ -106,7 +106,7 @@ public class Arrow extends Group implements Selectable {
 		this.arrowEnd.setEndpointType(type.getEndType());
 		drawArrow();
 	}
-	
+
 	public Box getLineSelectionHelper() {
 		return lineSelectionHelper;
 	}
@@ -118,21 +118,21 @@ public class Arrow extends Group implements Selectable {
 	public Box getEndSelectionHelper() {
 		return endSelectionHelper;
 	}
-	
+
 	public Arrow(PaneBox startBox, Point3D endPoint, RelationType type) {
 		setPoints(startBox, endPoint);
 		this.type = type;
 		buildArrow();
 		drawArrow();
 	}
-	
+
 	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
 		setPointsBasedOnBoxes(startBox, endBox);
 		this.type = type;
 		buildArrow();
 		drawArrow();
 	}
-	
+
 	private void buildArrow() {
 		prepareArrowLineEdge();
 		prepareArrowLabel();
@@ -147,29 +147,29 @@ public class Arrow extends Group implements Selectable {
 		getChildren().addAll(this.lineSelectionHelper, this.startSelectionHelper, this.endSelectionHelper);
 		getChildren().addAll(this.labelStartRight, this.labelStartLeft, this.labelEndRight, this.labelEndLeft);
 	}
-	
+
 	private void prepareArrowLineEdge() {
 		this.arrowStart = new ArrowEdge(this.type.getStartType(), this.color);
 		this.arrowEnd = new ArrowEdge(this.type.getEndType(), this.color);
-		
+
 	}
-	
+
 	private void prepareArrowLabel() {
 		this.labelStartRight = new ArrowLabel();
 		this.labelStartLeft = new ArrowLabel();
 		this.labelEndRight = new ArrowLabel();
 		this.labelEndLeft = new ArrowLabel();
 	}
-	
+
 	private void prepareLines() {
 		this.line = new Box(this.width, this.width, this.boxDistance);
 		for (int i = 0; i < DASHED_ELEMENT_COUNT; i++) {
 			Box dashedLine = new Box(this.width, this.width, this.boxDistance);
 			dashedLine.setVisible(false);
 			this.dashedLines.add(dashedLine);
-		}		
+		}
 	}
-	
+
 	private void buildSelectionHelpers() {
 		double lineSelectionGap = 100;
 		double endGap = this.arrowEnd.getAdditionalGap();
@@ -183,7 +183,7 @@ public class Arrow extends Group implements Selectable {
 		this.lineSelectionHelper.translateZProperty().bind(this.line.translateZProperty().subtract((-endGap + startGap) / 4));
 		this.lineSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
 		this.lineSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
-		
+
 		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, lineSelectionGap / 2);
 		this.startSelectionHelper.setMaterial(material); // for debugging
 		this.startSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
@@ -191,7 +191,7 @@ public class Arrow extends Group implements Selectable {
 		this.startSelectionHelper.translateZProperty().bind(this.line.translateZProperty().subtract(this.line.depthProperty().divide(2)).subtract(startGap / 2).add(lineSelectionGap / 4));
 		this.startSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
 		this.startSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
-		
+
 		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, lineSelectionGap / 2);
 		this.endSelectionHelper.setMaterial(material); // for debugging
 		this.endSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
@@ -229,16 +229,16 @@ public class Arrow extends Group implements Selectable {
 		getTransforms().clear();
 
 		boolean isDashedLine = LineType.DASHED_LINE.equals(this.type.getLineType());
-		
+
 		this.line.setVisible(!isDashedLine);
-		
+
 		for (Box dashedLine : this.dashedLines) {
 			dashedLine.setVisible(isDashedLine);
 		}
 
 		setArrowLineEdge();
 		setArrowLabels();
-		
+
 		double endGap = this.arrowEnd.getAdditionalGap();
 		double startGap = this.arrowStart.getAdditionalGap();
 
@@ -246,7 +246,7 @@ public class Arrow extends Group implements Selectable {
 
 		this.line.setDepth(gapDistance);
 		this.line.setTranslateZ((-endGap + startGap) / 4);
-		
+
 		ArrayList<Point3D> dashedLineCoords = divideLine(new Point3D(0, 0, -gapDistance / 2), new Point3D(0, 0, gapDistance / 2), this.dashedLines.size());
 
 		for (int i = 0; i < this.dashedLines.size(); i++) {
@@ -263,22 +263,22 @@ public class Arrow extends Group implements Selectable {
 		setTranslateXYZ(midPoint);
 		addRotateYAxis(this.rotateZAngle);
 		addRotateXAxis(this.rotateXAngle);
-		
+
 		this.labelStartLeft.setRotateYAxis(-this.rotateZAngle);
 		this.labelStartRight.setRotateYAxis(-this.rotateZAngle);
 		this.labelEndLeft.setRotateYAxis(-this.rotateZAngle);
 		this.labelEndRight.setRotateYAxis(-this.rotateZAngle);
-		
+
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
-	
+
 	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box) {
 		Point3D boxCenter = box.getCenterPoint();
 		double halfWidth = box.getWidth() / 2;
 		double halfHeight = box.getHeight() / 2;
-		
+
 		Point2D lineStart = new Point2D(externalPoint.getX(), externalPoint.getZ());
-		Point2D lineEnd   = new Point2D(boxCenter.getX(), boxCenter.getZ());
+		Point2D lineEnd = new Point2D(boxCenter.getX(), boxCenter.getZ());
 		Point2D northEast = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() + halfHeight);
 		Point2D southEast = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() - halfHeight);
 		Point2D southWest = new Point2D(boxCenter.getX() + halfWidth, boxCenter.getZ() - halfHeight);
@@ -303,7 +303,7 @@ public class Arrow extends Group implements Selectable {
 		}
 		return null;
 	}
-	
+
 	private ArrayList<Point3D> divideLine(Point3D start, Point3D end, int count) {
 		ArrayList<Point3D> pointList = new ArrayList<Point3D>();
 		for (int i = 1; i <= count; i++) {
@@ -321,19 +321,19 @@ public class Arrow extends Group implements Selectable {
 		this.arrowStart.setTranslateZ(-this.boxDistance / 2 - EDGE_SPACING);
 		this.arrowEnd.setTranslateZ(this.boxDistance / 2 + EDGE_SPACING);
 	}
-	
+
 	private void setArrowLabels() {
 		this.labelStartRight.setDiffX(-LABEL_SPACING / 3 - 1);
 		this.labelStartRight.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
-		
+
 		double startLeftWidth = this.labelStartLeft.calcMinWidth();
 		startLeftWidth = startLeftWidth < 20 ? 20 : startLeftWidth;
 		this.labelStartLeft.setDiffX(startLeftWidth + LABEL_SPACING / 3);
 		this.labelStartLeft.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
-		
+
 		this.labelEndRight.setDiffX(-LABEL_SPACING / 3 - 1);
 		this.labelEndRight.setDiffZ(this.boxDistance / 2 - LABEL_SPACING + 10);
-		
+
 		double endLeftWidth = this.labelEndLeft.calcMinWidth();
 		endLeftWidth = endLeftWidth < 20 ? 20 : endLeftWidth;
 		this.labelEndLeft.setDiffX(endLeftWidth + LABEL_SPACING / 3);
@@ -364,41 +364,41 @@ public class Arrow extends Group implements Selectable {
 	public Color getColor() {
 		return this.color;
 	}
-	
+
 	public void setAllLabelSelected(boolean selected) {
 		this.labelStartLeft.setLabelSelected(selected);
 		this.labelStartRight.setLabelSelected(selected);
 		this.labelEndLeft.setLabelSelected(selected);
 		this.labelEndRight.setLabelSelected(selected);
 	}
-	
+
 	public ArrowLabel getSelectedLabel() {
-		if(this.labelStartLeft.isLabelSelected()) {
+		if (this.labelStartLeft.isLabelSelected()) {
 			return this.labelStartLeft;
 		}
-		else if(this.labelStartRight.isLabelSelected()) {
+		else if (this.labelStartRight.isLabelSelected()) {
 			return this.labelStartRight;
 		}
-		else if(this.labelEndLeft.isLabelSelected()) {
+		else if (this.labelEndLeft.isLabelSelected()) {
 			return this.labelEndLeft;
 		}
-		else if(this.labelEndRight.isLabelSelected()) {
+		else if (this.labelEndRight.isLabelSelected()) {
 			return this.labelEndRight;
 		}
 		return null;
 	}
-	
+
 	public boolean isStart(ArrowLabel arrowLabel) {
 		return this.labelStartLeft.equals(arrowLabel) || this.labelStartRight.equals(arrowLabel);
 	}
-	
+
 	public boolean isLeft(ArrowLabel arrowLabel) {
 		return this.labelStartLeft.equals(arrowLabel) || this.labelEndLeft.equals(arrowLabel);
 	}
-	
+
 	public boolean hasLeftText(boolean atStart) {
 		String leftText = null;
-		if(atStart) {
+		if (atStart) {
 			leftText = getLabelStartLeft().getArrowText().getText();
 		}
 		else {
@@ -406,10 +406,10 @@ public class Arrow extends Group implements Selectable {
 		}
 		return leftText != null && !leftText.isEmpty();
 	}
-	
+
 	public boolean hasRightText(boolean atStart) {
 		String rightText = null;
-		if(atStart) {
+		if (atStart) {
 			rightText = getLabelStartRight().getArrowText().getText();
 		}
 		else {
@@ -426,7 +426,7 @@ public class Arrow extends Group implements Selectable {
 			colorToApply = SELECTION_COLOR;
 		}
 		applyColor(this.line, colorToApply);
-		for(Box dashedLine : this.dashedLines) {
+		for (Box dashedLine : this.dashedLines) {
 			applyColor(dashedLine, colorToApply);
 		}
 		this.arrowStart.setColor(colorToApply);
@@ -435,8 +435,8 @@ public class Arrow extends Group implements Selectable {
 		this.labelStartLeft.setColor(Util.darker(colorToApply, 0.3));
 		this.labelEndRight.setColor(Util.darker(colorToApply, 0.3));
 		this.labelEndLeft.setColor(Util.darker(colorToApply, 0.3));
-		
-		if(!selected) {
+
+		if (!selected) {
 			setAllLabelSelected(false);
 		}
 	}

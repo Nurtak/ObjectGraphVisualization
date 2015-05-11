@@ -31,11 +31,11 @@ import ch.hsr.ogv.view.SubSceneAdapter;
  *
  */
 public class ModelViewConnector {
-	
+
 	public static final double BASE_BOX_DEPTH = PaneBox.INIT_DEPTH + BoxSelection.INIT_SELECT_SIZE / 2;
 
 	private ModelManager modelManager = new ModelManager();
-	
+
 	private Map<ModelBox, PaneBox> boxes = new HashMap<ModelBox, PaneBox>();
 	private Map<Relation, Arrow> arrows = new HashMap<Relation, Arrow>();
 
@@ -104,25 +104,25 @@ public class ModelViewConnector {
 	public boolean containsRelation(Relation relation) {
 		return this.arrows.containsKey(relation);
 	}
-	
+
 	public boolean containsPaneBox(PaneBox paneBox) {
 		return this.boxes.values().contains(paneBox);
 	}
-	
+
 	public boolean containsArrow(Arrow arrow) {
 		return this.arrows.values().contains(arrow);
 	}
 
 	public boolean containsSelectable(Selectable selectable) {
-		if(selectable instanceof PaneBox) {
+		if (selectable instanceof PaneBox) {
 			return containsPaneBox((PaneBox) selectable);
 		}
-		else if(selectable instanceof Arrow) {
+		else if (selectable instanceof Arrow) {
 			return containsArrow((Arrow) selectable);
 		}
 		return false;
 	}
-	
+
 	public PaneBox putBoxes(ModelBox key, PaneBox value) {
 		return this.boxes.put(key, value);
 	}
@@ -151,14 +151,14 @@ public class ModelViewConnector {
 		ModelObject moB1 = this.modelManager.createObject(mcB);
 		ModelObject moB2 = this.modelManager.createObject(mcB);
 		ModelObject moB3 = this.modelManager.createObject(mcB);
-//
-//		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-//		this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
-//
+		//
+		// this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
+		// this.modelManager.createRelation(mcC, mcB, RelationType.DIRECTED_AGGREGATION, Arrow.DEFAULT_COLOR);
+		// this.modelManager.createRelation(mcC, mcA, RelationType.DEPENDENCY, Arrow.DEFAULT_COLOR);
+		// this.modelManager.createRelation(moA1, moB1, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+		// this.modelManager.createRelation(moA1, moB2, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+		// this.modelManager.createRelation(moA1, moB3, RelationType.OBJDIAGRAM, Arrow.DEFAULT_COLOR);
+		//
 		mcA.createAttribute();
 		mcA.createAttribute();
 		mcA.createAttribute();
@@ -166,7 +166,7 @@ public class ModelViewConnector {
 		mcA.createAttribute();
 		mcB.createAttribute();
 	}
-	
+
 	public PaneBox handleCreateNewClass(Point3D mouseCoords) {
 		Point3D boxPosition = new Point3D(mouseCoords.getX(), BASE_BOX_DEPTH, mouseCoords.getZ());
 		ModelClass newClass = this.modelManager.createClass(boxPosition, PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
@@ -176,7 +176,7 @@ public class ModelViewConnector {
 		}
 		return newBox;
 	}
-	
+
 	public PaneBox handleCreateNewObject(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			ModelBox selectedModelBox = this.getModelBox((PaneBox) selected);
@@ -207,8 +207,7 @@ public class ModelViewConnector {
 			if (selectedModelBox != null && selectedModelBox instanceof ModelClass) {
 				ModelClass selectedModelClass = (ModelClass) selectedModelBox;
 				String newAttributeName = "attr" + (selectedModelClass.getAttributes().size() + 1);
-				while(this.modelManager.isAttributeNameTaken(selectedModelClass, newAttributeName)
-				   || this.modelManager.isRoleNameTaken(selectedModelClass, newAttributeName)) {
+				while (this.modelManager.isAttributeNameTaken(selectedModelClass, newAttributeName) || this.modelManager.isRoleNameTaken(selectedModelClass, newAttributeName)) {
 					newAttributeName = TextUtil.countUpTrailing(newAttributeName, selectedModelClass.getAttributes().size());
 				}
 				Attribute newAttribute = selectedModelClass.createAttribute(newAttributeName);
@@ -220,19 +219,19 @@ public class ModelViewConnector {
 		}
 		return null;
 	}
-	
+
 	public void handleClearAll() {
 		modelManager.clearRelations();
 		modelManager.clearClasses();
 	}
-	
+
 	public void handleDelete(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			PaneBox paneBox = (PaneBox) selected;
 			ModelBox modelToDelete = getModelBox(paneBox);
 			boolean centerlabelSelected = paneBox.getSelectedLabel() != null && paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel()) >= 0;
 			if (modelToDelete instanceof ModelClass) {
-				if(!centerlabelSelected) { // delete the whole class
+				if (!centerlabelSelected) { // delete the whole class
 					ModelClass classToDelete = (ModelClass) modelToDelete;
 					this.modelManager.deleteClass(classToDelete);
 				}
@@ -240,23 +239,25 @@ public class ModelViewConnector {
 					handleDeleteAttribute(selected);
 				}
 
-			} else if (modelToDelete instanceof ModelObject) {
+			}
+			else if (modelToDelete instanceof ModelObject) {
 				ModelObject objectToDelete = (ModelObject) modelToDelete;
 				if (objectToDelete.isSuperObject() && !centerlabelSelected) {
 					return; // do nothing
 				}
-				else if(!centerlabelSelected) { // delete the whole object
+				else if (!centerlabelSelected) { // delete the whole object
 					this.modelManager.deleteObject(objectToDelete);
 				}
 				else { // clear attribute value
 					handleDeleteAttributeValue(selected);
 				}
 			}
-		} else if (selected instanceof Arrow) {
+		}
+		else if (selected instanceof Arrow) {
 			Arrow arrow = (Arrow) selected;
 			Relation relationToDelete = getRelation(arrow);
 			boolean arrowLabelSelected = arrow.getSelectedLabel() != null;
-			if(!arrowLabelSelected) {
+			if (!arrowLabelSelected) {
 				this.modelManager.deleteRelation(relationToDelete);
 			}
 			else {
@@ -312,7 +313,7 @@ public class ModelViewConnector {
 			}
 		}
 	}
-	
+
 	public void handleDeleteAttributeValue(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			PaneBox paneBox = (PaneBox) selected;
@@ -333,13 +334,16 @@ public class ModelViewConnector {
 		if (selected instanceof PaneBox) {
 			ModelBox modelBox = this.getModelBox((PaneBox) selected);
 			modelBox.setColor(pickedColor);
-		} else if (selected instanceof Arrow) {
+		}
+		else if (selected instanceof Arrow) {
 			Relation relation = this.getRelation((Arrow) selected);
 			relation.setColor(pickedColor);
-		} else if (selected instanceof SubSceneAdapter) {
+		}
+		else if (selected instanceof SubSceneAdapter) {
 			SubSceneAdapter subSceneAdapter = (SubSceneAdapter) selected;
 			subSceneAdapter.getFloor().setColor(pickedColor);
-		} else if (selected instanceof Floor) {
+		}
+		else if (selected instanceof Floor) {
 			Floor floor = (Floor) selected;
 			floor.setColor(pickedColor);
 		}
@@ -351,7 +355,7 @@ public class ModelViewConnector {
 			selectedBox.allowTopTextInput(true);
 		}
 	}
-	
+
 	public void handleRenameFieldOrValue(Selectable selected) {
 		if (selected instanceof PaneBox) {
 			PaneBox selectedBox = (PaneBox) selected;
@@ -362,22 +366,22 @@ public class ModelViewConnector {
 		}
 	}
 
-	public void handleChangeDirection(Selectable selected){
+	public void handleChangeDirection(Selectable selected) {
 		if (selected instanceof Arrow) {
 			getRelation((Arrow) selected).changeDirection();
 		}
 	}
-	
+
 	public void showLabel(ArrowLabel arrowLabel) {
 		arrowLabel.showLabel(true);
 		arrowLabel.setLabelSelected(true);
 		arrowLabel.allowTextInput(true);
 	}
-	
+
 	public void handleSetRoleName(Selectable selected, boolean atStart) {
 		if (selected instanceof Arrow) {
 			Arrow arrow = (Arrow) selected;
-			if(atStart) {
+			if (atStart) {
 				showLabel(arrow.getLabelStartLeft());
 			}
 			else {
@@ -385,11 +389,11 @@ public class ModelViewConnector {
 			}
 		}
 	}
-	
+
 	public void handleSetMultiplicity(Selectable selected, boolean atStart) {
 		if (selected instanceof Arrow) {
 			Arrow arrow = (Arrow) selected;
-			if(atStart) {
+			if (atStart) {
 				showLabel(arrow.getLabelStartRight());
 			}
 			else {
@@ -397,20 +401,20 @@ public class ModelViewConnector {
 			}
 		}
 	}
-	
+
 	public void handleSetMultiplicityRoleName(Selectable selected) {
 		if (selected instanceof Arrow) {
 			Arrow arrow = (Arrow) selected;
 			ArrowLabel selectedLabel = arrow.getSelectedLabel();
-			if(selectedLabel != null) {
+			if (selectedLabel != null) {
 				showLabel(selectedLabel);
 			}
 		}
 	}
-	
+
 	public void handleDeleteRoleName(Selectable selected, boolean atStart) {
 		if (selected instanceof Arrow) {
-			if(atStart) {
+			if (atStart) {
 				getRelation((Arrow) selected).setStartRoleName("");
 			}
 			else {
@@ -418,10 +422,10 @@ public class ModelViewConnector {
 			}
 		}
 	}
-	
+
 	public void handleDeleteMultiplicty(Selectable selected, boolean atStart) {
 		if (selected instanceof Arrow) {
-			if(atStart) {
+			if (atStart) {
 				getRelation((Arrow) selected).setStartMultiplicity("");
 			}
 			else {
@@ -429,13 +433,13 @@ public class ModelViewConnector {
 			}
 		}
 	}
-	
+
 	public void handleDeleteMultiplicityRole(Selectable selected) {
 		if (selected instanceof Arrow) {
 			Arrow arrow = (Arrow) selected;
 			ArrowLabel selectedLabel = arrow.getSelectedLabel();
-			if(arrow.isStart(selectedLabel)) {
-				if(arrow.isLeft(selectedLabel)) {
+			if (arrow.isStart(selectedLabel)) {
+				if (arrow.isLeft(selectedLabel)) {
 					getRelation((Arrow) selected).setStartRoleName("");
 				}
 				else {
@@ -443,7 +447,7 @@ public class ModelViewConnector {
 				}
 			}
 			else {
-				if(arrow.isLeft(selectedLabel)) {
+				if (arrow.isLeft(selectedLabel)) {
 					getRelation((Arrow) selected).setEndRoleName("");
 				}
 				else {
@@ -452,5 +456,5 @@ public class ModelViewConnector {
 			}
 		}
 	}
-	
+
 }

@@ -184,7 +184,8 @@ public class ContextMenuController extends Observable implements Observer {
 				}
 				subSceneCM.hide();
 				subSceneCM.show(subSceneAdapter.getFloor(), me.getScreenX(), me.getScreenY());
-			} else if (subSceneCM.isShowing()) {
+			}
+			else if (subSceneCM.isShowing()) {
 				subSceneCM.hide();
 			}
 		});
@@ -194,49 +195,47 @@ public class ContextMenuController extends Observable implements Observer {
 		paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
-				if (modelBox instanceof ModelClass) {
-					// Class
-					enableAttributeSelected(false);
-					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
-					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-				} else if ((modelBox instanceof ModelObject)) {
-					// Object
-					ModelObject modelObject = (ModelObject) modelBox;
-					if(modelObject.isSuperObject()) {
-						renameObject.setDisable(true);
-						deleteObject.setDisable(true);
-					}
-					else {
-						renameObject.setDisable(false);
-						deleteObject.setDisable(false);
-					}
-					hideAllContextMenus();
-					setValue.setDisable(true);
-					deleteValue.setDisable(true);
-					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-				}
+				if (modelBox instanceof ModelClass) { // Class
+				enableAttributeSelected(false);
+				addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
+				classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 			}
-			me.consume();
-		});
+			else if ((modelBox instanceof ModelObject)) { // Object
+				ModelObject modelObject = (ModelObject) modelBox;
+				if (modelObject.isSuperObject()) {
+					renameObject.setDisable(true);
+					deleteObject.setDisable(true);
+				}
+				else {
+					renameObject.setDisable(false);
+					deleteObject.setDisable(false);
+				}
+				hideAllContextMenus();
+				setValue.setDisable(true);
+				deleteValue.setDisable(true);
+				objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+			}
+		}
+		me.consume();
+	}	);
 
 		paneBox.getSelection().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
-				if (modelBox instanceof ModelClass) {
-					// Class
-					enableAttributeSelected(false);
-					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
-					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-				} else if ((modelBox instanceof ModelObject)) {
-					// Object
-					hideAllContextMenus();
-					setValue.setDisable(true);
-					deleteValue.setDisable(true);
-					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-				}
+				if (modelBox instanceof ModelClass) { // Class
+				enableAttributeSelected(false);
+				addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
+				classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 			}
-			me.consume();
-		});
+			else if ((modelBox instanceof ModelObject)) { // Object
+				hideAllContextMenus();
+				setValue.setDisable(true);
+				deleteValue.setDisable(true);
+				objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+			}
+		}
+		me.consume();
+	}	);
 	}
 
 	public void enableCenterFieldContextMenu(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
@@ -249,23 +248,22 @@ public class ContextMenuController extends Observable implements Observer {
 		label.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
-				if (modelBox instanceof ModelClass) {
-					// Label on Class
-					enableAttributeSelected(true);
-					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
-					int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
-					moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.getCenterLabels().size() - 1);
-					moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.getCenterLabels().size() - 1);
-					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-				} else if (modelBox instanceof ModelObject) {
-					// Label on Object
-					setValue.setDisable(false);
-					deleteValue.setDisable(false);
-					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-				}
-				me.consume();
+				if (modelBox instanceof ModelClass) { // Label on Class
+				enableAttributeSelected(true);
+				addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
+				int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
+				moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.getCenterLabels().size() - 1);
+				moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.getCenterLabels().size() - 1);
+				classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 			}
-		});
+			else if (modelBox instanceof ModelObject) { // Label on Object
+				setValue.setDisable(false);
+				deleteValue.setDisable(false);
+				objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+			}
+			me.consume();
+		}
+	}	);
 
 	}
 
@@ -281,21 +279,21 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	private boolean roleAttributeConflict(Arrow arrow, Relation relation) {
-		if(relation != null) {
+		if (relation != null) {
 			ModelBox startModelBox = relation.getStart().getAppendant();
 			ModelBox endModelBox = relation.getEnd().getAppendant();
-			if(startModelBox instanceof ModelClass && endModelBox instanceof ModelClass) {
+			if (startModelBox instanceof ModelClass && endModelBox instanceof ModelClass) {
 				ModelClass startModelClass = (ModelClass) startModelBox;
 				ModelClass endModelClass = (ModelClass) endModelBox;
-				for(Attribute attribute : startModelClass.getAttributes()) {
+				for (Attribute attribute : startModelClass.getAttributes()) {
 					boolean conflictStart = arrow.getLabelStartLeft().getLabelText().equals(attribute.getName());
-					if(conflictStart) {
+					if (conflictStart) {
 						return true;
 					}
 				}
-				for(Attribute attribute : endModelClass.getAttributes()) {
+				for (Attribute attribute : endModelClass.getAttributes()) {
 					boolean conflictEnd = arrow.getLabelEndLeft().getLabelText().equals(attribute.getName());
-					if(conflictEnd) {
+					if (conflictEnd) {
 						return true;
 					}
 				}
@@ -305,11 +303,8 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	private boolean relationTypeConflict(Arrow arrow) {
-		return arrow.getRelationType().equals(RelationType.GENERALIZATION)
-				|| arrow.getRelationType().equals(RelationType.DEPENDENCY)
-				|| arrow.getRelationType().equals(RelationType.ASSOZIATION_CLASS)
-				|| arrow.getRelationType().equals(RelationType.OBJDIAGRAM)
-				|| arrow.getRelationType().equals(RelationType.OBJGRAPH);
+		return arrow.getRelationType().equals(RelationType.GENERALIZATION) || arrow.getRelationType().equals(RelationType.DEPENDENCY) || arrow.getRelationType().equals(RelationType.ASSOZIATION_CLASS)
+				|| arrow.getRelationType().equals(RelationType.OBJDIAGRAM) || arrow.getRelationType().equals(RelationType.OBJGRAPH);
 	}
 
 	public void enableContextMenu(Arrow arrow, Relation relation) {
@@ -426,55 +421,55 @@ public class ContextMenuController extends Observable implements Observer {
 			this.mvConnector.handleDelete(selected);
 		});
 		createUndirectedAssociation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectedPaneBox, RelationType.UNDIRECTED_ASSOCIATION);
 			}
 		});
 		createDirectedAssociation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectedPaneBox, RelationType.DIRECTED_ASSOCIATION);
 			}
 		});
 		createBidirectedAssociation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectedPaneBox, RelationType.BIDIRECTED_ASSOCIATION);
 			}
 		});
 		createUndirectedAggregation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectedPaneBox, RelationType.UNDIRECTED_AGGREGATION);
 			}
 		});
 		createDirectedAggregation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectedPaneBox, RelationType.DIRECTED_AGGREGATION);
 			}
 		});
 		createUndirectedComposition.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectedPaneBox, RelationType.UNDIRECTED_COMPOSITION);
 			}
 		});
 		createDirectedComposition.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectedPaneBox, RelationType.DIRECTED_COMPOSITION);
 			}
 		});
 		createGeneralization.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectedPaneBox, RelationType.GENERALIZATION);
 			}
 		});
 		createDependency.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
 				startRelationCreation(selectedPaneBox, RelationType.DEPENDENCY);
 			}
@@ -494,49 +489,49 @@ public class ContextMenuController extends Observable implements Observer {
 		});
 
 		setMultiplicity.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) {
+			if (atLineSelectionHelper) {
 				return;
 			}
-			if(atStartSelectionHelper) {
+			if (atStartSelectionHelper) {
 				mvConnector.handleSetMultiplicity(selected, true);
 			}
-			else if(atEndSelectionHelper) {
+			else if (atEndSelectionHelper) {
 				mvConnector.handleSetMultiplicity(selected, false);
 			}
 		});
 
 		deleteMultiplicity.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) {
+			if (atLineSelectionHelper) {
 				return;
 			}
-			if(atStartSelectionHelper) {
+			if (atStartSelectionHelper) {
 				mvConnector.handleDeleteMultiplicty(selected, true);
 			}
-			else if(atEndSelectionHelper) {
+			else if (atEndSelectionHelper) {
 				mvConnector.handleDeleteMultiplicty(selected, false);
 			}
 		});
 
 		setRoleName.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) {
+			if (atLineSelectionHelper) {
 				return;
 			}
-			if(atStartSelectionHelper) {
+			if (atStartSelectionHelper) {
 				mvConnector.handleSetRoleName(selected, true);
 			}
-			else if(atEndSelectionHelper) {
+			else if (atEndSelectionHelper) {
 				mvConnector.handleSetRoleName(selected, false);
 			}
 		});
 
 		deleteRoleName.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) {
+			if (atLineSelectionHelper) {
 				return;
 			}
-			if(atStartSelectionHelper) {
+			if (atStartSelectionHelper) {
 				mvConnector.handleDeleteRoleName(selected, true);
 			}
-			else if(atEndSelectionHelper) {
+			else if (atEndSelectionHelper) {
 				mvConnector.handleDeleteRoleName(selected, false);
 			}
 

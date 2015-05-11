@@ -26,7 +26,7 @@ public class ModelClass extends ModelBox {
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
 	private HashMap<ModelObject, ArrayList<ModelObject>> superObjects = new HashMap<ModelObject, ArrayList<ModelObject>>();
-	
+
 	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
 
 	// for marshaling only
@@ -37,8 +37,8 @@ public class ModelClass extends ModelBox {
 		super(name, coordinates, width, heigth, color);
 	}
 
-	@XmlElementWrapper (name = "attributes")
-	@XmlElement (name = "attribute")
+	@XmlElementWrapper(name = "attributes")
+	@XmlElement(name = "attribute")
 	public List<Attribute> getAttributes() {
 		return attributes;
 	}
@@ -47,12 +47,12 @@ public class ModelClass extends ModelBox {
 		this.attributes = attributes;
 	}
 
-	@XmlElementWrapper (name = "objects")
-	@XmlElement (name = "object")
+	@XmlElementWrapper(name = "objects")
+	@XmlElement(name = "object")
 	public List<ModelObject> getModelObjects() {
 		return modelObjects;
 	}
-	
+
 	public ModelObject getModelObject(String name) {
 		if (name == null || name.isEmpty()) {
 			return null;
@@ -75,82 +75,87 @@ public class ModelClass extends ModelBox {
 		}
 		return false;
 	}
-	
+
 	public void addSuperObject(ModelObject subObject, ModelObject superObject) {
-		if(subObject == null || superObject == null) return;
+		if (subObject == null || superObject == null)
+			return;
 		ArrayList<ModelObject> superObjectContainer = new ArrayList<ModelObject>();
-		if(this.superObjects.containsKey(subObject)) {
+		if (this.superObjects.containsKey(subObject)) {
 			superObjectContainer = this.superObjects.get(subObject);
 		}
 		superObjectContainer.add(superObject);
 		this.superObjects.put(subObject, superObjectContainer);
 	}
-	
+
 	public void removeSuperObject(ModelObject superObject) {
-		for(ModelObject subObject : this.superObjects.keySet()) {
+		for (ModelObject subObject : this.superObjects.keySet()) {
 			this.superObjects.get(subObject).remove(superObject);
 		}
 	}
-	
+
 	protected void removeAllSuperObjects(ModelObject subModelObject) {
 		this.superObjects.remove(subModelObject);
 	}
-	
+
 	protected void removeAllSuperObjects(ModelClass superClass) {
-		for(ModelObject subObject : this.superObjects.keySet()) {
+		for (ModelObject subObject : this.superObjects.keySet()) {
 			ArrayList<ModelObject> superObjectList = this.superObjects.get(subObject);
-			for(ModelObject superObject : superObjectList) {
-				if(superObject.getModelClass().equals(superClass)) {
+			for (ModelObject superObject : superObjectList) {
+				if (superObject.getModelClass().equals(superClass)) {
 					superObjectList.remove(superObject);
 				}
 			}
 		}
 	}
-	
+
 	public ModelObject getSubModelObject(ModelObject superObject) {
-		for(ModelObject subObject : this.superObjects.keySet()) {
-			if(this.superObjects.get(subObject).contains(superObject)) {
+		for (ModelObject subObject : this.superObjects.keySet()) {
+			if (this.superObjects.get(subObject).contains(superObject)) {
 				return subObject;
 			}
 		}
 		return null;
 	}
-	
+
 	public List<ModelObject> getSuperObjects(ModelObject subObject) {
 		ArrayList<ModelObject> emptyList = new ArrayList<ModelObject>();
-		if(subObject == null) return emptyList;
+		if (subObject == null) {
+			return emptyList;
+		}
 		ArrayList<ModelObject> superObjectList = this.superObjects.get(subObject);
-		if(superObjectList != null) {
+		if (superObjectList != null) {
 			return superObjectList;
 		}
 		return emptyList;
 	}
-	
+
 	public List<ModelObject> getSuperObjects(ModelClass superClass) {
 		ArrayList<ModelObject> retList = new ArrayList<ModelObject>();
-		if(superClass == null) return retList;
-		for(ModelObject subObject : this.superObjects.keySet()) {
+		if (superClass == null) {
+			return retList;
+		}
+		for (ModelObject subObject : this.superObjects.keySet()) {
 			ArrayList<ModelObject> superObjectList = this.superObjects.get(subObject);
-			for(ModelObject superObject : superObjectList) {
-				if(superObject.getModelClass().equals(superClass)) {
+			for (ModelObject superObject : superObjectList) {
+				if (superObject.getModelClass().equals(superClass)) {
 					retList.add(superObject);
 				}
 			}
 		}
 		return retList;
 	}
-	
+
 	public List<ModelObject> getSuperObjects() {
 		ArrayList<ModelObject> retList = new ArrayList<ModelObject>();
-		for(ModelObject subObject : this.superObjects.keySet()) {
+		for (ModelObject subObject : this.superObjects.keySet()) {
 			retList.addAll(this.superObjects.get(subObject));
 		}
 		return retList;
 	}
-	
+
 	public List<ModelObject> getInheritingObjects() {
 		ArrayList<ModelObject> retList = new ArrayList<ModelObject>();
-		for(ModelClass subClass : getSubClasses()) {
+		for (ModelClass subClass : getSubClasses()) {
 			retList.addAll(subClass.getSuperObjects(this));
 		}
 		return retList;
@@ -206,25 +211,25 @@ public class ModelClass extends ModelBox {
 	public void deleteModelObjects() {
 		this.modelObjects.clear();
 	}
-	
+
 	public boolean deleteModelObject(ModelObject modelObject) {
 		return this.modelObjects.remove(modelObject);
 	}
-	
+
 	public void deleteSuperObjects() {
 		this.superObjects.clear();
 	}
-	
+
 	public boolean deleteSuperObject(ModelObject superObject) {
 		boolean removed = false;
-		for(ArrayList<ModelObject> superObjectList : this.superObjects.values()) {
-			if(superObjectList.remove(superObject)) {
+		for (ArrayList<ModelObject> superObjectList : this.superObjects.values()) {
+			if (superObjectList.remove(superObject)) {
 				removed = true;
 			}
 		}
 		return removed;
 	}
-	
+
 	public Attribute createAttribute() {
 		return createAttribute("attr" + (this.attributes.size() + 1));
 	}
@@ -321,7 +326,7 @@ public class ModelClass extends ModelBox {
 				ModelBox modelBox = endpoint.getFriend().getAppendant();
 				if (modelBox != null && modelBox instanceof ModelClass) {
 					ModelClass subClass = (ModelClass) modelBox;
-					if(!this.equals(subClass)) {
+					if (!this.equals(subClass)) {
 						subClassList.addAll(subClass.getSubClasses()); // recursively getting all sub classes
 						subClassList.add(subClass);
 					}
@@ -338,9 +343,9 @@ public class ModelClass extends ModelBox {
 				ModelBox modelBox = endpoint.getFriend().getAppendant();
 				if (modelBox != null && modelBox instanceof ModelClass) {
 					ModelClass superClass = (ModelClass) modelBox;
-					if(!this.equals(superClass)) {
+					if (!this.equals(superClass)) {
 						superClassList.add(superClass);
-						superClassList.addAll(superClass.getSuperClasses());  // recursively getting all super classes
+						superClassList.addAll(superClass.getSuperClasses()); // recursively getting all super classes
 					}
 				}
 			}

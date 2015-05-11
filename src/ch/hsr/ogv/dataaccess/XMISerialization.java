@@ -91,7 +91,8 @@ public class XMISerialization implements SerializationStrategy {
 			try {
 				mParser.parse(xmiFile, xmiHandler);
 				return true;
-			} catch (org.xml.sax.SAXParseException e) {
+			}
+			catch (org.xml.sax.SAXParseException e) {
 				logger.debug(e.getMessage());
 				MessageBar.setText("Unable to read XMI file: \"" + xmiFile.getPath() + "\".", MessageLevel.ALERT);
 			}

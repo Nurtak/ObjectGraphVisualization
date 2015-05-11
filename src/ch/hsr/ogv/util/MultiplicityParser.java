@@ -21,7 +21,8 @@ public class MultiplicityParser {
 		Matcher matcher = MUTLIP_PATTERN.matcher(multiString);
 		if (matcher.matches()) {
 			return multiString;
-		} else {
+		}
+		else {
 			return null;
 		}
 	}
@@ -88,7 +89,8 @@ public class MultiplicityParser {
 					return true;
 				}
 			}
-		} catch (ArrayIndexOutOfBoundsException aioobe) {
+		}
+		catch (ArrayIndexOutOfBoundsException aioobe) {
 			return false;
 		}
 		return false;
@@ -163,7 +165,8 @@ public class MultiplicityParser {
 	private static Integer toInteger(String str) {
 		try {
 			return Integer.parseInt(str);
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			return null;
 		}
 	}
@@ -171,7 +174,8 @@ public class MultiplicityParser {
 	private static BigInteger toBigInteger(String str) {
 		try {
 			return new BigInteger(str);
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			return null;
 		}
 	}
