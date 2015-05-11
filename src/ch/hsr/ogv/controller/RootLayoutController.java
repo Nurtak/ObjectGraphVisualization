@@ -621,9 +621,7 @@ public class RootLayoutController implements Observer, Initializable {
 					this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 					startRelationCreation(selectedPaneBox);
 				} else { // second selection
-					if (!this.relationCreationController.getStartBox().equals(selectedPaneBox)) { // TODO: reflexive relation
-						endRelationCreation(selectedPaneBox);
-					}
+					endRelationCreation(selectedPaneBox);
 				}
 			}
 

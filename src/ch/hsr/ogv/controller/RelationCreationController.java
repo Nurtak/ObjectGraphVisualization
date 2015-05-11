@@ -6,6 +6,9 @@ import java.util.Observer;
 
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
+import ch.hsr.ogv.model.ModelBox;
+import ch.hsr.ogv.model.ModelClass;
+import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
@@ -20,9 +23,10 @@ public class RelationCreationController extends Observable implements Observer {
 
 	private volatile boolean creationInProcess = false;
 
-	private Arrow viewArrow;
 	private PaneBox startBox;
 	private PaneBox endBox;
+	private Arrow viewArrow;
+	private RelationType relationType;
 
 	public void setSelectionController(SelectionController selectionController) {
 		this.selectionController = selectionController;
@@ -55,6 +59,7 @@ public class RelationCreationController extends Observable implements Observer {
 	public void startProcess(PaneBox startBox, RelationType relationType) {
 		this.creationInProcess = true;
 		this.startBox = startBox;
+		this.relationType = relationType;
 		this.viewArrow = new Arrow(startBox, startBox.getCenterPoint(), relationType);
 		subSceneAdapter.add(this.viewArrow);
 		subSceneAdapter.add(this.viewArrow.getSelection());
@@ -69,12 +74,39 @@ public class RelationCreationController extends Observable implements Observer {
 		notifyObservers(this.viewArrow);
 	}
 
-	public void listenToSelections(){
+	private void listenToSelections(){
 		selectionController.addObserver(this);
 	}
 
-	public void unlistenToSelections(){
+	private void unlistenToSelections(){
 		selectionController.deleteObserver(this);
+	}
+
+	private boolean checkRelation(ModelBox start, ModelBox end, RelationType relationType) {
+		if (!start.getClass().equals(end.getClass())) {
+			return false;
+		} else if (start.equals(end)) {  // TODO: reflexive relation
+			return false;
+		} else if (start instanceof ModelClass && (
+				relationType == RelationType.OBJDIAGRAM ||
+				relationType == RelationType.OBJGRAPH
+				)) {
+			return false;
+		} else if (start instanceof ModelObject && (
+				relationType == RelationType.UNDIRECTED_ASSOCIATION ||
+				relationType == RelationType.DIRECTED_ASSOCIATION ||
+				relationType == RelationType.BIDIRECTED_ASSOCIATION ||
+				relationType == RelationType.UNDIRECTED_AGGREGATION ||
+				relationType == RelationType.DIRECTED_AGGREGATION ||
+				relationType == RelationType.UNDIRECTED_COMPOSITION ||
+				relationType == RelationType.DIRECTED_COMPOSITION ||
+				relationType == RelationType.GENERALIZATION ||
+				relationType == RelationType.DEPENDENCY ||
+				relationType == RelationType.ASSOZIATION_CLASS
+				)) {
+			return false;
+		}
+		return true;
 	}
 
 	public void endProcess(PaneBox selectedPaneBox) {
@@ -82,11 +114,13 @@ public class RelationCreationController extends Observable implements Observer {
 		unlistenToSelections();
 		this.endBox = selectedPaneBox;
 
-		if (viewArrow != null && startBox != null && endBox != null) {
-			Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
-			Arrow newArrow = mvConnector.getArrow(relation);
-			if (newArrow != null) {
-				this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
+		if (checkRelation(mvConnector.getModelBox(startBox), mvConnector.getModelBox(endBox), this.relationType)) {
+			if (viewArrow != null && startBox != null && endBox != null) {
+				Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
+				Arrow newArrow = mvConnector.getArrow(relation);
+				if (newArrow != null) {
+					this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
+				}
 			}
 		}
 
