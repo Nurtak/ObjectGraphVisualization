@@ -566,7 +566,7 @@ public class RootLayoutController implements Observer, Initializable {
 		//this.mouseMoveController.deleteObserver(this.relationCreationController);
 		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		this.createToolbar.selectToggle(null);
-		this.relationCreationController.endProcess(this.subSceneAdapter);
+		this.relationCreationController.endProcess(selectedPaneBox);
 	}
 
 	private void disableAllButtons(boolean value) {
@@ -655,7 +655,7 @@ public class RootLayoutController implements Observer, Initializable {
 			}
 		} else if (this.selectionController.hasCurrentSelection()
 				&& (this.selectionController.getCurrentSelected().equals(this.subSceneAdapter)
-				|| this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter
+						|| this.selectionController.getCurrentSelected().equals(this.subSceneAdapter.getFloor()))) { // SubSceneAdapter
 			// selected
 			this.createObject.setDisable(true);
 			this.deleteSelected.setDisable(true);

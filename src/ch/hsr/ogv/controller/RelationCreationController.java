@@ -61,13 +61,26 @@ public class RelationCreationController extends Observable implements Observer {
 		subSceneAdapter.worldReceiveMouseEvents();
 		subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 		subSceneAdapter.restrictMouseEvents(this.viewArrow);
+
+		listenToSelections();
+
 		handleMouseEvents();
 		setChanged();
 		notifyObservers(this.viewArrow);
 	}
 
-	public void endProcess(SubSceneAdapter subSceneAdapter) {
+	public void listenToSelections(){
+		selectionController.addObserver(this);
+	}
+
+	public void unlistenToSelections(){
+		selectionController.deleteObserver(this);
+	}
+
+	public void endProcess(PaneBox selectedPaneBox) {
 		this.creationInProcess = false;
+		unlistenToSelections();
+		this.endBox = selectedPaneBox;
 
 		if (viewArrow != null && startBox != null && endBox != null) {
 			Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
@@ -127,9 +140,6 @@ public class RelationCreationController extends Observable implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if(this.selectionController == null || this.subSceneAdapter == null) {
-			return;
-		}
 		if(o instanceof MouseMoveController && arg instanceof Point3D && this.creationInProcess) {
 			if(this.endBox != null && !this.endBox.equals(this.startBox)) {
 				this.endBox.setSelected(false);
@@ -143,8 +153,7 @@ public class RelationCreationController extends Observable implements Observer {
 				this.selectionController.setSelected(this.viewArrow, true, this.subSceneAdapter);
 				this.startBox.setSelected(true); // only visually show selection
 			}
-		}
-		else if(o instanceof MouseMoveController && arg instanceof PaneBox && this.creationInProcess) {
+		} else if(o instanceof MouseMoveController && arg instanceof PaneBox && this.creationInProcess) {
 			PaneBox paneBoxMovedOver = (PaneBox) arg;
 			if(this.endBox != null && !this.endBox.equals(this.startBox) && !this.endBox.equals(paneBoxMovedOver)) {
 				this.endBox.setSelected(false);
@@ -154,6 +163,11 @@ public class RelationCreationController extends Observable implements Observer {
 			this.endBox.setSelected(true); // only visually show selection
 			this.viewArrow.setPointsBasedOnBoxes(this.startBox, this.endBox);
 			this.viewArrow.drawArrow();
+		} else if (o instanceof SelectionController && arg instanceof PaneBox && this.creationInProcess) {
+			PaneBox selectedPaneBox = (PaneBox) arg;
+			if (!this.getStartBox().equals(selectedPaneBox)) { // TODO: reflexive relation
+				endProcess(selectedPaneBox);
+			}
 		}
 	}
 
