@@ -6,6 +6,11 @@ import java.util.Set;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.Relation;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public interface SerializationStrategy {
 
 	public boolean parse(File file);

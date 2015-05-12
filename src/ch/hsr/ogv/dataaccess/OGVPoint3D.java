@@ -2,6 +2,11 @@ package ch.hsr.ogv.dataaccess;
 
 import javax.xml.bind.annotation.XmlType;
 
+/**
+ * 
+ * @author Adrian Rieser
+ *
+ */
 @XmlType(propOrder = { "x", "y", "z" })
 public class OGVPoint3D {
 

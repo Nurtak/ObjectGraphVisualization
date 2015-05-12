@@ -6,6 +6,11 @@ import javafx.stage.Stage;
 import ch.hsr.ogv.view.MessageBar;
 import ch.hsr.ogv.view.MessageBar.MessageLevel;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class SaveCallback implements PersistencyCallback {
 	
 	private Stage primaryStage;

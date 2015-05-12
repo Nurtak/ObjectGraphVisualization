@@ -9,6 +9,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class Floor extends Group implements Selectable {
 
 	private HashSet<Rectangle> tiles = new HashSet<Rectangle>();

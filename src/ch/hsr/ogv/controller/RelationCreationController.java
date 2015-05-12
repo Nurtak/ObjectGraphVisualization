@@ -18,6 +18,11 @@ import ch.hsr.ogv.view.MessageBar.MessageLevel;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
+/**
+ * 
+ * @author Adrian Rieser, Simon Gwerder
+ *
+ */
 public class RelationCreationController extends Observable implements Observer {
 
 	private SelectionController selectionController;

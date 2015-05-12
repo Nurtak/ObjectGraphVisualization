@@ -19,6 +19,12 @@ import org.slf4j.LoggerFactory;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.Relation;
 
+
+/**
+ * 
+ * @author Adrian Rieser
+ *
+ */
 @XmlRootElement(name = "model")
 @XmlType(propOrder = { "classes", "relations" })
 public class OGVSerialization implements SerializationStrategy {

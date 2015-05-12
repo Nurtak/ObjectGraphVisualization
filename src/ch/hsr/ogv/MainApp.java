@@ -17,7 +17,7 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
 /**
  * Starts the application.
  * 
- * @author Simon Gwerder
+ * @author Simon Gwerder, Adrian Rieser
  *
  */
 public class MainApp extends Application {

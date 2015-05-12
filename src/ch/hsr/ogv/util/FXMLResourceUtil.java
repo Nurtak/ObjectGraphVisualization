@@ -8,6 +8,11 @@ import org.slf4j.LoggerFactory;
 import javafx.fxml.FXMLLoader;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class FXMLResourceUtil {
 
 	private final static Logger logger = LoggerFactory.getLogger(FXMLResourceUtil.class);

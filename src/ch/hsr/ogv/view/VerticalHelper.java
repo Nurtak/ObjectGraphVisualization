@@ -10,6 +10,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import ch.hsr.ogv.model.ModelClass;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class VerticalHelper extends Group {
 
 	private HashSet<ArrayList<Rectangle>> helperAreas = new HashSet<ArrayList<Rectangle>>();

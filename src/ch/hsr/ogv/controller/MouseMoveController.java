@@ -9,6 +9,11 @@ import ch.hsr.ogv.view.Floor;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.VerticalHelper;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class MouseMoveController extends Observable {
 
 	public void enableMouseMove(Floor floor) {

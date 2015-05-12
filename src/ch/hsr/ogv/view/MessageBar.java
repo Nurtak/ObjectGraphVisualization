@@ -11,6 +11,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class MessageBar {
 
 	private static int CLEAR_TIME_SECOND = 5;
