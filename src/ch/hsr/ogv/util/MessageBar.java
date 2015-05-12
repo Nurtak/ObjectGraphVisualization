@@ -1,9 +1,8 @@
-package ch.hsr.ogv.view;
+package ch.hsr.ogv.util;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;

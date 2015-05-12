@@ -17,8 +17,8 @@ import org.xml.sax.SAXException;
 
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.Relation;
-import ch.hsr.ogv.view.MessageBar;
-import ch.hsr.ogv.view.MessageBar.MessageLevel;
+import ch.hsr.ogv.util.MessageBar;
+import ch.hsr.ogv.util.MessageBar.MessageLevel;
 
 /**
  * This class represents a XMI Parser. It reads the Version of the XMI File and use an according handler. If no handler for the version exists or the 

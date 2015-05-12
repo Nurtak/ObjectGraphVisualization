@@ -3,8 +3,8 @@ package ch.hsr.ogv.dataaccess;
 import java.io.File;
 
 import javafx.stage.Stage;
-import ch.hsr.ogv.view.MessageBar;
-import ch.hsr.ogv.view.MessageBar.MessageLevel;
+import ch.hsr.ogv.util.MessageBar;
+import ch.hsr.ogv.util.MessageBar.MessageLevel;
 
 /**
  * 

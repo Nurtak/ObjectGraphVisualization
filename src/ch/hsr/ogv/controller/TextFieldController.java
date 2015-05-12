@@ -19,11 +19,11 @@ import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.util.MessageBar;
 import ch.hsr.ogv.util.MultiplicityParser;
+import ch.hsr.ogv.util.MessageBar.MessageLevel;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.ArrowLabel;
-import ch.hsr.ogv.view.MessageBar;
-import ch.hsr.ogv.view.MessageBar.MessageLevel;
 import ch.hsr.ogv.view.PaneBox;
 
 /**
