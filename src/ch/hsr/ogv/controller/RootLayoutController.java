@@ -30,7 +30,10 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import jfxtras.labs.util.Util;
+import ch.hsr.ogv.dataaccess.ImportCallback;
+import ch.hsr.ogv.dataaccess.LoadCallback;
 import ch.hsr.ogv.dataaccess.Persistancy;
+import ch.hsr.ogv.dataaccess.SaveCallback;
 import ch.hsr.ogv.dataaccess.UserPreferences;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
@@ -107,6 +110,7 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleNew() {
 		this.primaryStage.setTitle(this.appTitle);
+		UserPreferences.setOGVFilePath(null);
 		this.mvConnector.handleClearAll();
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 		this.createToolbar.selectToggle(null);
@@ -133,14 +137,8 @@ public class RootLayoutController implements Observer, Initializable {
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
 			UserPreferences.setOGVFilePath(file);
-			MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.loadOGVData(file);
-			if (success) {
-				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-				MessageBar.setText("Loaded file: \"" + file.getPath() + "\".", MessageLevel.INFO);
-			} else {
-				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
-			}
+			MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
+			persistancy.loadOGVDataAsync(file, new LoadCallback(this.primaryStage, this.appTitle, file));
 		}
 	}
 
@@ -162,15 +160,10 @@ public class RootLayoutController implements Observer, Initializable {
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
 			UserPreferences.setXMIFilePath(file);
-			MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.loadXMIData(file);
-			if (success) {
-				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-				MessageBar.setText("Loaded file: \"" + file.getPath() + "\".", MessageLevel.INFO);
-			} else {
-				MessageBar.setText("Could not load data from file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
-			}
+			MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
+			persistancy.loadXMIDataAsync(file, new ImportCallback(this.primaryStage, this.appTitle, file));
 		}
+		UserPreferences.setOGVFilePath(null);
 	}
 
 	/**
@@ -180,14 +173,8 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleSave() {
 		File file = UserPreferences.getOGVFilePath();
 		if (file != null) {
-			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.saveOGVData(file);
-			if (success) {
-				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
-			} else {
-				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
-			}
+			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
+			persistancy.saveOGVDataAsync(file, new SaveCallback(this.primaryStage, this.appTitle, file));
 		} else {
 			handleSaveAs();
 		}
@@ -216,14 +203,8 @@ public class RootLayoutController implements Observer, Initializable {
 				file = new File(file.getPath() + ".ogv");
 			}
 			UserPreferences.setOGVFilePath(file);
-			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.INFO);
-			boolean success = persistancy.saveOGVData(file);
-			if (success) {
-				this.primaryStage.setTitle(this.appTitle + " - " + file.getName()); // set new app title
-				MessageBar.setText("Saved file: \"" + file.getPath() + "\".", MessageLevel.INFO);
-			} else {
-				MessageBar.setText("Could not save data to file: \"" + file.getPath() + "\".", MessageLevel.ALERT);
-			}
+			MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
+			persistancy.saveOGVDataAsync(file, new SaveCallback(this.primaryStage, this.appTitle, file));
 		} else {
 			MessageBar.setText("Could not save data. No save file specified.", MessageLevel.ALERT);
 		}

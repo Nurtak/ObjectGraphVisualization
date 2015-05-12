@@ -109,7 +109,7 @@ public class RelationCreationController extends Observable implements Observer {
 	private boolean isFreeOfCycle(ModelClass startClass, ModelClass endClass) {
 		for (ModelClass endSuperClass : endClass.getSuperClasses()) {
 			if (endSuperClass.equals(startClass)) {
-				MessageBar.setText("Cycle dedected in polymorphism. Cycles are not allowed.", MessageLevel.WARN);
+				MessageBar.setText("Cycle detected in polymorphism. Cycles are not allowed.", MessageLevel.ALERT);
 				return false;
 			}
 			return isFreeOfCycle(startClass, endSuperClass);

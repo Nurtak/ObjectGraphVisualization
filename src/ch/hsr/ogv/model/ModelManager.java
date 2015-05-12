@@ -180,8 +180,9 @@ public class ModelManager extends Observable {
 	private void cleanupGeneralizationObjects(Relation relation) {
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
-		if (!(startModelBox instanceof ModelClass) || !(endModelBox instanceof ModelClass))
+		if (!(startModelBox instanceof ModelClass) || !(endModelBox instanceof ModelClass)) {
 			return;
+		}
 		ModelClass startClass = (ModelClass) startModelBox;
 		List<ModelClass> subClasses = new ArrayList<ModelClass>(startClass.getSubClasses());
 		List<ModelClass> superClasses = new ArrayList<ModelClass>(startClass.getSuperClasses());
@@ -196,8 +197,14 @@ public class ModelManager extends Observable {
 	}
 
 	public boolean deleteRelation(Relation relation) {
+		ArrayList<ModelClass> superClasses = new ArrayList<ModelClass>();
 		if (RelationType.GENERALIZATION.equals(relation.getType())) {
 			cleanupGeneralizationObjects(relation);
+//			ModelBox startModelBox = relation.getStart().getAppendant();
+//			if (startModelBox instanceof ModelClass) {
+//				ModelClass startClass = (ModelClass) startModelBox;
+//				superClasses = startClass.getSuperClasses();
+//			}
 		}
 		boolean deletedRelation = relations.remove(relation);
 		if (deletedRelation) {

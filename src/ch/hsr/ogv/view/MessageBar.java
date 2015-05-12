@@ -34,7 +34,7 @@ public class MessageBar {
 		HBox.setHgrow(messageBar, Priority.ALWAYS);
 		HBox.setMargin(messageBar, new Insets(5, 5, 5, 5));
 	}
-
+	
 	public static void setText(String text, MessageLevel level) {
 		synchronized (messageBar) {
 			messageBar.setText(text);
