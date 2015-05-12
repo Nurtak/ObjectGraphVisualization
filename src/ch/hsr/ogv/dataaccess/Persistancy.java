@@ -77,15 +77,14 @@ public class Persistancy {
 			@Override
 			public Void call() {
 				boolean loaded = serialStrategy.parse(file);
-				if (!loaded) {
-					Platform.runLater(() -> {
-						callback.completed(false);
-					});
-					return null;
-				}
 				Platform.runLater(() -> {
-					loadedToModel(serialStrategy);
-					callback.completed(true);
+					if (!loaded) {
+						callback.completed(false);
+					}
+					else {
+						loadedToModel(serialStrategy);
+						callback.completed(true);
+					}
 				});
 				return null;
 			}
