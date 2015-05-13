@@ -48,7 +48,7 @@ public class ModelManager extends Observable {
 		}
 		ModelObject modelObject = modelClass.createModelObject(newObjectName);
 
-		buildGeneralizationObjects((ModelClass) modelClass);
+		buildGeneralizationObjects(modelClass);
 
 		setChanged();
 		notifyObservers(modelObject);
@@ -89,7 +89,7 @@ public class ModelManager extends Observable {
 	}
 
 	public Relation createRelation(ModelBox start, ModelBox end, RelationType relationType, Color color) {
-		if (start != null && end != null && isRelationAllowed(start, end, relationType)) {
+		if (start != null && end != null) {
 			Relation relation = new Relation(start, end, relationType, color);
 			start.getEndpoints().add(relation.getStart());
 			end.getEndpoints().add(relation.getEnd());
@@ -167,7 +167,7 @@ public class ModelManager extends Observable {
 	}
 
 	private void buildGeneralizationObjects(ModelClass start) {
-		ModelClass startClass = (ModelClass) start;
+		ModelClass startClass = start;
 		List<ModelClass> superClasses = startClass.getSuperClasses();
 		List<ModelClass> subClasses = startClass.getSubClasses();
 		subClasses.add(startClass);
@@ -258,36 +258,6 @@ public class ModelManager extends Observable {
 			}
 		}
 		return false;
-	}
-
-	public boolean isRelationAllowed(ModelBox start, ModelBox end, RelationType relationType) {
-		switch (relationType) {
-		case GENERALIZATION:
-			if ((start instanceof ModelClass) && (end instanceof ModelClass) && !start.equals(end)) {
-				return true;
-			}
-			return false;
-		case UNDIRECTED_ASSOCIATION:
-		case DIRECTED_ASSOCIATION:
-		case BIDIRECTED_ASSOCIATION:
-		case UNDIRECTED_AGGREGATION:
-		case DIRECTED_AGGREGATION:
-		case UNDIRECTED_COMPOSITION:
-		case DIRECTED_COMPOSITION:
-		case DEPENDENCY:
-			if ((start instanceof ModelClass) && (end instanceof ModelClass)) {
-				return true;
-			}
-			return false;
-		case OBJDIAGRAM:
-		case OBJGRAPH:
-			if ((start instanceof ModelObject) && (end instanceof ModelObject)) {
-				return true;
-			}
-			return false;
-		default:
-			return false;
-		}
 	}
 
 	public Set<ModelClass> getClasses() {

@@ -288,7 +288,7 @@
             </ToolBar>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <items>
-                  <ToggleButton fx:id="objectGraphMode" mnemonicParsing="false" text="Object Graph Mode">
+                  <ToggleButton fx:id="objectGraphMode" contentDisplay="RIGHT" mnemonicParsing="false" text="Object Graph Mode">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
