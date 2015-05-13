@@ -123,5 +123,10 @@ public class ModelObject extends ModelBox {
 	public void updateAttribute(Attribute attribute, String value) {
 		attributeValues.replace(attribute, value);
 	}
+	
+	@Override
+	public String toString() {
+		return super.toString() + " - " + name;
+	}
 
 }

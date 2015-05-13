@@ -37,11 +37,11 @@ public class ModelBox extends Observable {
 	public ModelBox() {
 	}
 
-	public ModelBox(String name, Point3D coordinates, double width, double heigth, Color color) {
+	public ModelBox(String name, Point3D coordinates, double width, double height, Color color) {
 		this.name = name;
 		this.coordinates = coordinates;
 		this.width = width;
-		this.height = heigth;
+		this.height = height;
 		this.color = color;
 	}
 
@@ -64,7 +64,7 @@ public class ModelBox extends Observable {
 	}
 
 	public void setCoordinates(Point3D coordinates) {
-		if (this.coordinates != null && !this.coordinates.equals(coordinates)) {
+		if (this.coordinates != null) {
 			this.coordinates = coordinates;
 			setChanged();
 			notifyObservers(ModelBoxChange.COORDINATES);

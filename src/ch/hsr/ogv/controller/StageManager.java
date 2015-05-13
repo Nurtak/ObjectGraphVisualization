@@ -200,12 +200,12 @@ public class StageManager implements Observer {
 	 * @param node
 	 *            node.
 	 */
-	private void removeFromSubScene(Node node) {
+	private void removeFromView(Node node) {
 		this.subSceneAdapter.remove(node);
 		this.rootLayout.applyCss();
 	}
 
-	private void createClassInView(ModelClass modelClass) {
+	private void showClassInView(ModelClass modelClass) {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
@@ -218,7 +218,7 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelClass, paneBox);
 	}
 
-	private void createObjectInView(ModelObject modelObject) {
+	private void showObjectInView(ModelObject modelObject) {
 		modelObject.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
@@ -231,7 +231,7 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
 
-	private void createArrowInView(Relation relation) {
+	private void showArrowInView(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
@@ -557,40 +557,40 @@ public class StageManager implements Observer {
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) arg;
 			if (!this.mvConnector.containsModelBox(modelClass)) { // class is new
-				createClassInView(modelClass);
+				showClassInView(modelClass);
 				adaptBoxSettings(modelClass);
 				adaptArrowToBox(modelClass);
 			}
 			else {
 				PaneBox toDelete = this.mvConnector.removeBoxes(modelClass);
-				removeFromSubScene(toDelete.get());
-				removeFromSubScene(toDelete.getSelection());
-			}
-		}
-		else if (o instanceof ModelManager && arg instanceof Relation) {
-			Relation relation = (Relation) arg;
-			if (!this.mvConnector.containsRelation(relation)) { // relation is new
-				createArrowInView(relation);
-				adaptArrowColor(relation);
-				// adaptRelation(relation);
-			}
-			else {
-				Arrow toDelete = this.mvConnector.removeArrows(relation);
-				removeFromSubScene(toDelete);
-				removeFromSubScene(toDelete.getSelection());
+				removeFromView(toDelete.get());
+				removeFromView(toDelete.getSelection());
 			}
 		}
 		else if (o instanceof ModelManager && arg instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) arg;
 			if (!this.mvConnector.containsModelBox(modelObject)) { // object is new
-				createObjectInView(modelObject);
+				showObjectInView(modelObject);
 				adaptBoxSettings(modelObject);
 				adaptArrowToBox(modelObject);
 			}
 			else {
 				PaneBox toDelete = this.mvConnector.removeBoxes(modelObject);
-				removeFromSubScene(toDelete.get());
-				removeFromSubScene(toDelete.getSelection());
+				removeFromView(toDelete.get());
+				removeFromView(toDelete.getSelection());
+			}
+		}
+		else if (o instanceof ModelManager && arg instanceof Relation) {
+			Relation relation = (Relation) arg;
+			if (!this.mvConnector.containsRelation(relation)) { // relation is new
+				showArrowInView(relation);
+				adaptArrowColor(relation);
+				// adaptRelation(relation);
+			}
+			else {
+				Arrow toDelete = this.mvConnector.removeArrows(relation);
+				removeFromView(toDelete);
+				removeFromView(toDelete.getSelection());
 			}
 		}
 		else if (o instanceof ModelClass && arg instanceof Attribute) {

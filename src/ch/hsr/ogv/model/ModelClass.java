@@ -335,22 +335,32 @@ public class ModelClass extends ModelBox {
 		}
 		return subClassList;
 	}
+	
+	private ModelClass getDirectSuperClass(Endpoint endpoint) {
+		if (endpoint.getFriend() != null && endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
+			ModelBox modelBox = endpoint.getFriend().getAppendant();
+			if (modelBox != null && modelBox instanceof ModelClass) {
+				return (ModelClass) modelBox;
+			}
+		}
+		return null;
+	}
 
 	public List<ModelClass> getSuperClasses() {
 		ArrayList<ModelClass> superClassList = new ArrayList<ModelClass>();
 		for (Endpoint endpoint : getEndpoints()) {
-			if (endpoint.getFriend() != null && endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
-				ModelBox modelBox = endpoint.getFriend().getAppendant();
-				if (modelBox != null && modelBox instanceof ModelClass) {
-					ModelClass superClass = (ModelClass) modelBox;
-					if (!this.equals(superClass)) {
-						superClassList.add(superClass);
-						superClassList.addAll(superClass.getSuperClasses()); // recursively getting all super classes
-					}
-				}
+			ModelClass superClass = getDirectSuperClass(endpoint);
+			if(superClass != null) {
+				superClassList.add(superClass);
+				superClassList.addAll(superClass.getSuperClasses());
 			}
 		}
 		return superClassList;
+	}
+
+	@Override
+	public String toString() {
+		return super.toString() + " - " + name;
 	}
 
 }

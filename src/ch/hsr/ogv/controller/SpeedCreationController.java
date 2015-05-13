@@ -51,7 +51,6 @@ public class SpeedCreationController {
 	private void enableClassSpeedCreation() {
 		this.classKeyEvent = (KeyEvent ke) -> {
 			if (ke.getCode() == KeyCode.ENTER) { // continue
-				this.disableSpeedCreation = true;
 				disableClassSpeedCreation();
 				Attribute newAttribute = this.mvConnector.handleCreateNewAttribute(this.paneBox);
 				for (TextField centerTextField : this.paneBox.getCenterTextFields()) {
@@ -61,7 +60,6 @@ public class SpeedCreationController {
 				}
 			}
 			else if (ke.getCode() == KeyCode.ESCAPE) { // finish
-				this.disableSpeedCreation = true;
 				disableClassSpeedCreation();
 			}
 		};
@@ -86,7 +84,6 @@ public class SpeedCreationController {
 	private void enableObjectSpeedCreation() {
 		this.objectKeyEvent = (KeyEvent ke) -> {
 			if (ke.getCode() == KeyCode.ENTER) { // continue
-				this.disableSpeedCreation = true;
 				disableObjectSpeedCreation();
 				Label selectedLabel = this.paneBox.getSelectedLabel();
 				if (selectedLabel != null && selectedLabel.equals(this.paneBox.getTopLabel()) && !this.paneBox.getCenterLabels().isEmpty()) {
@@ -104,7 +101,6 @@ public class SpeedCreationController {
 				}
 			}
 			else if (ke.getCode() == KeyCode.ESCAPE) { // finish
-				this.disableSpeedCreation = true;
 				disableObjectSpeedCreation();
 			}
 		};

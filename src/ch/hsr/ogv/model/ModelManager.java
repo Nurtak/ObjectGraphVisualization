@@ -48,9 +48,7 @@ public class ModelManager extends Observable {
 		}
 		ModelObject modelObject = modelClass.createModelObject(newObjectName);
 
-		if (!modelClass.getSuperClasses().isEmpty()) { // if class has superclasses
-			buildGeneralizationObjects((ModelClass) modelClass);
-		}
+		buildGeneralizationObjects((ModelClass) modelClass);
 
 		setChanged();
 		notifyObservers(modelObject);
@@ -145,6 +143,7 @@ public class ModelManager extends Observable {
 		if (deletedObject) {
 			setChanged();
 			notifyObservers(superObject);
+			subClass.setCoordinates(subClass.getCoordinates()); // triggers repositioning
 		}
 		return deletedObject;
 	}
@@ -185,10 +184,10 @@ public class ModelManager extends Observable {
 		}
 		ModelClass startClass = (ModelClass) startModelBox;
 		List<ModelClass> subClasses = new ArrayList<ModelClass>(startClass.getSubClasses());
-		List<ModelClass> superClasses = new ArrayList<ModelClass>(startClass.getSuperClasses());
+		List<ModelClass> startSuperClasses = new ArrayList<ModelClass>(startClass.getSuperClasses());
 		subClasses.add(startClass);
 		for (ModelClass subClass : subClasses) {
-			for (ModelClass superClass : superClasses) {
+			for (ModelClass superClass : startSuperClasses) {
 				for (ModelObject subSuperObject : subClass.getSuperObjects(superClass)) {
 					deleteSuperObject(subClass, subSuperObject);
 				}
@@ -197,14 +196,8 @@ public class ModelManager extends Observable {
 	}
 
 	public boolean deleteRelation(Relation relation) {
-		ArrayList<ModelClass> superClasses = new ArrayList<ModelClass>();
 		if (RelationType.GENERALIZATION.equals(relation.getType())) {
 			cleanupGeneralizationObjects(relation);
-//			ModelBox startModelBox = relation.getStart().getAppendant();
-//			if (startModelBox instanceof ModelClass) {
-//				ModelClass startClass = (ModelClass) startModelBox;
-//				superClasses = startClass.getSuperClasses();
-//			}
 		}
 		boolean deletedRelation = relations.remove(relation);
 		if (deletedRelation) {
