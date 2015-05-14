@@ -162,7 +162,7 @@ public class MultiplicityParser {
 		return true;
 	}
 
-	private static Integer toInteger(String str) {
+	public static Integer toInteger(String str) {
 		try {
 			return Integer.parseInt(str);
 		}

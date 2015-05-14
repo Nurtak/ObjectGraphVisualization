@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.hsr.ogv.dataaccess.Persistancy;
 import ch.hsr.ogv.dataaccess.UserPreferences;
+import ch.hsr.ogv.model.ArrayObject;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
@@ -205,7 +206,7 @@ public class StageManager implements Observer {
 		this.rootLayout.applyCss();
 	}
 
-	private void showClassInView(ModelClass modelClass) {
+	private void showModelClassInView(ModelClass modelClass) {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
@@ -218,7 +219,7 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelClass, paneBox);
 	}
 
-	private void showObjectInView(ModelObject modelObject) {
+	private void showModelObjectInView(ModelObject modelObject) {
 		modelObject.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
@@ -229,6 +230,19 @@ public class StageManager implements Observer {
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
 		this.mvConnector.putBoxes(modelObject, paneBox);
+	}
+	
+	private void showArrayObjectInView(ArrayObject arrayObject) {
+		arrayObject.addObserver(this);
+		PaneBox paneBox = new PaneBox();
+		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
+		paneBox.setColor(arrayObject.getColor());
+		paneBox.setTopUnderline(true);
+		paneBox.showCenterGrid(true);
+		//addPaneBoxControls(arrayObject, paneBox);
+		addToSubScene(paneBox.get());
+		addToSubScene(paneBox.getSelection());
+		this.mvConnector.putBoxes(arrayObject, paneBox);
 	}
 
 	private void showArrowInView(Relation relation) {
@@ -301,6 +315,11 @@ public class StageManager implements Observer {
 			}
 			adaptCenterFields(modelObject);
 		}
+		else if (changedBox != null && modelBox instanceof ArrayObject) {
+			changedBox.setMinWidth(modelBox.getWidth());
+			changedBox.setMinHeight(modelBox.getHeight());
+			adaptCenterFields((ArrayObject) modelBox);
+		}
 		adaptBoxTopField(modelBox);
 		adaptBoxColor(modelBox);
 		adaptBoxWidth(modelBox);
@@ -372,15 +391,7 @@ public class StageManager implements Observer {
 
 	private void adaptBoxTopField(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox != null && modelBox instanceof ModelObject) {
-			ModelObject modelObject = (ModelObject) modelBox;
-			changedBox.getTopTextField().setText((modelObject.getName()));
-			changedBox.getTopLabel().setText(modelObject.getName() + " : " + modelObject.getModelClass().getName());
-			if (!modelObject.isSuperObject()) {
-				modelBox.setWidth(modelObject.getModelClass().getWidth());
-			}
-		}
-		else if (changedBox != null && modelBox instanceof ModelClass) {
+		if (changedBox != null && modelBox instanceof ModelClass) {
 			changedBox.setTopText(modelBox.getName());
 
 			double newWidth = changedBox.calcMinWidth();
@@ -398,6 +409,25 @@ public class StageManager implements Observer {
 				inheritingObject.setName(inheritingObject.getName());
 			}
 		}
+		else if (changedBox != null && modelBox instanceof ModelObject) {
+			ModelObject modelObject = (ModelObject) modelBox;
+			changedBox.getTopTextField().setText((modelObject.getName()));
+			changedBox.getTopLabel().setText(modelObject.getName() + " : " + modelObject.getModelClass().getName());
+			if (!modelObject.isSuperObject()) {
+				modelBox.setWidth(modelObject.getModelClass().getWidth());
+			}
+		}
+		else if (changedBox != null && modelBox instanceof ArrayObject) {
+			ArrayObject arrayObject = (ArrayObject) modelBox;
+			changedBox.getTopTextField().setText((arrayObject.getName()));
+			changedBox.getTopLabel().setText(arrayObject.getName() + " : " + arrayObject.getBaseModelClass().getName() + "[" + arrayObject.getAllocate() + "]");
+		
+			double newWidth = changedBox.calcMinWidth();
+			changedBox.setMinWidth(newWidth);
+			if (newWidth > changedBox.getWidth()) {
+				modelBox.setWidth(changedBox.getMinWidth());
+			}
+		}
 	}
 
 	private void adaptBoxWidth(ModelBox modelBox) {
@@ -413,13 +443,9 @@ public class StageManager implements Observer {
 			}
 			for (ModelObject superObject : modelClass.getSuperObjects()) {
 				superObject.setWidth(modelClass.getWidth());
-				// PaneBox superPaneBox = this.mvConnector.getPaneBox(modelBox);
-				// if(superPaneBox != null) {
-				// superPaneBox.setMinWidth(changedBox.getMinWidth());
-				// }
 			}
 		}
-		else if (modelBox instanceof ModelObject) {
+		else if (modelBox instanceof ModelObject || modelBox instanceof ArrayObject) {
 			changedBox.setWidth(modelBox.getWidth());
 		}
 	}
@@ -492,6 +518,9 @@ public class StageManager implements Observer {
 				superObjects.setY(modelObject.getY());
 			}
 		}
+		else if (modelBox instanceof ArrayObject) {
+			changedBox.setTranslateXYZ(modelBox.getCoordinates());
+		}
 	}
 
 	private void adaptCenterFields(ModelClass modelClass) {
@@ -551,13 +580,44 @@ public class StageManager implements Observer {
 			this.contextMenuController.enableCenterFieldContextMenu(modelObject, changedBox, this.subSceneAdapter);
 		}
 	}
+	
+	private void adaptCenterFields(ArrayObject arrayObject) {
+		PaneBox changedBox = this.mvConnector.getPaneBox(arrayObject);
+		if (changedBox != null) {
+			int prevSelectionIndex = changedBox.getCenterLabels().indexOf(changedBox.getSelectedLabel());
+			changedBox.clearCenterFields();
+			for (int i = 0; i < arrayObject.getAttributes().size(); i++) {
+				if (i < PaneBox.MAX_CENTER_LABELS) {
+					Attribute attribute = arrayObject.getAttributes().get(i);
+					changedBox.setCenterText(i, attribute.getName(), attribute.getName());
+				}
+			}
+			changedBox.recalcHasCenterGrid();
+			changedBox.setLabelSelected(prevSelectionIndex, true);
+			// center labels were cleared and recreated, need controls again
+			// this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter);
+			// this.textFieldController.enableCenterTextInput(arrayObject, changedBox, this.mvConnector);
+			// this.contextMenuController.enableCenterFieldContextMenu(arrayObject, changedBox, this.subSceneAdapter);
+
+			double newWidth = changedBox.calcMinWidth();
+			changedBox.setMinWidth(newWidth);
+			if (newWidth > changedBox.getWidth()) {
+				arrayObject.setWidth(changedBox.getMinWidth());
+			}
+			double newHeight = changedBox.calcMinHeight();
+			changedBox.setMinHeight(newHeight);
+			if (newHeight > changedBox.getHeight()) {
+				arrayObject.setHeight(changedBox.getMinHeight());
+			}
+		}
+	}
 
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) arg;
 			if (!this.mvConnector.containsModelBox(modelClass)) { // class is new
-				showClassInView(modelClass);
+				showModelClassInView(modelClass);
 				adaptBoxSettings(modelClass);
 				adaptArrowToBox(modelClass);
 			}
@@ -570,7 +630,7 @@ public class StageManager implements Observer {
 		else if (o instanceof ModelManager && arg instanceof ModelObject) {
 			ModelObject modelObject = (ModelObject) arg;
 			if (!this.mvConnector.containsModelBox(modelObject)) { // object is new
-				showObjectInView(modelObject);
+				showModelObjectInView(modelObject);
 				adaptBoxSettings(modelObject);
 				adaptArrowToBox(modelObject);
 			}
@@ -585,11 +645,23 @@ public class StageManager implements Observer {
 			if (!this.mvConnector.containsRelation(relation)) { // relation is new
 				showArrowInView(relation);
 				adaptArrowColor(relation);
-				// adaptRelation(relation);
 			}
 			else {
 				Arrow toDelete = this.mvConnector.removeArrows(relation);
 				removeFromView(toDelete);
+				removeFromView(toDelete.getSelection());
+			}
+		}
+		else if (o instanceof ModelManager && arg instanceof ArrayObject) {
+			ArrayObject arrayObject = (ArrayObject) arg;
+			if (!this.mvConnector.containsModelBox(arrayObject)) { // object is new
+				showArrayObjectInView(arrayObject);
+				adaptBoxSettings(arrayObject);
+				adaptArrowToBox(arrayObject);
+			}
+			else {
+				PaneBox toDelete = this.mvConnector.removeBoxes(arrayObject);
+				removeFromView(toDelete.get());
 				removeFromView(toDelete.getSelection());
 			}
 		}

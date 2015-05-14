@@ -403,11 +403,12 @@ public class RootLayoutController implements Observer, Initializable {
 	@FXML
 	private void handleCreateAssociation() {
 		if (tSplitMenuButton.isSelected()) {
+			this.relationCreationController.endChoosingStartBox();
 			toggleCreateToolbar(null);
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		} else {
-			this.relationCreationController.setChoosingStartBox(true);
+			this.relationCreationController.startChoosingStartBox(getToggledRelationType());
 			toggleCreateToolbar(this.tSplitMenuButton);
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
@@ -462,7 +463,14 @@ public class RootLayoutController implements Observer, Initializable {
 
 	@FXML
 	private void handleCreateObjectRelation() {
-		System.out.println("Obj Rel");
+		if(this.createObjectRelation.isSelected()) {
+			this.relationCreationController.startChoosingStartBox(RelationType.OBJDIAGRAM);
+			System.out.println("Obj Rel start");
+		}
+		else {
+			this.relationCreationController.endChoosingStartBox();
+			System.out.println("Obj Rel end");
+		}
 	}
 
 	@FXML
@@ -510,17 +518,21 @@ public class RootLayoutController implements Observer, Initializable {
 			});
 		}
 	}
-
-	private void startRelationCreation(PaneBox selectedPaneBox) {
-		subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
+	
+	private RelationType getToggledRelationType() {
 		Toggle toggle = this.createToolbar.getSelectedToggle();
-		RelationType relationType = null;
 		if (toggle != null && toggle.equals(this.tSplitMenuButton)) {
 			MenuItem selectedChoice = this.tSplitMenuButton.selectedChoice();
 			if (selectedChoice != null && this.toggleRelationMap.containsKey(selectedChoice)) {
-				relationType = this.toggleRelationMap.get(selectedChoice);
+				return this.toggleRelationMap.get(selectedChoice);
 			}
 		}
+		return null;
+	}
+
+	private void startRelationCreation(PaneBox selectedPaneBox) {
+		subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
+		RelationType relationType = getToggledRelationType();
 		if (relationType != null) {
 			this.relationCreationController.startProcess(selectedPaneBox, relationType);
 		}
@@ -545,11 +557,15 @@ public class RootLayoutController implements Observer, Initializable {
 
 	private void disableAllButtons(boolean value) {
 		this.createClass.setDisable(value);
-		this.createObject.setDisable(value);
 		this.createAssociation.setDisable(value);
-		this.createObjectRelation.setDisable(value);
 		this.deleteSelected.setDisable(value);
 		this.colorPick.setDisable(value);
+		boolean disableObjectButtons = value;
+		if(!value && !this.showObjects.isSelected()) {
+			disableObjectButtons = true;
+		}
+		this.createObject.setDisable(disableObjectButtons);
+		this.createObjectRelation.setDisable(disableObjectButtons);
 	}
 
 	// TODO Refactor!!
@@ -604,7 +620,7 @@ public class RootLayoutController implements Observer, Initializable {
 				colorPick.setValue(selectedPaneBox.getColor());
 				ModelBox modelBox = mvConnector.getModelBox(selectedPaneBox);
 				if (modelBox instanceof ModelClass) {
-					createObject.setDisable(false);
+					createObject.setDisable(!this.showObjects.isSelected());
 				}
 				else if (modelBox instanceof ModelObject) {
 					ModelObject modelObject = (ModelObject) modelBox;
@@ -617,7 +633,7 @@ public class RootLayoutController implements Observer, Initializable {
 				colorPick.setValue(selectedArrow.getColor());
 			}
 		}
-		else if (selectionController.hasCurrentSelection()
+		if (selectionController.hasCurrentSelection()
 				&& (selectionController.getCurrentSelected().equals(subSceneAdapter)
 						|| selectionController.getCurrentSelected().equals(subSceneAdapter.getFloor()))) { // SubSceneAdapter selected
 			createObject.setDisable(true);
@@ -628,8 +644,6 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 
 	private void initToggleRelationMap() {
-		this.toggleRelationMap.put(this.createDependency, RelationType.DEPENDENCY);
-		this.toggleRelationMap.put(this.createGeneralization, RelationType.GENERALIZATION);
 		this.toggleRelationMap.put(this.createUndirectedAssociation, RelationType.UNDIRECTED_ASSOCIATION);
 		this.toggleRelationMap.put(this.createDirectedAssociation, RelationType.DIRECTED_ASSOCIATION);
 		this.toggleRelationMap.put(this.createBidirectedAssociation, RelationType.BIDIRECTED_ASSOCIATION);
