@@ -12,8 +12,6 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
-import ch.hsr.ogv.util.MessageBar;
-import ch.hsr.ogv.util.MessageBar.MessageLevel;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
@@ -91,6 +89,10 @@ public class RelationCreationController extends Observable implements Observer {
 		subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 	}
 
+	public void startProcess(PaneBox startBox) {
+		startProcess(startBox, this.relationType);
+	}
+	
 	public void startProcess(PaneBox startBox, RelationType relationType) {
 		setRelationType(relationType);
 		this.isChoosingStartBox = false;
@@ -109,23 +111,12 @@ public class RelationCreationController extends Observable implements Observer {
 		setChanged();
 		notifyObservers(this.viewArrow);
 	}
-
-	public void endProcess(PaneBox selectedPaneBox) {
+	
+	public void abortProcess() {
 		this.isChoosingStartBox = false;
 		this.creationInProcess = false;
 		unlistenToSelections();
-		this.endBox = selectedPaneBox;
-
-		if (checkRelation(mvConnector.getModelBox(startBox), mvConnector.getModelBox(endBox), this.relationType)) {
-			if (viewArrow != null && startBox != null && endBox != null) {
-				Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
-				Arrow newArrow = mvConnector.getArrow(relation);
-				if (newArrow != null) {
-					this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
-				}
-			}
-		}
-
+		
 		if (this.viewArrow != null) {
 			subSceneAdapter.remove(this.viewArrow.getSelection());
 			subSceneAdapter.remove(this.viewArrow);
@@ -144,6 +135,20 @@ public class RelationCreationController extends Observable implements Observer {
 
 		setChanged();
 		notifyObservers(this.viewArrow);
+	}
+
+	public void endProcess(PaneBox selectedPaneBox) {
+		this.endBox = selectedPaneBox;
+
+		if (viewArrow != null && startBox != null && endBox != null) {
+			Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
+			Arrow newArrow = mvConnector.getArrow(relation);
+			if (newArrow != null) {
+				this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
+			}
+		}
+		
+		abortProcess();
 	}
 
 
@@ -173,7 +178,10 @@ public class RelationCreationController extends Observable implements Observer {
 	}
 	
 	private boolean checkRelation(ModelBox start, ModelBox end, RelationType relationType) {
-		if (!start.getClass().equals(end.getClass())) {
+		if (start == null || end == null || relationType == null) {
+			return false;
+		}
+		else if(!start.getClass().equals(end.getClass())) { // are both either of type ModelObject or ModelClass
 			return false;
 		}
 		else if (start.equals(end)) { // TODO: reflexive relation
@@ -181,6 +189,17 @@ public class RelationCreationController extends Observable implements Observer {
 		}
 		else if (start instanceof ModelClass && (isObjectsRelation(relationType) || (relationType == RelationType.GENERALIZATION && !isCycleFree((ModelClass) start, (ModelClass) end)))) {
 			return false;
+		}
+		else if (start instanceof ModelObject && end instanceof ModelObject && isObjectsRelation(relationType)) {
+			ModelObject startObject = (ModelObject) start;
+			ModelObject endObject = (ModelObject) end;
+			ModelClass startClass = startObject.getModelClass();
+			if(startObject.getRelationWith(endObject) != null) { // they are connected already
+				return false;
+			}
+			else if(startClass != null && startClass.getRelationWith(endObject.getModelClass()) == null) { // underlying classes are not connected
+				return false;
+			}
 		}
 		else if (start instanceof ModelObject && isClassesRelation(relationType)) {
 			return false;
@@ -191,27 +210,23 @@ public class RelationCreationController extends Observable implements Observer {
 	private boolean isCycleFree(ModelClass startClass, ModelClass endClass) {
 		for (ModelClass endSuperClass : endClass.getSuperClasses()) {
 			if (endSuperClass.equals(startClass)) {
-				MessageBar.setText("Cycle detected in polymorphism. Cycles are not allowed.", MessageLevel.ALERT);
 				return false;
 			}
 			return isCycleFree(startClass, endSuperClass);
 		}
 		return true;
 	}
-
+	
 	private void selectiveMouseEvents() {
-		if (this.mvConnector == null) {
-			return;
-		}
 		Collection<PaneBox> boxes = new HashSet<PaneBox>();
 		boolean isClassesRelation = isClassesRelation(this.relationType);
 		boolean isObjectsRelation = isObjectsRelation(this.relationType);
 		for(ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
-			PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
-			if (isClassesRelation && modelBox instanceof ModelClass && paneBox != null) {
-				boxes.add(paneBox);
+			if(this.creationInProcess && !checkRelation(this.mvConnector.getModelBox(this.startBox), modelBox, this.relationType)) {
+				continue;
 			}
-			else if(isObjectsRelation && modelBox instanceof ModelObject && paneBox != null) {
+			PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
+			if ((isClassesRelation && modelBox instanceof ModelClass && paneBox != null) || (isObjectsRelation && modelBox instanceof ModelObject && paneBox != null)) {
 				boxes.add(paneBox);
 			}
 		}
@@ -225,7 +240,7 @@ public class RelationCreationController extends Observable implements Observer {
 		this.subSceneAdapter.worldRestrictMouseEvents();
 		this.subSceneAdapter.receiveMouseEvents(nodes);
 	}
-
+	
 	private boolean pointBoxXZ(PaneBox box, Point3D movePoint) {
 		double leftBorder = this.startBox.getCenterPoint().getX() + this.startBox.getWidth() / 2;
 		double rightBorder = this.startBox.getCenterPoint().getX() - this.startBox.getWidth() / 2;

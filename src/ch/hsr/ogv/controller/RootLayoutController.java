@@ -408,11 +408,28 @@ public class RootLayoutController implements Observer, Initializable {
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		} else {
-			this.relationCreationController.startChoosingStartBox(getToggledRelationType());
 			toggleCreateToolbar(this.tSplitMenuButton);
+			this.relationCreationController.startChoosingStartBox(getToggledRelationType());
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 			this.colorPick.setDisable(true);
+		}
+	}
+	
+	@FXML
+	private void handleCreateObjectRelation() {
+		if(this.createObjectRelation.isSelected()) {
+			toggleCreateToolbar(this.createObjectRelation);
+			this.relationCreationController.startChoosingStartBox(RelationType.OBJDIAGRAM);
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			this.colorPick.setDisable(true);
+		}
+		else {
+			this.relationCreationController.endChoosingStartBox();
+			toggleCreateToolbar(null);
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		}
 	}
 
@@ -462,18 +479,6 @@ public class RootLayoutController implements Observer, Initializable {
 	}
 
 	@FXML
-	private void handleCreateObjectRelation() {
-		if(this.createObjectRelation.isSelected()) {
-			this.relationCreationController.startChoosingStartBox(RelationType.OBJDIAGRAM);
-			System.out.println("Obj Rel start");
-		}
-		else {
-			this.relationCreationController.endChoosingStartBox();
-			System.out.println("Obj Rel end");
-		}
-	}
-
-	@FXML
 	private void handleDeleteSelected() {
 		toggleCreateToolbar(null);
 		Selectable selected = this.selectionController.getCurrentSelected();
@@ -515,7 +520,17 @@ public class RootLayoutController implements Observer, Initializable {
 						this.deleteSelected.fire();
 					}
 				});
+				
+				this.primaryStage.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.ESCAPE), () -> {
+					if (this.relationCreationController.isInProcess()) {
+						this.relationCreationController.abortProcess();
+						toggleCreateToolbar(null);
+						this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+						this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
+					}
+				});
 			});
+			
 		}
 	}
 	
@@ -532,10 +547,10 @@ public class RootLayoutController implements Observer, Initializable {
 
 	private void startRelationCreation(PaneBox selectedPaneBox) {
 		subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
-		RelationType relationType = getToggledRelationType();
-		if (relationType != null) {
-			this.relationCreationController.startProcess(selectedPaneBox, relationType);
-		}
+		// RelationType relationType = getToggledRelationType();
+		// if (relationType != null) {
+		this.relationCreationController.startProcess(selectedPaneBox);
+		// }
 	}
 
 	private void endRelationCreation(PaneBox selectedPaneBox) {

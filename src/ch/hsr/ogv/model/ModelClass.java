@@ -357,7 +357,7 @@ public class ModelClass extends ModelBox {
 		}
 		return superClassList;
 	}
-
+	
 	@Override
 	public String toString() {
 		return super.toString() + " - " + name;

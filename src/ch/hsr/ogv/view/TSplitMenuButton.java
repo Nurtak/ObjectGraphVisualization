@@ -91,5 +91,10 @@ public class TSplitMenuButton implements Toggle {
 	public ObjectProperty<ToggleGroup> toggleGroupProperty() {
 		return toggleButton.toggleGroupProperty();
 	}
+	
+	public boolean isDisable() {
+		return splitMenuButton.isDisable();
+		
+	}
 
 }
