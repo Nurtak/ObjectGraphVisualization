@@ -24,6 +24,7 @@ public class SubSceneAdapter implements Selectable {
 	private VerticalHelper verticalHelper;
 
 	private volatile boolean selected = false;
+	private volatile boolean ySpaceVisible = true;
 
 	private final Group root = new Group();
 
@@ -59,6 +60,14 @@ public class SubSceneAdapter implements Selectable {
 		this.color = color;
 	}
 
+	public boolean isYSpaceVisible() {
+		return ySpaceVisible;
+	}
+	
+	public void setYSpaceVisible(boolean ySpaceVisible) {
+		this.ySpaceVisible = ySpaceVisible;
+	}
+	
 	public SubSceneAdapter(double initWidth, double initHeight) {
 		// create a new subscene that resides in the root group
 		this.root.setDepthTest(DepthTest.ENABLE);

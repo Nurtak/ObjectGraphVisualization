@@ -265,10 +265,14 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleShowObjects() {
 		if (this.showObjects.isSelected()) {
 			this.createObject.setDisable(false);
+			this.createObjectRelation.setDisable(false);
+			this.subSceneAdapter.setYSpaceVisible(true);
 		} else {
 			this.createObject.setDisable(true);
+			this.createObjectRelation.setDisable(true);
 			this.subSceneAdapter.getVerticalHelper().setVisible(false);
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+			this.subSceneAdapter.setYSpaceVisible(false);
 		}
 
 		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {

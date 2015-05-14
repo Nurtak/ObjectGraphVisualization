@@ -196,46 +196,52 @@ public class ContextMenuController extends Observable implements Observer {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
 				if (modelBox instanceof ModelClass) { // Class
-				enableAttributeSelected(false);
-				addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
-				classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-			}
-			else if ((modelBox instanceof ModelObject)) { // Object
-				ModelObject modelObject = (ModelObject) modelBox;
-				if (modelObject.isSuperObject()) {
-					renameObject.setDisable(true);
-					deleteObject.setDisable(true);
+					if(subSceneAdapter.isYSpaceVisible()) {
+						createObject.setDisable(false);
+					}
+					else {
+						createObject.setDisable(true);
+					}
+					enableAttributeSelected(false);
+					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
+					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
-				else {
-					renameObject.setDisable(false);
-					deleteObject.setDisable(false);
+				else if ((modelBox instanceof ModelObject)) { // Object
+					ModelObject modelObject = (ModelObject) modelBox;
+					if (modelObject.isSuperObject()) {
+						renameObject.setDisable(true);
+						deleteObject.setDisable(true);
+					}
+					else {
+						renameObject.setDisable(false);
+						deleteObject.setDisable(false);
+					}
+					hideAllContextMenus();
+					setValue.setDisable(true);
+					deleteValue.setDisable(true);
+					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 				}
-				hideAllContextMenus();
-				setValue.setDisable(true);
-				deleteValue.setDisable(true);
-				objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
 			}
-		}
-		me.consume();
-	}	);
+			me.consume();
+		});
 
 		paneBox.getSelection().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
 				if (modelBox instanceof ModelClass) { // Class
-				enableAttributeSelected(false);
-				addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
-				classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+					enableAttributeSelected(false);
+					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
+					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+				}
+				else if ((modelBox instanceof ModelObject)) { // Object
+					hideAllContextMenus();
+					setValue.setDisable(true);
+					deleteValue.setDisable(true);
+					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+				}
 			}
-			else if ((modelBox instanceof ModelObject)) { // Object
-				hideAllContextMenus();
-				setValue.setDisable(true);
-				deleteValue.setDisable(true);
-				objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-			}
-		}
-		me.consume();
-	}	);
+			me.consume();
+		});
 	}
 
 	public void enableCenterFieldContextMenu(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
@@ -249,21 +255,27 @@ public class ContextMenuController extends Observable implements Observer {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
 				if (modelBox instanceof ModelClass) { // Label on Class
-				enableAttributeSelected(true);
-				addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
-				int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
-				moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.getCenterLabels().size() - 1);
-				moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.getCenterLabels().size() - 1);
-				classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+					if(subSceneAdapter.isYSpaceVisible()) {
+						createObject.setDisable(false);
+					}
+					else {
+						createObject.setDisable(true);
+					}
+					enableAttributeSelected(true);
+					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
+					int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
+					moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.getCenterLabels().size() - 1);
+					moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.getCenterLabels().size() - 1);
+					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+				}
+				else if (modelBox instanceof ModelObject) { // Label on Object
+					setValue.setDisable(false);
+					deleteValue.setDisable(false);
+					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
+				}
+				me.consume();
 			}
-			else if (modelBox instanceof ModelObject) { // Label on Object
-				setValue.setDisable(false);
-				deleteValue.setDisable(false);
-				objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-			}
-			me.consume();
-		}
-	}	);
+		});
 
 	}
 
@@ -386,7 +398,7 @@ public class ContextMenuController extends Observable implements Observer {
 		moveAttributeDown.setDisable(!isAttributeActive);
 		deleteAttribute.setDisable(!isAttributeActive);
 	}
-
+	
 	private void startRelationCreation(PaneBox selectedPaneBox, RelationType relationType) {
 		this.relationCreationController.startProcess(selectedPaneBox, relationType);
 	}
@@ -566,16 +578,6 @@ public class ContextMenuController extends Observable implements Observer {
 
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow)) {
-			SelectionController selectionController = (SelectionController) o;
-			if (selectionController.hasCurrentSelection()) {
-				this.selected = (Selectable) arg;
-			}
-		}
-	}
-
 	private ImageView getImageView(Resource image) {
 		return new ImageView(ResourceLocator.getResourcePath(image).toExternalForm());
 	}
@@ -592,5 +594,15 @@ public class ContextMenuController extends Observable implements Observer {
 		menuItem.setGraphic(getImageView(image));
 		parent.getItems().add(menuItem);
 		return menuItem;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow)) {
+			SelectionController selectionController = (SelectionController) o;
+			if (selectionController.hasCurrentSelection()) {
+				this.selected = (Selectable) arg;
+			}
+		}
 	}
 }

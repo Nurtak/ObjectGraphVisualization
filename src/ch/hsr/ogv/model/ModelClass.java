@@ -33,8 +33,8 @@ public class ModelClass extends ModelBox {
 	public ModelClass() {
 	}
 
-	public ModelClass(String name, Point3D coordinates, double width, double heigth, Color color) {
-		super(name, coordinates, width, heigth, color);
+	public ModelClass(String name, Point3D coordinates, double width, double height, Color color) {
+		super(name, coordinates, width, height, color);
 	}
 
 	@XmlElementWrapper(name = "attributes")
