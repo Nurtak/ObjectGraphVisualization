@@ -99,31 +99,29 @@ public class ModelManager extends Observable {
 			if (RelationType.GENERALIZATION.equals(relation.getType()) && start instanceof ModelClass) {
 				buildGeneralizationObjects((ModelClass) start);
 			}
-			else if(RelationType.OBJDIAGRAM.equals(relation.getType())
-					&& start instanceof ModelObject
-					&& end instanceof ModelObject) {
+			else if (RelationType.OBJDIAGRAM.equals(relation.getType()) && start instanceof ModelObject && end instanceof ModelObject) {
 				buildArrayObject((ModelObject) start, ((ModelObject) end).getModelClass(), relation);
 			}
-					
+
 			setChanged();
 			notifyObservers(relation);
 			return relation;
 		}
 		return null;
 	}
-	
+
 	public ArrayObject createArrayObject(ModelObject referencingObject, ModelClass modelClass, String allocate) {
 		Point3D midpoint = referencingObject.getCoordinates().midpoint(modelClass.getCoordinates());
 		Point3D coordinates = new Point3D(midpoint.getX(), referencingObject.getY(), midpoint.getZ());
 		ArrayObject arrayObject = new ArrayObject("", modelClass, coordinates, modelClass.getWidth(), modelClass.getHeight(), modelClass.getColor(), allocate);
-		
-		if(MultiplicityParser.isInteger(allocate)) {
+
+		if (MultiplicityParser.isInteger(allocate)) {
 			int allocateInt = MultiplicityParser.toInteger(allocate);
-			for(int i = 0; i < allocateInt; i++) {
+			for (int i = 0; i < allocateInt; i++) {
 				arrayObject.createAttribute();
 			}
 		}
-		
+
 		setChanged();
 		notifyObservers(arrayObject);
 		return arrayObject;
@@ -192,7 +190,7 @@ public class ModelManager extends Observable {
 	private void buildArrayObject(ModelObject referencingObject, ModelClass baseModelClass, Relation relation) {
 		createArrayObject(referencingObject, baseModelClass, "1"); // TODO
 	}
-	
+
 	private void buildGeneralizationObjects(ModelClass start) {
 		ModelClass startClass = start;
 		List<ModelClass> superClasses = startClass.getSuperClasses();
@@ -222,6 +220,30 @@ public class ModelManager extends Observable {
 		}
 	}
 
+	private void deleteObjectRelations(ModelBox startBox, ModelBox endBox) {
+		if (startBox instanceof ModelClass && endBox instanceof ModelClass) {
+			ModelClass startClass = (ModelClass) startBox;
+			ModelClass endClass = (ModelClass) endBox;
+			List<ModelObject> startObjects = startClass.getModelObjects();
+			// startObjects.addAll(startClass.getSuperObjects());
+			for (ModelObject startObject : startObjects) {
+				for (ModelObject endObject : endClass.getModelObjects()) {
+					Relation objectRelation = startObject.getRelationWith(endObject);
+					if (objectRelation != null) {
+						deleteRelation(objectRelation);
+					}
+				}
+
+				// for (ModelObject endSuperObject : endClass.getSuperObjects()) {
+				// Relation objectRelation = startObject.getRelationWith(endSuperObject);
+				// if (objectRelation != null) {
+				// deleteRelation(objectRelation);
+				// }
+				// }
+			}
+		}
+	}
+
 	public boolean deleteRelation(Relation relation) {
 		if (RelationType.GENERALIZATION.equals(relation.getType())) {
 			cleanupGeneralizationObjects(relation);
@@ -230,8 +252,13 @@ public class ModelManager extends Observable {
 		if (deletedRelation) {
 			Endpoint start = relation.getStart();
 			Endpoint end = relation.getEnd();
-			start.getAppendant().getEndpoints().remove(start);
-			end.getAppendant().getEndpoints().remove(end);
+			ModelBox startBox = start.getAppendant();
+			ModelBox endBox = end.getAppendant();
+
+			deleteObjectRelations(startBox, endBox);
+
+			startBox.getEndpoints().remove(start);
+			endBox.getEndpoints().remove(end);
 			setChanged();
 			notifyObservers(relation);
 		}

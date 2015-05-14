@@ -194,7 +194,10 @@ public class RelationCreationController extends Observable implements Observer {
 			ModelObject startObject = (ModelObject) start;
 			ModelObject endObject = (ModelObject) end;
 			ModelClass startClass = startObject.getModelClass();
-			if(startObject.getRelationWith(endObject) != null) { // they are connected already
+			if(startObject.isSuperObject() || endObject.isSuperObject()) {
+				return false;
+			}
+			else if(startObject.getRelationWith(endObject) != null) { // they are connected already
 				return false;
 			}
 			else if(startClass != null && startClass.getRelationWith(endObject.getModelClass()) == null) { // underlying classes are not connected
@@ -226,8 +229,14 @@ public class RelationCreationController extends Observable implements Observer {
 				continue;
 			}
 			PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
-			if ((isClassesRelation && modelBox instanceof ModelClass && paneBox != null) || (isObjectsRelation && modelBox instanceof ModelObject && paneBox != null)) {
+			if (isClassesRelation && modelBox instanceof ModelClass && paneBox != null) {
 				boxes.add(paneBox);
+			}
+			else if (isObjectsRelation && modelBox instanceof ModelObject && paneBox != null) {
+				ModelObject modelObject = (ModelObject) modelBox;
+				if(!modelObject.isSuperObject()) {
+					boxes.add(paneBox);
+				}
 			}
 		}
 		Node[] nodes = new Node[boxes.size() + 1];
