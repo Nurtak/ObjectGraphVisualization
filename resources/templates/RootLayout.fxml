@@ -160,7 +160,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Separator orientation="VERTICAL">
+                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="30.0">
                      <padding>
                         <Insets left="3.0" />
                      </padding>
@@ -263,7 +263,7 @@
                         </ImageView>
                      </graphic>
                   </ToggleButton>
-                  <Separator orientation="VERTICAL">
+                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="30.0">
                      <padding>
                         <Insets left="3.0" />
                      </padding>
@@ -277,7 +277,7 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Separator orientation="VERTICAL">
+                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="30.0">
                      <padding>
                         <Insets left="3.0" />
                      </padding>

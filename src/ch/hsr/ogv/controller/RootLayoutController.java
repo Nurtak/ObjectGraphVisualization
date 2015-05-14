@@ -8,6 +8,8 @@ import java.util.Observer;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -366,12 +368,14 @@ public class RootLayoutController implements Observer, Initializable {
 	private void handleCreateClass() {
 		if (this.subSceneAdapter != null) {
 			if (this.createClass.isSelected()) {
+				toggleCreateToolbar(this.createClass);
 				this.subSceneAdapter.worldRestrictMouseEvents();
 				this.subSceneAdapter.receiveMouseEvents(this.subSceneAdapter.getFloor());
 				this.subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
 				this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 				this.colorPick.setDisable(true);
 			} else {
+				toggleCreateToolbar(null);
 				this.subSceneAdapter.worldReceiveMouseEvents();
 				this.subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
 				this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
@@ -397,7 +401,7 @@ public class RootLayoutController implements Observer, Initializable {
 	private void splitMenuButtonSelect(MenuItem choosenItem) {
 		this.tSplitMenuButton.setChoice(choosenItem);
 		handleCreateAssociation();
-		toggleCreateToolbar(this.tSplitMenuButton);
+		//toggleCreateToolbar(this.tSplitMenuButton);
 	}
 
 	@FXML
@@ -669,7 +673,7 @@ public class RootLayoutController implements Observer, Initializable {
 		this.toggleRelationMap.put(this.createGeneralization, RelationType.GENERALIZATION);
 		this.toggleRelationMap.put(this.createDependency, RelationType.DEPENDENCY);
 	}
-
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
 		setMessageBar(); // sets the message bar into the footer
