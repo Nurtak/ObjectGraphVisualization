@@ -433,10 +433,14 @@ public class TextFieldController {
 		if(newMultiplicity == null || newMultiplicity.isEmpty()) {
 			return oldMultiplicity;
 		}
+		String copyNewMulti = newMultiplicity;
 		newMultiplicity = MultiplicityParser.getParsedMultiplicity(newMultiplicity);
 		if(newMultiplicity == null) {
-			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be of in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N. (Comma separation possible)", MessageLevel.ALERT);
+			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N. (Comma separation possible)", MessageLevel.ALERT);
 			return oldMultiplicity;
+		}
+		if(newMultiplicity.length() < copyNewMulti.length()) {
+			MessageBar.setText("Converted new multiplicity to a correct form.", MessageLevel.WARN);
 		}
 		return newMultiplicity;
 	}

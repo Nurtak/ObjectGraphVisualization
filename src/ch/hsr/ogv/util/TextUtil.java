@@ -1,5 +1,7 @@
 package ch.hsr.ogv.util;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,4 +63,17 @@ public class TextUtil {
 		}
 		return str + startValue;
 	}
+	
+	public static String join(Collection<String> s, String delimiter) {
+	    StringBuffer buffer = new StringBuffer();
+	    Iterator<String> iter = s.iterator();
+	    while (iter.hasNext()) {
+	        buffer.append(iter.next());
+	        if (iter.hasNext()) {
+	            buffer.append(delimiter);
+	        }
+	    }
+	    return buffer.toString();
+	}
+	
 }

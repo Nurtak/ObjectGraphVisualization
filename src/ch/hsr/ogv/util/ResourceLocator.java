@@ -29,8 +29,6 @@ public class ResourceLocator {
 
 		SCENE_CSS("css/Scene.css"),
 		TSPLITMENUBUTTON_CSS("css/TSplitMenuButton.css"),
-		LIGHTHEME_CSS("css/LightTheme.css"),
-		DARKTHEME_CSS("css/DarkTheme.css"),
 		TEXTFIELD_CSS("css/TextField.css"),
 
 		OPEN_ARROW_OBJ("models/open_arrow.obj"),

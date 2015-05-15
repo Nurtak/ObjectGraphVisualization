@@ -81,9 +81,9 @@ public class MessageBar {
 				countDown.decrementAndGet();
 			}
 			messageBar.clear();
-			String iconStyleDefault = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_DEFAULT_PNG).toExternalForm() + "\");";
+			String iconStyleDefault = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_DEFAULT_PNG).toExternalForm() + "\");\n";
 			try {
-				messageBar.setStyle(iconStyleDefault + " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold;");
+				messageBar.setStyle(iconStyleDefault + "-fx-padding: 0 5 0 25;\n-fx-background-repeat: no-repeat;\n-fx-background-position: left center;\n-fx-font-weight: bold;");
 			}
 			catch (Exception e) {
 			}

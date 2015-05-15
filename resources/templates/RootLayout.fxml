@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../css/LightTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../css/Scene.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<top>
       <GridPane>
          <columnConstraints>
@@ -22,7 +22,7 @@
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-      		<MenuBar id="menubar" prefHeight="25.0" prefWidth="956.0" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER" GridPane.columnSpan="2">
+      		<MenuBar id="menubar" prefHeight="25.0" prefWidth="956.0" BorderPane.alignment="CENTER" GridPane.columnSpan="2">
       			<menus>
       				<Menu id="menu_file" mnemonicParsing="false" text="File">
       					<items>
