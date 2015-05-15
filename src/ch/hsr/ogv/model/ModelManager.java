@@ -21,7 +21,7 @@ public class ModelManager extends Observable {
 
 	private Set<ModelClass> classes = new HashSet<ModelClass>();
 	private Set<Relation> relations = new HashSet<Relation>();
-
+	
 	public ModelClass createClass(Point3D coordinates, double width, double heigth, Color color) {
 		int classCount = ModelClass.modelClassCounter.addAndGet(1);
 		String newClassName = "Class" + classCount;
@@ -111,9 +111,7 @@ public class ModelManager extends Observable {
 	}
 
 	public ArrayObject createArrayObject(ModelObject referencingObject, ModelClass modelClass, String allocate) {
-		Point3D midpoint = referencingObject.getCoordinates().midpoint(modelClass.getCoordinates());
-		Point3D coordinates = new Point3D(midpoint.getX(), referencingObject.getY(), midpoint.getZ());
-		ArrayObject arrayObject = new ArrayObject("", modelClass, coordinates, modelClass.getWidth(), modelClass.getHeight(), modelClass.getColor(), allocate);
+		ArrayObject arrayObject = new ArrayObject("", referencingObject, modelClass, allocate);
 
 		if (MultiplicityParser.isInteger(allocate)) {
 			int allocateInt = MultiplicityParser.toInteger(allocate);
@@ -225,7 +223,6 @@ public class ModelManager extends Observable {
 			ModelClass startClass = (ModelClass) startBox;
 			ModelClass endClass = (ModelClass) endBox;
 			List<ModelObject> startObjects = startClass.getModelObjects();
-			// startObjects.addAll(startClass.getSuperObjects());
 			for (ModelObject startObject : startObjects) {
 				for (ModelObject endObject : endClass.getModelObjects()) {
 					Relation objectRelation = startObject.getRelationWith(endObject);
@@ -233,13 +230,6 @@ public class ModelManager extends Observable {
 						deleteRelation(objectRelation);
 					}
 				}
-
-				// for (ModelObject endSuperObject : endClass.getSuperObjects()) {
-				// Relation objectRelation = startObject.getRelationWith(endSuperObject);
-				// if (objectRelation != null) {
-				// deleteRelation(objectRelation);
-				// }
-				// }
 			}
 		}
 	}

@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.geometry.Point3D;
-import javafx.scene.paint.Color;
 
 public class ArrayObject extends ModelBox {
 	
 	private String allocate = "";
 	private ModelClass baseModelClass;
+	private ModelObject referencingObject;
+
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	
 	public String getAllocate() {
@@ -27,6 +28,14 @@ public class ArrayObject extends ModelBox {
 	public void setBaseModelClass(ModelClass baseModelClass) {
 		this.baseModelClass = baseModelClass;
 	}
+	
+	public ModelObject getReferencingObject() {
+		return referencingObject;
+	}
+
+	public void setReferencingObject(ModelObject referencingObject) {
+		this.referencingObject = referencingObject;
+	}
 
 	
 	public List<Attribute> getAttributes() {
@@ -37,9 +46,13 @@ public class ArrayObject extends ModelBox {
 		this.attributes = attributes;
 	}
 	
-	public ArrayObject(String name, ModelClass baseModelClass, Point3D coordinates, double width, double height, Color color, String allocate) {
-		super(name, coordinates, width, height, color);
+	public ArrayObject(String name, ModelObject referencingObject, ModelClass baseModelClass, String allocate) {
+		super(name, baseModelClass.getCoordinates(), baseModelClass.getWidth(), baseModelClass.getHeight(), baseModelClass.getColor());
+		Point3D midpoint = referencingObject.getCoordinates().midpoint(baseModelClass.getCoordinates());
+		Point3D coordinates = new Point3D(midpoint.getX(), referencingObject.getY(), midpoint.getZ());
+		this.coordinates = coordinates;
 		this.baseModelClass = baseModelClass;
+		this.referencingObject = referencingObject;
 		this.allocate = allocate;
 	}
 	
@@ -63,6 +76,10 @@ public class ArrayObject extends ModelBox {
 			return attribute;
 		}
 		return null;
+	}
+	
+	public Relation getBaseRelation() {
+		return this.baseModelClass.getRelationWith(this.referencingObject.getModelClass());
 	}
 	
 }

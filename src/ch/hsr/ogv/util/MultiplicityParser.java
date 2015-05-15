@@ -20,7 +20,7 @@ public class MultiplicityParser {
 	public static String getParsedMultiplicity(String multiString) {
 		Matcher matcher = MUTLIP_PATTERN.matcher(multiString);
 		if (matcher.matches()) {
-			return multiString;
+			return deleteLeadingZeros(multiString);
 		}
 		else {
 			return null;
@@ -28,17 +28,23 @@ public class MultiplicityParser {
 	}
 
 	public static String deleteLeadingZeros(String multiString) {
-		StringBuffer sb = new StringBuffer();
-
-		String[] split = multiString.split("\\.\\.|,");
-
-		for (int i = 0; i < split.length; i++) {
-			System.out.println(split[i]);
-			if (split[i] != "*") {
-				sb.append(split[i]);
+		String retStr = "";
+		if(multiString.contains(",")) {
+			String[] split = multiString.split(",");
+			for (int i = 0; i < split.length; i++) {
+				if(split[i].equals("0")) {
+					retStr += split[i];
+				}
+				else {
+					retStr += split[i].replaceAll("^0+", ""); // remove leading zeros
+				}
+				if(i < split.length - 1) {
+					retStr += ",";
+				}
 			}
 		}
-		return sb.toString();
+		
+		return retStr;
 	}
 
 	private static boolean isNForm(String multiString) {

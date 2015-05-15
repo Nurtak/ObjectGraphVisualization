@@ -177,10 +177,10 @@ public class ModelBox extends Observable {
 		}
 		return false;
 	}
-	
+
 	public Relation getRelationWith(ModelBox modelBox) {
 		for (Endpoint endpoint : getEndpoints()) {
-			if(endpoint.getFriend() != null && endpoint.getFriend().getAppendant() != null && endpoint.getFriend().getAppendant().equals(modelBox)) {
+			if (endpoint.getFriend() != null && endpoint.getFriend().getAppendant() != null && endpoint.getFriend().getAppendant().equals(modelBox)) {
 				return endpoint.getRelation();
 			}
 		}
