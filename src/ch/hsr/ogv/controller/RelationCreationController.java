@@ -50,10 +50,10 @@ public class RelationCreationController extends Observable implements Observer {
 	public Arrow getViewArrow() {
 		return viewArrow;
 	}
-	
+
 	private void setRelationType(RelationType relationType) {
 		this.relationType = relationType;
-		if(relationType == null) {
+		if (relationType == null) {
 			this.relationType = RelationType.UNDIRECTED_ASSOCIATION;
 		}
 	}
@@ -73,15 +73,15 @@ public class RelationCreationController extends Observable implements Observer {
 	public boolean isInProcess() {
 		return creationInProcess;
 	}
-	
+
 	public void startChoosingStartBox(RelationType relationType) {
 		this.isChoosingStartBox = true;
 		this.creationInProcess = false;
 		setRelationType(relationType);
-		
+
 		selectiveMouseEvents();
 	}
-	
+
 	public void endChoosingStartBox() {
 		this.isChoosingStartBox = false;
 		this.creationInProcess = false;
@@ -92,7 +92,7 @@ public class RelationCreationController extends Observable implements Observer {
 	public void startProcess(PaneBox startBox) {
 		startProcess(startBox, this.relationType);
 	}
-	
+
 	public void startProcess(PaneBox startBox, RelationType relationType) {
 		setRelationType(relationType);
 		this.isChoosingStartBox = false;
@@ -111,12 +111,12 @@ public class RelationCreationController extends Observable implements Observer {
 		setChanged();
 		notifyObservers(this.viewArrow);
 	}
-	
+
 	public void abortProcess() {
 		this.isChoosingStartBox = false;
 		this.creationInProcess = false;
 		unlistenToSelections();
-		
+
 		if (this.viewArrow != null) {
 			subSceneAdapter.remove(this.viewArrow.getSelection());
 			subSceneAdapter.remove(this.viewArrow);
@@ -147,10 +147,9 @@ public class RelationCreationController extends Observable implements Observer {
 				this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
 			}
 		}
-		
+
 		abortProcess();
 	}
-
 
 	private void listenToSelections() {
 		selectionController.addObserver(this);
@@ -159,24 +158,18 @@ public class RelationCreationController extends Observable implements Observer {
 	private void unlistenToSelections() {
 		selectionController.deleteObserver(this);
 	}
-	
+
 	private boolean isClassesRelation(RelationType relationType) {
-		return relationType == RelationType.UNDIRECTED_ASSOCIATION
-				|| relationType == RelationType.DIRECTED_ASSOCIATION
-				|| relationType == RelationType.BIDIRECTED_ASSOCIATION
-				|| relationType == RelationType.UNDIRECTED_AGGREGATION
-				|| relationType == RelationType.DIRECTED_AGGREGATION
-				|| relationType == RelationType.UNDIRECTED_COMPOSITION
-				|| relationType == RelationType.DIRECTED_COMPOSITION 
-			    || relationType == RelationType.GENERALIZATION 
-			    || relationType == RelationType.DEPENDENCY
-			    || relationType == RelationType.ASSOZIATION_CLASS;
+		return relationType == RelationType.UNDIRECTED_ASSOCIATION || relationType == RelationType.DIRECTED_ASSOCIATION || relationType == RelationType.BIDIRECTED_ASSOCIATION
+				|| relationType == RelationType.UNDIRECTED_AGGREGATION || relationType == RelationType.DIRECTED_AGGREGATION || relationType == RelationType.UNDIRECTED_COMPOSITION
+				|| relationType == RelationType.DIRECTED_COMPOSITION || relationType == RelationType.GENERALIZATION || relationType == RelationType.DEPENDENCY
+				|| relationType == RelationType.ASSOZIATION_CLASS;
 	}
-	
+
 	private boolean isObjectsRelation(RelationType relationType) {
 		return relationType == RelationType.OBJDIAGRAM || relationType == RelationType.OBJGRAPH;
 	}
-	
+
 	private boolean checkRelation(ModelBox start, ModelBox end, RelationType relationType) {
 		if (start == null || end == null || relationType == null) {
 			return false;
@@ -203,6 +196,12 @@ public class RelationCreationController extends Observable implements Observer {
 			else if(startClass != null && startClass.getRelationWith(endObject.getModelClass()) == null) { // underlying classes are not connected
 				return false;
 			}
+			else if(startClass != null && startClass.getRelationWith(endObject.getModelClass()) != null) { // no object relation at Generalization / Dependency
+				Relation baseRelation = startClass.getRelationWith(endObject.getModelClass());
+				if(baseRelation.getType().equals(RelationType.GENERALIZATION) || baseRelation.getType().equals(RelationType.DEPENDENCY)) {
+					return false;
+				}
+			}
 		}
 		else if (start instanceof ModelObject && isClassesRelation(relationType)) {
 			return false;
@@ -219,13 +218,13 @@ public class RelationCreationController extends Observable implements Observer {
 		}
 		return true;
 	}
-	
+
 	private void selectiveMouseEvents() {
 		Collection<PaneBox> boxes = new HashSet<PaneBox>();
 		boolean isClassesRelation = isClassesRelation(this.relationType);
 		boolean isObjectsRelation = isObjectsRelation(this.relationType);
-		for(ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
-			if(this.creationInProcess && !checkRelation(this.mvConnector.getModelBox(this.startBox), modelBox, this.relationType)) {
+		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
+			if (this.creationInProcess && !checkRelation(this.mvConnector.getModelBox(this.startBox), modelBox, this.relationType)) {
 				continue;
 			}
 			PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
@@ -234,7 +233,7 @@ public class RelationCreationController extends Observable implements Observer {
 			}
 			else if (isObjectsRelation && modelBox instanceof ModelObject && paneBox != null) {
 				ModelObject modelObject = (ModelObject) modelBox;
-				if(!modelObject.isSuperObject()) {
+				if (!modelObject.isSuperObject()) {
 					boxes.add(paneBox);
 				}
 			}
@@ -249,7 +248,7 @@ public class RelationCreationController extends Observable implements Observer {
 		this.subSceneAdapter.worldRestrictMouseEvents();
 		this.subSceneAdapter.receiveMouseEvents(nodes);
 	}
-	
+
 	private boolean pointBoxXZ(PaneBox box, Point3D movePoint) {
 		double leftBorder = this.startBox.getCenterPoint().getX() + this.startBox.getWidth() / 2;
 		double rightBorder = this.startBox.getCenterPoint().getX() - this.startBox.getWidth() / 2;
@@ -275,13 +274,13 @@ public class RelationCreationController extends Observable implements Observer {
 			}
 		}
 		else if (o instanceof MouseMoveController && arg instanceof Point3D && this.isChoosingStartBox) { // choosing start box, mouseover non-box
-			if(this.startBox != null) {
+			if (this.startBox != null) {
 				this.startBox.setSelected(false);
 				this.startBox = null;
 			}
 		}
 		else if (o instanceof MouseMoveController && arg instanceof PaneBox && this.isChoosingStartBox) { // choosing start box, mouseover box
-			if(this.startBox != null) {
+			if (this.startBox != null) {
 				this.startBox.setSelected(false);
 				this.startBox = null;
 			}

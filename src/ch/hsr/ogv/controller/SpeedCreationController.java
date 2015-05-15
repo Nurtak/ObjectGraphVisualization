@@ -50,7 +50,7 @@ public class SpeedCreationController {
 
 	private void enableClassSpeedCreation() {
 		this.classKeyEvent = (KeyEvent ke) -> {
-			if (ke.getCode() == KeyCode.ENTER) { // continue
+			if (ke.getCode() == KeyCode.ENTER && !ke.isControlDown()) { // continue
 				disableClassSpeedCreation();
 				Attribute newAttribute = this.mvConnector.handleCreateNewAttribute(this.paneBox);
 				for (TextField centerTextField : this.paneBox.getCenterTextFields()) {
@@ -59,7 +59,7 @@ public class SpeedCreationController {
 					}
 				}
 			}
-			else if (ke.getCode() == KeyCode.ESCAPE) { // finish
+			else if ((ke.getCode() == KeyCode.ENTER && ke.isControlDown()) || ke.getCode() == KeyCode.ESCAPE) { // finish
 				disableClassSpeedCreation();
 			}
 		};
@@ -77,13 +77,17 @@ public class SpeedCreationController {
 	}
 
 	private void disableClassSpeedCreation() {
-		this.textField.removeEventHandler(KeyEvent.KEY_PRESSED, this.classKeyEvent);
-		this.textField.focusedProperty().removeListener(this.classFocusChange);
+		if(this.classKeyEvent != null) {
+			this.textField.removeEventHandler(KeyEvent.KEY_PRESSED, this.classKeyEvent);
+		}
+		if(this.classFocusChange != null) {
+			this.textField.focusedProperty().removeListener(this.classFocusChange);
+		}
 	}
 
 	private void enableObjectSpeedCreation() {
 		this.objectKeyEvent = (KeyEvent ke) -> {
-			if (ke.getCode() == KeyCode.ENTER) { // continue
+			if (ke.getCode() == KeyCode.ENTER && !ke.isControlDown()) { // continue
 				disableObjectSpeedCreation();
 				Label selectedLabel = this.paneBox.getSelectedLabel();
 				if (selectedLabel != null && selectedLabel.equals(this.paneBox.getTopLabel()) && !this.paneBox.getCenterLabels().isEmpty()) {
@@ -100,7 +104,7 @@ public class SpeedCreationController {
 					}
 				}
 			}
-			else if (ke.getCode() == KeyCode.ESCAPE) { // finish
+			else if ((ke.getCode() == KeyCode.ENTER && ke.isControlDown()) || ke.getCode() == KeyCode.ESCAPE) { // finish
 				disableObjectSpeedCreation();
 			}
 		};
@@ -118,8 +122,12 @@ public class SpeedCreationController {
 	}
 
 	private void disableObjectSpeedCreation() {
-		this.textField.removeEventHandler(KeyEvent.KEY_PRESSED, this.objectKeyEvent);
-		this.textField.focusedProperty().removeListener(this.objectFocusChange);
+		if(this.objectKeyEvent != null) {
+			this.textField.removeEventHandler(KeyEvent.KEY_PRESSED, this.objectKeyEvent);
+		}
+		if(this.objectFocusChange != null) {
+			this.textField.focusedProperty().removeListener(this.objectFocusChange);
+		}
 	}
 
 }

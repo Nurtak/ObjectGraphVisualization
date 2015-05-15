@@ -9,7 +9,6 @@ import java.util.Set;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import jfxtras.labs.util.Util;
-import ch.hsr.ogv.util.MultiplicityParser;
 import ch.hsr.ogv.util.TextUtil;
 
 /**
@@ -99,30 +98,12 @@ public class ModelManager extends Observable {
 			if (RelationType.GENERALIZATION.equals(relation.getType()) && start instanceof ModelClass) {
 				buildGeneralizationObjects((ModelClass) start);
 			}
-			else if (RelationType.OBJDIAGRAM.equals(relation.getType()) && start instanceof ModelObject && end instanceof ModelObject) {
-				buildArrayObject((ModelObject) start, ((ModelObject) end).getModelClass(), relation);
-			}
 
 			setChanged();
 			notifyObservers(relation);
 			return relation;
 		}
 		return null;
-	}
-
-	public ArrayObject createArrayObject(ModelObject referencingObject, ModelClass modelClass, String allocate) {
-		ArrayObject arrayObject = new ArrayObject("", referencingObject, modelClass, allocate);
-
-		if (MultiplicityParser.isInteger(allocate)) {
-			int allocateInt = MultiplicityParser.toInteger(allocate);
-			for (int i = 0; i < allocateInt; i++) {
-				arrayObject.createAttribute();
-			}
-		}
-
-		setChanged();
-		notifyObservers(arrayObject);
-		return arrayObject;
 	}
 
 	public boolean deleteClass(ModelClass modelClass) {
@@ -183,10 +164,6 @@ public class ModelManager extends Observable {
 			notifyObservers(modelObject);
 		}
 		return deletedObject;
-	}
-
-	private void buildArrayObject(ModelObject referencingObject, ModelClass baseModelClass, Relation relation) {
-		createArrayObject(referencingObject, baseModelClass, "1"); // TODO
 	}
 
 	private void buildGeneralizationObjects(ModelClass start) {
