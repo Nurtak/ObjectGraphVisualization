@@ -141,7 +141,7 @@
                <items>
                   <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" text="Create Class">
                      <toggleGroup>
-                        <ToggleGroup fx:id="createToolbar" />
+                        <ToggleGroup fx:id="toolbarGroup" />
                      </toggleGroup>
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -165,7 +165,7 @@
                         <Insets left="3.0" />
                      </padding>
                   </Separator>
-                  <Label text="Class Relation:" />
+                  <Label fx:id="classRelationLabel" text="Class Relation:" />
                   <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
                     <items>
                         <MenuItem fx:id="createUndirectedAssociation" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association">
@@ -256,7 +256,7 @@
                      </graphic>
                   </SplitMenuButton>
                   <Separator orientation="VERTICAL" prefHeight="30.0" visible="false" />
-                  <ToggleButton fx:id="createObjectRelation" mnemonicParsing="false" onAction="#handleCreateObjectRelation" text="Object Relation" toggleGroup="$createToolbar">
+                  <ToggleButton fx:id="createObjectRelation" mnemonicParsing="false" onAction="#handleCreateObjectRelation" text="Object Relation" toggleGroup="$toolbarGroup">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -285,12 +285,12 @@
                      </padding>
                   </Separator>
                   <Label fx:id="pickColorLabel" text="Pick color: " />
-                  <ColorPicker fx:id="colorPick" disable="true" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleColorPick" />
+                  <ColorPicker fx:id="pickColor" disable="true" nodeOrientation="LEFT_TO_RIGHT" onAction="#handlePickColor" />
                </items>
             </ToolBar>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <items>
-                  <ToggleButton fx:id="objectGraphMode" contentDisplay="RIGHT" mnemonicParsing="false" text="Object Graph Mode">
+                  <ToggleButton fx:id="objectGraphMode" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#handleObjectGraphMode" text="Object Graph Mode" toggleGroup="$toolbarGroup">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>

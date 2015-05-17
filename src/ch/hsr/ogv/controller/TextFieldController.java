@@ -434,7 +434,7 @@ public class TextFieldController {
 			return oldMultiplicity;
 		}
 		String copyNewMulti = newMultiplicity;
-		newMultiplicity = MultiplicityParser.getParsedMultiplicity(newMultiplicity);
+		newMultiplicity = MultiplicityParser.getParsed(newMultiplicity);
 		if(newMultiplicity == null) {
 			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N. (Comma separation possible)", MessageLevel.ALERT);
 			return oldMultiplicity;

@@ -18,13 +18,13 @@ import java.util.regex.Pattern;
  */
 public class MultiplicityParser {
 
-	private static final String ASTERISK = "*";
+	public static final String ASTERISK = "*";
 
 	// ^(\d+|\*)(\.\.(\d+|\*))?(,(\d+|\*)(\.\.(\d+|\*))?)*$
 	private static final String MUTLIP_REGEX = "^(\\d+|\\*)(\\.\\.(\\d+|\\*))?(,(\\d+|\\*)(\\.\\.(\\d+|\\*))?)*$";
 	private static final Pattern MUTLIP_PATTERN = Pattern.compile(MUTLIP_REGEX);
 
-	public static String getSimpleMultiplicity(String multiString) {
+	public static String getSimpleParsed(String multiString) {
 		if (multiString.equals("0")) {
 			return null;
 		}
@@ -96,7 +96,7 @@ public class MultiplicityParser {
 		return multiString.equals(ASTERISK);
 	}
 
-	public static String getParsedMultiplicity(String multiString) {
+	public static String getParsed(String multiString) {
 		Set<String> retContainer = new HashSet<String>();
 		List<String> separations = new ArrayList<String>(Arrays.asList(multiString.split(",")));
 		for (String part : separations) {
@@ -172,6 +172,9 @@ public class MultiplicityParser {
 	}
 
 	public static String getUppermostBound(String multiString) {
+		if (multiString == null || multiString.isEmpty()) {
+			return null;
+		}
 		List<String> separations = new ArrayList<String>(Arrays.asList(multiString.split("\\.\\.|,")));
 		String retString = null;
 		BigInteger currentBiggest = new BigInteger("0");

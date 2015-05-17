@@ -51,6 +51,7 @@ public class StageManager implements Observer {
 	private SubSceneAdapter subSceneAdapter;
 
 	private ModelViewConnector mvConnector;
+	private ObjectGraph objectGraph;
 	private Persistancy persistancy;
 
 	private RootLayoutController rootLayoutController = new RootLayoutController();
@@ -76,6 +77,7 @@ public class StageManager implements Observer {
 		setupStage();
 
 		initMVConnector();
+		initObjectGraph();
 		initPersistancy();
 
 		initRootLayoutController();
@@ -130,16 +132,21 @@ public class StageManager implements Observer {
 		this.mvConnector.getModelManager().addObserver(this);
 	}
 
+	private void initObjectGraph() {
+		this.objectGraph = new ObjectGraph(this.mvConnector, this.subSceneAdapter);
+	}
+	
 	private void initPersistancy() {
 		UserPreferences.setOGVFilePath(null); // reset user preferences of file path
 		persistancy = new Persistancy(this.mvConnector.getModelManager());
-		rootLayoutController.setPersistancy(this.persistancy);
 	}
 
 	private void initRootLayoutController() {
 		this.rootLayoutController.setPrimaryStage(this.primaryStage);
-		this.rootLayoutController.setMVConnector(this.mvConnector);
 		this.rootLayoutController.setSubSceneAdapter(this.subSceneAdapter);
+		this.rootLayoutController.setMVConnector(this.mvConnector);
+		this.rootLayoutController.setObjectGraph(this.objectGraph);
+		this.rootLayoutController.setPersistancy(this.persistancy);
 		this.rootLayoutController.setSelectionController(this.selectionController);
 		this.rootLayoutController.setCameraController(this.cameraController);
 		this.rootLayoutController.setRelationCreationController(this.relationCreationController);
@@ -294,7 +301,7 @@ public class StageManager implements Observer {
 			else if (paneClassBox != null && modelObject.isSuperObject()) {
 				for (ModelClass subClass : modelClass.getSubClasses()) {
 					if (subClass.getSubModelObject(modelObject) != null) {
-						changedBox.setMinWidth(subClass.getWidth());
+						changedBox.setWidth(subClass.getWidth());
 					}
 				}
 			}
@@ -401,11 +408,10 @@ public class StageManager implements Observer {
 
 	private void adaptBoxWidth(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
-		if (changedBox == null) {
-			return;
+		if (changedBox != null) {
+			changedBox.setWidth(modelBox.getWidth());
 		}
 		if (modelBox instanceof ModelClass) {
-			changedBox.setWidth(modelBox.getWidth());
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
 				modelObject.setWidth(modelClass.getWidth());
@@ -413,9 +419,6 @@ public class StageManager implements Observer {
 			for (ModelObject superObject : modelClass.getSuperObjects()) {
 				superObject.setWidth(modelClass.getWidth());
 			}
-		}
-		else if (modelBox instanceof ModelObject) {
-			changedBox.setWidth(modelBox.getWidth());
 		}
 	}
 
