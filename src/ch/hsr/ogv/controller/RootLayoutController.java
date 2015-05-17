@@ -620,6 +620,7 @@ public class RootLayoutController implements Observer, Initializable {
 					startRelationCreation(selectedPaneBox);
 				} else { // second selection
 					endRelationCreation(selectedPaneBox);
+					handleShowObjects();
 				}
 			}
 

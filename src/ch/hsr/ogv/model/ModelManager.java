@@ -21,6 +21,22 @@ public class ModelManager extends Observable {
 	private Set<ModelClass> classes = new HashSet<ModelClass>();
 	private Set<Relation> relations = new HashSet<Relation>();
 	
+	public Set<ModelClass> getClasses() {
+		return this.classes;
+	}
+
+	public void setClasses(Set<ModelClass> classes) {
+		this.classes = classes;
+	}
+
+	public Set<Relation> getRelations() {
+		return this.relations;
+	}
+
+	public void setRelations(Set<Relation> relations) {
+		this.relations = relations;
+	}
+	
 	public ModelClass createClass(Point3D coordinates, double width, double heigth, Color color) {
 		int classCount = ModelClass.modelClassCounter.addAndGet(1);
 		String newClassName = "Class" + classCount;
@@ -106,6 +122,14 @@ public class ModelManager extends Observable {
 		return null;
 	}
 
+	public void clearClasses() {
+		for (ModelClass modelClass : new ArrayList<ModelClass>(classes)) {
+			deleteClass(modelClass);
+		}
+		ModelClass.modelClassCounter.set(0);
+		ModelObject.modelObjectCounter.set(0);
+	}
+	
 	public boolean deleteClass(ModelClass modelClass) {
 		for (ModelClass subClass : modelClass.getSubClasses()) {
 			for (ModelObject subSuperObject : subClass.getSuperObjects(modelClass)) {
@@ -202,8 +226,8 @@ public class ModelManager extends Observable {
 			List<ModelObject> startObjects = startClass.getModelObjects();
 			for (ModelObject startObject : startObjects) {
 				for (ModelObject endObject : endClass.getModelObjects()) {
-					Relation objectRelation = startObject.getRelationWith(endObject);
-					if (objectRelation != null) {
+					List<Relation> objectRelations = getRelationsBetween(startObject, endObject);
+					for(Relation objectRelation : objectRelations) {
 						deleteRelation(objectRelation);
 					}
 				}
@@ -211,6 +235,12 @@ public class ModelManager extends Observable {
 		}
 	}
 
+	public void clearRelations() {
+		for (Relation relation : new ArrayList<Relation>(relations)) {
+			deleteRelation(relation);
+		}
+	}
+	
 	public boolean deleteRelation(Relation relation) {
 		if (RelationType.GENERALIZATION.equals(relation.getType())) {
 			cleanupGeneralizationObjects(relation);
@@ -280,35 +310,15 @@ public class ModelManager extends Observable {
 		}
 		return false;
 	}
-
-	public Set<ModelClass> getClasses() {
-		return this.classes;
-	}
-
-	public void setClasses(Set<ModelClass> classes) {
-		this.classes = classes;
-	}
-
-	public void clearClasses() {
-		for (ModelClass modelClass : new ArrayList<ModelClass>(classes)) {
-			deleteClass(modelClass);
+	
+	public List<Relation> getRelationsBetween(ModelBox thisModelBox, ModelBox otherModelBox) {
+		List<Relation> relationList = new ArrayList<Relation>();
+		for (Endpoint endpoint : thisModelBox.getEndpoints()) {
+			if (endpoint.getFriend() != null && endpoint.getFriend().getAppendant() != null && endpoint.getFriend().getAppendant().equals(otherModelBox)) {
+				relationList.add(endpoint.getRelation());
+			}
 		}
-		ModelClass.modelClassCounter.set(0);
-		ModelObject.modelObjectCounter.set(0);
-	}
-
-	public Set<Relation> getRelations() {
-		return this.relations;
-	}
-
-	public void setRelations(Set<Relation> relations) {
-		this.relations = relations;
-	}
-
-	public void clearRelations() {
-		for (Relation relation : new ArrayList<Relation>(relations)) {
-			deleteRelation(relation);
-		}
+		return relationList;
 	}
 
 }

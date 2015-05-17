@@ -2,6 +2,7 @@ package ch.hsr.ogv.controller;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -9,6 +10,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
+import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
@@ -187,20 +189,26 @@ public class RelationCreationController extends Observable implements Observer {
 			ModelObject startObject = (ModelObject) start;
 			ModelObject endObject = (ModelObject) end;
 			ModelClass startClass = startObject.getModelClass();
+			ModelManager modelManager = this.mvConnector.getModelManager();
+			
 			if(startObject.isSuperObject() || endObject.isSuperObject()) {
 				return false;
 			}
-			else if(startObject.getRelationWith(endObject) != null) { // they are connected already
+			
+			List<Relation> objectRelations = modelManager.getRelationsBetween(startObject, endObject);
+			List<Relation> baseRelations = modelManager.getRelationsBetween(startClass, endObject.getModelClass());
+			if(startClass != null && baseRelations.isEmpty()) { // underlying classes are not connected
 				return false;
 			}
-			else if(startClass != null && startClass.getRelationWith(endObject.getModelClass()) == null) { // underlying classes are not connected
-				return false;
-			}
-			else if(startClass != null && startClass.getRelationWith(endObject.getModelClass()) != null) { // no object relation at Generalization / Dependency
-				Relation baseRelation = startClass.getRelationWith(endObject.getModelClass());
-				if(baseRelation.getType().equals(RelationType.GENERALIZATION) || baseRelation.getType().equals(RelationType.DEPENDENCY)) {
-					return false;
+			if(startClass != null && !baseRelations.isEmpty()) { // no object relation at Generalization / Dependency
+				for(Relation baseRelation : baseRelations) {
+					if(baseRelation.getType().equals(RelationType.GENERALIZATION) || baseRelation.getType().equals(RelationType.DEPENDENCY)) {
+						return false;
+					}
 				}
+			}
+			if(baseRelations.size() <= objectRelations.size()) { // available base connections already covered
+				return false;
 			}
 		}
 		else if (start instanceof ModelObject && isClassesRelation(relationType)) {

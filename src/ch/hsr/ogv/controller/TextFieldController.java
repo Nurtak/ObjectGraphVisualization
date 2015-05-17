@@ -439,7 +439,7 @@ public class TextFieldController {
 			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N. (Comma separation possible)", MessageLevel.ALERT);
 			return oldMultiplicity;
 		}
-		if(newMultiplicity.length() < copyNewMulti.length()) {
+		if(!newMultiplicity.equals(copyNewMulti)) {
 			MessageBar.setText("Converted new multiplicity to a correct form.", MessageLevel.WARN);
 		}
 		return newMultiplicity;

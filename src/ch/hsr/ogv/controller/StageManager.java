@@ -164,8 +164,7 @@ public class StageManager implements Observer {
 	}
 
 	private void initCameraController() {
-		this.cameraController.handleMouse(this.subSceneAdapter);
-		this.cameraController.handleKeyboard(this.subSceneAdapter);
+		this.cameraController.enableCamera(this.subSceneAdapter);
 	}
 
 	private void initDragController() {
