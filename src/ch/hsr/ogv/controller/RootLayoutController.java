@@ -261,6 +261,27 @@ public class RootLayoutController implements Observer, Initializable {
 		}
 	}
 
+	private void showObjects(boolean show) {
+		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
+			if (modelBox instanceof ModelObject) {
+				PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
+				paneBox.setVisible(show);
+
+				if (paneBox.isSelected() && this.selectionController != null) {
+					this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+				}
+
+				for (Endpoint endpoint : modelBox.getEndpoints()) {
+					Arrow arrow = this.mvConnector.getArrow(endpoint.getRelation());
+					arrow.setVisible(show);
+					if (arrow.isSelected() && this.selectionController != null) {
+						this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+					}
+				}
+			}
+		}
+	}
+	
 	@FXML
 	private void handleShowObjects() {
 		if (this.showObjects.isSelected()) {
@@ -275,24 +296,7 @@ public class RootLayoutController implements Observer, Initializable {
 			this.subSceneAdapter.setYSpaceVisible(false);
 		}
 
-		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
-			if (modelBox instanceof ModelObject) {
-				PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
-				paneBox.setVisible(this.showObjects.isSelected());
-
-				if (paneBox.isSelected() && this.selectionController != null) {
-					this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-				}
-
-				for (Endpoint endpoint : modelBox.getEndpoints()) {
-					Arrow arrow = this.mvConnector.getArrow(endpoint.getRelation());
-					arrow.setVisible(this.showObjects.isSelected());
-					if (arrow.isSelected() && this.selectionController != null) {
-						this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-					}
-				}
-			}
-		}
+		showObjects(this.showObjects.isSelected());
 	}
 
 	@FXML

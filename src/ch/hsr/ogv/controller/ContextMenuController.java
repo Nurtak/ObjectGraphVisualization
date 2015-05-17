@@ -50,12 +50,13 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem renameClass;
 	private MenuItem addAttribute;
 	private MenuItem deleteClass;
-
-	// Object
-	private ContextMenu objectCM;
-	private MenuItem renameObject;
-	private MenuItem deleteObject;
-
+	
+	// Attribute
+	private MenuItem renameAttribute;
+	private MenuItem moveAttributeUp;
+	private MenuItem moveAttributeDown;
+	private MenuItem deleteAttribute;
+	
 	// Relation
 	private ContextMenu relationCM;
 	private MenuItem changeDirection;
@@ -74,19 +75,19 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem createGeneralization;
 	private MenuItem createDependency;
 
-	private volatile boolean atLineSelectionHelper = false;
-	private volatile boolean atStartSelectionHelper = false;
-	private volatile boolean atEndSelectionHelper = false;
-
-	// Attribute
-	private MenuItem renameAttribute;
-	private MenuItem moveAttributeUp;
-	private MenuItem moveAttributeDown;
-	private MenuItem deleteAttribute;
-
+	// Object
+	private ContextMenu objectCM;
+	private MenuItem renameObject;
+	private MenuItem createObjectRelation;
+	private MenuItem deleteObject;
+	
 	// Value (Attribute)
 	private MenuItem setValue;
 	private MenuItem deleteValue;
+
+	private volatile boolean atLineSelectionHelper = false;
+	private volatile boolean atStartSelectionHelper = false;
+	private volatile boolean atEndSelectionHelper = false;
 
 	public void setRelationCreationController(RelationCreationController relationCreationProcess) {
 		this.relationCreationController = relationCreationProcess;
@@ -124,7 +125,7 @@ public class ContextMenuController extends Observable implements Observer {
 		classCM = new ContextMenu();
 		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF, classCM);
 		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF, classCM);
-		getClassRelationMenu("Create Relation", Resource.RELATION_GIF, classCM);
+		getClassRelationMenu("Class Relation", Resource.RELATION_GIF, classCM);
 		addAttribute = getMenuItem("Add Attribute", Resource.ADD_ATTR_GIF, classCM);
 		classCM.getItems().add(new SeparatorMenuItem());
 		renameAttribute = getMenuItem("Rename Attribute", Resource.RENAME_ATTR_GIF, classCM);
@@ -137,6 +138,7 @@ public class ContextMenuController extends Observable implements Observer {
 		// Object
 		objectCM = new ContextMenu();
 		renameObject = getMenuItem("Rename Object", Resource.RENAME_GIF, objectCM);
+		createObjectRelation = getMenuItem("Object Relation", Resource.OBJRELATION_GIF, objectCM);
 		objectCM.getItems().add(new SeparatorMenuItem());
 		setValue = getMenuItem("Set Value", Resource.RENAME_ATTR_GIF, objectCM);
 		deleteValue = getMenuItem("Delete Value", Resource.DELETE_PNG, objectCM);
@@ -490,6 +492,12 @@ public class ContextMenuController extends Observable implements Observer {
 		// Object
 		renameObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleRenameClassOrObject(selected);
+		});
+		createObjectRelation.setOnAction((ActionEvent e) -> {
+			if (selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectedPaneBox, RelationType.OBJDIAGRAM);
+			}
 		});
 		deleteObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);

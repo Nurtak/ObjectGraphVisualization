@@ -208,7 +208,7 @@ public class StageManager implements Observer {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
-		paneBox.setColor(PaneBox.DEFAULT_COLOR);
+		paneBox.setColor(modelClass.getColor());
 		paneBox.setTopUnderline(false);
 		paneBox.setAllCenterGrid(false);
 		addPaneBoxControls(modelClass, paneBox);

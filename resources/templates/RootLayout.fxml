@@ -165,6 +165,7 @@
                         <Insets left="3.0" />
                      </padding>
                   </Separator>
+                  <Label text="Class Relation:" />
                   <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
                     <items>
                         <MenuItem fx:id="createUndirectedAssociation" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association">
@@ -254,6 +255,7 @@
                         </ImageView>
                      </graphic>
                   </SplitMenuButton>
+                  <Separator orientation="VERTICAL" prefHeight="30.0" visible="false" />
                   <ToggleButton fx:id="createObjectRelation" mnemonicParsing="false" onAction="#handleCreateObjectRelation" text="Object Relation" toggleGroup="$createToolbar">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
