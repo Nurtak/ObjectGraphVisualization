@@ -69,7 +69,7 @@ public class PaneBox implements Selectable {
 
 	private volatile Label selectedLabel = null;
 
-	private volatile boolean showCenterGrid = false;
+	private volatile int indexCenterGrid = -1; // row index of centerlabels, where grid should begin, -1: no center grid
 
 	private Color color;
 	private Cuboid box;
@@ -348,46 +348,59 @@ public class PaneBox implements Selectable {
 		}
 		return null;
 	}
-
-	public boolean isShowCenterGrid() {
-		return this.showCenterGrid;
+	
+	public boolean isAllCenterGrid() {
+		return this.indexCenterGrid == 0;
+	}
+	
+	public boolean isNoCenterGrid() {
+		return this.indexCenterGrid == -1;
+	}
+	
+	public void setAllCenterGrid(boolean all) {
+		if(all) {
+			this.indexCenterGrid = 0;
+		}
+		else {
+			this.indexCenterGrid = -1;
+		}
+	}
+	
+	public boolean hasCenterGrid(int index) {
+		return this.indexCenterGrid != -1 && index <= this.indexCenterGrid && index < this.centerLabels.size();
 	}
 
-	public void showCenterGrid(boolean value) {
-		this.showCenterGrid = value;
+	public void setIndexCenterGrid(int index) {
+		this.indexCenterGrid = index;
 		recalcHasCenterGrid();
 	}
 
 	public void recalcHasCenterGrid() {
 		for (int i = 0; i < this.centerLabels.size(); i++) {
 			Label centerLabel = this.centerLabels.get(i);
+			centerLabel.setBorder(null);
 			boolean isLast = true;
 			if (i < this.centerLabels.size() - 1) {
 				Label nextCenterLabel = this.centerLabels.get(i + 1);
 				isLast = !nextCenterLabel.isVisible();
 			}
-			if (isLast) {
-				showCenterGrid(centerLabel, true);
-			}
-			else {
-				showCenterGrid(centerLabel, false);
+			if (!(this.indexCenterGrid <= -1) && i >= this.indexCenterGrid) {
+				showCenterGrid(centerLabel, isLast);
 			}
 		}
 	}
 
 	private void showCenterGrid(Label centerLabel, boolean isLast) {
 		Border border = null;
-		if (isShowCenterGrid()) {
-			BorderStroke bsMiddle = new BorderStroke(Color.BLACK, Color.BLACK, Color.TRANSPARENT, Color.BLACK, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-					BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1), null);
-			BorderStroke bsLast = new BorderStroke(Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-					BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1), null);
-			if (!isLast) {
-				border = new Border(bsMiddle);
-			}
-			else {
-				border = new Border(bsLast);
-			}
+		BorderStroke bsMiddle = new BorderStroke(Color.BLACK, Color.BLACK, Color.TRANSPARENT, Color.BLACK, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+				BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1), null);
+		BorderStroke bsLast = new BorderStroke(Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
+				BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1), null);
+		if (!isLast) {
+			border = new Border(bsMiddle);
+		}
+		else {
+			border = new Border(bsLast);
 		}
 		centerLabel.setBorder(border);
 	}
@@ -469,7 +482,7 @@ public class PaneBox implements Selectable {
 		else {
 			this.selectedLabel = null;
 			label.setBorder(null);
-			showCenterGrid(isShowCenterGrid());
+			recalcHasCenterGrid();
 		}
 	}
 

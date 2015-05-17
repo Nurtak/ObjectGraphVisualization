@@ -210,7 +210,7 @@ public class StageManager implements Observer {
 		paneBox.setDepth(PaneBox.CLASSBOX_DEPTH);
 		paneBox.setColor(PaneBox.DEFAULT_COLOR);
 		paneBox.setTopUnderline(false);
-		paneBox.showCenterGrid(false);
+		paneBox.setAllCenterGrid(false);
 		addPaneBoxControls(modelClass, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
@@ -223,7 +223,7 @@ public class StageManager implements Observer {
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
 		paneBox.setColor(modelObject.getColor());
 		paneBox.setTopUnderline(true);
-		paneBox.showCenterGrid(true);
+		paneBox.setAllCenterGrid(true);
 		addPaneBoxControls(modelObject, paneBox);
 		addToSubScene(paneBox.get());
 		addToSubScene(paneBox.getSelection());
