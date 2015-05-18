@@ -224,7 +224,7 @@ public class Arrow extends Group implements Selectable {
 		setEndPoint(endBox.getCenterPoint());
 		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox);
 		if (endIntersection != null) {
-			setEndPoint(new Point3D(endIntersection.getX(), this.startPoint.getY(), endIntersection.getY()));
+			setEndPoint(new Point3D(endIntersection.getX(), this.endPoint.getY(), endIntersection.getY()));
 		}
 		this.boxDistance = this.startPoint.distance(this.endPoint);
 	}

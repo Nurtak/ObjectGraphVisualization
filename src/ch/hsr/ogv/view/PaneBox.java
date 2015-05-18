@@ -340,6 +340,13 @@ public class PaneBox implements Selectable {
 		}
 		return BASE_HEIGHT + (countCenterLabels - 1) * CENTER_LABEL_HEIGHT;
 	}
+	
+	public Point3D getCenterLabelEndPos(int centerLabelIndex) {
+		if(centerLabelIndex < 0 || centerLabelIndex >= this.centerLabels.size()) {
+			return new Point3D(getTranslateX(), getTranslateY() + getDepth() / 2, getTranslateZ());
+		}
+		return new Point3D(getTranslateX(), getTranslateY() + getDepth() / 2, getTranslateZ());
+	}
 
 	public GridPane getCenter() {
 		Node centerNode = this.borderPane.getCenter();

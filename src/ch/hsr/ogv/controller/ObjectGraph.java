@@ -3,6 +3,7 @@ package ch.hsr.ogv.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.geometry.Point3D;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
@@ -124,7 +125,7 @@ public class ObjectGraph {
 					ModelObject firstRefObject = modelObjects.get(0);
 					PaneBox firstRefBox = this.mvConnector.getPaneBox(firstRefObject);
 					if(firstRefBox != null) {
-						Arrow refArrow = new Arrow(paneBox, firstRefBox, RelationType.OBJGRAPH);
+						Arrow refArrow = new Arrow(paneBox.getCenterLabelEndPos(i + origSize), firstRefBox, RelationType.OBJGRAPH);
 						addGraphArrow(refArrow);
 					}
 				}
