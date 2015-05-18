@@ -33,6 +33,9 @@ public class Arrow extends Group implements Selectable {
 	private double rotateZAngle;
 	private double rotateXAngle;
 
+	private int arrowNumberActual;
+	private int arrowNumberTotal;
+
 	private Point3D startPoint;
 	private Point3D endPoint;
 
@@ -507,6 +510,19 @@ public class Arrow extends Group implements Selectable {
 
 	public double getRotateXAngle() {
 		return this.rotateXAngle;
+	}
+
+	public void setArrowNumberActual(int arrowNumberActual) {
+		this.arrowNumberActual = arrowNumberActual;
+	}
+
+	public void setArrowNumberTotal(int arrowNumberTotal) {
+		this.arrowNumberTotal = arrowNumberTotal;
+	}
+
+	public void arrange(int i, int size) {
+		System.out.println("arrange! i: " + i + " size: " + size);
+
 	}
 
 }
