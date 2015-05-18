@@ -229,7 +229,7 @@ public class Persistancy {
 		if (newStartBox == null || newEndBox == null)
 			return;
 
-		Relation newRelation = modelManager.createRelation(newStartBox, newEndBox, loadedRelation.getType(), loadedRelation.getColor());
+		Relation newRelation = modelManager.createRelation(newStartBox, newEndBox, loadedRelation.getRelationType(), loadedRelation.getColor());
 		if (newRelation != null) {
 			loadedRoleMultiToModel(newRelation, loadedRelation);
 		}

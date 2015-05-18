@@ -111,7 +111,7 @@ public class ModelManager extends Observable {
 			end.getEndpoints().add(relation.getEnd());
 			relations.add(relation);
 
-			if (RelationType.GENERALIZATION.equals(relation.getType()) && start instanceof ModelClass) {
+			if (RelationType.GENERALIZATION.equals(relation.getRelationType()) && start instanceof ModelClass) {
 				buildGeneralizationObjects((ModelClass) start);
 			}
 
@@ -242,7 +242,7 @@ public class ModelManager extends Observable {
 	}
 	
 	public boolean deleteRelation(Relation relation) {
-		if (RelationType.GENERALIZATION.equals(relation.getType())) {
+		if (RelationType.GENERALIZATION.equals(relation.getRelationType())) {
 			cleanupGeneralizationObjects(relation);
 		}
 		boolean deletedRelation = relations.remove(relation);

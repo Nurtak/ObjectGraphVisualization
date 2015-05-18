@@ -79,8 +79,7 @@ public class Arrow extends Group implements Selectable {
 		buildArrow();
 		drawArrow();
 	}
-
-
+	
 	public Point3D getStartPoint() {
 		return startPoint;
 	}
@@ -227,10 +226,11 @@ public class Arrow extends Group implements Selectable {
 		setEndPoint(endBox.getCenterPoint());
 		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox);
 		if (endIntersection != null) {
-			setEndPoint(new Point3D(endIntersection.getX(), this.startPoint.getY(), endIntersection.getY()));
+			setEndPoint(new Point3D(endIntersection.getX(), this.endPoint.getY(), endIntersection.getY()));
 		}
 		this.boxDistance = this.startPoint.distance(this.endPoint);
 	}
+	
 
 	public void setPointsBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
 		setStartPoint(startBox.getCenterPoint());
@@ -293,17 +293,16 @@ public class Arrow extends Group implements Selectable {
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 
-	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box) {
-		Point3D boxCenter = box.getCenterPoint();
-		double halfWidth = box.getWidth() / 2;
-		double halfHeight = box.getHeight() / 2;
-
+	private Point2D lineRectangleIntersection(Point3D externalPoint, Point3D center, double width, double height) {
+		double halfWidth = width / 2;
+		double halfHeight = height / 2;
+		
 		Point2D lineStart = new Point2D(externalPoint.getX(), externalPoint.getZ());
-		Point2D lineEnd = new Point2D(boxCenter.getX(), boxCenter.getZ());
-		Point2D northEast = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() + halfHeight);
-		Point2D southEast = new Point2D(boxCenter.getX() - halfWidth, boxCenter.getZ() - halfHeight);
-		Point2D southWest = new Point2D(boxCenter.getX() + halfWidth, boxCenter.getZ() - halfHeight);
-		Point2D northWest = new Point2D(boxCenter.getX() + halfWidth, boxCenter.getZ() + halfHeight);
+		Point2D lineEnd = new Point2D(center.getX(), center.getZ());
+		Point2D northEast = new Point2D(center.getX() - halfWidth, center.getZ() + halfHeight);
+		Point2D southEast = new Point2D(center.getX() - halfWidth, center.getZ() - halfHeight);
+		Point2D southWest = new Point2D(center.getX() + halfWidth, center.getZ() - halfHeight);
+		Point2D northWest = new Point2D(center.getX() + halfWidth, center.getZ() + halfHeight);
 
 		Point2D interEastHeight = GeometryUtil.lineIntersect(lineStart, lineEnd, northEast, southEast);
 		Point2D interWestHeight = GeometryUtil.lineIntersect(lineStart, lineEnd, northWest, southWest);
@@ -323,6 +322,10 @@ public class Arrow extends Group implements Selectable {
 			return interSouthWidth;
 		}
 		return null;
+	}
+	
+	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box) {
+		return lineRectangleIntersection(externalPoint, box.getCenterPoint(), box.getWidth(), box.getHeight());
 	}
 
 	private ArrayList<Point3D> divideLine(Point3D start, Point3D end, int count) {

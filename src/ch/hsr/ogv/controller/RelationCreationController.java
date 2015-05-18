@@ -202,7 +202,7 @@ public class RelationCreationController extends Observable implements Observer {
 			}
 			if(startClass != null && !baseRelations.isEmpty()) { // no object relation at Generalization / Dependency
 				for(Relation baseRelation : baseRelations) {
-					if(baseRelation.getType().equals(RelationType.GENERALIZATION) || baseRelation.getType().equals(RelationType.DEPENDENCY)) {
+					if(baseRelation.getRelationType().equals(RelationType.GENERALIZATION) || baseRelation.getRelationType().equals(RelationType.DEPENDENCY)) {
 						return false;
 					}
 				}

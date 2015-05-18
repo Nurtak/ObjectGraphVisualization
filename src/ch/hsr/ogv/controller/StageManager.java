@@ -245,7 +245,7 @@ public class StageManager implements Observer {
 		PaneBox startViewBox = this.mvConnector.getPaneBox(startModelBox);
 		PaneBox endViewBox = this.mvConnector.getPaneBox(endModelBox);
 		if (startViewBox != null && endViewBox != null) {
-			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getType());
+			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getRelationType());
 			addArrowControls(arrow, relation);
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
@@ -341,7 +341,7 @@ public class StageManager implements Observer {
 		PaneBox startPaneBox = this.mvConnector.getPaneBox(startModelBox);
 		PaneBox endPaneBox = this.mvConnector.getPaneBox(endModelBox);
 
-		changedArrow.setType(relation.getType());
+		changedArrow.setType(relation.getRelationType());
 		changedArrow.setPointsBasedOnBoxes(startPaneBox, endPaneBox);
 		changedArrow.drawArrow();
 		this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);

@@ -64,7 +64,7 @@ public class Relation extends Observable {
 		this.end = end;
 	}
 
-	public RelationType getType() {
+	public RelationType getRelationType() {
 		return type;
 	}
 

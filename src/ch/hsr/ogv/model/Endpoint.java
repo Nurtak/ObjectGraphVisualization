@@ -109,5 +109,12 @@ public class Endpoint {
 		}
 		return false;
 	}
+	
+	public boolean isEnd() {
+		if (relation != null) {
+			return relation.isEnd(this);
+		}
+		return false;
+	}
 
 }
