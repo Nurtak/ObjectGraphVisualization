@@ -56,6 +56,28 @@ public class Arrow extends Group implements Selectable {
 	private Box startSelectionHelper;
 	private Box endSelectionHelper;
 
+	public Arrow(PaneBox startBox, Point3D endPoint, RelationType type) {
+		setPoints(startBox, endPoint);
+		this.type = type;
+		buildArrow();
+		drawArrow();
+	}
+
+	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
+		setPointsBasedOnBoxes(startBox, endBox);
+		this.type = type;
+		buildArrow();
+		drawArrow();
+	}
+
+	public Arrow(Point3D startPoint, PaneBox endBox, RelationType type) {
+		setPoints(startPoint, endBox);
+		this.type = type;
+		buildArrow();
+		drawArrow();
+	}
+
+
 	public Point3D getStartPoint() {
 		return startPoint;
 	}
@@ -117,20 +139,6 @@ public class Arrow extends Group implements Selectable {
 
 	public Box getEndSelectionHelper() {
 		return endSelectionHelper;
-	}
-
-	public Arrow(PaneBox startBox, Point3D endPoint, RelationType type) {
-		setPoints(startBox, endPoint);
-		this.type = type;
-		buildArrow();
-		drawArrow();
-	}
-
-	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
-		setPointsBasedOnBoxes(startBox, endBox);
-		this.type = type;
-		buildArrow();
-		drawArrow();
 	}
 
 	private void buildArrow() {
@@ -207,6 +215,16 @@ public class Arrow extends Group implements Selectable {
 		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox);
 		if (startIntersection != null) {
 			setStartPoint(new Point3D(startIntersection.getX(), this.startPoint.getY(), startIntersection.getY()));
+		}
+		this.boxDistance = this.startPoint.distance(this.endPoint);
+	}
+
+	public void setPoints(Point3D startPoint, PaneBox endBox) {
+		setStartPoint(startPoint);
+		setEndPoint(endBox.getCenterPoint());
+		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox);
+		if (endIntersection != null) {
+			setEndPoint(new Point3D(endIntersection.getX(), this.startPoint.getY(), endIntersection.getY()));
 		}
 		this.boxDistance = this.startPoint.distance(this.endPoint);
 	}
