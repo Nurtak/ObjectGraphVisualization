@@ -9,6 +9,7 @@ import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.MultiplicityParser;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
@@ -81,12 +82,12 @@ public class ObjectGraph {
 		paneBox.setColor(modelObject.getColor());
 		paneBox.setTranslateXYZ(modelObject.getCoordinates());
 		paneBox.setWidth(modelObject.getWidth());
-		paneBox.setHeight(modelObject.getHeight());
+		paneBox.setMinHeight(modelObject.getHeight());
 		
 		buildGraphAttributes(paneBox, modelObject);
 		
 		ObjectGraphWrapper ogWrapper = new ObjectGraphWrapper(modelObject);
-		buildGraphReferences(paneBox, modelObject);
+		buildGraphReferences(paneBox, ogWrapper);
 
 		addGraphBox(paneBox);
 	}
@@ -109,26 +110,31 @@ public class ObjectGraph {
 		}
 	}
 
-	private void buildGraphReferences(PaneBox paneBox, ModelObject modelObject) {
-		List<String> roleNames = getRoleAttributes(modelObject);
+	private void buildGraphReferences(PaneBox paneBox, ObjectGraphWrapper ogWrapper) {
 		int origSize = paneBox.getCenterLabels().size();
-		for (int i = origSize; i < origSize + roleNames.size(); i++) {
-			String roleName = roleNames.get(i - origSize);
-			paneBox.setCenterText(i, roleName + " " + MultiplicityParser.ASTERISK, "");
+		for (int i = 0; i < ogWrapper.getClassRelations().size(); i++) {
+			Relation relation = ogWrapper.getClassRelations().get(i);
+			String roleName = ogWrapper.getReferenceNames().get(relation);
+			paneBox.setCenterText(origSize + i, roleName + " " + MultiplicityParser.ASTERISK, "");
+			
+			String upperBound = ogWrapper.getAllocates().get(relation);
+			if(upperBound != null && !upperBound.isEmpty() && upperBound.equals("1")) { // direct reference
+				ArrayList<ModelObject> modelObjects = ogWrapper.getReferences().get(relation);
+				if (!modelObjects.isEmpty()) {
+					ModelObject firstRefObject = modelObjects.get(0);
+					PaneBox firstRefBox = this.mvConnector.getPaneBox(firstRefObject);
+					if(firstRefBox != null) {
+						Arrow refArrow = new Arrow(paneBox, firstRefBox, RelationType.OBJGRAPH);
+						addGraphArrow(refArrow);
+					}
+				}
+			}
+			else { // create array object in between
+				
+			}
 		}
 		paneBox.recalcHasCenterGrid();
 		paneBox.setHeight(paneBox.calcMinHeight());
-	}
-
-	private List<String> getRoleAttributes(ModelObject modelObject) {
-		List<String> roleNames = new ArrayList<String>();
-		for (Endpoint endpoint : modelObject.getModelClass().getEndpoints()) {
-			String roleName = endpoint.getFriend().getRoleName();
-			if (roleName != null && !roleName.isEmpty()) {
-				roleNames.add(roleName);
-			}
-		}
-		return roleNames;
 	}
 
 	public void buildGraphRelation(Relation relation) {

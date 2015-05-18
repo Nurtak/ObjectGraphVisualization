@@ -8,6 +8,7 @@ import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.MultiplicityParser;
 
 /**
@@ -23,6 +24,22 @@ public class ObjectGraphWrapper {
 	private HashMap<Relation, String> allocates = new HashMap<Relation, String>(); // k: class relation, v: upper multiplicity bound
 	private HashMap<Relation, String> referenceNames = new HashMap<Relation, String>(); // k: class relation, v: role name / mClass
 	private HashMap<Relation, ArrayList<ModelObject>> references = new HashMap<Relation, ArrayList<ModelObject>>(); // k: class relation, v: list of referenced objects.
+	
+	public ArrayList<Relation> getClassRelations() {
+		return classRelations;
+	}
+
+	public HashMap<Relation, String> getAllocates() {
+		return allocates;
+	}
+
+	public HashMap<Relation, String> getReferenceNames() {
+		return referenceNames;
+	}
+
+	public HashMap<Relation, ArrayList<ModelObject>> getReferences() {
+		return references;
+	}
 
 	public ObjectGraphWrapper(ModelObject modelObject) {
 		this.modelObject = modelObject;
@@ -34,8 +51,14 @@ public class ObjectGraphWrapper {
 
 	private void setHelpers() {
 		for (Endpoint endpoint : this.modelObject.getModelClass().getEndpoints()) {
-			this.classRelations.add(endpoint.getRelation());
-			this.classFriendEndpoints.add(endpoint.getFriend());
+			Endpoint friendEndpoint = endpoint.getFriend();
+			Relation relation = endpoint.getRelation();
+			if (!RelationType.DEPENDENCY.equals(relation.getRelationType())
+				&& !RelationType.GENERALIZATION.equals(relation.getRelationType())
+				&& (endpoint.getFriend().isEnd() || RelationType.BIDIRECTED_ASSOCIATION.equals(relation.getRelationType()))) {
+				this.classRelations.add(relation);
+				this.classFriendEndpoints.add(friendEndpoint);
+			}
 		}
 		for(Relation relation : this.classRelations) {
 			this.references.put(relation, new ArrayList<ModelObject>());
