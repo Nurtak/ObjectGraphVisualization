@@ -256,7 +256,7 @@ public class StageManager implements Observer {
 			List<Relation> relationList = mvConnector.getModelManager().getRelationsBetween(startModelBox, endModelBox);
 			if (relationList.size() > 1) {
 				for (int i = 0; i < relationList.size(); i++) {
-					mvConnector.getArrow(relationList.get(i)).arrange(i, relationList.size());
+					mvConnector.getArrow(relationList.get(i)).arrangeEndpoints(i, relationList.size());
 				}
 			}
 		}

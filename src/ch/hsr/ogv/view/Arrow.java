@@ -33,8 +33,8 @@ public class Arrow extends Group implements Selectable {
 	private double rotateZAngle;
 	private double rotateXAngle;
 
-	private int arrowNumberActual;
-	private int arrowNumberTotal;
+	private int actualArrowNumber = 0;
+	private int totalArrowNumber = 1;
 
 	private Point3D startPoint;
 	private Point3D endPoint;
@@ -79,7 +79,7 @@ public class Arrow extends Group implements Selectable {
 		buildArrow();
 		drawArrow();
 	}
-	
+
 	public Point3D getStartPoint() {
 		return startPoint;
 	}
@@ -230,11 +230,19 @@ public class Arrow extends Group implements Selectable {
 		}
 		this.boxDistance = this.startPoint.distance(this.endPoint);
 	}
-	
+
 
 	public void setPointsBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
 		setStartPoint(startBox.getCenterPoint());
 		setEndPoint(endBox.getCenterPoint());
+
+		if (totalArrowNumber > 1) {
+			//			if (startBox.getCenterPoint().) {
+			//
+			//			}
+			//			setStartPoint();
+			//			setEndPoint();
+		}
 		Point2D startIntersection = lineBoxIntersection(this.endPoint, startBox);
 		Point2D endIntersection = lineBoxIntersection(this.startPoint, endBox);
 		if (startIntersection != null) {
@@ -296,7 +304,7 @@ public class Arrow extends Group implements Selectable {
 	private Point2D lineRectangleIntersection(Point3D externalPoint, Point3D center, double width, double height) {
 		double halfWidth = width / 2;
 		double halfHeight = height / 2;
-		
+
 		Point2D lineStart = new Point2D(externalPoint.getX(), externalPoint.getZ());
 		Point2D lineEnd = new Point2D(center.getX(), center.getZ());
 		Point2D northEast = new Point2D(center.getX() - halfWidth, center.getZ() + halfHeight);
@@ -323,7 +331,7 @@ public class Arrow extends Group implements Selectable {
 		}
 		return null;
 	}
-	
+
 	private Point2D lineBoxIntersection(Point3D externalPoint, PaneBox box) {
 		return lineRectangleIntersection(externalPoint, box.getCenterPoint(), box.getWidth(), box.getHeight());
 	}
@@ -515,16 +523,10 @@ public class Arrow extends Group implements Selectable {
 		return this.rotateXAngle;
 	}
 
-	public void setArrowNumberActual(int arrowNumberActual) {
-		this.arrowNumberActual = arrowNumberActual;
-	}
-
-	public void setArrowNumberTotal(int arrowNumberTotal) {
-		this.arrowNumberTotal = arrowNumberTotal;
-	}
-
-	public void arrange(int i, int size) {
-		System.out.println("arrange! i: " + i + " size: " + size);
+	public void arrangeEndpoints(int actualArrowNumber, int totalArrowNumber) {
+		System.out.println("arrange! i: " + actualArrowNumber + " size: " + totalArrowNumber);
+		this.actualArrowNumber = actualArrowNumber;
+		this.totalArrowNumber = totalArrowNumber;
 
 	}
 
