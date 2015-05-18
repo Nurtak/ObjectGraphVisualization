@@ -1,6 +1,7 @@
 package ch.hsr.ogv.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -135,7 +136,7 @@ public class StageManager implements Observer {
 	private void initObjectGraph() {
 		this.objectGraph = new ObjectGraph(this.mvConnector, this.subSceneAdapter);
 	}
-	
+
 	private void initPersistancy() {
 		UserPreferences.setOGVFilePath(null); // reset user preferences of file path
 		persistancy = new Persistancy(this.mvConnector.getModelManager());
@@ -236,7 +237,7 @@ public class StageManager implements Observer {
 		addToSubScene(paneBox.getSelection());
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
-	
+
 	private void showArrowInView(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
@@ -248,8 +249,16 @@ public class StageManager implements Observer {
 			addArrowControls(arrow, relation);
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
+
 			this.mvConnector.putArrows(relation, arrow);
 			this.contextMenuController.enableContextMenu(arrow, relation);
+
+			List<Relation> relationList = mvConnector.getModelManager().getRelationsBetween(startModelBox, endModelBox);
+			if (relationList.size() > 1) {
+				for (int i = 0; i < relationList.size(); i++) {
+					mvConnector.getArrow(relationList.get(i)).arrangeEndpoints(i, relationList.size());
+				}
+			}
 		}
 	}
 
@@ -549,7 +558,7 @@ public class StageManager implements Observer {
 			this.contextMenuController.enableCenterFieldContextMenu(modelObject, changedBox, this.subSceneAdapter);
 		}
 	}
-	
+
 	@Override
 	public void update(Observable o, Object arg) {
 		if (o instanceof ModelManager && arg instanceof ModelClass) {
