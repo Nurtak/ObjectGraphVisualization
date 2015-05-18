@@ -55,7 +55,7 @@ public class PaneBox implements Selectable {
 
 	public final static double BASE_HEIGHT = 72.0; // required min height with one centerlabel (experience value)
 	public final static double LABEL_HEIGHT = 28.0;
-	private final static double BORDER_GAP = 4.0;
+	public final static double BORDER_GAP = 4.0;
 	public final static int MAX_CENTER_LABELS = Integer.MAX_VALUE; // was at 15 before
 
 	private Group paneBox = new Group();
@@ -347,7 +347,7 @@ public class PaneBox implements Selectable {
 			return new Point3D(getTranslateX(), getTranslateY(), getTranslateZ());
 		}
 		double z = getTranslateZ() + getHeight() - ((centerLabelIndex + 1) * LABEL_HEIGHT) - (LABEL_HEIGHT / 2) - BORDER_GAP;
-		return new Point3D(getTranslateX() - (getWidth() / 2), getTranslateY() - (getDepth() / 2), z);
+		return new Point3D(getTranslateX() - (getWidth() / 2), getTranslateY(), z);
 	}
 
 	public GridPane getCenter() {

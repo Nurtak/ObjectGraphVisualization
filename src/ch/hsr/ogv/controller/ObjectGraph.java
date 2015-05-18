@@ -12,6 +12,7 @@ import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.MultiplicityParser;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.ConnectorBox;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
@@ -24,6 +25,7 @@ public class ObjectGraph {
 
 	private List<PaneBox> boxes = new ArrayList<PaneBox>();
 	private List<Arrow> arrows = new ArrayList<Arrow>();
+	private List<ConnectorBox> connectorBoxes = new ArrayList<ConnectorBox>();
 
 	private ModelViewConnector mvConnector;
 	private SubSceneAdapter subSceneAdapter;
@@ -52,6 +54,12 @@ public class ObjectGraph {
 		this.subSceneAdapter.add(arrow);
 		arrow.applyCss();
 	}
+	
+	private void addGraphConnectorBox(ConnectorBox connectorBox) {
+		this.connectorBoxes.add(connectorBox);
+		this.subSceneAdapter.add(connectorBox);
+		connectorBox.applyCss();
+	}
 
 	private void removeGraphBox(PaneBox paneBox) {
 		this.subSceneAdapter.remove(paneBox.get());
@@ -61,6 +69,11 @@ public class ObjectGraph {
 	private void removeGraphArrow(Arrow arrow) {
 		this.subSceneAdapter.remove(arrow);
 		this.arrows.remove(arrow);
+	}
+	
+	private void removeGraphConnectorBox(ConnectorBox connectorBox) {
+		this.subSceneAdapter.remove(connectorBox);
+		this.connectorBoxes.remove(connectorBox);
 	}
 
 	public void setup() {
@@ -127,6 +140,7 @@ public class ObjectGraph {
 						Point3D labelPosition = paneBox.getCenterLabelEndPos(origSize + i);
 						Arrow refArrow = new Arrow(labelPosition, firstRefBox, RelationType.OBJGRAPH);
 						addGraphArrow(refArrow);
+						addGraphConnectorBox(new ConnectorBox(paneBox, origSize + i, refArrow));
 					}
 				}
 			}
@@ -149,6 +163,10 @@ public class ObjectGraph {
 		for (Arrow arrow : new ArrayList<Arrow>(this.arrows)) {
 			removeGraphArrow(arrow);
 		}
+		for (ConnectorBox connectorBox : new ArrayList<ConnectorBox>(this.connectorBoxes)) {
+			removeGraphConnectorBox(connectorBox);
+		}
+		
 		this.boxes.clear();
 		this.arrows.clear();
 	}
