@@ -200,7 +200,7 @@ public class ModelManager extends Observable {
 		}
 	}
 
-	private void cleanupGeneralizationObjects(Relation relation) {
+	private void cleanupGeneralizationObjects(Relation relation, List<ModelClass> beforeSuperClasses) {
 		ModelBox startModelBox = relation.getStart().getAppendant();
 		ModelBox endModelBox = relation.getEnd().getAppendant();
 		if (!(startModelBox instanceof ModelClass) || !(endModelBox instanceof ModelClass)) {
@@ -208,12 +208,14 @@ public class ModelManager extends Observable {
 		}
 		ModelClass startClass = (ModelClass) startModelBox;
 		List<ModelClass> subClasses = new ArrayList<ModelClass>(startClass.getSubClasses());
-		List<ModelClass> startSuperClasses = new ArrayList<ModelClass>(startClass.getSuperClasses());
 		subClasses.add(startClass);
 		for (ModelClass subClass : subClasses) {
-			for (ModelClass superClass : startSuperClasses) {
-				for (ModelObject subSuperObject : subClass.getSuperObjects(superClass)) {
-					deleteSuperObject(subClass, subSuperObject);
+			for (ModelClass superClass : beforeSuperClasses) {
+				List<ModelClass> afterSuperClasses = new ArrayList<ModelClass>(subClass.getSuperClasses());
+				if(!afterSuperClasses.contains(superClass)) {
+					for (ModelObject subSuperObject : subClass.getSuperObjects(superClass)) {
+						deleteSuperObject(subClass, subSuperObject);
+					}
 				}
 			}
 		}
@@ -242,8 +244,11 @@ public class ModelManager extends Observable {
 	}
 	
 	public boolean deleteRelation(Relation relation) {
-		if (RelationType.GENERALIZATION.equals(relation.getRelationType())) {
-			cleanupGeneralizationObjects(relation);
+		List<ModelClass> superClasses = new ArrayList<ModelClass>();
+		ModelBox startModelBox = relation.getStart().getAppendant();
+		if(RelationType.GENERALIZATION.equals(relation.getRelationType()) && startModelBox instanceof ModelClass) {
+			ModelClass startClass = (ModelClass) startModelBox;
+			superClasses = startClass.getSuperClasses();
 		}
 		boolean deletedRelation = relations.remove(relation);
 		if (deletedRelation) {
@@ -256,9 +261,15 @@ public class ModelManager extends Observable {
 
 			startBox.getEndpoints().remove(start);
 			endBox.getEndpoints().remove(end);
+			
+			if (RelationType.GENERALIZATION.equals(relation.getRelationType())) {
+				cleanupGeneralizationObjects(relation, superClasses);
+			}
+			
 			setChanged();
 			notifyObservers(relation);
 		}
+		
 		return deletedRelation;
 	}
 
