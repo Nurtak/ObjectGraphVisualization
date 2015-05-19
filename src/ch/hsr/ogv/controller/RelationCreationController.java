@@ -173,6 +173,7 @@ public class RelationCreationController extends Observable implements Observer {
 	}
 
 	private boolean checkRelation(ModelBox start, ModelBox end, RelationType relationType) {
+		ModelManager modelManager = this.mvConnector.getModelManager();
 		if (start == null || end == null || relationType == null) {
 			return false;
 		}
@@ -185,11 +186,22 @@ public class RelationCreationController extends Observable implements Observer {
 		else if (start instanceof ModelClass && (isObjectsRelation(relationType) || (relationType == RelationType.GENERALIZATION && !isCycleFree((ModelClass) start, (ModelClass) end)))) {
 			return false;
 		}
-		else if (start instanceof ModelObject && end instanceof ModelObject && isObjectsRelation(relationType)) {
+		else if (start instanceof ModelClass && end instanceof ModelClass) {
+			ModelClass startClass = (ModelClass) start;
+			ModelClass endClass = (ModelClass) end;
+			List<Relation> baseRelations = modelManager.getRelationsBetween(startClass, endClass);
+			for (Relation baseRelation : baseRelations) {
+				boolean bothGeneralization = relationType == RelationType.GENERALIZATION && baseRelation.getRelationType() == RelationType.GENERALIZATION;
+				boolean bothDependency = relationType == RelationType.DEPENDENCY && baseRelation.getRelationType() == RelationType.DEPENDENCY;
+				if (bothGeneralization || (bothDependency && baseRelation.getStart().getAppendant().equals(startClass))) {
+					return false;
+				}
+			}
+		}
+		if (start instanceof ModelObject && end instanceof ModelObject && isObjectsRelation(relationType)) {
 			ModelObject startObject = (ModelObject) start;
 			ModelObject endObject = (ModelObject) end;
 			ModelClass startClass = startObject.getModelClass();
-			ModelManager modelManager = this.mvConnector.getModelManager();
 
 			if (startObject.isSuperObject() || endObject.isSuperObject()) {
 				return false;

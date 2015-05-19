@@ -84,11 +84,14 @@ public class ObjectGraph {
 				ModelClass modelClass = (ModelClass) modelBox;
 				for (ModelObject modelObject : modelClass.getModelObjects()) {
 					createBox(modelObject);
+					for(ModelObject superModelObject : modelObject.getSuperObjects()) {
+						createBox(superModelObject);
+					}
 				}
 			}
 		}
 	}
-
+	
 	private PaneBox createBox(ModelObject modelObject) {
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
@@ -100,9 +103,11 @@ public class ObjectGraph {
 		paneBox.setMinHeight(modelObject.getHeight());
 
 		createBoxAttributes(paneBox, modelObject);
-
-		ObjectGraphWrapper ogWrapper = new ObjectGraphWrapper(modelObject);
-		buildReferences(paneBox, ogWrapper);
+		
+		if(!modelObject.isSuperObject()) {
+			ObjectGraphWrapper ogWrapper = new ObjectGraphWrapper(modelObject);
+			buildReferences(paneBox, ogWrapper);
+		}
 
 		add(paneBox);
 		return paneBox;
