@@ -313,6 +313,9 @@ public class ModelManager extends Observable {
 	
 	public List<Relation> getRelationsBetween(ModelBox thisModelBox, ModelBox otherModelBox) {
 		List<Relation> relationList = new ArrayList<Relation>();
+		if(thisModelBox == null || otherModelBox == null) {
+			return relationList;
+		}
 		for (Endpoint endpoint : thisModelBox.getEndpoints()) {
 			if (endpoint.getFriend() != null && endpoint.getFriend().getAppendant() != null && endpoint.getFriend().getAppendant().equals(otherModelBox)) {
 				relationList.add(endpoint.getRelation());

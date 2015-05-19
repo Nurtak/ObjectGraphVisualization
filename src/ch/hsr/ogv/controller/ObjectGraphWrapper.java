@@ -25,6 +25,10 @@ public class ObjectGraphWrapper {
 	private HashMap<Relation, String> referenceNames = new HashMap<Relation, String>(); // k: class relation, v: role name / mClass
 	private HashMap<Relation, ArrayList<ModelObject>> references = new HashMap<Relation, ArrayList<ModelObject>>(); // k: class relation, v: list of referenced objects.
 	
+	public ModelObject getModelObject() {
+		return modelObject;
+	}
+	
 	public ArrayList<Relation> getClassRelations() {
 		return classRelations;
 	}

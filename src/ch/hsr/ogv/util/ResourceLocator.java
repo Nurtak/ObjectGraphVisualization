@@ -36,6 +36,7 @@ public class ResourceLocator {
 		EMPTY_ARROW_OBJ("models/empty_arrow.obj"),
 		FILLED_DIAMOND_OBJ("models/filled_diamond.obj"),
 		EMPTY_DIAMOND_OBJ("models/empty_diamond.obj"),
+		ARC_OBJ("models/arc.obj"),
 
 		UNDIRECTED_ASSOCIATION_GIF("images/menu/assoc.gif"),
 		DIRECTED_ASSOCIATION_GIF("images/menu/assoWithNav.gif"),

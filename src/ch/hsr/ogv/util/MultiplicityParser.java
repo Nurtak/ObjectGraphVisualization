@@ -218,6 +218,9 @@ public class MultiplicityParser {
 	}
 
 	public static Integer toInteger(String str) {
+		if(str == null || str.isEmpty()) {
+			return null;
+		}
 		try {
 			return Integer.parseInt(str);
 		}
@@ -227,6 +230,9 @@ public class MultiplicityParser {
 	}
 
 	private static BigInteger toBigInteger(String str) {
+		if(str == null || str.isEmpty()) {
+			return null;
+		}
 		try {
 			return new BigInteger(str);
 		}

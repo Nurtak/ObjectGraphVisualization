@@ -30,7 +30,7 @@ public class GeometryUtil {
 		return null;
 	}
 
-	public static double rotateZAngle(Point3D p1, Point3D p2) {
+	public static double rotateYAngle(Point3D p1, Point3D p2) {
 		double xDiff = p2.getX() - p1.getX();
 		double zDiff = p2.getZ() - p1.getZ();
 		return Math.toDegrees(Math.atan2(xDiff, zDiff));

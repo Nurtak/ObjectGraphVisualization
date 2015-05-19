@@ -177,7 +177,6 @@ public class ArrowLabel extends Group {
 	}
 	
 	public void setRotateYAxis(double degree) {
-		//getTransforms().add(new Rotate(degree, Rotate.Y_AXIS));
 		setRotationAxis(Rotate.Y_AXIS);
 		setRotate(degree);
 	}
