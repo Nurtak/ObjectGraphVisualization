@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.geometry.Point3D;
 import jfxtras.labs.util.Util;
 import ch.hsr.ogv.model.Attribute;
+import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
@@ -23,6 +24,8 @@ import ch.hsr.ogv.view.SubSceneAdapter;
  *
  */
 public class ObjectGraph {
+	
+	private final static double ARRAYBOX_LEVEL_DIFF = 100;
 
 	private List<PaneBox> boxes = new ArrayList<PaneBox>();
 	private List<Arrow> arrows = new ArrayList<Arrow>();
@@ -127,9 +130,10 @@ public class ObjectGraph {
 
 	private void buildReferences(PaneBox paneBox, ObjectGraphWrapper ogWrapper) {
 		int origSize = paneBox.getCenterLabels().size();
-		for (int i = 0; i < ogWrapper.getClassRelations().size(); i++) {
+		for (int i = 0; i < ogWrapper.getClassFriendEndpoints().size(); i++) {
 			int centerLabelIndex = origSize + i;
-			Relation relation = ogWrapper.getClassRelations().get(i);
+			Endpoint friendEndpoint = ogWrapper.getClassFriendEndpoints().get(i);
+			Relation relation = friendEndpoint.getRelation();
 			String roleName = ogWrapper.getReferenceNames().get(relation);
 			paneBox.setCenterText(centerLabelIndex, roleName + " " + MultiplicityParser.ASTERISK, "");
 
@@ -148,7 +152,7 @@ public class ObjectGraph {
 				if (upperBoundStr == null) {
 					upperBoundStr = MultiplicityParser.ASTERISK;
 				}
-				PaneBox arrayBox = createArrayBox(ogWrapper.getModelObject(), (ModelClass) relation.getEnd().getAppendant(), upperBoundStr);
+				PaneBox arrayBox = createArrayBox(ogWrapper.getModelObject(), (ModelClass) friendEndpoint.getAppendant(), relation, upperBoundStr);
 				createBoxArrow(paneBox, arrayBox, centerLabelIndex, relation);
 				createArrayBoxAttributes(arrayBox, relation, ogWrapper);
 				createArrayBoxArrows(arrayBox, relation, ogWrapper);
@@ -168,7 +172,7 @@ public class ObjectGraph {
 		return refArrow;
 	}
 
-	private PaneBox createArrayBox(ModelObject modelObject, ModelClass modelClass, String upperBoundStr) {
+	private PaneBox createArrayBox(ModelObject modelObject, ModelClass modelClass, Relation relation, String upperBoundStr) {
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
 		paneBox.setTopText(" : " + modelClass.getName() + "[" + upperBoundStr + "]");
@@ -176,11 +180,30 @@ public class ObjectGraph {
 		paneBox.setIndexCenterGrid(0);
 		paneBox.setColor(Util.brighter(modelClass.getColor(), 0.1));
 		Point3D midpoint = modelObject.getCoordinates().midpoint(modelClass.getCoordinates());
+		// Point3D midmidpoint = modelObject.getCoordinates().midpoint(midpoint);
+		// double arrayBoxY = getArrayBoxLevel(modelObject, modelClass, relation);
 		paneBox.setTranslateXYZ(new Point3D(midpoint.getX(), modelObject.getY(), midpoint.getZ()));
 		paneBox.setWidth(PaneBox.MIN_WIDTH);
 		paneBox.setMinHeight(PaneBox.MIN_HEIGHT);
 		add(paneBox);
 		return paneBox;
+	}
+	
+	private double getArrayBoxLevel(ModelObject modelObject, ModelClass modelClass, Relation relation) {
+		List<Relation> relations = this.mvConnector.getModelManager().getRelationsBetween(modelObject.getModelClass(), modelClass);
+		int index = relations.indexOf(relation);
+		if(index >= 0) {
+			return modelObject.getY() + (index * ARRAYBOX_LEVEL_DIFF);
+		}
+		if(RelationType.BIDIRECTED_ASSOCIATION.equals(relation.getRelationType())) {
+			if(modelObject.equals(relation.getStart().getAppendant())) {
+				return modelObject.getY() + ARRAYBOX_LEVEL_DIFF;
+			}
+			else {
+				return modelObject.getY();
+			}
+		}
+		return modelObject.getY();
 	}
 
 	private void createArrayBoxAttributes(PaneBox arrayBox, Relation relation, ObjectGraphWrapper ogWrapper) {

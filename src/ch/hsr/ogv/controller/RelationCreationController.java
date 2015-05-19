@@ -176,7 +176,7 @@ public class RelationCreationController extends Observable implements Observer {
 		if (start == null || end == null || relationType == null) {
 			return false;
 		}
-		else if(!start.getClass().equals(end.getClass())) { // are both either of type ModelObject or ModelClass
+		else if (!start.getClass().equals(end.getClass())) { // are both either of type ModelObject or ModelClass
 			return false;
 		}
 		else if (start.equals(end)) { // TODO: reflexive relation
@@ -190,26 +190,26 @@ public class RelationCreationController extends Observable implements Observer {
 			ModelObject endObject = (ModelObject) end;
 			ModelClass startClass = startObject.getModelClass();
 			ModelManager modelManager = this.mvConnector.getModelManager();
-			
-			if(startObject.isSuperObject() || endObject.isSuperObject()) {
+
+			if (startObject.isSuperObject() || endObject.isSuperObject()) {
 				return false;
 			}
-			
-			List<Relation> objectRelations = modelManager.getRelationsBetween(startObject, endObject);
+
 			List<Relation> baseRelations = modelManager.getRelationsBetween(startClass, endObject.getModelClass());
-			if(startClass != null && baseRelations.isEmpty()) { // underlying classes are not connected
+			if (startClass != null && baseRelations.isEmpty()) { // underlying classes are not connected
 				return false;
 			}
-			if(startClass != null && !baseRelations.isEmpty()) { // no object relation at Generalization / Dependency
-				for(Relation baseRelation : baseRelations) {
-					if(baseRelation.getRelationType().equals(RelationType.GENERALIZATION) || baseRelation.getRelationType().equals(RelationType.DEPENDENCY)) {
+			if (startClass != null && !baseRelations.isEmpty()) { // no object relation at Generalization / Dependency
+				for (Relation baseRelation : baseRelations) {
+					if (baseRelation.getRelationType().equals(RelationType.GENERALIZATION) || baseRelation.getRelationType().equals(RelationType.DEPENDENCY)) {
 						return false;
 					}
 				}
 			}
-			if(baseRelations.size() <= objectRelations.size()) { // available base connections already covered
-				return false;
-			}
+			// List<Relation> objectRelations = modelManager.getRelationsBetween(startObject, endObject);
+			// if(baseRelations.size() <= objectRelations.size()) { // available base connections already covered
+			// return false;
+			// }
 		}
 		else if (start instanceof ModelObject && isClassesRelation(relationType)) {
 			return false;

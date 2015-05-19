@@ -118,15 +118,11 @@ public class RootLayoutController implements Observer, Initializable {
 		UserPreferences.setOGVFilePath(null);
 		this.mvConnector.handleClearAll();
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+		exitObjectGraphMode();
 		toggleToolbar(null);
 		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		handleCenterView();
 		MessageBar.setText("Initialized new workspace.", MessageLevel.INFO);
-		
-		if (this.objectGraphMode.isSelected()) {
-			this.objectGraphMode.setSelected(false);
-			handleObjectGraphMode();
-		}
 	}
 
 	/**
@@ -149,11 +145,7 @@ public class RootLayoutController implements Observer, Initializable {
 			UserPreferences.setOGVFilePath(file);
 			MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
 			persistancy.loadOGVDataAsync(file, new LoadCallback(this.primaryStage, this.appTitle, file));
-			
-			if (this.objectGraphMode.isSelected()) {
-				this.objectGraphMode.setSelected(false);
-				handleObjectGraphMode();
-			}
+			exitObjectGraphMode();
 		}
 	}
 
@@ -175,15 +167,11 @@ public class RootLayoutController implements Observer, Initializable {
 		File file = fileChooser.showOpenDialog(this.primaryStage);
 		if (file != null) {
 			UserPreferences.setXMIFilePath(file);
+			UserPreferences.setOGVFilePath(null);
 			MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
 			persistancy.loadXMIDataAsync(file, new ImportCallback(this.primaryStage, this.appTitle, file));
-			
-			if (this.objectGraphMode.isSelected()) {
-				this.objectGraphMode.setSelected(false);
-				handleObjectGraphMode();
-			}
+			exitObjectGraphMode();
 		}
-		UserPreferences.setOGVFilePath(null);
 	}
 
 	/**
@@ -535,6 +523,14 @@ public class RootLayoutController implements Observer, Initializable {
 		}
 	}
 	
+	private void exitObjectGraphMode() {
+		if (this.objectGraphMode.isSelected()) {
+			this.objectGraphMode.setSelected(false);
+		}
+		handleObjectGraphMode();
+	}
+	
+	
 	@FXML
 	private void handleObjectGraphMode() {
 		if(this.objectGraphMode.isSelected()) {
@@ -591,9 +587,8 @@ public class RootLayoutController implements Observer, Initializable {
 						this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 						this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 					}
-					else if (this.objectGraphMode.isSelected()) {
-						this.objectGraphMode.setSelected(false);
-						handleObjectGraphMode();
+					else {
+						exitObjectGraphMode();
 					}
 				});
 			});

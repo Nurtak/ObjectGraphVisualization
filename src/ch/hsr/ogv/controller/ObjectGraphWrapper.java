@@ -33,6 +33,11 @@ public class ObjectGraphWrapper {
 		return classRelations;
 	}
 
+	public ArrayList<Endpoint> getClassFriendEndpoints() {
+		return classFriendEndpoints;
+	}
+
+	
 	public HashMap<Relation, String> getAllocates() {
 		return allocates;
 	}
@@ -58,10 +63,15 @@ public class ObjectGraphWrapper {
 			Endpoint friendEndpoint = endpoint.getFriend();
 			Relation relation = endpoint.getRelation();
 			if (!RelationType.DEPENDENCY.equals(relation.getRelationType())
-				&& !RelationType.GENERALIZATION.equals(relation.getRelationType())
-				&& (endpoint.getFriend().isEnd() || RelationType.BIDIRECTED_ASSOCIATION.equals(relation.getRelationType()))) {
-				this.classRelations.add(relation);
-				this.classFriendEndpoints.add(friendEndpoint);
+				&& !RelationType.GENERALIZATION.equals(relation.getRelationType())) {
+				if((endpoint.getFriend().isEnd())) {
+					this.classRelations.add(relation);
+					this.classFriendEndpoints.add(friendEndpoint);
+				}
+				else if((endpoint.getFriend().isStart() && RelationType.BIDIRECTED_ASSOCIATION.equals(relation.getRelationType()))) {
+					this.classRelations.add(relation);
+					this.classFriendEndpoints.add(friendEndpoint);
+				}
 			}
 		}
 		for(Relation relation : this.classRelations) {
