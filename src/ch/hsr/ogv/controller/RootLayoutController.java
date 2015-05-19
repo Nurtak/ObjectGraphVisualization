@@ -122,6 +122,11 @@ public class RootLayoutController implements Observer, Initializable {
 		this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 		handleCenterView();
 		MessageBar.setText("Initialized new workspace.", MessageLevel.INFO);
+		
+		if (this.objectGraphMode.isSelected()) {
+			this.objectGraphMode.setSelected(false);
+			handleObjectGraphMode();
+		}
 	}
 
 	/**
@@ -144,6 +149,11 @@ public class RootLayoutController implements Observer, Initializable {
 			UserPreferences.setOGVFilePath(file);
 			MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
 			persistancy.loadOGVDataAsync(file, new LoadCallback(this.primaryStage, this.appTitle, file));
+			
+			if (this.objectGraphMode.isSelected()) {
+				this.objectGraphMode.setSelected(false);
+				handleObjectGraphMode();
+			}
 		}
 	}
 
@@ -167,6 +177,11 @@ public class RootLayoutController implements Observer, Initializable {
 			UserPreferences.setXMIFilePath(file);
 			MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
 			persistancy.loadXMIDataAsync(file, new ImportCallback(this.primaryStage, this.appTitle, file));
+			
+			if (this.objectGraphMode.isSelected()) {
+				this.objectGraphMode.setSelected(false);
+				handleObjectGraphMode();
+			}
 		}
 		UserPreferences.setOGVFilePath(null);
 	}

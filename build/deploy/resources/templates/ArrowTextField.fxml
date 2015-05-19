@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+
+<TextField cacheHint="SCALE_AND_ROTATE" depthTest="ENABLE" disable="true" editable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="21.0" snapToPixel="false" style="-fx-font-smoothing-type: gray;" stylesheets="@../css/TextInputSmall.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <padding>
+      <Insets left="5.0" right="5.0" />
+   </padding>
+   <font>
+      <Font size="10.0" />
+   </font>
+</TextField>

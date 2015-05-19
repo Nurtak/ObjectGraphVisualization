@@ -30,7 +30,7 @@ public class Arrow extends Group implements Selectable {
 	private static final double EDGE_SPACING = 3;
 	private static final double LABEL_SPACING = 30;
 	private double boxDistance;
-	private double rotateZAngle;
+	private double rotateYAngle;
 	private double rotateXAngle;
 
 	private int arrowNumber = 0;
@@ -310,19 +310,19 @@ public class Arrow extends Group implements Selectable {
 			dashedLine.setTranslateZ(dashedLineCoord.getZ() - dashedLine.getDepth() + (-endGap + startGap) / 4);
 		}
 
-		this.rotateZAngle = GeometryUtil.rotateZAngle(this.startPoint, this.endPoint);
+		this.rotateYAngle = GeometryUtil.rotateYAngle(this.startPoint, this.endPoint);
 		this.rotateXAngle = -GeometryUtil.rotateXAngle(this.startPoint, this.endPoint);
 
 		Point3D midPoint = this.startPoint.midpoint(this.endPoint);
 		setTranslateXYZ(midPoint);
-		addRotateYAxis(this.rotateZAngle);
+		addRotateYAxis(this.rotateYAngle);
 		addRotateXAxis(this.rotateXAngle);
 
-		this.labelStartLeft.setRotateYAxis(-this.rotateZAngle);
-		this.labelStartRight.setRotateYAxis(-this.rotateZAngle);
-		this.labelEndLeft.setRotateYAxis(-this.rotateZAngle);
-		this.labelEndRight.setRotateYAxis(-this.rotateZAngle);
-
+		this.labelStartLeft.setRotateYAxis(-this.rotateYAngle);
+		this.labelStartRight.setRotateYAxis(-this.rotateYAngle);
+		this.labelEndLeft.setRotateYAxis(-this.rotateYAngle);
+		this.labelEndRight.setRotateYAxis(-this.rotateYAngle);
+		
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 
@@ -540,8 +540,8 @@ public class Arrow extends Group implements Selectable {
 		return this.boxDistance;
 	}
 
-	public double getRotateZAngle() {
-		return this.rotateZAngle;
+	public double getRotateYAngle() {
+		return this.rotateYAngle;
 	}
 
 	public double getRotateXAngle() {

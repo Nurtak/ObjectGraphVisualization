@@ -5,20 +5,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
+import javafx.scene.transform.Rotate;
 import ch.hsr.ogv.model.EndpointType;
+import ch.hsr.ogv.util.ModelLoader;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
-
-import com.interactivemesh.jfx.importer.ImportException;
-import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 
 /**
  * 
@@ -26,8 +22,6 @@ import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
  *
  */
 public class ArrowEdge extends Group {
-
-	private final static Logger logger = LoggerFactory.getLogger(ArrowEdge.class);
 
 	private Color color = Color.BLACK;
 	private List<MeshView> meshViews = new ArrayList<MeshView>();
@@ -72,6 +66,10 @@ public class ArrowEdge extends Group {
 			modelUrl = ResourceLocator.getResourcePath(Resource.OPEN_ARROW_OBJ);
 			this.additionalGap = 0;
 			break;
+		case ARC:
+			modelUrl = ResourceLocator.getResourcePath(Resource.ARC_OBJ);
+			this.additionalGap = 50;
+			break;
 		case NONE:
 			this.additionalGap = 0;
 			break;
@@ -83,22 +81,10 @@ public class ArrowEdge extends Group {
 	}
 
 	private void loadModel(URL modelUrl) {
-		ObjModelImporter tdsImporter = new ObjModelImporter();
-		Node[] rootNodes = {};
-		if (modelUrl != null) {
-			try {
-				tdsImporter.read(modelUrl);
-			}
-			catch (ImportException e) {
-				e.printStackTrace();
-				logger.debug(e.getMessage());
-			}
-			rootNodes = tdsImporter.getImport();
-
-			for (Node n : rootNodes) {
-				MeshView mv = (MeshView) n;
-				this.meshViews.add(mv);
-			}
+		Node[] rootNodes = ModelLoader.load(modelUrl);
+		for (Node n : rootNodes) {
+			MeshView mv = (MeshView) n;
+			this.meshViews.add(mv);
 		}
 		setColor(this.color);
 		getChildren().clear();
@@ -126,6 +112,16 @@ public class ArrowEdge extends Group {
 	public void setEndpointType(EndpointType endpointType) {
 		this.endpointType = endpointType;
 		loadModel();
+	}
+	
+	public void setRotateYAxis(double degree) {
+		setRotationAxis(Rotate.Y_AXIS);
+		setRotate(degree);
+	}
+	
+	public void setRotateXAxis(double degree) {
+		setRotationAxis(Rotate.X_AXIS);
+		setRotate(degree);
 	}
 
 }
