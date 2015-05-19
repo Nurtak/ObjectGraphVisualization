@@ -243,7 +243,7 @@ public class Arrow extends Group implements Selectable {
 			//double endBoxDiameter = endBox.getWidth() <= endBox.getHeight() ? endBox.getWidth() / 2 : endBox.getHeight() / 2;
 			System.out.println("radius: " + startBoxRadius);
 
-			double alpha = GeometryUtil.rotateZAngle(startBox.getCenterPoint(), endBox.getCenterPoint());
+			double alpha = GeometryUtil.rotateYAngle(startBox.getCenterPoint(), endBox.getCenterPoint());
 			if (alpha < 0.0) {
 				alpha += 180.0;
 			}
@@ -322,7 +322,7 @@ public class Arrow extends Group implements Selectable {
 		this.labelStartRight.setRotateYAxis(-this.rotateYAngle);
 		this.labelEndLeft.setRotateYAxis(-this.rotateYAngle);
 		this.labelEndRight.setRotateYAxis(-this.rotateYAngle);
-		
+
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 
