@@ -24,8 +24,10 @@ import ch.hsr.ogv.view.SubSceneAdapter;
  *
  */
 public class ObjectGraph {
-	
-	private List<PaneBox> boxes = new ArrayList<PaneBox>();
+
+	private final static double ARRAYBOX_LEVEL_DIFF = 100.0;
+
+	private List<PaneBox> boxes = new ArrayList<PaneBox>(); // contains normal and arrayBoxes
 	private List<Arrow> arrows = new ArrayList<Arrow>();
 	private List<ConnectorBox> connectorBoxes = new ArrayList<ConnectorBox>();
 
@@ -84,14 +86,52 @@ public class ObjectGraph {
 				ModelClass modelClass = (ModelClass) modelBox;
 				for (ModelObject modelObject : modelClass.getModelObjects()) {
 					createBox(modelObject);
-					for(ModelObject superModelObject : modelObject.getSuperObjects()) {
+					for (ModelObject superModelObject : modelObject.getSuperObjects()) {
 						createBox(superModelObject);
 					}
 				}
 			}
 		}
 	}
-	
+
+	private int buildReferenceNames(PaneBox paneBox, ObjectGraphWrapper ogWrapper) {
+		int origSize = paneBox.getCenterLabels().size();
+		for (int i = 0; i < ogWrapper.getClassFriendEndpoints().size(); i++) {
+			int centerLabelIndex = origSize + i;
+			Endpoint friendEndpoint = ogWrapper.getClassFriendEndpoints().get(i);
+			Relation relation = friendEndpoint.getRelation();
+			String roleName = ogWrapper.getReferenceNames().get(relation);
+			paneBox.setCenterText(centerLabelIndex, roleName + " " + MultiplicityParser.ASTERISK, "");
+		}
+		return origSize;
+	}
+
+	private void buildReferences(PaneBox paneBox, int origSize, ObjectGraphWrapper ogWrapper) {
+		for (int i = 0; i < ogWrapper.getClassFriendEndpoints().size(); i++) {
+			int centerLabelIndex = origSize + i;
+			Endpoint friendEndpoint = ogWrapper.getClassFriendEndpoints().get(i);
+			Relation relation = friendEndpoint.getRelation();
+			ArrayList<ModelObject> modelObjects = ogWrapper.getAssociatedObjects(relation);
+			String upperBoundStr = ogWrapper.getAllocates().get(relation);
+			if (!modelObjects.isEmpty() && upperBoundStr != null && !upperBoundStr.isEmpty() && upperBoundStr.equals("1")) { // direct reference
+				ModelObject firstRefObject = modelObjects.get(0);
+				PaneBox firstRefBox = this.mvConnector.getPaneBox(firstRefObject);
+				if (firstRefBox != null) {
+					createBoxArrow(paneBox, firstRefBox, centerLabelIndex, relation);
+				}
+			}
+			else if (!modelObjects.isEmpty()) { // create array object in between
+				if (upperBoundStr == null) {
+					upperBoundStr = MultiplicityParser.ASTERISK;
+				}
+				PaneBox arrayBox = createArrayBox(ogWrapper.getModelObject(), (ModelClass) friendEndpoint.getAppendant(), relation, upperBoundStr);
+				createBoxArrow(paneBox, arrayBox, centerLabelIndex, relation);
+				createArrayBoxAttributes(arrayBox, relation, ogWrapper);
+				createArrayBoxArrows(arrayBox, relation, ogWrapper);
+			}
+		}
+	}
+
 	private PaneBox createBox(ModelObject modelObject) {
 		PaneBox paneBox = new PaneBox();
 		paneBox.setDepth(PaneBox.OBJECTBOX_DEPTH);
@@ -100,15 +140,13 @@ public class ObjectGraph {
 		paneBox.setColor(modelObject.getColor());
 		paneBox.setTranslateXYZ(modelObject.getCoordinates());
 		paneBox.setWidth(modelObject.getWidth());
-		paneBox.setMinHeight(modelObject.getHeight());
-
+		paneBox.setHeight(modelObject.getHeight());
 		createBoxAttributes(paneBox, modelObject);
-		
-		if(!modelObject.isSuperObject()) {
+		if (!modelObject.isSuperObject()) {
 			ObjectGraphWrapper ogWrapper = new ObjectGraphWrapper(modelObject);
-			buildReferences(paneBox, ogWrapper);
+			int origSize = buildReferenceNames(paneBox, ogWrapper);
+			buildReferences(paneBox, origSize, ogWrapper);
 		}
-
 		add(paneBox);
 		return paneBox;
 	}
@@ -131,42 +169,10 @@ public class ObjectGraph {
 		}
 	}
 
-	private void buildReferences(PaneBox paneBox, ObjectGraphWrapper ogWrapper) {
-		int origSize = paneBox.getCenterLabels().size();
-		for (int i = 0; i < ogWrapper.getClassFriendEndpoints().size(); i++) {
-			int centerLabelIndex = origSize + i;
-			Endpoint friendEndpoint = ogWrapper.getClassFriendEndpoints().get(i);
-			Relation relation = friendEndpoint.getRelation();
-			String roleName = ogWrapper.getReferenceNames().get(relation);
-			paneBox.setCenterText(centerLabelIndex, roleName + " " + MultiplicityParser.ASTERISK, "");
-
-			ArrayList<ModelObject> modelObjects = ogWrapper.getAssociatedObjects(relation);
-			String upperBoundStr = ogWrapper.getAllocates().get(relation);
-			if (upperBoundStr != null && !upperBoundStr.isEmpty() && upperBoundStr.equals("1")) { // direct reference
-				if (!modelObjects.isEmpty()) {
-					ModelObject firstRefObject = modelObjects.get(0);
-					PaneBox firstRefBox = this.mvConnector.getPaneBox(firstRefObject);
-					if (firstRefBox != null) {
-						createBoxArrow(paneBox, firstRefBox, centerLabelIndex, relation);
-					}
-				}
-			}
-			else if (!modelObjects.isEmpty()) { // create array object in between
-				if (upperBoundStr == null) {
-					upperBoundStr = MultiplicityParser.ASTERISK;
-				}
-				PaneBox arrayBox = createArrayBox(ogWrapper.getModelObject(), (ModelClass) friendEndpoint.getAppendant(), relation, upperBoundStr);
-				createBoxArrow(paneBox, arrayBox, centerLabelIndex, relation);
-				createArrayBoxAttributes(arrayBox, relation, ogWrapper);
-				createArrayBoxArrows(arrayBox, relation, ogWrapper);
-			}
-		}
-		paneBox.recalcHasCenterGrid();
-		paneBox.setHeight(paneBox.calcMinHeight());
-	}
-
 	private Arrow createBoxArrow(PaneBox startBox, PaneBox endBox, int centerLabelIndex, Relation relation) {
 		Point3D labelPosition = startBox.getCenterLabelEndPos(centerLabelIndex);
+		System.out.println("Z: " + startBox.getTranslateZ() + ", Index: " + centerLabelIndex + ", pos z: " + labelPosition.getZ() + ", calc min height: " + startBox.calcMinHeight() + ", height: "
+				+ startBox.getHeight());
 		Point3D refArrowStartpoint = new Point3D(labelPosition.getX() + PaneBox.HORIZONTAL_BORDER_GAP, labelPosition.getY() + startBox.getDepth() - 1, labelPosition.getZ());
 		Arrow refArrow = new Arrow(refArrowStartpoint, endBox, RelationType.OBJGRAPH);
 		refArrow.setColor(relation.getColor());
@@ -182,15 +188,19 @@ public class ObjectGraph {
 		paneBox.setTopUnderline(true);
 		paneBox.setIndexCenterGrid(0);
 		paneBox.setColor(Util.brighter(modelClass.getColor(), 0.1));
-		Point3D midpoint = modelObject.getCoordinates().midpoint(modelClass.getCoordinates());
-		// Point3D midmidpoint = modelObject.getCoordinates().midpoint(midpoint);
-		paneBox.setTranslateXYZ(new Point3D(midpoint.getX(), modelObject.getY(), midpoint.getZ()));
+		Point3D newPosition = modelObject.getCoordinates().midpoint(modelClass.getCoordinates());
+		// Point3D newPosition = modelObject.getCoordinates().midpoint(newPosition);
+		newPosition = new Point3D(newPosition.getX(), modelObject.getY(), newPosition.getZ());
+		while (hasArrayBoxAtPos(newPosition)) {
+			newPosition = new Point3D(newPosition.getX(), newPosition.getY() + ARRAYBOX_LEVEL_DIFF, newPosition.getZ());
+		}
+		paneBox.setTranslateXYZ(newPosition);
 		paneBox.setWidth(PaneBox.MIN_WIDTH);
 		paneBox.setMinHeight(PaneBox.MIN_HEIGHT);
 		add(paneBox);
 		return paneBox;
 	}
-	
+
 	private void createArrayBoxAttributes(PaneBox arrayBox, Relation relation, ObjectGraphWrapper ogWrapper) {
 		ArrayList<ModelObject> modelObjects = ogWrapper.getAssociatedObjects(relation);
 		Integer upperBound = MultiplicityParser.toInteger(ogWrapper.getAllocates().get(relation));
@@ -210,12 +220,22 @@ public class ObjectGraph {
 				ModelObject modelObject = modelObjects.get(i);
 				PaneBox refBox = this.mvConnector.getPaneBox(modelObject);
 				if (refBox != null) {
-					arrayBox.recalcHasCenterGrid();
-					arrayBox.setHeight(arrayBox.calcMinHeight());
 					createBoxArrow(arrayBox, refBox, i, relation);
 				}
 			}
 		}
+	}
+
+	private boolean hasArrayBoxAtPos(Point3D coords) {
+		for (PaneBox paneBox : this.boxes) {
+			boolean approxEqualX = Math.floor(paneBox.getCenterPoint().getX()) == Math.floor(coords.getX());
+			boolean approxEqualY = Math.floor(paneBox.getCenterPoint().getY() + paneBox.getDepth() / 2) == Math.floor(coords.getY());
+			boolean approxEqualZ = Math.floor(paneBox.getCenterPoint().getZ()) == Math.floor(coords.getZ());
+			if (approxEqualX && approxEqualY && approxEqualZ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void tearDown() {

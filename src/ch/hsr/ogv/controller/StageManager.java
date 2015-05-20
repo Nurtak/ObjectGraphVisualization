@@ -558,7 +558,7 @@ public class StageManager implements Observer {
 					}
 				}
 			}
-			changedBox.recalcHasCenterGrid();
+			// changedBox.recalcHasCenterGrid();
 			changedBox.setLabelSelected(prevSelectionIndex, true);
 			// center labels were cleared and recreated, need controls again
 			this.selectionController.enableCenterLabelSelection(changedBox, this.subSceneAdapter);

@@ -440,6 +440,8 @@ public class PaneBox implements Selectable {
 		TextField centerTextField = this.centerTextFields.get(rowIndex);
 		centerLabel.setText(labelText);
 		centerTextField.setText(textFieldText);
+		recalcHasCenterGrid();
+		setHeight(calcMinHeight());
 	}
 
 	@Override

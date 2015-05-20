@@ -418,8 +418,8 @@ public class RootLayoutController implements Observer, Initializable {
 
 	private void splitMenuButtonSelect(MenuItem choosenItem) {
 		this.tSplitMenuButton.setChoice(choosenItem);
+		toggleToolbar(null);
 		handleCreateAssociation();
-		//toggleCreateToolbar(this.tSplitMenuButton);
 	}
 
 	@FXML
@@ -649,6 +649,30 @@ public class RootLayoutController implements Observer, Initializable {
 		this.createObjectRelation.setDisable(disableObjectButtons);
 	}
 
+	private void initToggleRelationMap() {
+		this.toggleRelationMap.put(this.createUndirectedAssociation, RelationType.UNDIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createDirectedAssociation, RelationType.DIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createBidirectedAssociation, RelationType.BIDIRECTED_ASSOCIATION);
+		this.toggleRelationMap.put(this.createUndirectedAggregation, RelationType.UNDIRECTED_AGGREGATION);
+		this.toggleRelationMap.put(this.createDirectedAggregation, RelationType.DIRECTED_AGGREGATION);
+		this.toggleRelationMap.put(this.createUndirectedComposition, RelationType.UNDIRECTED_COMPOSITION);
+		this.toggleRelationMap.put(this.createDirectedComposition, RelationType.DIRECTED_COMPOSITION);
+		this.toggleRelationMap.put(this.createGeneralization, RelationType.GENERALIZATION);
+		this.toggleRelationMap.put(this.createDependency, RelationType.DEPENDENCY);
+	}
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
+		setMessageBar(); // sets the message bar into the footer
+		addButtonAccelerators();
+		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.toolbarGroup);
+		this.pickColor.getCustomColors().add(SubSceneAdapter.DEFAULT_COLOR);
+		this.pickColor.getCustomColors().add(Floor.DEFAULT_COLOR);
+		this.pickColor.getCustomColors().add(PaneBox.DEFAULT_COLOR);
+		this.pickColor.getCustomColors().add(Util.brighter(PaneBox.DEFAULT_COLOR, 0.1));
+		initToggleRelationMap();
+	}
+	
 	// TODO Refactor!!
 	@Override
 	public void update(Observable o, Object arg) {
@@ -721,34 +745,10 @@ public class RootLayoutController implements Observer, Initializable {
 				|| selectionController.getCurrentSelected().equals(subSceneAdapter.getFloor()))) { // SubSceneAdapter selected
 			createObject.setDisable(true);
 			deleteSelected.setDisable(true);
-			pickColorLabel.setDisable(false);
-			pickColor.setDisable(false);
+			pickColorLabel.setDisable(this.relationCreationController.isChoosingStartBox());
+			pickColor.setDisable(this.relationCreationController.isChoosingStartBox());
 			pickColor.setValue(subSceneAdapter.getFloor().getColor());
 		}
-	}
-
-	private void initToggleRelationMap() {
-		this.toggleRelationMap.put(this.createUndirectedAssociation, RelationType.UNDIRECTED_ASSOCIATION);
-		this.toggleRelationMap.put(this.createDirectedAssociation, RelationType.DIRECTED_ASSOCIATION);
-		this.toggleRelationMap.put(this.createBidirectedAssociation, RelationType.BIDIRECTED_ASSOCIATION);
-		this.toggleRelationMap.put(this.createUndirectedAggregation, RelationType.UNDIRECTED_AGGREGATION);
-		this.toggleRelationMap.put(this.createDirectedAggregation, RelationType.DIRECTED_AGGREGATION);
-		this.toggleRelationMap.put(this.createUndirectedComposition, RelationType.UNDIRECTED_COMPOSITION);
-		this.toggleRelationMap.put(this.createDirectedComposition, RelationType.DIRECTED_COMPOSITION);
-		this.toggleRelationMap.put(this.createGeneralization, RelationType.GENERALIZATION);
-		this.toggleRelationMap.put(this.createDependency, RelationType.DEPENDENCY);
-	}
-	
-	@Override
-	public void initialize(URL location, ResourceBundle resources) { // called once FXML is loaded and all fields injected
-		setMessageBar(); // sets the message bar into the footer
-		addButtonAccelerators();
-		this.tSplitMenuButton = new TSplitMenuButton(this.createAssociation, this.createUndirectedAssociation, this.toolbarGroup);
-		this.pickColor.getCustomColors().add(SubSceneAdapter.DEFAULT_COLOR);
-		this.pickColor.getCustomColors().add(Floor.DEFAULT_COLOR);
-		this.pickColor.getCustomColors().add(PaneBox.DEFAULT_COLOR);
-		this.pickColor.getCustomColors().add(Util.brighter(PaneBox.DEFAULT_COLOR, 0.1));
-		initToggleRelationMap();
 	}
 
 }
