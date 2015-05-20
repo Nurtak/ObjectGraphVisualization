@@ -237,8 +237,6 @@ public class Arrow extends Group implements Selectable {
 		setEndPoint(endBox.getCenterPoint());
 
 		if (totalArrowNumber > 1) {
-			System.out.println("arrow: " + arrowNumber + " of: " + totalArrowNumber);
-
 			double startBoxRadius = startBox.getWidth() <= startBox.getHeight() ? startBox.getWidth() / 2 : startBox.getHeight() / 2;
 			double endBoxRadius = endBox.getWidth() <= endBox.getHeight() ? endBox.getWidth() / 2 : endBox.getHeight() / 2;
 
@@ -264,10 +262,8 @@ public class Arrow extends Group implements Selectable {
 			Point3D lineStartPointEnd = new Point3D(endBox.getCenterPoint().getX() + diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() - diffZEnd);
 			Point3D lineEndPointEnd = new Point3D(endBox.getCenterPoint().getX() - diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() + diffZEnd);
 
-			System.out.println("center: " + startBox.getCenterPoint());
 			setStartPoint(GeometryUtil.divideLineFraction(lineStartPointStart, lineEndPointStart, (arrowNumber) / (totalArrowNumber + 1.0)));
 			setEndPoint(GeometryUtil.divideLineFraction(lineStartPointEnd, lineEndPointEnd, (arrowNumber) / (totalArrowNumber + 1.0)));
-
 		}
 
 		Point2D startIntersection = lineBoxIntersection(startPoint, startBox, endPoint);
@@ -552,7 +548,6 @@ public class Arrow extends Group implements Selectable {
 	}
 
 	public void arrangeEndpoints(PaneBox startBox, PaneBox endBox, int actualArrowNumber, int totalArrowNumber) {
-		System.out.println("arrange! i: " + actualArrowNumber + " size: " + totalArrowNumber);
 		this.arrowNumber = actualArrowNumber;
 		this.totalArrowNumber = totalArrowNumber;
 		this.setPointsBasedOnBoxes(startBox, endBox);
