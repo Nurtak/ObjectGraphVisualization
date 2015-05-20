@@ -212,10 +212,12 @@ public class ContextMenuController extends Observable implements Observer {
 					ModelObject modelObject = (ModelObject) modelBox;
 					if (modelObject.isSuperObject()) {
 						renameObject.setDisable(true);
+						createObjectRelation.setDisable(true);
 						deleteObject.setDisable(true);
 					}
 					else {
 						renameObject.setDisable(false);
+						createObjectRelation.setDisable(false);
 						deleteObject.setDisable(false);
 					}
 					hideAllContextMenus();
@@ -248,11 +250,11 @@ public class ContextMenuController extends Observable implements Observer {
 
 	public void enableCenterFieldContextMenu(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		for (Label centerLabel : paneBox.getCenterLabels()) {
-			enableContextMenu(centerLabel, modelBox, paneBox, subSceneAdapter);
+			enableLabelContextMenu(centerLabel, modelBox, paneBox, subSceneAdapter);
 		}
 	}
 
-	private void enableContextMenu(Label label, ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	private void enableLabelContextMenu(Label label, ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		label.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();

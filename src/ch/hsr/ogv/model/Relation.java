@@ -18,7 +18,7 @@ public class Relation extends Observable {
 	private String name = "";
 	private Endpoint start;
 	private Endpoint end;
-	private RelationType type = RelationType.UNDIRECTED_ASSOCIATION;
+	private RelationType relationType = RelationType.UNDIRECTED_ASSOCIATION;
 	private Color color = Color.BLACK;
 
 	// for un/marshaling only
@@ -32,7 +32,7 @@ public class Relation extends Observable {
 	public Relation(ModelBox startBox, ModelBox endBox, RelationType relationType, Color color) {
 		this.start = new Endpoint(relationType.getStartType(), startBox);
 		this.end = new Endpoint(relationType.getEndType(), endBox);
-		this.type = relationType;
+		this.relationType = relationType;
 		this.start.setRelation(this);
 		this.end.setRelation(this);
 		this.color = color;
@@ -65,11 +65,11 @@ public class Relation extends Observable {
 	}
 
 	public RelationType getRelationType() {
-		return type;
+		return relationType;
 	}
 
-	public void setType(RelationType type) {
-		this.type = type;
+	public void setRelationType(RelationType type) {
+		this.relationType = type;
 	}
 
 	@XmlJavaTypeAdapter(ColorAdapter.class)
