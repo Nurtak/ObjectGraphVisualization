@@ -171,8 +171,6 @@ public class ObjectGraph {
 
 	private Arrow createBoxArrow(PaneBox startBox, PaneBox endBox, int centerLabelIndex, Relation relation) {
 		Point3D labelPosition = startBox.getCenterLabelEndPos(centerLabelIndex);
-		System.out.println("Z: " + startBox.getTranslateZ() + ", Index: " + centerLabelIndex + ", pos z: " + labelPosition.getZ() + ", calc min height: " + startBox.calcMinHeight() + ", height: "
-				+ startBox.getHeight());
 		Point3D refArrowStartpoint = new Point3D(labelPosition.getX() + PaneBox.HORIZONTAL_BORDER_GAP, labelPosition.getY() + startBox.getDepth() - 1, labelPosition.getZ());
 		Arrow refArrow = new Arrow(refArrowStartpoint, endBox, RelationType.OBJGRAPH);
 		refArrow.setColor(relation.getColor());
