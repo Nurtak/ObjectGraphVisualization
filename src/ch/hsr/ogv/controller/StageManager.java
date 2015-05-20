@@ -253,18 +253,21 @@ public class StageManager implements Observer {
 			this.mvConnector.putArrows(relation, arrow);
 			this.contextMenuController.enableContextMenu(arrow, relation);
 
-			List<Relation> relationList = mvConnector.getModelManager().getRelationsBetween(startModelBox, endModelBox);
-			if (relationList.size() > 1) {
-				for (int i = 0; i < relationList.size(); i++) {
-					mvConnector.getArrow(relationList.get(i)).arrangeEndpoints(
-							mvConnector.getPaneBox(relationList.get(i).getStart().getAppendant()),
-							mvConnector.getPaneBox(relationList.get(i).getEnd().getAppendant()),
-							i,
-							relationList.size()
-							);
-				}
-			}
+			arrangeArrowNumbers(startModelBox, endModelBox);
 		}
+	}
+
+	private void arrangeArrowNumbers(ModelBox startBox, ModelBox endBox) {
+		List<Relation> relationList = mvConnector.getModelManager().getRelationsBetween(startBox, endBox);
+		for (int i = 0; i < relationList.size(); i++) {
+			mvConnector.getArrow(relationList.get(i)).arrangeEndpoints(
+				mvConnector.getPaneBox(relationList.get(i).getStart().getAppendant()),
+				mvConnector.getPaneBox(relationList.get(i).getEnd().getAppendant()),
+				i + 1,
+				relationList.size()
+			);
+		}
+
 	}
 
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
@@ -599,7 +602,10 @@ public class StageManager implements Observer {
 				adaptArrowColor(relation);
 			}
 			else {
+				ModelBox startModelBox = relation.getStart().getAppendant();
+				ModelBox endModelBox = relation.getEnd().getAppendant();
 				Arrow toDelete = this.mvConnector.removeArrows(relation);
+				arrangeArrowNumbers(startModelBox, endModelBox);
 				removeFromView(toDelete);
 				removeFromView(toDelete.getSelection());
 			}
@@ -659,4 +665,5 @@ public class StageManager implements Observer {
 		}
 		this.rootLayout.applyCss();
 	}
+
 }
