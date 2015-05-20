@@ -221,16 +221,32 @@ public class ModelManager extends Observable {
 		}
 	}
 
-	private void deleteObjectRelations(ModelBox startBox, ModelBox endBox) {
+	private int countSameColored(List<Relation> relationList, Relation toCheck) {
+		int count = 0;
+		relationList.remove(toCheck);
+		for(Relation relation : relationList) {
+			if(relation.getColor().equals(toCheck.getColor())) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	private void deleteObjectRelations(Relation relation, ModelBox startBox, ModelBox endBox) {
 		if (startBox instanceof ModelClass && endBox instanceof ModelClass) {
 			ModelClass startClass = (ModelClass) startBox;
 			ModelClass endClass = (ModelClass) endBox;
+			List<Relation> classRelations = getRelationsBetween(startClass, endClass); // relation we delete still contained
+			boolean deleteAllObjRel = classRelations.size() <= 1;
+			boolean hasOtherWithColor = countSameColored(classRelations, relation) > 0;
 			List<ModelObject> startObjects = startClass.getModelObjects();
 			for (ModelObject startObject : startObjects) {
 				for (ModelObject endObject : endClass.getModelObjects()) {
 					List<Relation> objectRelations = getRelationsBetween(startObject, endObject);
 					for(Relation objectRelation : objectRelations) {
-						deleteRelation(objectRelation);
+						if(deleteAllObjRel || (!hasOtherWithColor && objectRelation.getColor().equals(relation.getColor()))) {
+							deleteRelation(objectRelation);
+						}
 					}
 				}
 			}
@@ -257,7 +273,7 @@ public class ModelManager extends Observable {
 			ModelBox startBox = start.getAppendant();
 			ModelBox endBox = end.getAppendant();
 
-			deleteObjectRelations(startBox, endBox);
+			deleteObjectRelations(relation, startBox, endBox);
 
 			startBox.getEndpoints().remove(start);
 			endBox.getEndpoints().remove(end);
