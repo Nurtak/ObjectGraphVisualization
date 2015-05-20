@@ -140,7 +140,7 @@ public class ObjectGraph {
 			String roleName = ogWrapper.getReferenceNames().get(relation);
 			paneBox.setCenterText(centerLabelIndex, roleName + " " + MultiplicityParser.ASTERISK, "");
 
-			ArrayList<ModelObject> modelObjects = ogWrapper.getReferences().get(relation);
+			ArrayList<ModelObject> modelObjects = ogWrapper.getAssociatedObjects(relation);
 			String upperBoundStr = ogWrapper.getAllocates().get(relation);
 			if (upperBoundStr != null && !upperBoundStr.isEmpty() && upperBoundStr.equals("1")) { // direct reference
 				if (!modelObjects.isEmpty()) {
@@ -192,27 +192,27 @@ public class ObjectGraph {
 	}
 	
 	private void createArrayBoxAttributes(PaneBox arrayBox, Relation relation, ObjectGraphWrapper ogWrapper) {
-		ArrayList<ModelObject> modelObjects = ogWrapper.getReferences().get(relation);
+		ArrayList<ModelObject> modelObjects = ogWrapper.getAssociatedObjects(relation);
 		Integer upperBound = MultiplicityParser.toInteger(ogWrapper.getAllocates().get(relation));
 		if (upperBound == null) {
 			upperBound = modelObjects.size();
 		}
-		for (int x = 0; x < upperBound; x++) {
-			String arrayIndexRef = "[" + x + "] " + MultiplicityParser.ASTERISK;
-			arrayBox.setCenterText(x, arrayIndexRef, arrayIndexRef);
+		for (int i = 0; i < upperBound; i++) {
+			String arrayIndexRef = "[" + i + "] " + MultiplicityParser.ASTERISK;
+			arrayBox.setCenterText(i, arrayIndexRef, arrayIndexRef);
 		}
 	}
 
 	private void createArrayBoxArrows(PaneBox arrayBox, Relation relation, ObjectGraphWrapper ogWrapper) {
-		ArrayList<ModelObject> modelObjects = ogWrapper.getReferences().get(relation);
-		for (int x = 0; x < arrayBox.getCenterLabels().size(); x++) {
-			if (x < modelObjects.size()) {
-				ModelObject modelObject = modelObjects.get(x);
+		ArrayList<ModelObject> modelObjects = ogWrapper.getAssociatedObjects(relation);
+		for (int i = 0; i < arrayBox.getCenterLabels().size(); i++) {
+			if (i < modelObjects.size()) {
+				ModelObject modelObject = modelObjects.get(i);
 				PaneBox refBox = this.mvConnector.getPaneBox(modelObject);
 				if (refBox != null) {
 					arrayBox.recalcHasCenterGrid();
 					arrayBox.setHeight(arrayBox.calcMinHeight());
-					createBoxArrow(arrayBox, refBox, x, relation);
+					createBoxArrow(arrayBox, refBox, i, relation);
 				}
 			}
 		}
