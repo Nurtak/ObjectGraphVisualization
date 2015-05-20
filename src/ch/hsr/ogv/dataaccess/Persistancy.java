@@ -213,13 +213,13 @@ public class Persistancy {
 		}
 		else if (loadedStartBox instanceof ModelObject && loadedEndBox instanceof ModelObject) {
 			for (ModelClass newModelClass : modelManager.getClasses()) {
-				newStartBox = newModelClass.getModelObject(loadedStartBox.getName());
+				newStartBox = newModelClass.getModelObject(((ModelObject) loadedStartBox).getUniqueID());
 				if (newStartBox != null) {
 					break;
 				}
 			}
 			for (ModelClass newModelClass : modelManager.getClasses()) {
-				newEndBox = newModelClass.getModelObject(loadedEndBox.getName());
+				newEndBox = newModelClass.getModelObject(((ModelObject) loadedEndBox).getUniqueID());
 				if (newEndBox != null) {
 					break;
 				}

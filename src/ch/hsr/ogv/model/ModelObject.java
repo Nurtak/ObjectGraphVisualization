@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.geometry.Point3D;
@@ -17,14 +18,25 @@ import javax.xml.bind.annotation.XmlType;
  * @author Adrian Rieser
  *
  */
-@XmlType(propOrder = { "attributeValues" })
+@XmlType(propOrder = { "uniqueID", "attributeValues" })
 public class ModelObject extends ModelBox {
 
+	// for un/marshaling only
+	private String uniqueID = UUID.randomUUID().toString();
+	
 	private Map<Attribute, String> attributeValues = new HashMap<Attribute, String>();
 	private ModelClass modelClass;
 
 	public static volatile AtomicInteger modelObjectCounter = new AtomicInteger(0);
 
+	public String getUniqueID() {
+		return uniqueID;
+	}
+
+	public void setUniqueID(String uniqueID) {
+		this.uniqueID = uniqueID;
+	}
+	
 	public Map<Attribute, String> getAttributeValues() {
 		return attributeValues;
 	}

@@ -53,12 +53,12 @@ public class ModelClass extends ModelBox {
 		return modelObjects;
 	}
 
-	public ModelObject getModelObject(String name) {
-		if (name == null || name.isEmpty()) {
+	public ModelObject getModelObject(String uniqueID) {
+		if (uniqueID == null || uniqueID.isEmpty()) {
 			return null;
 		}
 		for (ModelObject modelObject : this.modelObjects) {
-			if (name.equals(modelObject.getName())) {
+			if (uniqueID.equals(modelObject.getUniqueID())) {
 				return modelObject;
 			}
 		}

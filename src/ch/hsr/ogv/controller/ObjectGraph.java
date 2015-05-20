@@ -139,13 +139,16 @@ public class ObjectGraph {
 		paneBox.setTopUnderline(true);
 		paneBox.setColor(modelObject.getColor());
 		paneBox.setTranslateXYZ(modelObject.getCoordinates());
-		paneBox.setWidth(modelObject.getWidth());
-		paneBox.setHeight(modelObject.getHeight());
 		createBoxAttributes(paneBox, modelObject);
+		paneBox.setWidth(modelObject.getWidth());
 		if (!modelObject.isSuperObject()) {
 			ObjectGraphWrapper ogWrapper = new ObjectGraphWrapper(modelObject);
 			int origSize = buildReferenceNames(paneBox, ogWrapper);
+			double newHeight = modelObject.getHeight() > paneBox.calcMinHeight() ? modelObject.getHeight() : paneBox.calcMinHeight();
+			paneBox.setHeight(newHeight);
 			buildReferences(paneBox, origSize, ogWrapper);
+			paneBox.setMinHeight(modelObject.getHeight());
+			paneBox.recalcHasCenterGrid();
 		}
 		add(paneBox);
 		return paneBox;
@@ -208,7 +211,9 @@ public class ObjectGraph {
 		for (int i = 0; i < upperBound; i++) {
 			String arrayIndexRef = "[" + i + "] " + MultiplicityParser.ASTERISK;
 			arrayBox.setCenterText(i, arrayIndexRef, arrayIndexRef);
+			arrayBox.setHeight(arrayBox.calcMinHeight());
 		}
+		arrayBox.recalcHasCenterGrid();
 	}
 
 	private void createArrayBoxArrows(PaneBox arrayBox, Relation relation, ObjectGraphWrapper ogWrapper) {
