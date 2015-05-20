@@ -33,7 +33,7 @@ public class Arrow extends Group implements Selectable {
 	private double rotateYAngle;
 	private double rotateXAngle;
 
-	private int arrowNumber = 0;
+	private int arrowNumber = 1;
 	private int totalArrowNumber = 1;
 
 	private Point3D startPoint;
@@ -237,34 +237,36 @@ public class Arrow extends Group implements Selectable {
 		setEndPoint(endBox.getCenterPoint());
 
 		if (totalArrowNumber > 1) {
-			System.out.println("arrow: " + arrowNumber + "of: " + totalArrowNumber);
+			System.out.println("arrow: " + arrowNumber + " of: " + totalArrowNumber);
 
 			double startBoxRadius = startBox.getWidth() <= startBox.getHeight() ? startBox.getWidth() / 2 : startBox.getHeight() / 2;
-			//double endBoxDiameter = endBox.getWidth() <= endBox.getHeight() ? endBox.getWidth() / 2 : endBox.getHeight() / 2;
-			System.out.println("radius: " + startBoxRadius);
+			double endBoxRadius = endBox.getWidth() <= endBox.getHeight() ? endBox.getWidth() / 2 : endBox.getHeight() / 2;
 
-			double alpha = GeometryUtil.rotateYAngle(startBox.getCenterPoint(), endBox.getCenterPoint());
-			if (alpha < 0.0) {
-				alpha += 180.0;
+			double alphaStart = GeometryUtil.rotateYAngle(startBox.getCenterPoint(), endBox.getCenterPoint());
+			if (alphaStart < 0.0) {
+				alphaStart += 180.0;
 			}
-			System.out.println("alpha: " + alpha);
+			double alphaEnd = GeometryUtil.rotateYAngle(endBox.getCenterPoint(), startBox.getCenterPoint());
+			if (alphaEnd < 0.0) {
+				alphaEnd += 180.0;
+			}
 
-			double beta = 90.0 - alpha;
-			System.out.println("beta: " + beta);
+			double betaStart = 90.0 - alphaStart;
+			double betaEnd = 90.0 - alphaEnd;
 
-			double diffX = startBoxRadius * Math.sin(Math.toRadians(beta));
-			double diffZ = startBoxRadius * Math.cos(Math.toRadians(beta));
-			System.out.println("diffX: " + diffX + " / diffZ: " + diffZ);
+			double diffXStart = startBoxRadius * Math.sin(Math.toRadians(betaStart));
+			double diffZStart = startBoxRadius * Math.cos(Math.toRadians(betaStart));
+			double diffXEnd = endBoxRadius * Math.sin(Math.toRadians(betaEnd));
+			double diffZEnd = endBoxRadius * Math.cos(Math.toRadians(betaEnd));
 
-			Point3D lineStartPoint = new Point3D(startBox.getCenterPoint().getX() + diffX, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() - diffZ);
-			Point3D lineEndPoint = new Point3D(startBox.getCenterPoint().getX() - diffX, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() + diffZ);
+			Point3D lineStartPointStart = new Point3D(startBox.getCenterPoint().getX() + diffXStart, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() - diffZStart);
+			Point3D lineEndPointStart = new Point3D(startBox.getCenterPoint().getX() - diffXStart, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() + diffZStart);
+			Point3D lineStartPointEnd = new Point3D(endBox.getCenterPoint().getX() + diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() - diffZEnd);
+			Point3D lineEndPointEnd = new Point3D(endBox.getCenterPoint().getX() - diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() + diffZEnd);
 
 			System.out.println("center: " + startBox.getCenterPoint());
-			setStartPoint(GeometryUtil.divideLineFraction(lineStartPoint, lineEndPoint, (arrowNumber + 1.0) / (totalArrowNumber + 1.0)));
-			//setEndPoint(GeometryUtil.divideLineFraction(lineStartPoint, lineEndPoint, actualArrowNumber / totalArrowNumber + 1.0));
-
-			System.out.println(getStartPoint());
-
+			setStartPoint(GeometryUtil.divideLineFraction(lineStartPointStart, lineEndPointStart, (arrowNumber) / (totalArrowNumber + 1.0)));
+			setEndPoint(GeometryUtil.divideLineFraction(lineStartPointEnd, lineEndPointEnd, (arrowNumber) / (totalArrowNumber + 1.0)));
 
 		}
 
@@ -326,16 +328,17 @@ public class Arrow extends Group implements Selectable {
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 
-	private Point2D lineRectangleIntersection(Point3D externalPoint, Point3D center, double width, double height) {
+	private Point2D lineRectangleIntersection(Point3D internalPoint, Point3D externalPoint, Point3D centerPoint, double width, double height) {
 		double halfWidth = width / 2;
 		double halfHeight = height / 2;
 
 		Point2D lineStart = new Point2D(externalPoint.getX(), externalPoint.getZ());
-		Point2D lineEnd = new Point2D(center.getX(), center.getZ());
-		Point2D northEast = new Point2D(center.getX() - halfWidth, center.getZ() + halfHeight);
-		Point2D southEast = new Point2D(center.getX() - halfWidth, center.getZ() - halfHeight);
-		Point2D southWest = new Point2D(center.getX() + halfWidth, center.getZ() - halfHeight);
-		Point2D northWest = new Point2D(center.getX() + halfWidth, center.getZ() + halfHeight);
+		Point2D lineEnd = new Point2D(internalPoint.getX(), internalPoint.getZ());
+
+		Point2D northEast = new Point2D(centerPoint.getX() - halfWidth, centerPoint.getZ() + halfHeight);
+		Point2D southEast = new Point2D(centerPoint.getX() - halfWidth, centerPoint.getZ() - halfHeight);
+		Point2D southWest = new Point2D(centerPoint.getX() + halfWidth, centerPoint.getZ() - halfHeight);
+		Point2D northWest = new Point2D(centerPoint.getX() + halfWidth, centerPoint.getZ() + halfHeight);
 
 		Point2D interEastHeight = GeometryUtil.lineIntersect(lineStart, lineEnd, northEast, southEast);
 		Point2D interWestHeight = GeometryUtil.lineIntersect(lineStart, lineEnd, northWest, southWest);
@@ -358,7 +361,7 @@ public class Arrow extends Group implements Selectable {
 	}
 
 	private Point2D lineBoxIntersection(Point3D internalPoint, PaneBox box, Point3D externalPoint) {
-		return lineRectangleIntersection(externalPoint, internalPoint, box.getWidth(), box.getHeight());
+		return lineRectangleIntersection(externalPoint, internalPoint, box.getCenterPoint(), box.getWidth(), box.getHeight());
 	}
 
 	private ArrayList<Point3D> divideLine(Point3D start, Point3D end, int count) {

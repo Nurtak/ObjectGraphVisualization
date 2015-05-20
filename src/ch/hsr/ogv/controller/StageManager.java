@@ -259,7 +259,7 @@ public class StageManager implements Observer {
 					mvConnector.getArrow(relationList.get(i)).arrangeEndpoints(
 							mvConnector.getPaneBox(relationList.get(i).getStart().getAppendant()),
 							mvConnector.getPaneBox(relationList.get(i).getEnd().getAppendant()),
-							i,
+							i + 1,
 							relationList.size()
 							);
 				}
