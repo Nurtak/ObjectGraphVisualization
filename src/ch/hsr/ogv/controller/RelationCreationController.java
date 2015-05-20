@@ -282,6 +282,7 @@ public class RelationCreationController extends Observable implements Observer {
 		if (o instanceof MouseMoveController && arg instanceof Point3D && this.creationInProcess) {
 			if (this.endBox != null && !this.endBox.equals(this.startBox)) {
 				this.endBox.setSelected(false);
+				arrangedDrawArrows(false);
 				this.endBox = null;
 			}
 			Point3D movePoint = (Point3D) arg;
@@ -312,12 +313,26 @@ public class RelationCreationController extends Observable implements Observer {
 			PaneBox paneBoxMovedOver = (PaneBox) arg;
 			if (this.endBox != null && !this.endBox.equals(this.startBox) && !this.endBox.equals(paneBoxMovedOver)) {
 				this.endBox.setSelected(false);
+				arrangedDrawArrows(false);
 				this.endBox = null;
 			}
 			this.endBox = paneBoxMovedOver;
 			this.endBox.setSelected(true); // only visually show selection
-			this.viewArrow.setPointsBasedOnBoxes(this.startBox, this.endBox);
-			this.viewArrow.drawArrow();
+			arrangedDrawArrows(true);
+		}
+	}
+	
+	private void arrangedDrawArrows(boolean addViewArrow) {
+		ModelBox startModelBox = this.mvConnector.getModelBox(this.startBox);
+		ModelBox endModelBox = this.mvConnector.getModelBox(this.endBox);
+		if(addViewArrow) {
+			int relationsCount = this.mvConnector.getModelManager().getRelationsBetween(startModelBox, endModelBox).size();
+			this.mvConnector.arrangeArrowNumbers(startModelBox, endModelBox, 1);
+			this.viewArrow.arrangeEndpoints(this.startBox, this.endBox,  1,  relationsCount + 1);
+		}
+		else {
+			this.mvConnector.arrangeArrowNumbers(startModelBox, endModelBox, 0);
+			this.viewArrow.arrangeEndpoints(this.startBox, this.endBox,  1,  1);
 		}
 	}
 

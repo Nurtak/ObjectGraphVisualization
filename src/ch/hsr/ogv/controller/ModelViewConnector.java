@@ -2,6 +2,7 @@ package ch.hsr.ogv.controller;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -437,6 +438,22 @@ public class ModelViewConnector {
 				}
 			}
 		}
+	}
+	
+	public void arrangeArrowNumbers(ModelBox startModelBox, ModelBox endModelBox, int plusNumber) {
+		List<Relation> relationList = this.modelManager.getRelationsBetween(startModelBox, endModelBox);
+		for (int i = 0; i < relationList.size(); i++) {
+			Arrow arrow = getArrow(relationList.get(i));
+			PaneBox startPaneBox = getPaneBox(relationList.get(i).getStart().getAppendant());
+			PaneBox endPaneBox = getPaneBox(relationList.get(i).getEnd().getAppendant());
+			if(arrow != null && startPaneBox != null && endPaneBox != null) {
+				arrow.arrangeEndpoints(startPaneBox, endPaneBox, plusNumber + i + 1, relationList.size() + plusNumber);
+			}
+		}
+	}
+	
+	public void arrangeArrowNumbers(ModelBox startModelBox, ModelBox endModelBox) {
+		arrangeArrowNumbers(startModelBox, endModelBox, 0);
 	}
 
 }

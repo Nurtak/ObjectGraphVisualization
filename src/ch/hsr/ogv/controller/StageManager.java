@@ -1,7 +1,6 @@
 package ch.hsr.ogv.controller;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -253,21 +252,8 @@ public class StageManager implements Observer {
 			this.mvConnector.putArrows(relation, arrow);
 			this.contextMenuController.enableContextMenu(arrow, relation);
 
-			arrangeArrowNumbers(startModelBox, endModelBox);
+			this.mvConnector.arrangeArrowNumbers(startModelBox, endModelBox);
 		}
-	}
-
-	private void arrangeArrowNumbers(ModelBox startBox, ModelBox endBox) {
-		List<Relation> relationList = mvConnector.getModelManager().getRelationsBetween(startBox, endBox);
-		for (int i = 0; i < relationList.size(); i++) {
-			mvConnector.getArrow(relationList.get(i)).arrangeEndpoints(
-				mvConnector.getPaneBox(relationList.get(i).getStart().getAppendant()),
-				mvConnector.getPaneBox(relationList.get(i).getEnd().getAppendant()),
-				i + 1,
-				relationList.size()
-			);
-		}
-
 	}
 
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
@@ -605,7 +591,7 @@ public class StageManager implements Observer {
 				ModelBox startModelBox = relation.getStart().getAppendant();
 				ModelBox endModelBox = relation.getEnd().getAppendant();
 				Arrow toDelete = this.mvConnector.removeArrows(relation);
-				arrangeArrowNumbers(startModelBox, endModelBox);
+				this.mvConnector.arrangeArrowNumbers(startModelBox, endModelBox);
 				removeFromView(toDelete);
 				removeFromView(toDelete.getSelection());
 			}

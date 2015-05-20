@@ -348,7 +348,6 @@ public class PaneBox implements Selectable {
 		if(centerLabelIndex < 0 || centerLabelIndex >= this.centerLabels.size()) {
 			return new Point3D(getTranslateX(), getTranslateY(), getTranslateZ());
 		}
-		System.out.println(getHeight());
 		double z = getTranslateZ() + (getHeight() / 2) - TOP_LABEL_HEIGHT - VERTICAL_BORDER_GAP
 				 - (centerLabelIndex * CENTER_LABEL_HEIGHT) - (CENTER_LABEL_HEIGHT / 2);
 		return new Point3D(getTranslateX() - (getWidth() / 2), getTranslateY(), z);
