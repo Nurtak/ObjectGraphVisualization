@@ -211,11 +211,9 @@ public class RelationCreationController extends Observable implements Observer {
 			if (startClass != null && baseRelations.isEmpty()) { // underlying classes are not connected
 				return false;
 			}
-			if (startClass != null && !baseRelations.isEmpty()) { // no object relation at Generalization / Dependency
-				for (Relation baseRelation : baseRelations) {
-					if (baseRelation.getRelationType().equals(RelationType.GENERALIZATION) || baseRelation.getRelationType().equals(RelationType.DEPENDENCY)) {
-						return false;
-					}
+			if (startClass != null && !baseRelations.isEmpty()) { // no object relation at Generalization / Dependency only
+				if(baseRelations.size() == 1 && (baseRelations.get(0).getRelationType().equals(RelationType.GENERALIZATION) || baseRelations.get(0).getRelationType().equals(RelationType.DEPENDENCY))) {
+					return false;
 				}
 			}
 			// List<Relation> objectRelations = modelManager.getRelationsBetween(startObject, endObject);
@@ -328,7 +326,7 @@ public class RelationCreationController extends Observable implements Observer {
 		if(addViewArrow) {
 			int relationsCount = this.mvConnector.getModelManager().getRelationsBetween(startModelBox, endModelBox).size();
 			this.mvConnector.arrangeArrowNumbers(startModelBox, endModelBox, 1);
-			this.viewArrow.arrangeEndpoints(this.startBox, this.endBox,  1,  relationsCount + 1);
+			this.viewArrow.arrangeEndpoints(this.startBox, this.endBox,  relationsCount + 1,  relationsCount + 1);
 		}
 		else {
 			this.mvConnector.arrangeArrowNumbers(startModelBox, endModelBox, 0);
