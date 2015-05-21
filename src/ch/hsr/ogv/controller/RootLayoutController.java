@@ -271,14 +271,16 @@ public class RootLayoutController implements Observer, Initializable {
 				PaneBox paneBox = this.mvConnector.getPaneBox(modelBox);
 				paneBox.setVisible(show);
 
-				if (paneBox.isSelected() && this.selectionController != null) {
+				if (!show && paneBox.isSelected() && this.selectionController != null) {
+					paneBox.getSelection().setVisible(false);
 					this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 				}
 
 				for (Endpoint endpoint : modelBox.getEndpoints()) {
 					Arrow arrow = this.mvConnector.getArrow(endpoint.getRelation());
 					arrow.setVisible(show);
-					if (arrow.isSelected() && this.selectionController != null) {
+					if (!show && arrow.isSelected() && this.selectionController != null) {
+						arrow.getSelection().setVisible(false);
 						this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 					}
 				}
