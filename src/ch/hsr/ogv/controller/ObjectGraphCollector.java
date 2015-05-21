@@ -110,17 +110,20 @@ public class ObjectGraphCollector {
 				this.referenceNames.put(friendEndpoint.getRelation(), roleName);
 			}
 			else {
-				String referenceName = "m" + friendEndpoint.getAppendant().getName();
+				String className = friendEndpoint.getAppendant().getName();
+				String referenceName = "m" + className;
+				String nextReferenceName = "m" + "1" + className;
 				if(this.referenceNames.values().contains(referenceName)) {
 					Relation prevRelation = getFirstRelation(referenceName);
 					this.referenceNames.remove(prevRelation); // replace old reference name
-					referenceName = "m" + friendEndpoint.getAppendant().getName() + "1";
-					this.referenceNames.put(prevRelation, referenceName);
+					this.referenceNames.put(prevRelation, nextReferenceName);
 				}
-				else {
-					referenceName = "m" + friendEndpoint.getAppendant().getName() + "1";
+				if(this.referenceNames.values().contains(nextReferenceName)) {
+					referenceName = "m" + "1" + className;
 					while (this.referenceNames.values().contains(referenceName)) {
-						referenceName = TextUtil.countUpTrailing(referenceName, 1);
+						String partRefName = TextUtil.replaceLast(referenceName, className, "");
+						referenceName = TextUtil.countUpTrailing(partRefName, 1);
+						referenceName += className;
 					}
 				}
 				this.referenceNames.put(friendEndpoint.getRelation(), referenceName);
@@ -128,7 +131,7 @@ public class ObjectGraphCollector {
 		}
 	}
 	
-	public Relation getFirstRelation(String referenceName) {
+	private Relation getFirstRelation(String referenceName) {
 		for (Entry<Relation, String> entry : this.referenceNames.entrySet()) {
 			if (entry.getValue().equals(referenceName)) {
 				return entry.getKey();

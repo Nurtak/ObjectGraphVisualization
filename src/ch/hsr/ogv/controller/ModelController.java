@@ -20,6 +20,11 @@ import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
+/**
+ * 
+ * @author Simon Gwerder
+ *
+ */
 public class ModelController implements Observer {
 
 	private BorderPane rootLayout;
@@ -42,9 +47,14 @@ public class ModelController implements Observer {
 		this.subSceneAdapter = subSceneAdapter;
 	}
 
+	/**
+	 * Setter for {@link ch.hsr.ogv.controller.ModelViewConnector}, adds this class as observer of the 
+	 * {@link ch.hsr.ogv.model.ModelManager} immediately after setting it.
+	 * @param mvConnector
+	 */
 	public void setMVConnector(ModelViewConnector mvConnector) {
 		this.mvConnector = mvConnector;
-		this.mvConnector.getModelManager().addObserver(this); // observing ModelManager immediately after setting it
+		this.mvConnector.getModelManager().addObserver(this);
 	}
 
 	public void setSelectionController(SelectionController selectionController) {
@@ -75,7 +85,7 @@ public class ModelController implements Observer {
 	 * Adds node to the subscene of the primary stage.
 	 *
 	 * @param node
-	 *            node.
+	 * 
 	 */
 	private void addToSubScene(Node node) {
 		this.subSceneAdapter.add(node);
@@ -86,13 +96,18 @@ public class ModelController implements Observer {
 	 * Removes node from the subscene of the primary stage.
 	 *
 	 * @param node
-	 *            node.
+	 * 
 	 */
 	private void removeFromView(Node node) {
 		this.subSceneAdapter.remove(node);
 		this.rootLayout.applyCss();
 	}
 
+	/**
+	 * Creates a {@link ch.hsr.ogv.view.PaneBox} representing a class, adds it to the view and creates a connection in the
+	 * {@link ch.hsr.ogv.controller.ModelViewConnector}
+	 * @param modelClass
+	 */
 	private void showModelClassInView(ModelClass modelClass) {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
@@ -106,6 +121,11 @@ public class ModelController implements Observer {
 		this.mvConnector.putBoxes(modelClass, paneBox);
 	}
 
+	/**
+	 * Creates a {@link ch.hsr.ogv.view.PaneBox} representing an object, adds it to the view and creates a connection in the
+	 * {@link ch.hsr.ogv.controller.ModelViewConnector}
+	 * @param modelObject
+	 */
 	private void showModelObjectInView(ModelObject modelObject) {
 		modelObject.addObserver(this);
 		PaneBox paneBox = new PaneBox();
@@ -119,6 +139,11 @@ public class ModelController implements Observer {
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
 
+	/**
+	 * Creates a {@link ch.hsr.ogv.view.PaneBox} representing a relation, adds it to the view and creates a connection in the
+	 * {@link ch.hsr.ogv.controller.ModelViewConnector}.
+	 * @param relation
+	 */
 	private void showArrowInView(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
@@ -127,7 +152,7 @@ public class ModelController implements Observer {
 		PaneBox endViewBox = this.mvConnector.getPaneBox(endModelBox);
 		if (startViewBox != null && endViewBox != null) {
 			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getRelationType());
-			addArrowControls(arrow, relation);
+			addArrowControls(relation, arrow);
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
 
@@ -138,6 +163,11 @@ public class ModelController implements Observer {
 		}
 	}
 
+	/**
+	 * Adds various controllers based on the type and nature of the ModelBox.
+	 * @param modelBox The model object or class
+	 * @param paneBox The corresponding box representing the model object or class in view
+	 */
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
 		if (modelBox instanceof ModelClass) {
 			this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter, true);
@@ -162,12 +192,21 @@ public class ModelController implements Observer {
 		this.mouseMoveController.enableMouseMove(paneBox);
 	}
 
-	private void addArrowControls(Arrow arrow, Relation relation) {
+	/**
+	 * Adds various controllers to the arrow.
+	 * @param relation The model relation
+	 * @param arrow The corresponding arrow representing the relation in view
+	 */
+	private void addArrowControls(Relation relation, Arrow arrow) {
 		this.selectionController.enableArrowSelection(arrow, this.subSceneAdapter);
 		this.selectionController.enableArrowLabelSelection(arrow, this.subSceneAdapter);
 		this.textFieldController.enableArrowLabelTextInput(arrow, relation, this.mvConnector);
 	}
 
+	/**
+	 * Adapts all settings of the view box based on changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxSettings(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null && modelBox instanceof ModelClass) {
@@ -199,6 +238,10 @@ public class ModelController implements Observer {
 		adaptBoxCoordinates(modelBox);
 	}
 
+	/**
+	 * Adapts the color of an arrow based on the relation changes.
+	 * @param relation
+	 */
 	private void adaptArrowColor(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow == null) {
@@ -207,6 +250,10 @@ public class ModelController implements Observer {
 		changedArrow.setColor(relation.getColor());
 	}
 
+	/**
+	 * Adapts the arrow direction based on the relation changes.
+	 * @param relation
+	 */
 	private void adaptArrowDirection(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow == null) {
@@ -223,6 +270,10 @@ public class ModelController implements Observer {
 		this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
 	}
 
+	/**
+	 * Adapts the arrow labels based on the relation changes.
+	 * @param relation
+	 */
 	private void adaptArrowLabel(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow != null) {
@@ -234,6 +285,11 @@ public class ModelController implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the position of all arrows connected to the model box. Some changes that trigger
+	 * arrow repositioning calculation are e.g. box position, width and height.
+	 * @param modelBox
+	 */
 	private void adaptArrowToBox(ModelBox modelBox) {
 		if (modelBox.getEndpoints().isEmpty()) {
 			return;
@@ -261,6 +317,10 @@ public class ModelController implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the view box to changes in the model box name.
+	 * @param modelBox
+	 */
 	private void adaptBoxTopField(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null && modelBox instanceof ModelClass) {
@@ -291,6 +351,10 @@ public class ModelController implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the view box's width to width changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxWidth(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null) {
@@ -307,6 +371,10 @@ public class ModelController implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the view box's height to height changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxHeight(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null) {
@@ -333,6 +401,10 @@ public class ModelController implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the view box color to color changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxColor(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null) {
@@ -349,6 +421,10 @@ public class ModelController implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the position of the view box based on coordinates changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxCoordinates(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox == null) {
@@ -377,6 +453,10 @@ public class ModelController implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the centerfields to attribute changes in the model class.
+	 * @param modelClass
+	 */
 	private void adaptCenterFields(ModelClass modelClass) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelClass);
 		if (changedBox != null) {
@@ -407,6 +487,10 @@ public class ModelController implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the centerfields to attribute / attributevalue changes in the model object.
+	 * @param modelObject
+	 */
 	private void adaptCenterFields(ModelObject modelObject) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelObject);
 		if (changedBox != null) {

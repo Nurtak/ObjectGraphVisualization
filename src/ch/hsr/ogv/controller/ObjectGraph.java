@@ -196,8 +196,8 @@ public class ObjectGraph {
 			newPosition = new Point3D(newPosition.getX(), newPosition.getY() + ARRAYBOX_LEVEL_DIFF, newPosition.getZ());
 		}
 		paneBox.setTranslateXYZ(newPosition);
-		paneBox.setWidth(PaneBox.MIN_WIDTH);
-		paneBox.setMinHeight(PaneBox.MIN_HEIGHT);
+		paneBox.setWidth(paneBox.calcMinWidth());
+		paneBox.setMinHeight(paneBox.calcMinHeight());
 		add(paneBox);
 		return paneBox;
 	}
