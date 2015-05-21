@@ -1,192 +1,74 @@
 package ch.hsr.ogv.controller;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.SubScene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import jfxtras.labs.util.Util;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.hsr.ogv.dataaccess.Persistancy;
-import ch.hsr.ogv.dataaccess.UserPreferences;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
-import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
 import ch.hsr.ogv.model.Relation.RelationChange;
-import ch.hsr.ogv.util.FXMLResourceUtil;
-import ch.hsr.ogv.util.ResourceLocator;
-import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
-/**
- *
- * @author Simon Gwerder
- *
- */
-public class StageManager implements Observer {
+public class ModelController implements Observer {
 
-	private final static Logger logger = LoggerFactory.getLogger(StageManager.class);
-
-	private String appTitle = "Object Graph Visualizer v.2.0";
-	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdapter;
-
+	
 	private ModelViewConnector mvConnector;
-	private ObjectGraph objectGraph;
-	private Persistancy persistancy;
-
-	private RootLayoutController rootLayoutController = new RootLayoutController();
-	private SelectionController selectionController = new SelectionController();
-	private ContextMenuController contextMenuController = new ContextMenuController();
-	private TextFieldController textFieldController = new TextFieldController();
-	private MouseMoveController mouseMoveController = new MouseMoveController();
-	private CameraController cameraController = new CameraController();
-	private DragMoveController dragMoveController = new DragMoveController();
-	private DragResizeController dragResizeController = new DragResizeController();
-	private RelationCreationController relationCreationController = new RelationCreationController();
-
-	private static final int MIN_WIDTH = 1024;
-	private static final int MIN_HEIGHT = 768;
-
-	public StageManager(Stage primaryStage) {
-		if (primaryStage == null) {
-			throw new IllegalArgumentException("The primaryStage argument can not be null!");
-		}
-		this.primaryStage = primaryStage;
-
-		loadRootLayoutController();
-		setupStage();
-
-		initMVConnector();
-		initObjectGraph();
-		initPersistancy();
-
-		initRootLayoutController();
-		initSelectionController();
-		initContextMenuController();
-		initMouseMoveController();
-		initCameraController();
-		initDragController();
-		initRelationCreationController();
-
-		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-
-		// TODO: Remove everything below this line:
-		mvConnector.createDummyContent();
+	
+	private SelectionController selectionController;
+	private ContextMenuController contextMenuController;
+	private TextFieldController textFieldController;
+	private MouseMoveController mouseMoveController;
+	private DragMoveController dragMoveController;
+	private DragResizeController dragResizeController;
+	
+	public void setRootLayout(BorderPane rootLayout) {
+		this.rootLayout = rootLayout;
 	}
 
-	private void setupStage() {
-		this.primaryStage.setTitle(this.appTitle);
-		this.primaryStage.setMinWidth(MIN_WIDTH);
-		this.primaryStage.setMinHeight(MIN_HEIGHT);
-		this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_GIF).toExternalForm())); // set the application icon
-
-		Pane canvas = (Pane) this.rootLayout.getCenter();
-		this.subSceneAdapter = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());
-		SubScene subScene = this.subSceneAdapter.getSubScene();
-		canvas.getChildren().add(subScene);
-		subScene.widthProperty().bind(canvas.widthProperty());
-		subScene.heightProperty().bind(canvas.heightProperty());
-
-		Scene scene = new Scene(this.rootLayout);
-		String sceneCSS = ResourceLocator.getResourcePath(Resource.SCENE_CSS).toExternalForm();
-		scene.getStylesheets().add(sceneCSS);
-		this.primaryStage.setScene(scene);
-		this.primaryStage.show();
-		this.subSceneAdapter.getSubScene().requestFocus();
+	public void setSubSceneAdapter(SubSceneAdapter subSceneAdapter) {
+		this.subSceneAdapter = subSceneAdapter;
 	}
 
-	private void loadRootLayoutController() {
-		FXMLLoader loader = FXMLResourceUtil.prepareLoader(Resource.ROOTLAYOUT_FXML); // load rootlayout from fxml file
-		try {
-			loader.setController(rootLayoutController);
-			this.rootLayout = (BorderPane) loader.load();
-		}
-		catch (IOException | ClassCastException e) {
-			logger.debug(e.getMessage());
-			e.printStackTrace();
-		}
+	public void setMVConnector(ModelViewConnector mvConnector) {
+		this.mvConnector = mvConnector;
+		this.mvConnector.getModelManager().addObserver(this); // observing ModelManager immediately after setting it
 	}
 
-	private void initMVConnector() {
-		this.mvConnector = new ModelViewConnector();
-		this.mvConnector.getModelManager().addObserver(this);
+	public void setSelectionController(SelectionController selectionController) {
+		this.selectionController = selectionController;
 	}
 
-	private void initObjectGraph() {
-		this.objectGraph = new ObjectGraph(this.mvConnector, this.subSceneAdapter);
+	public void setContextMenuController(ContextMenuController contextMenuController) {
+		this.contextMenuController = contextMenuController;
 	}
 
-	private void initPersistancy() {
-		UserPreferences.setOGVFilePath(null); // reset user preferences of file path
-		persistancy = new Persistancy(this.mvConnector.getModelManager());
+	public void setTextFieldController(TextFieldController textFieldController) {
+		this.textFieldController = textFieldController;
 	}
 
-	private void initRootLayoutController() {
-		this.rootLayoutController.setPrimaryStage(this.primaryStage);
-		this.rootLayoutController.setSubSceneAdapter(this.subSceneAdapter);
-		this.rootLayoutController.setMVConnector(this.mvConnector);
-		this.rootLayoutController.setObjectGraph(this.objectGraph);
-		this.rootLayoutController.setPersistancy(this.persistancy);
-		this.rootLayoutController.setSelectionController(this.selectionController);
-		this.rootLayoutController.setCameraController(this.cameraController);
-		this.rootLayoutController.setRelationCreationController(this.relationCreationController);
+	public void setMouseMoveController(MouseMoveController mouseMoveController) {
+		this.mouseMoveController = mouseMoveController;
 	}
 
-	private void initSelectionController() {
-		this.selectionController.enableSubSceneSelection(this.subSceneAdapter);
-		this.selectionController.addObserver(this.rootLayoutController);
-		this.selectionController.addObserver(this.contextMenuController);
+	public void setDragMoveController(DragMoveController dragMoveController) {
+		this.dragMoveController = dragMoveController;
 	}
 
-	private void initContextMenuController() {
-		this.contextMenuController.enableActionEvents(this.selectionController, this.subSceneAdapter);
-		this.contextMenuController.setMVConnector(this.mvConnector);
-		this.contextMenuController.setRelationCreationController(this.relationCreationController);
-		this.contextMenuController.enableContextMenu(this.subSceneAdapter);
-	}
-
-	private void initMouseMoveController() {
-		this.mouseMoveController.enableMouseMove(this.subSceneAdapter.getFloor());
-		this.mouseMoveController.addObserver(relationCreationController);
-	}
-
-	private void initCameraController() {
-		this.cameraController.enableCamera(this.subSceneAdapter);
-	}
-
-	private void initDragController() {
-		this.dragMoveController.addObserver(this.cameraController);
-		this.dragMoveController.addObserver(this.rootLayoutController);
-		this.dragMoveController.addObserver(this.selectionController);
-		this.dragResizeController.addObserver(this.cameraController);
-		this.dragResizeController.addObserver(this.rootLayoutController);
-		this.dragResizeController.addObserver(this.selectionController);
-	}
-
-	private void initRelationCreationController() {
-		relationCreationController.setSelectionController(selectionController);
-		relationCreationController.setSubSceneAdapter(subSceneAdapter);
-		relationCreationController.setMvConnector(mvConnector);
+	public void setDragResizeController(DragResizeController dragResizeController) {
+		this.dragResizeController = dragResizeController;
 	}
 
 	/**
@@ -651,5 +533,5 @@ public class StageManager implements Observer {
 		}
 		this.rootLayout.applyCss();
 	}
-
+	
 }

@@ -51,11 +51,11 @@ import ch.hsr.ogv.view.SubSceneCamera;
 import ch.hsr.ogv.view.TSplitMenuButton;
 
 /**
- * The controller for the root layout. The root layout provides the basic application layout containing a menu bar and space where other JavaFX elements can be placed.
- *
+ * 
  * @author Simon Gwerder
+ *
  */
-public class RootLayoutController implements Observer, Initializable {
+public class ViewController implements Observer, Initializable {
 
 	private Stage primaryStage;
 	private String appTitle;
