@@ -18,7 +18,7 @@ import ch.hsr.ogv.util.TextUtil;
  * @author Simon Gwerder
  *
  */
-public class ObjectGraphWrapper {
+public class ObjectGraphCollector {
 
 	private ModelObject modelObject; // the model object we gather all info for
 	private ArrayList<Relation> classRelations = new ArrayList<Relation>(); // helper list with all class relations
@@ -64,7 +64,7 @@ public class ObjectGraphWrapper {
 		return retList;
 	}
 
-	public ObjectGraphWrapper(ModelObject modelObject) {
+	public ObjectGraphCollector(ModelObject modelObject) {
 		this.modelObject = modelObject;
 		perpareHelpers();
 		setAllocates();

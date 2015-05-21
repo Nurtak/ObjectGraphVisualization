@@ -94,25 +94,25 @@ public class ObjectGraph {
 		}
 	}
 
-	private int buildReferenceNames(PaneBox paneBox, ObjectGraphWrapper ogWrapper) {
+	private int buildReferenceNames(PaneBox paneBox, ObjectGraphCollector ogCollector) {
 		int origSize = paneBox.getCenterLabels().size();
-		for (int i = 0; i < ogWrapper.getClassFriendEndpoints().size(); i++) {
+		for (int i = 0; i < ogCollector.getClassFriendEndpoints().size(); i++) {
 			int centerLabelIndex = origSize + i;
-			Endpoint friendEndpoint = ogWrapper.getClassFriendEndpoints().get(i);
+			Endpoint friendEndpoint = ogCollector.getClassFriendEndpoints().get(i);
 			Relation relation = friendEndpoint.getRelation();
-			String roleName = ogWrapper.getReferenceNames().get(relation);
+			String roleName = ogCollector.getReferenceNames().get(relation);
 			paneBox.setCenterText(centerLabelIndex, roleName + " " + MultiplicityParser.ASTERISK, "");
 		}
 		return origSize;
 	}
 
-	private void buildReferences(PaneBox paneBox, int origSize, ObjectGraphWrapper ogWrapper) {
-		for (int i = 0; i < ogWrapper.getClassFriendEndpoints().size(); i++) {
+	private void buildReferences(PaneBox paneBox, int origSize, ObjectGraphCollector ogCollector) {
+		for (int i = 0; i < ogCollector.getClassFriendEndpoints().size(); i++) {
 			int centerLabelIndex = origSize + i;
-			Endpoint friendEndpoint = ogWrapper.getClassFriendEndpoints().get(i);
+			Endpoint friendEndpoint = ogCollector.getClassFriendEndpoints().get(i);
 			Relation relation = friendEndpoint.getRelation();
-			ArrayList<ModelObject> modelObjects = ogWrapper.getAssociatedObjects(relation);
-			String upperBoundStr = ogWrapper.getAllocates().get(relation);
+			ArrayList<ModelObject> modelObjects = ogCollector.getAssociatedObjects(relation);
+			String upperBoundStr = ogCollector.getAllocates().get(relation);
 			if (!modelObjects.isEmpty() && upperBoundStr != null && !upperBoundStr.isEmpty() && upperBoundStr.equals("1")) { // direct reference
 				ModelObject firstRefObject = modelObjects.get(0);
 				PaneBox firstRefBox = this.mvConnector.getPaneBox(firstRefObject);
@@ -124,10 +124,10 @@ public class ObjectGraph {
 				if (upperBoundStr == null) {
 					upperBoundStr = MultiplicityParser.ASTERISK;
 				}
-				PaneBox arrayBox = createArrayBox(ogWrapper.getModelObject(), (ModelClass) friendEndpoint.getAppendant(), relation, upperBoundStr);
+				PaneBox arrayBox = createArrayBox(ogCollector.getModelObject(), (ModelClass) friendEndpoint.getAppendant(), relation, upperBoundStr);
 				createBoxArrow(paneBox, arrayBox, centerLabelIndex, relation);
-				createArrayBoxAttributes(arrayBox, relation, ogWrapper);
-				createArrayBoxArrows(arrayBox, relation, ogWrapper);
+				createArrayBoxAttributes(arrayBox, relation, ogCollector);
+				createArrayBoxArrows(arrayBox, relation, ogCollector);
 			}
 		}
 	}
@@ -142,11 +142,11 @@ public class ObjectGraph {
 		createBoxAttributes(paneBox, modelObject);
 		paneBox.setWidth(modelObject.getWidth());
 		if (!modelObject.isSuperObject()) {
-			ObjectGraphWrapper ogWrapper = new ObjectGraphWrapper(modelObject);
-			int origSize = buildReferenceNames(paneBox, ogWrapper);
+			ObjectGraphCollector ogCollector = new ObjectGraphCollector(modelObject);
+			int origSize = buildReferenceNames(paneBox, ogCollector);
 			double newHeight = modelObject.getHeight() > paneBox.calcMinHeight() ? modelObject.getHeight() : paneBox.calcMinHeight();
 			paneBox.setHeight(newHeight);
-			buildReferences(paneBox, origSize, ogWrapper);
+			buildReferences(paneBox, origSize, ogCollector);
 			paneBox.setMinHeight(modelObject.getHeight());
 			paneBox.recalcHasCenterGrid();
 		}
@@ -202,9 +202,9 @@ public class ObjectGraph {
 		return paneBox;
 	}
 
-	private void createArrayBoxAttributes(PaneBox arrayBox, Relation relation, ObjectGraphWrapper ogWrapper) {
-		ArrayList<ModelObject> modelObjects = ogWrapper.getAssociatedObjects(relation);
-		Integer upperBound = MultiplicityParser.toInteger(ogWrapper.getAllocates().get(relation));
+	private void createArrayBoxAttributes(PaneBox arrayBox, Relation relation, ObjectGraphCollector ogCollector) {
+		ArrayList<ModelObject> modelObjects = ogCollector.getAssociatedObjects(relation);
+		Integer upperBound = MultiplicityParser.toInteger(ogCollector.getAllocates().get(relation));
 		if (upperBound == null) {
 			upperBound = modelObjects.size();
 		}
@@ -216,8 +216,8 @@ public class ObjectGraph {
 		arrayBox.recalcHasCenterGrid();
 	}
 
-	private void createArrayBoxArrows(PaneBox arrayBox, Relation relation, ObjectGraphWrapper ogWrapper) {
-		ArrayList<ModelObject> modelObjects = ogWrapper.getAssociatedObjects(relation);
+	private void createArrayBoxArrows(PaneBox arrayBox, Relation relation, ObjectGraphCollector ogCollector) {
+		ArrayList<ModelObject> modelObjects = ogCollector.getAssociatedObjects(relation);
 		for (int i = 0; i < arrayBox.getCenterLabels().size(); i++) {
 			if (i < modelObjects.size()) {
 				ModelObject modelObject = modelObjects.get(i);
