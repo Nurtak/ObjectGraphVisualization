@@ -1,199 +1,91 @@
 package ch.hsr.ogv.controller;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.SubScene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import jfxtras.labs.util.Util;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.hsr.ogv.dataaccess.Persistancy;
-import ch.hsr.ogv.dataaccess.UserPreferences;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
-import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
 import ch.hsr.ogv.model.Relation.RelationChange;
-import ch.hsr.ogv.util.FXMLResourceUtil;
-import ch.hsr.ogv.util.ResourceLocator;
-import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
 /**
- *
+ * 
  * @author Simon Gwerder
  *
  */
-public class StageManager implements Observer {
+public class ModelController implements Observer {
 
-	private final static Logger logger = LoggerFactory.getLogger(StageManager.class);
-
-	private String appTitle = "Object Graph Visualizer v.2.0";
-	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdapter;
-
+	
 	private ModelViewConnector mvConnector;
-	private ObjectGraph objectGraph;
-	private Persistancy persistancy;
-
-	private RootLayoutController rootLayoutController = new RootLayoutController();
-	private SelectionController selectionController = new SelectionController();
-	private ContextMenuController contextMenuController = new ContextMenuController();
-	private TextFieldController textFieldController = new TextFieldController();
-	private MouseMoveController mouseMoveController = new MouseMoveController();
-	private CameraController cameraController = new CameraController();
-	private DragMoveController dragMoveController = new DragMoveController();
-	private DragResizeController dragResizeController = new DragResizeController();
-	private RelationCreationController relationCreationController = new RelationCreationController();
-
-	private static final int MIN_WIDTH = 1024;
-	private static final int MIN_HEIGHT = 768;
-
-	public StageManager(Stage primaryStage) {
-		if (primaryStage == null) {
-			throw new IllegalArgumentException("The primaryStage argument can not be null!");
-		}
-		this.primaryStage = primaryStage;
-
-		loadRootLayoutController();
-		setupStage();
-
-		initMVConnector();
-		initObjectGraph();
-		initPersistancy();
-
-		initRootLayoutController();
-		initSelectionController();
-		initContextMenuController();
-		initMouseMoveController();
-		initCameraController();
-		initDragController();
-		initRelationCreationController();
-
-		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-
-		// TODO: Remove everything below this line:
-		mvConnector.createDummyContent();
+	
+	private SelectionController selectionController;
+	private ContextMenuController contextMenuController;
+	private TextFieldController textFieldController;
+	private MouseMoveController mouseMoveController;
+	private DragMoveController dragMoveController;
+	private DragResizeController dragResizeController;
+	
+	public void setRootLayout(BorderPane rootLayout) {
+		this.rootLayout = rootLayout;
 	}
 
-	private void setupStage() {
-		this.primaryStage.setTitle(this.appTitle);
-		this.primaryStage.setMinWidth(MIN_WIDTH);
-		this.primaryStage.setMinHeight(MIN_HEIGHT);
-		this.primaryStage.getIcons().add(new Image(ResourceLocator.getResourcePath(Resource.ICON_GIF).toExternalForm())); // set the application icon
-
-		Pane canvas = (Pane) this.rootLayout.getCenter();
-		this.subSceneAdapter = new SubSceneAdapter(canvas.getWidth(), canvas.getHeight());
-		SubScene subScene = this.subSceneAdapter.getSubScene();
-		canvas.getChildren().add(subScene);
-		subScene.widthProperty().bind(canvas.widthProperty());
-		subScene.heightProperty().bind(canvas.heightProperty());
-
-		Scene scene = new Scene(this.rootLayout);
-		String sceneCSS = ResourceLocator.getResourcePath(Resource.SCENE_CSS).toExternalForm();
-		scene.getStylesheets().add(sceneCSS);
-		this.primaryStage.setScene(scene);
-		this.primaryStage.show();
-		this.subSceneAdapter.getSubScene().requestFocus();
+	public void setSubSceneAdapter(SubSceneAdapter subSceneAdapter) {
+		this.subSceneAdapter = subSceneAdapter;
 	}
 
-	private void loadRootLayoutController() {
-		FXMLLoader loader = FXMLResourceUtil.prepareLoader(Resource.ROOTLAYOUT_FXML); // load rootlayout from fxml file
-		try {
-			loader.setController(rootLayoutController);
-			this.rootLayout = (BorderPane) loader.load();
-		}
-		catch (IOException | ClassCastException e) {
-			logger.debug(e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	private void initMVConnector() {
-		this.mvConnector = new ModelViewConnector();
+	/**
+	 * Setter for {@link ch.hsr.ogv.controller.ModelViewConnector}, adds this class as observer of the 
+	 * {@link ch.hsr.ogv.model.ModelManager} immediately after setting it.
+	 * @param mvConnector
+	 */
+	public void setMVConnector(ModelViewConnector mvConnector) {
+		this.mvConnector = mvConnector;
 		this.mvConnector.getModelManager().addObserver(this);
 	}
 
-	private void initObjectGraph() {
-		this.objectGraph = new ObjectGraph(this.mvConnector, this.subSceneAdapter);
+	public void setSelectionController(SelectionController selectionController) {
+		this.selectionController = selectionController;
 	}
 
-	private void initPersistancy() {
-		UserPreferences.setOGVFilePath(null); // reset user preferences of file path
-		persistancy = new Persistancy(this.mvConnector.getModelManager());
+	public void setContextMenuController(ContextMenuController contextMenuController) {
+		this.contextMenuController = contextMenuController;
 	}
 
-	private void initRootLayoutController() {
-		this.rootLayoutController.setPrimaryStage(this.primaryStage);
-		this.rootLayoutController.setSubSceneAdapter(this.subSceneAdapter);
-		this.rootLayoutController.setMVConnector(this.mvConnector);
-		this.rootLayoutController.setObjectGraph(this.objectGraph);
-		this.rootLayoutController.setPersistancy(this.persistancy);
-		this.rootLayoutController.setSelectionController(this.selectionController);
-		this.rootLayoutController.setCameraController(this.cameraController);
-		this.rootLayoutController.setRelationCreationController(this.relationCreationController);
+	public void setTextFieldController(TextFieldController textFieldController) {
+		this.textFieldController = textFieldController;
 	}
 
-	private void initSelectionController() {
-		this.selectionController.enableSubSceneSelection(this.subSceneAdapter);
-		this.selectionController.addObserver(this.rootLayoutController);
-		this.selectionController.addObserver(this.contextMenuController);
+	public void setMouseMoveController(MouseMoveController mouseMoveController) {
+		this.mouseMoveController = mouseMoveController;
 	}
 
-	private void initContextMenuController() {
-		this.contextMenuController.enableActionEvents(this.selectionController, this.subSceneAdapter);
-		this.contextMenuController.setMVConnector(this.mvConnector);
-		this.contextMenuController.setRelationCreationController(this.relationCreationController);
-		this.contextMenuController.enableContextMenu(this.subSceneAdapter);
+	public void setDragMoveController(DragMoveController dragMoveController) {
+		this.dragMoveController = dragMoveController;
 	}
 
-	private void initMouseMoveController() {
-		this.mouseMoveController.enableMouseMove(this.subSceneAdapter.getFloor());
-		this.mouseMoveController.addObserver(relationCreationController);
-	}
-
-	private void initCameraController() {
-		this.cameraController.enableCamera(this.subSceneAdapter);
-	}
-
-	private void initDragController() {
-		this.dragMoveController.addObserver(this.cameraController);
-		this.dragMoveController.addObserver(this.rootLayoutController);
-		this.dragMoveController.addObserver(this.selectionController);
-		this.dragResizeController.addObserver(this.cameraController);
-		this.dragResizeController.addObserver(this.rootLayoutController);
-		this.dragResizeController.addObserver(this.selectionController);
-	}
-
-	private void initRelationCreationController() {
-		relationCreationController.setSelectionController(selectionController);
-		relationCreationController.setSubSceneAdapter(subSceneAdapter);
-		relationCreationController.setMvConnector(mvConnector);
+	public void setDragResizeController(DragResizeController dragResizeController) {
+		this.dragResizeController = dragResizeController;
 	}
 
 	/**
 	 * Adds node to the subscene of the primary stage.
 	 *
 	 * @param node
-	 *            node.
+	 * 
 	 */
 	private void addToSubScene(Node node) {
 		this.subSceneAdapter.add(node);
@@ -204,13 +96,18 @@ public class StageManager implements Observer {
 	 * Removes node from the subscene of the primary stage.
 	 *
 	 * @param node
-	 *            node.
+	 * 
 	 */
 	private void removeFromView(Node node) {
 		this.subSceneAdapter.remove(node);
 		this.rootLayout.applyCss();
 	}
 
+	/**
+	 * Creates a {@link ch.hsr.ogv.view.PaneBox} representing a class, adds it to the view and creates a connection in the
+	 * {@link ch.hsr.ogv.controller.ModelViewConnector}
+	 * @param modelClass
+	 */
 	private void showModelClassInView(ModelClass modelClass) {
 		modelClass.addObserver(this);
 		PaneBox paneBox = new PaneBox();
@@ -224,6 +121,11 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelClass, paneBox);
 	}
 
+	/**
+	 * Creates a {@link ch.hsr.ogv.view.PaneBox} representing an object, adds it to the view and creates a connection in the
+	 * {@link ch.hsr.ogv.controller.ModelViewConnector}
+	 * @param modelObject
+	 */
 	private void showModelObjectInView(ModelObject modelObject) {
 		modelObject.addObserver(this);
 		PaneBox paneBox = new PaneBox();
@@ -237,6 +139,11 @@ public class StageManager implements Observer {
 		this.mvConnector.putBoxes(modelObject, paneBox);
 	}
 
+	/**
+	 * Creates a {@link ch.hsr.ogv.view.PaneBox} representing a relation, adds it to the view and creates a connection in the
+	 * {@link ch.hsr.ogv.controller.ModelViewConnector}.
+	 * @param relation
+	 */
 	private void showArrowInView(Relation relation) {
 		relation.addObserver(this);
 		ModelBox startModelBox = relation.getStart().getAppendant();
@@ -245,7 +152,7 @@ public class StageManager implements Observer {
 		PaneBox endViewBox = this.mvConnector.getPaneBox(endModelBox);
 		if (startViewBox != null && endViewBox != null) {
 			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getRelationType());
-			addArrowControls(arrow, relation);
+			addArrowControls(relation, arrow);
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
 
@@ -256,6 +163,11 @@ public class StageManager implements Observer {
 		}
 	}
 
+	/**
+	 * Adds various controllers based on the type and nature of the ModelBox.
+	 * @param modelBox The model object or class
+	 * @param paneBox The corresponding box representing the model object or class in view
+	 */
 	private void addPaneBoxControls(ModelBox modelBox, PaneBox paneBox) {
 		if (modelBox instanceof ModelClass) {
 			this.selectionController.enablePaneBoxSelection(paneBox, this.subSceneAdapter, true);
@@ -280,12 +192,21 @@ public class StageManager implements Observer {
 		this.mouseMoveController.enableMouseMove(paneBox);
 	}
 
-	private void addArrowControls(Arrow arrow, Relation relation) {
+	/**
+	 * Adds various controllers to the arrow.
+	 * @param relation The model relation
+	 * @param arrow The corresponding arrow representing the relation in view
+	 */
+	private void addArrowControls(Relation relation, Arrow arrow) {
 		this.selectionController.enableArrowSelection(arrow, this.subSceneAdapter);
 		this.selectionController.enableArrowLabelSelection(arrow, this.subSceneAdapter);
 		this.textFieldController.enableArrowLabelTextInput(arrow, relation, this.mvConnector);
 	}
 
+	/**
+	 * Adapts all settings of the view box based on changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxSettings(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null && modelBox instanceof ModelClass) {
@@ -317,6 +238,10 @@ public class StageManager implements Observer {
 		adaptBoxCoordinates(modelBox);
 	}
 
+	/**
+	 * Adapts the color of an arrow based on the relation changes.
+	 * @param relation
+	 */
 	private void adaptArrowColor(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow == null) {
@@ -325,6 +250,10 @@ public class StageManager implements Observer {
 		changedArrow.setColor(relation.getColor());
 	}
 
+	/**
+	 * Adapts the arrow direction based on the relation changes.
+	 * @param relation
+	 */
 	private void adaptArrowDirection(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow == null) {
@@ -341,6 +270,10 @@ public class StageManager implements Observer {
 		this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
 	}
 
+	/**
+	 * Adapts the arrow labels based on the relation changes.
+	 * @param relation
+	 */
 	private void adaptArrowLabel(Relation relation) {
 		Arrow changedArrow = this.mvConnector.getArrow(relation);
 		if (changedArrow != null) {
@@ -352,6 +285,11 @@ public class StageManager implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the position of all arrows connected to the model box. Some changes that trigger
+	 * arrow repositioning calculation are e.g. box position, width and height.
+	 * @param modelBox
+	 */
 	private void adaptArrowToBox(ModelBox modelBox) {
 		if (modelBox.getEndpoints().isEmpty()) {
 			return;
@@ -379,6 +317,10 @@ public class StageManager implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the view box to changes in the model box name.
+	 * @param modelBox
+	 */
 	private void adaptBoxTopField(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null && modelBox instanceof ModelClass) {
@@ -409,6 +351,10 @@ public class StageManager implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the view box's width to width changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxWidth(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null) {
@@ -425,6 +371,10 @@ public class StageManager implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the view box's height to height changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxHeight(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null) {
@@ -451,6 +401,10 @@ public class StageManager implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the view box color to color changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxColor(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox != null) {
@@ -467,6 +421,10 @@ public class StageManager implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the position of the view box based on coordinates changes in the model.
+	 * @param modelBox
+	 */
 	private void adaptBoxCoordinates(ModelBox modelBox) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelBox);
 		if (changedBox == null) {
@@ -495,6 +453,10 @@ public class StageManager implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the centerfields to attribute changes in the model class.
+	 * @param modelClass
+	 */
 	private void adaptCenterFields(ModelClass modelClass) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelClass);
 		if (changedBox != null) {
@@ -525,6 +487,10 @@ public class StageManager implements Observer {
 		}
 	}
 
+	/**
+	 * Adapts the centerfields to attribute / attributevalue changes in the model object.
+	 * @param modelObject
+	 */
 	private void adaptCenterFields(ModelObject modelObject) {
 		PaneBox changedBox = this.mvConnector.getPaneBox(modelObject);
 		if (changedBox != null) {
@@ -651,5 +617,5 @@ public class StageManager implements Observer {
 		}
 		this.rootLayout.applyCss();
 	}
-
+	
 }

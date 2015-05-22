@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 
-public class ModelLoader {
+public class ObjModelLoader {
 	
-	private final static Logger logger = LoggerFactory.getLogger(ModelLoader.class);
+	private final static Logger logger = LoggerFactory.getLogger(ObjModelLoader.class);
 
 	public static Node[] load(URL modelUrl) {
 		Node[] rootNodes = {};

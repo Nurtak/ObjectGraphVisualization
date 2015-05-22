@@ -447,7 +447,7 @@ public class ModelViewConnector {
 			PaneBox startPaneBox = getPaneBox(relationList.get(i).getStart().getAppendant());
 			PaneBox endPaneBox = getPaneBox(relationList.get(i).getEnd().getAppendant());
 			if(arrow != null && startPaneBox != null && endPaneBox != null) {
-				arrow.arrangeEndpoints(startPaneBox, endPaneBox, plusNumber + i + 1, relationList.size() + plusNumber);
+				arrow.arrangeEndpoints(startPaneBox, endPaneBox, i + 1, relationList.size() + plusNumber);
 			}
 		}
 	}

@@ -19,15 +19,4 @@ public class ConnectorBox extends Group {
 		getChildren().add(conectorBox);
 	}
 	
-//	Box conectorBox = new Box(2 * PaneBox.HORIZONTAL_BORDER_GAP, arrow.getWidth(), arrow.getWidth());
-//	Point3D centerLabelPos = paneBox.getCenterLabelEndPos(centerLabelIndex);
-//	setTranslateX(centerLabelPos.getX() + PaneBox.HORIZONTAL_BORDER_GAP);
-//	setTranslateY(centerLabelPos.getY());
-//	setTranslateZ(centerLabelPos.getZ());
-//	PhongMaterial material = new PhongMaterial();
-//	material.setDiffuseColor(arrow.getColor());
-//	material.setSpecularColor(arrow.getColor().brighter());
-//	conectorBox.setMaterial(material);
-//	getChildren().add(conectorBox);
-
 }

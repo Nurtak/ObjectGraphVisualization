@@ -12,7 +12,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Rotate;
 import ch.hsr.ogv.model.EndpointType;
-import ch.hsr.ogv.util.ModelLoader;
+import ch.hsr.ogv.util.ObjModelLoader;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
@@ -81,7 +81,7 @@ public class ArrowEdge extends Group {
 	}
 
 	private void loadModel(URL modelUrl) {
-		Node[] rootNodes = ModelLoader.load(modelUrl);
+		Node[] rootNodes = ObjModelLoader.load(modelUrl);
 		for (Node n : rootNodes) {
 			MeshView mv = (MeshView) n;
 			this.meshViews.add(mv);

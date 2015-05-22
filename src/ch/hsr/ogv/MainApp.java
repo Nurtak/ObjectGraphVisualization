@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.hsr.ogv.controller.StageManager;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
@@ -44,7 +43,7 @@ public class MainApp extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		Thread.currentThread().setUncaughtExceptionHandler(ueHandler);
-		new StageManager(primaryStage);
+		new StageBuilder(primaryStage);
 	}
 
 }

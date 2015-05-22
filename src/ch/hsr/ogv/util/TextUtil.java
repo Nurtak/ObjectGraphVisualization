@@ -64,6 +64,10 @@ public class TextUtil {
 		return str + startValue;
 	}
 	
+	public static String replaceLast(String text, String regex, String replacement) {
+        return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
+    }
+	
 	public static String join(Collection<String> s, String delimiter) {
 	    StringBuffer buffer = new StringBuffer();
 	    Iterator<String> iter = s.iterator();
