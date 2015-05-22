@@ -23,41 +23,41 @@ import ch.hsr.ogv.util.GeometryUtil;
 public class Arrow extends Group implements Selectable {
 
 	private static final int INIT_WIDTH = 2;
-	private static final int SELECTION_HELPER_WIDTH = 20;
+	protected static final int SELECTION_HELPER_WIDTH = 20;
 	private static final int DASHED_ELEMENT_COUNT = 20;
 	private double width = INIT_WIDTH;
 	private static final Color SELECTION_COLOR = Color.DODGERBLUE;
 	private static final double EDGE_SPACING = 3;
 	private static final double LABEL_SPACING = 30;
-	private double boxDistance;
-	private double rotateYAngle;
-	private double rotateXAngle;
+	protected double boxDistance;
+	protected double rotateYAngle;
+	protected double rotateXAngle;
 
 	private int arrowNumber = 1;
 	private int totalArrowNumber = 1;
 
-	private Point3D startPoint;
-	private Point3D endPoint;
+	protected Point3D startPoint;
+	protected Point3D endPoint;
 
-	private ArrowEdge arrowStart;
-	private ArrowEdge arrowEnd;
+	protected ArrowEdge arrowStart;
+	protected ArrowEdge arrowEnd;
 
-	private ArrowLabel labelStartRight; // start multiplicity
-	private ArrowLabel labelStartLeft; // start role
-	private ArrowLabel labelEndRight; // end multiplicity
-	private ArrowLabel labelEndLeft; // end role
+	protected ArrowLabel labelStartRight; // start multiplicity
+	protected ArrowLabel labelStartLeft; // start role
+	protected ArrowLabel labelEndRight; // end multiplicity
+	protected ArrowLabel labelEndLeft; // end role
 
 	private RelationType type = RelationType.BIDIRECTED_ASSOCIATION;
 
-	private Box line;
+	protected Box line;
 	private ArrayList<Box> dashedLines = new ArrayList<Box>();
 
 	public static final Color DEFAULT_COLOR = Color.BLACK;
-	private Color color = DEFAULT_COLOR;
-	private ArrowSelection selection = null;
-	private Box lineSelectionHelper;
-	private Box startSelectionHelper;
-	private Box endSelectionHelper;
+	protected Color color = DEFAULT_COLOR;
+	protected ArrowSelection selection = null;
+	protected Box lineSelectionHelper;
+	protected Box startSelectionHelper;
+	protected Box endSelectionHelper;
 
 	public Arrow(PaneBox startBox, Point3D endPoint, RelationType type) {
 		setPoints(startBox, endPoint);
@@ -143,7 +143,7 @@ public class Arrow extends Group implements Selectable {
 		return endSelectionHelper;
 	}
 
-	private void buildArrow() {
+	protected void buildArrow() {
 		prepareArrowLineEdge();
 		prepareArrowLabel();
 		prepareLines();
@@ -158,20 +158,20 @@ public class Arrow extends Group implements Selectable {
 		getChildren().addAll(this.labelStartRight, this.labelStartLeft, this.labelEndRight, this.labelEndLeft);
 	}
 
-	private void prepareArrowLineEdge() {
+	protected void prepareArrowLineEdge() {
 		this.arrowStart = new ArrowEdge(this.type.getStartType(), this.color);
 		this.arrowEnd = new ArrowEdge(this.type.getEndType(), this.color);
 
 	}
 
-	private void prepareArrowLabel() {
+	protected void prepareArrowLabel() {
 		this.labelStartRight = new ArrowLabel();
 		this.labelStartLeft = new ArrowLabel();
 		this.labelEndRight = new ArrowLabel();
 		this.labelEndLeft = new ArrowLabel();
 	}
 
-	private void prepareLines() {
+	protected void prepareLines() {
 		this.line = new Box(this.width, this.width, this.boxDistance);
 		for (int i = 0; i < DASHED_ELEMENT_COUNT; i++) {
 			Box dashedLine = new Box(this.width, this.width, this.boxDistance);
@@ -180,7 +180,7 @@ public class Arrow extends Group implements Selectable {
 		}
 	}
 
-	private void buildSelectionHelpers() {
+	protected void buildSelectionHelpers() {
 		double lineSelectionGap = 100;
 		double endGap = this.arrowEnd.getAdditionalGap();
 		double startGap = this.arrowStart.getAdditionalGap();
@@ -230,7 +230,6 @@ public class Arrow extends Group implements Selectable {
 		}
 		this.boxDistance = this.startPoint.distance(this.endPoint);
 	}
-
 
 	public void setPointsBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
 		setStartPoint(startBox.getCenterPoint());
@@ -368,7 +367,7 @@ public class Arrow extends Group implements Selectable {
 		return pointList;
 	}
 
-	private void setArrowLineEdge() {
+	protected void setArrowLineEdge() {
 		this.arrowStart.setTranslateX(0);
 		this.arrowStart.setTranslateY(0);
 		this.arrowStart.setTranslateZ(0);
@@ -378,7 +377,7 @@ public class Arrow extends Group implements Selectable {
 		this.arrowEnd.setTranslateZ(this.boxDistance / 2 + EDGE_SPACING);
 	}
 
-	private void setArrowLabels() {
+	protected void setArrowLabels() {
 		this.labelStartRight.setDiffX(-LABEL_SPACING / 3 - 1);
 		this.labelStartRight.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
 
