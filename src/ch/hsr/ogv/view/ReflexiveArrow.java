@@ -4,125 +4,227 @@ import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.transform.Rotate;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.GeometryUtil;
 
 public class ReflexiveArrow extends Arrow {
+	
+	private final double SMALL_PART_LENGTH = 50;
 
-	Point3D firstPartPoint;
-	Point3D secondPartPoint;
-	Point3D thirdPartPoint;
-
-	public ReflexiveArrow(PaneBox box, RelationType type) {
-		super(box, box, type);
-		calcucaltePartPoints(box);
+	private Point3D firstPartPoint;
+	private Point3D secondPartPoint;
+	private Point3D thirdPartPoint;
+	
+	private Box smallVertical;
+	private Box largeHorizontal;
+	private Box largeVertical;
+	private Box smallHorizontal;
+	
+	public ReflexiveArrow(PaneBox startBox, PaneBox endBox, RelationType type) {
+		super(startBox, endBox, type);
+		setPoints(startBox, endBox);
+		this.type = type;
+		buildArrow();
+		drawArrow();
 	}
-
+	
+	@Override
+	public void setPoints(PaneBox startBox, PaneBox endBox) { // startBox and endBox can be the same
+		Point3D startBoxCenter = startBox.getCenterPoint();
+		Point3D endBoxCenter = endBox.getCenterPoint();
+		setStartPoint(new Point3D(startBoxCenter.getX(), startBoxCenter.getY(), startBoxCenter.getZ() + startBox.getHeight() / 2));
+		setEndPoint(new Point3D(endBoxCenter.getX() - endBox.getWidth() / 2, endBoxCenter.getY(), endBoxCenter.getZ()));
+//		if (totalArrowNumber > 1) { // TODO
+//			calculateArrangement(startBox, endBox);
+//		}
+		this.startEndDistance = this.startPoint.distance(this.endPoint);
+		calculatePartPoints();
+	}
+	
+	private void calculatePartPoints() {
+		this.firstPartPoint = new Point3D(this.startPoint.getX(), this.startPoint.getY(), this.startPoint.getZ() + SMALL_PART_LENGTH);
+		this.thirdPartPoint = new Point3D(this.endPoint.getX() - SMALL_PART_LENGTH, this.endPoint.getY(), this.endPoint.getZ());
+		this.secondPartPoint = new Point3D(this.thirdPartPoint.getX(), this.endPoint.getY(), this.firstPartPoint.getZ());
+	}
+	
 	@Override
 	protected void buildArrow() {
 		prepareArrowLineEdge();
 		prepareArrowLabel();
 		prepareLines();
 		buildSelectionHelpers();
-		selection = new ArrowSelection();
-		selection.setVisible(false);
-		setColor(color);
+		this.selection = new ArrowSelection();
+		this.selection.setVisible(false);
+		setColor(this.color);
 		drawArrow();
-		getChildren().addAll(line, arrowStart, arrowEnd);
-		getChildren().addAll(lineSelectionHelper, startSelectionHelper, endSelectionHelper);
-		getChildren().addAll(labelStartRight, labelStartLeft, labelEndRight, labelEndLeft);
+		addElementsToGroup();
 	}
-
+	
+	@Override
+	protected void addElementsToGroup() {
+		getChildren().clear();
+		getChildren().addAll(this.smallVertical, this.largeHorizontal, this.largeVertical, this.smallHorizontal);
+		getChildren().addAll(this.arrowStart, this.arrowEnd);
+		getChildren().addAll(this.lineSelectionHelpers);
+		getChildren().addAll(this.startSelectionHelper, this.endSelectionHelper);
+		getChildren().addAll(this.labelStartRight, this.labelStartLeft, this.labelEndRight, this.labelEndLeft);
+	}
+	
+	@Override
+	protected void prepareLines() {
+		this.line = new Box(this.width, this.width, this.width);
+		if(this.firstPartPoint != null && this.secondPartPoint != null && this.thirdPartPoint != null) {
+			this.smallVertical = new Box(this.width, this.width, this.startPoint.distance(this.firstPartPoint));
+			this.largeHorizontal = new Box(this.width, this.width, this.firstPartPoint.distance(this.secondPartPoint));
+			this.largeVertical = new Box(this.width, this.width, this.secondPartPoint.distance(this.thirdPartPoint));
+			this.smallHorizontal = new Box(this.width, this.width, this.thirdPartPoint.distance(this.endPoint));
+		}
+	}
+	
 	@Override
 	protected void buildSelectionHelpers() {
-		double lineSelectionGap = 100;
-		double endGap = arrowEnd.getAdditionalGap();
-		double startGap = arrowStart.getAdditionalGap();
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(Color.DODGERBLUE);
-		lineSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, line.getDepth() - lineSelectionGap);
-		lineSelectionHelper.depthProperty().bind(this.line.depthProperty().subtract(lineSelectionGap).add((endGap + startGap) / 2));
-		lineSelectionHelper.translateXProperty().bind(line.translateXProperty());
-		lineSelectionHelper.translateYProperty().bind(line.translateYProperty());
-		lineSelectionHelper.translateZProperty().bind(line.translateZProperty().subtract((-endGap + startGap) / 4));
-		lineSelectionHelper.rotateProperty().bind(line.rotateProperty());
-		lineSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
+		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, SMALL_PART_LENGTH);
+		this.startSelectionHelper.setMaterial(material); // for debugging
+		this.startSelectionHelper.translateXProperty().bind(this.smallVertical.translateXProperty());
+		this.startSelectionHelper.translateYProperty().bind(this.smallVertical.translateYProperty());
+		this.startSelectionHelper.translateZProperty().bind(this.smallVertical.translateZProperty());
+		this.startSelectionHelper.rotateProperty().bind(this.smallVertical.rotateProperty());
+		this.startSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 
-		startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, lineSelectionGap / 2);
-		startSelectionHelper.setMaterial(material); // for debugging
-		startSelectionHelper.translateXProperty().bind(line.translateXProperty());
-		startSelectionHelper.translateYProperty().bind(line.translateYProperty());
-		startSelectionHelper.translateZProperty().bind(line.translateZProperty().subtract(this.line.depthProperty().divide(2)).subtract(startGap / 2).add(lineSelectionGap / 4));
-		startSelectionHelper.rotateProperty().bind(line.rotateProperty());
-		startSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
-
-		endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, lineSelectionGap / 2);
-		endSelectionHelper.setMaterial(material); // for debugging
-		endSelectionHelper.translateXProperty().bind(line.translateXProperty());
-		endSelectionHelper.translateYProperty().bind(line.translateYProperty());
-		endSelectionHelper.translateZProperty().bind(line.translateZProperty().add(this.line.depthProperty().divide(2)).add(endGap / 2).subtract(lineSelectionGap / 4));
-		endSelectionHelper.rotateProperty().bind(line.rotateProperty());
-		endSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
+		this.lineSelectionHelpers.add(createBindLineHelper(this.largeHorizontal));
+		this.lineSelectionHelpers.add(createBindLineHelper(this.largeVertical));
+		
+		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, SMALL_PART_LENGTH);
+		this.endSelectionHelper.setMaterial(material); // for debugging
+		this.endSelectionHelper.translateXProperty().bind(this.smallHorizontal.translateXProperty());
+		this.endSelectionHelper.translateYProperty().bind(this.smallHorizontal.translateYProperty());
+		this.endSelectionHelper.translateZProperty().bind(this.smallHorizontal.translateZProperty());
+		this.endSelectionHelper.rotationAxisProperty().bind(this.smallHorizontal.rotationAxisProperty());
+		this.endSelectionHelper.rotateProperty().bind(this.smallHorizontal.rotateProperty());
+		this.endSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 	}
-
+	
+	private Box createBindLineHelper(Box origin) {
+		Box lineHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, origin.getDepth());
+		lineHelper.depthProperty().bind(origin.depthProperty().add((SELECTION_HELPER_WIDTH)));
+		lineHelper.translateXProperty().bind(origin.translateXProperty());
+		lineHelper.translateYProperty().bind(origin.translateYProperty());
+		lineHelper.translateZProperty().bind(origin.translateZProperty());
+		lineHelper.rotationAxisProperty().bind(origin.rotationAxisProperty());
+		lineHelper.rotateProperty().bind(origin.rotateProperty());
+		lineHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
+		return lineHelper;
+	}
+	
 	@Override
-	public void drawArrow() {
-		getTransforms().clear();
-		line.setVisible(true);
-		setArrowLineEdge();
-		setArrowLabels();
-
-		drawSmallHorizontalPart();
-		drawLargeVerticalPart();
-		drawLargeHorizontalPart();
-		drawSmallVerticalPart();
-
-		labelStartLeft.setRotateYAxis(-rotateYAngle);
-		labelStartRight.setRotateYAxis(-rotateYAngle);
-		labelEndLeft.setRotateYAxis(-rotateYAngle);
-		labelEndRight.setRotateYAxis(-rotateYAngle);
-
-		selection.setStartEndXYZ(startPoint, endPoint);
+	protected void setLineVisibility() {
+		this.line.setVisible(false);
+		this.smallVertical.setVisible(true);
+		this.largeHorizontal.setVisible(true);
+		this.largeVertical.setVisible(true);
+		this.smallHorizontal.setVisible(true);
+	}
+	
+	@Override
+	protected void setArrowLineEdge() {
+		setArrowStart();
+		setArrowEnd();
+	}
+	
+	private void setArrowStart() {
+		this.arrowStart.setTranslateX(0);
+		this.arrowStart.setTranslateY(0);
+		this.arrowStart.setTranslateZ(0);
+		this.arrowStart.getTransforms().clear();
+		this.arrowStart.getTransforms().add(new Rotate(-180, arrowStart.getTranslateX(), arrowStart.getTranslateY(), arrowStart.getTranslateZ(), Rotate.Y_AXIS));
+		this.arrowStart.setTranslateX(this.startPoint.getX());
+		this.arrowStart.setTranslateY(this.startPoint.getY());
+		this.arrowStart.setTranslateZ(this.startPoint.getZ() - EDGE_SPACING);
+	}
+	
+	private void setArrowEnd() {
+		this.arrowEnd.setTranslateX(0);
+		this.arrowEnd.setTranslateY(0);
+		this.arrowEnd.setTranslateZ(0);
+		this.arrowEnd.getTransforms().clear();
+		this.arrowEnd.getTransforms().add(new Rotate(90, arrowEnd.getTranslateX(), arrowEnd.getTranslateY(), arrowEnd.getTranslateZ(), Rotate.Y_AXIS));
+		this.arrowEnd.setTranslateX(this.endPoint.getX() + EDGE_SPACING);
+		this.arrowEnd.setTranslateY(this.endPoint.getY());
+		this.arrowEnd.setTranslateZ(this.endPoint.getZ());
 	}
 
-	private void calcucaltePartPoints(PaneBox box) {
-		firstPartPoint = new Point3D(startPoint.getX() - (box.getWidth() / 2) + 200, startPoint.getY(), startPoint.getZ());
-		thirdPartPoint = new Point3D(startPoint.getX(), startPoint.getY(), startPoint.getZ() + (box.getHeight() / 2) + 200);
-		secondPartPoint = new Point3D(firstPartPoint.getX(), startPoint.getY(), thirdPartPoint.getZ());
+	protected void setSingleElements() {
+		setSmallVertical();
+		setLargeHorizontal();
+		setLargeVertical();
+		setSmallHorizontal();
 	}
-
-	public void drawArrowBody(Point3D start, Point3D end) {
-		double endGap = arrowEnd.getAdditionalGap();
-		double startGap = arrowStart.getAdditionalGap();
-		double gapDistance = boxDistance - (endGap + startGap) / 2;
-
-		line.setDepth(gapDistance);
-		line.setTranslateZ((-endGap + startGap) / 4);
-
-		rotateYAngle = GeometryUtil.rotateYAngle(start, end);
-		rotateXAngle = -GeometryUtil.rotateXAngle(start, end);
-
-		Point3D midPoint = start.midpoint(end);
-		setTranslateXYZ(midPoint);
-		addRotateYAxis(rotateYAngle);
-		addRotateXAxis(rotateXAngle);
-
+	
+	private void setSmallVertical() {
+		double startGap = this.arrowStart.getAdditionalGap();
+		double smallVerticalDist = this.startPoint.distance(this.firstPartPoint) - (startGap / 2);
+		this.smallVertical.setDepth(smallVerticalDist);
+		this.smallVertical.setTranslateX(this.startPoint.getX());
+		this.smallVertical.setTranslateY(this.startPoint.getY());
+		this.smallVertical.setTranslateZ(this.startPoint.getZ() + (smallVerticalDist / 2) + (startGap / 2));
 	}
-
-	public void drawSmallHorizontalPart() {
-		drawArrowBody(startPoint, firstPartPoint);
+	
+	private void setLargeHorizontal() {
+		double largeHorizontalDist = this.firstPartPoint.distance(this.secondPartPoint) + this.width;
+		this.largeHorizontal.setDepth(largeHorizontalDist);
+		this.largeHorizontal.setTranslateX(this.firstPartPoint.getX() - (largeHorizontalDist / 2) + (this.width / 2));
+		this.largeHorizontal.setTranslateY(this.firstPartPoint.getY());
+		this.largeHorizontal.setTranslateZ(this.firstPartPoint.getZ());
+		this.largeHorizontal.setRotationAxis(Rotate.Y_AXIS);
+		this.largeHorizontal.setRotate(90);
 	}
-
-	public void drawLargeVerticalPart() {
-		drawArrowBody(firstPartPoint, secondPartPoint);
+	
+	private void setLargeVertical() {
+		double largeVerticalDist = this.secondPartPoint.distance(this.thirdPartPoint) + this.width;
+		this.largeVertical.setDepth(largeVerticalDist);
+		this.largeVertical.setTranslateX(this.secondPartPoint.getX());
+		this.largeVertical.setTranslateY(this.secondPartPoint.getY());
+		this.largeVertical.setTranslateZ(this.secondPartPoint.getZ() - (largeVerticalDist / 2) + (this.width / 2));
 	}
-
-	public void drawLargeHorizontalPart() {
-		drawArrowBody(secondPartPoint, thirdPartPoint);
+	
+	private void setSmallHorizontal() {
+		double endGap = this.arrowEnd.getAdditionalGap();
+		double smallHorizontalDist = this.thirdPartPoint.distance(this.endPoint) - (endGap / 2);
+		this.smallHorizontal.setDepth(smallHorizontalDist);
+		this.smallHorizontal.setTranslateX(this.endPoint.getX() - (smallHorizontalDist / 2) + (endGap / 4));
+		this.smallHorizontal.setTranslateY(this.endPoint.getY());
+		this.smallHorizontal.setTranslateZ(this.endPoint.getZ());
+		this.smallHorizontal.setRotationAxis(Rotate.Y_AXIS);
+		this.smallHorizontal.setRotate(90);
 	}
-
-	public void drawSmallVerticalPart() {
-		drawArrowBody(thirdPartPoint, startPoint);
+	
+	@Override
+	protected void moveRotateGroup() {
+		this.rotateYAngle = GeometryUtil.rotateYAngle(this.startPoint, this.endPoint);
+		this.rotateXAngle = -GeometryUtil.rotateXAngle(this.startPoint, this.endPoint);
+		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
-
+	
+	@Override
+	public void setColor(Color color) {
+		super.setColor(color);
+		applyColor(this.smallVertical, this.color);
+		applyColor(this.largeHorizontal, this.color);
+		applyColor(this.largeVertical, this.color);
+		applyColor(this.smallHorizontal, this.color);
+	}
+	
+	@Override
+	public void setSelected(boolean selected) {
+		super.setSelected(selected);
+		Color colorToApply = colorToApply(selected);
+		applyColor(this.smallVertical, colorToApply);
+		applyColor(this.largeHorizontal, colorToApply);
+		applyColor(this.largeVertical, colorToApply);
+		applyColor(this.smallHorizontal, colorToApply);
+	}
+	
 }

@@ -190,7 +190,7 @@ public class ObjectGraph {
 		paneBox.setIndexCenterGrid(0);
 		paneBox.setColor(Util.brighter(modelClass.getColor(), 0.1));
 		Point3D newPosition = modelObject.getCoordinates().midpoint(modelClass.getCoordinates());
-		// Point3D newPosition = modelObject.getCoordinates().midpoint(newPosition);
+		// newPosition = modelObject.getCoordinates().midpoint(newPosition);
 		newPosition = new Point3D(newPosition.getX(), modelObject.getY(), newPosition.getZ());
 		while (hasArrayBoxAtPos(newPosition)) {
 			newPosition = new Point3D(newPosition.getX(), newPosition.getY() + ARRAYBOX_LEVEL_DIFF, newPosition.getZ());
@@ -229,12 +229,23 @@ public class ObjectGraph {
 		}
 	}
 
-	private boolean hasArrayBoxAtPos(Point3D coords) {
+	public boolean hasArrayBoxAtPos(Point3D coords) {
 		for (PaneBox paneBox : this.boxes) {
 			boolean approxEqualX = Math.floor(paneBox.getCenterPoint().getX()) == Math.floor(coords.getX());
 			boolean approxEqualY = Math.floor(paneBox.getCenterPoint().getY() + paneBox.getDepth() / 2) == Math.floor(coords.getY());
 			boolean approxEqualZ = Math.floor(paneBox.getCenterPoint().getZ()) == Math.floor(coords.getZ());
 			if (approxEqualX && approxEqualY && approxEqualZ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasArrayBoxAtYZ(Point3D coords) {
+		for (PaneBox paneBox : this.boxes) {
+			boolean approxEqualY = Math.floor(paneBox.getCenterPoint().getY() + paneBox.getDepth() / 2) == Math.floor(coords.getY());
+			boolean approxEqualZ = Math.floor(paneBox.getCenterPoint().getZ()) == Math.floor(coords.getZ());
+			if (approxEqualY && approxEqualZ) {
 				return true;
 			}
 		}

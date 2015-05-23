@@ -611,10 +611,7 @@ public class ViewController implements Observer, Initializable {
 
 	private void startRelationCreation(PaneBox selectedPaneBox) {
 		subSceneAdapter.getSubScene().setCursor(Cursor.CROSSHAIR);
-		// RelationType relationType = getToggledRelationType();
-		// if (relationType != null) {
 		this.relationCreationController.startProcess(selectedPaneBox);
-		// }
 	}
 
 	private void endRelationCreation(PaneBox selectedPaneBox) {

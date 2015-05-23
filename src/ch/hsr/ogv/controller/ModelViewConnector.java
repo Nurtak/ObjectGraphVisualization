@@ -141,12 +141,12 @@ public class ModelViewConnector {
 	}
 
 	public void createDummyContent() {
-		ModelClass mcA = this.modelManager.createClass(new Point3D(-300, BASE_BOX_DEPTH, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass mcA = this.modelManager.createClass(new Point3D(0, BASE_BOX_DEPTH, 0), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcA.setName("A");
-		ModelClass mcB = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-		mcB.setName("B");
-
-		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
+//		ModelClass mcB = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+//		mcB.setName("B");
+//
+//		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
 
 	}
 

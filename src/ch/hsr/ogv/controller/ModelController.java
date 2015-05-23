@@ -14,10 +14,13 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
 import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.DashedArrow;
 import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.ReflexiveArrow;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
 /**
@@ -151,7 +154,7 @@ public class ModelController implements Observer {
 		PaneBox startViewBox = this.mvConnector.getPaneBox(startModelBox);
 		PaneBox endViewBox = this.mvConnector.getPaneBox(endModelBox);
 		if (startViewBox != null && endViewBox != null) {
-			Arrow arrow = new Arrow(startViewBox, endViewBox, relation.getRelationType());
+			Arrow arrow = createViewArrow(startViewBox, endViewBox, relation.getRelationType());
 			addArrowControls(relation, arrow);
 			addToSubScene(arrow);
 			addToSubScene(arrow.getSelection());
@@ -160,6 +163,20 @@ public class ModelController implements Observer {
 			this.contextMenuController.enableContextMenu(arrow, relation);
 
 			this.mvConnector.arrangeArrowNumbers(startModelBox, endModelBox);
+		}
+	}
+	
+	private Arrow createViewArrow(PaneBox startBox, PaneBox endBox, RelationType relationType) {
+		if(!startBox.equals(endBox)) { // non-special case arrows
+			if(!RelationType.DEPENDENCY.equals(relationType)) {
+				return new Arrow(startBox, endBox, relationType);
+			}
+			else { // dependency
+				return new DashedArrow(startBox, endBox, relationType);
+			}
+		}
+		else { // reflexive relation
+			return new ReflexiveArrow(startBox, endBox, relationType);
 		}
 	}
 
@@ -265,7 +282,7 @@ public class ModelController implements Observer {
 		PaneBox endPaneBox = this.mvConnector.getPaneBox(endModelBox);
 
 		changedArrow.setType(relation.getRelationType());
-		changedArrow.setPointsBasedOnBoxes(startPaneBox, endPaneBox);
+		changedArrow.setPoints(startPaneBox, endPaneBox);
 		changedArrow.drawArrow();
 		this.selectionController.setSelected(changedArrow, true, this.subSceneAdapter);
 	}
@@ -303,12 +320,12 @@ public class ModelController implements Observer {
 			Arrow changedArrow = this.mvConnector.getArrow(relation);
 			if (changedArrow != null && changedBox != null && friendChangedBox != null) {
 				if (endpoint.isStart()) {
-					changedArrow.setPointsBasedOnBoxes(changedBox, friendChangedBox);
+					changedArrow.setPoints(changedBox, friendChangedBox);
 					endpoint.setCoordinates(changedArrow.getStartPoint());
 					friendEndpoint.setCoordinates(changedArrow.getEndPoint());
 				}
 				else {
-					changedArrow.setPointsBasedOnBoxes(friendChangedBox, changedBox);
+					changedArrow.setPoints(friendChangedBox, changedBox);
 					friendEndpoint.setCoordinates(changedArrow.getStartPoint());
 					endpoint.setCoordinates(changedArrow.getEndPoint());
 				}

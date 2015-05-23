@@ -1,6 +1,7 @@
 package ch.hsr.ogv.view;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -11,7 +12,6 @@ import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import jfxtras.labs.util.Util;
-import ch.hsr.ogv.model.LineType;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.GeometryUtil;
 
@@ -22,19 +22,18 @@ import ch.hsr.ogv.util.GeometryUtil;
  */
 public class Arrow extends Group implements Selectable {
 
-	private static final int INIT_WIDTH = 2;
+	protected static final int INIT_WIDTH = 2;
 	protected static final int SELECTION_HELPER_WIDTH = 20;
-	private static final int DASHED_ELEMENT_COUNT = 20;
-	private double width = INIT_WIDTH;
-	private static final Color SELECTION_COLOR = Color.DODGERBLUE;
-	private static final double EDGE_SPACING = 3;
-	private static final double LABEL_SPACING = 30;
-	protected double boxDistance;
+	protected double width = INIT_WIDTH;
+	protected static final Color SELECTION_COLOR = Color.DODGERBLUE;
+	protected static final double EDGE_SPACING = 3;
+	protected static final double LABEL_SPACING = 30;
+	protected double startEndDistance;
 	protected double rotateYAngle;
 	protected double rotateXAngle;
 
-	private int arrowNumber = 1;
-	private int totalArrowNumber = 1;
+	protected int arrowNumber = 1;
+	protected int totalArrowNumber = 1;
 
 	protected Point3D startPoint;
 	protected Point3D endPoint;
@@ -47,18 +46,24 @@ public class Arrow extends Group implements Selectable {
 	protected ArrowLabel labelEndRight; // end multiplicity
 	protected ArrowLabel labelEndLeft; // end role
 
-	private RelationType type = RelationType.BIDIRECTED_ASSOCIATION;
+	protected RelationType type = RelationType.BIDIRECTED_ASSOCIATION;
 
 	protected Box line;
-	private ArrayList<Box> dashedLines = new ArrayList<Box>();
 
 	public static final Color DEFAULT_COLOR = Color.BLACK;
 	protected Color color = DEFAULT_COLOR;
 	protected ArrowSelection selection = null;
-	protected Box lineSelectionHelper;
+	protected List<Box> lineSelectionHelpers = new ArrayList<Box>();
 	protected Box startSelectionHelper;
 	protected Box endSelectionHelper;
 
+	public Arrow(Point3D startPoint, Point3D endPoint, RelationType type) {
+		setPoints(startPoint, endPoint);
+		this.type = type;
+		buildArrow();
+		drawArrow();
+	}
+	
 	public Arrow(PaneBox startBox, Point3D endPoint, RelationType type) {
 		setPoints(startBox, endPoint);
 		this.type = type;
@@ -66,15 +71,15 @@ public class Arrow extends Group implements Selectable {
 		drawArrow();
 	}
 
-	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
-		setPointsBasedOnBoxes(startBox, endBox);
+	public Arrow(Point3D startPoint, PaneBox endBox, RelationType type) {
+		setPoints(startPoint, endBox);
 		this.type = type;
 		buildArrow();
 		drawArrow();
 	}
-
-	public Arrow(Point3D startPoint, PaneBox endBox, RelationType type) {
-		setPoints(startPoint, endBox);
+	
+	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
+		setPoints(startBox, endBox);
 		this.type = type;
 		buildArrow();
 		drawArrow();
@@ -131,8 +136,8 @@ public class Arrow extends Group implements Selectable {
 		drawArrow();
 	}
 
-	public Box getLineSelectionHelper() {
-		return lineSelectionHelper;
+	public List<Box> getLineSelectionHelpers() {
+		return lineSelectionHelpers;
 	}
 
 	public Box getStartSelectionHelper() {
@@ -152,16 +157,12 @@ public class Arrow extends Group implements Selectable {
 		this.selection.setVisible(false);
 		setColor(this.color);
 		drawArrow();
-		getChildren().addAll(this.line, this.arrowStart, this.arrowEnd);
-		getChildren().addAll(this.dashedLines);
-		getChildren().addAll(this.lineSelectionHelper, this.startSelectionHelper, this.endSelectionHelper);
-		getChildren().addAll(this.labelStartRight, this.labelStartLeft, this.labelEndRight, this.labelEndLeft);
+		addElementsToGroup();
 	}
-
+	
 	protected void prepareArrowLineEdge() {
 		this.arrowStart = new ArrowEdge(this.type.getStartType(), this.color);
 		this.arrowEnd = new ArrowEdge(this.type.getEndType(), this.color);
-
 	}
 
 	protected void prepareArrowLabel() {
@@ -172,12 +173,7 @@ public class Arrow extends Group implements Selectable {
 	}
 
 	protected void prepareLines() {
-		this.line = new Box(this.width, this.width, this.boxDistance);
-		for (int i = 0; i < DASHED_ELEMENT_COUNT; i++) {
-			Box dashedLine = new Box(this.width, this.width, this.boxDistance);
-			dashedLine.setVisible(false);
-			this.dashedLines.add(dashedLine);
-		}
+		this.line = new Box(this.width, this.width, this.startEndDistance);
 	}
 
 	protected void buildSelectionHelpers() {
@@ -186,14 +182,15 @@ public class Arrow extends Group implements Selectable {
 		double startGap = this.arrowStart.getAdditionalGap();
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(Color.DODGERBLUE);
-		this.lineSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, this.line.getDepth() - lineSelectionGap);
-		this.lineSelectionHelper.depthProperty().bind(this.line.depthProperty().subtract(lineSelectionGap).add((endGap + startGap) / 2));
-		this.lineSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
-		this.lineSelectionHelper.translateYProperty().bind(this.line.translateYProperty());
-		this.lineSelectionHelper.translateZProperty().bind(this.line.translateZProperty().subtract((-endGap + startGap) / 4));
-		this.lineSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
-		this.lineSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
-
+		Box lineSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH, this.line.getDepth() - lineSelectionGap);
+		lineSelectionHelper.depthProperty().bind(this.line.depthProperty().subtract(lineSelectionGap).add((endGap + startGap) / 2));
+		lineSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
+		lineSelectionHelper.translateYProperty().bind(this.line.translateYProperty());
+		lineSelectionHelper.translateZProperty().bind(this.line.translateZProperty().subtract((-endGap + startGap) / 4));
+		lineSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
+		lineSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
+		this.lineSelectionHelpers.add(lineSelectionHelper);
+		
 		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, lineSelectionGap / 2);
 		this.startSelectionHelper.setMaterial(material); // for debugging
 		this.startSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
@@ -210,6 +207,20 @@ public class Arrow extends Group implements Selectable {
 		this.endSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
 		this.endSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 	}
+	
+	protected void addElementsToGroup() {
+		getChildren().clear();
+		getChildren().addAll(this.line, this.arrowStart, this.arrowEnd);
+		getChildren().addAll(this.lineSelectionHelpers);
+		getChildren().addAll(this.startSelectionHelper, this.endSelectionHelper);
+		getChildren().addAll(this.labelStartRight, this.labelStartLeft, this.labelEndRight, this.labelEndLeft);
+	}
+	
+	public void setPoints(Point3D startPoint, Point3D endPoint) {
+		setStartPoint(startPoint);
+		setEndPoint(endPoint);
+		this.startEndDistance = this.startPoint.distance(this.endPoint);
+	}
 
 	public void setPoints(PaneBox startBox, Point3D endPoint) {
 		setStartPoint(startBox.getCenterPoint());
@@ -218,7 +229,7 @@ public class Arrow extends Group implements Selectable {
 		if (startIntersection != null) {
 			setStartPoint(new Point3D(startIntersection.getX(), this.startPoint.getY(), startIntersection.getY()));
 		}
-		this.boxDistance = this.startPoint.distance(this.endPoint);
+		this.startEndDistance = this.startPoint.distance(this.endPoint);
 	}
 
 	public void setPoints(Point3D startPoint, PaneBox endBox) {
@@ -228,41 +239,15 @@ public class Arrow extends Group implements Selectable {
 		if (endIntersection != null) {
 			setEndPoint(new Point3D(endIntersection.getX(), this.endPoint.getY(), endIntersection.getY()));
 		}
-		this.boxDistance = this.startPoint.distance(this.endPoint);
+		this.startEndDistance = this.startPoint.distance(this.endPoint);
 	}
 
-	public void setPointsBasedOnBoxes(PaneBox startBox, PaneBox endBox) {
+	public void setPoints(PaneBox startBox, PaneBox endBox) {
 		setStartPoint(startBox.getCenterPoint());
 		setEndPoint(endBox.getCenterPoint());
 
 		if (totalArrowNumber > 1) {
-			double startBoxRadius = startBox.getWidth() <= startBox.getHeight() ? startBox.getWidth() / 2 : startBox.getHeight() / 2;
-			double endBoxRadius = endBox.getWidth() <= endBox.getHeight() ? endBox.getWidth() / 2 : endBox.getHeight() / 2;
-
-			double alphaStart = GeometryUtil.rotateYAngle(startBox.getCenterPoint(), endBox.getCenterPoint());
-			if (alphaStart < 0.0) {
-				alphaStart += 180.0;
-			}
-			double alphaEnd = GeometryUtil.rotateYAngle(endBox.getCenterPoint(), startBox.getCenterPoint());
-			if (alphaEnd < 0.0) {
-				alphaEnd += 180.0;
-			}
-
-			double betaStart = 90.0 - alphaStart;
-			double betaEnd = 90.0 - alphaEnd;
-
-			double diffXStart = startBoxRadius * Math.sin(Math.toRadians(betaStart));
-			double diffZStart = startBoxRadius * Math.cos(Math.toRadians(betaStart));
-			double diffXEnd = endBoxRadius * Math.sin(Math.toRadians(betaEnd));
-			double diffZEnd = endBoxRadius * Math.cos(Math.toRadians(betaEnd));
-
-			Point3D lineStartPointStart = new Point3D(startBox.getCenterPoint().getX() + diffXStart, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() - diffZStart);
-			Point3D lineEndPointStart = new Point3D(startBox.getCenterPoint().getX() - diffXStart, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() + diffZStart);
-			Point3D lineStartPointEnd = new Point3D(endBox.getCenterPoint().getX() + diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() - diffZEnd);
-			Point3D lineEndPointEnd = new Point3D(endBox.getCenterPoint().getX() - diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() + diffZEnd);
-
-			setStartPoint(GeometryUtil.divideLineFraction(lineStartPointStart, lineEndPointStart, (arrowNumber) / (totalArrowNumber + 1.0)));
-			setEndPoint(GeometryUtil.divideLineFraction(lineStartPointEnd, lineEndPointEnd, (arrowNumber) / (totalArrowNumber + 1.0)));
+			calculateArrangement(startBox, endBox);
 		}
 
 		Point2D startIntersection = lineBoxIntersection(startPoint, startBox, endPoint);
@@ -273,40 +258,62 @@ public class Arrow extends Group implements Selectable {
 		if (endIntersection != null) {
 			setEndPoint(new Point3D(endIntersection.getX(), endPoint.getY(), endIntersection.getY()));
 		}
-		this.boxDistance = this.startPoint.distance(this.endPoint);
+		this.startEndDistance = this.startPoint.distance(this.endPoint);
 	}
+	
+	protected void calculateArrangement(PaneBox startBox, PaneBox endBox) {
+		double startBoxRadius = startBox.getWidth() <= startBox.getHeight() ? startBox.getWidth() / 2 : startBox.getHeight() / 2;
+		double endBoxRadius = endBox.getWidth() <= endBox.getHeight() ? endBox.getWidth() / 2 : endBox.getHeight() / 2;
 
-	public void drawArrow() {
-		getTransforms().clear();
-
-		boolean isDashedLine = LineType.DASHED_LINE.equals(this.type.getLineType());
-
-		this.line.setVisible(!isDashedLine);
-
-		for (Box dashedLine : this.dashedLines) {
-			dashedLine.setVisible(isDashedLine);
+		double alphaStart = GeometryUtil.rotateYAngle(startBox.getCenterPoint(), endBox.getCenterPoint());
+		if (alphaStart < 0.0) {
+			alphaStart += 180.0;
+		}
+		double alphaEnd = GeometryUtil.rotateYAngle(endBox.getCenterPoint(), startBox.getCenterPoint());
+		if (alphaEnd < 0.0) {
+			alphaEnd += 180.0;
 		}
 
+		double betaStart = 90.0 - alphaStart;
+		double betaEnd = 90.0 - alphaEnd;
+
+		double diffXStart = startBoxRadius * Math.sin(Math.toRadians(betaStart));
+		double diffZStart = startBoxRadius * Math.cos(Math.toRadians(betaStart));
+		double diffXEnd = endBoxRadius * Math.sin(Math.toRadians(betaEnd));
+		double diffZEnd = endBoxRadius * Math.cos(Math.toRadians(betaEnd));
+
+		Point3D lineStartPointStart = new Point3D(startBox.getCenterPoint().getX() + diffXStart, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() - diffZStart);
+		Point3D lineEndPointStart = new Point3D(startBox.getCenterPoint().getX() - diffXStart, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() + diffZStart);
+		Point3D lineStartPointEnd = new Point3D(endBox.getCenterPoint().getX() + diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() - diffZEnd);
+		Point3D lineEndPointEnd = new Point3D(endBox.getCenterPoint().getX() - diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() + diffZEnd);
+
+		setStartPoint(GeometryUtil.divideLineFraction(lineStartPointStart, lineEndPointStart, (arrowNumber) / (totalArrowNumber + 1.0)));
+		setEndPoint(GeometryUtil.divideLineFraction(lineStartPointEnd, lineEndPointEnd, (arrowNumber) / (totalArrowNumber + 1.0)));
+	}
+	
+	public final void drawArrow() {
+		getTransforms().clear();
+		setLineVisibility();
 		setArrowLineEdge();
 		setArrowLabels();
-
+		setSingleElements();
+		moveRotateGroup();
+	}
+	
+	protected void setLineVisibility() {
+		this.line.setVisible(true);
+	}
+	
+	protected void setSingleElements() {
 		double endGap = this.arrowEnd.getAdditionalGap();
 		double startGap = this.arrowStart.getAdditionalGap();
-
-		double gapDistance = this.boxDistance - (endGap + startGap) / 2;
+		double gapDistance = this.startEndDistance - (endGap + startGap) / 2;
 
 		this.line.setDepth(gapDistance);
 		this.line.setTranslateZ((-endGap + startGap) / 4);
-
-		ArrayList<Point3D> dashedLineCoords = divideLine(new Point3D(0, 0, -gapDistance / 2), new Point3D(0, 0, gapDistance / 2), this.dashedLines.size());
-
-		for (int i = 0; i < this.dashedLines.size(); i++) {
-			Box dashedLine = this.dashedLines.get(i);
-			dashedLine.setDepth(gapDistance / (2 * DASHED_ELEMENT_COUNT));
-			Point3D dashedLineCoord = dashedLineCoords.get(i);
-			dashedLine.setTranslateZ(dashedLineCoord.getZ() - dashedLine.getDepth() + (-endGap + startGap) / 4);
-		}
-
+	}
+	
+	protected void moveRotateGroup() {
 		this.rotateYAngle = GeometryUtil.rotateYAngle(this.startPoint, this.endPoint);
 		this.rotateXAngle = -GeometryUtil.rotateXAngle(this.startPoint, this.endPoint);
 
@@ -322,7 +329,7 @@ public class Arrow extends Group implements Selectable {
 
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
-
+	
 	private Point2D lineRectangleIntersection(Point3D internalPoint, Point3D externalPoint, Point3D centerPoint, double width, double height) {
 		double halfWidth = width / 2;
 		double halfHeight = height / 2;
@@ -359,48 +366,37 @@ public class Arrow extends Group implements Selectable {
 		return lineRectangleIntersection(externalPoint, internalPoint, box.getCenterPoint(), box.getWidth(), box.getHeight());
 	}
 
-	private ArrayList<Point3D> divideLine(Point3D start, Point3D end, int count) {
-		ArrayList<Point3D> pointList = new ArrayList<Point3D>();
-		for (int i = 1; i <= count; i++) {
-			pointList.add(GeometryUtil.divideLineFraction(start, end, ((double) i) / ((double) count)));
-		}
-		return pointList;
-	}
-
 	protected void setArrowLineEdge() {
 		this.arrowStart.setTranslateX(0);
 		this.arrowStart.setTranslateY(0);
 		this.arrowStart.setTranslateZ(0);
 		this.arrowStart.getTransforms().clear();
 		this.arrowStart.getTransforms().add(new Rotate(180, arrowStart.getTranslateX(), arrowStart.getTranslateY(), arrowStart.getTranslateZ(), Rotate.Y_AXIS));
-		this.arrowStart.setTranslateZ(-this.boxDistance / 2 - EDGE_SPACING);
-		this.arrowEnd.setTranslateZ(this.boxDistance / 2 + EDGE_SPACING);
+		this.arrowStart.setTranslateZ(-this.startEndDistance / 2 - EDGE_SPACING);
+		this.arrowEnd.setTranslateZ(this.startEndDistance / 2 + EDGE_SPACING);
 	}
 
 	protected void setArrowLabels() {
 		this.labelStartRight.setDiffX(-LABEL_SPACING / 3 - 1);
-		this.labelStartRight.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
+		this.labelStartRight.setDiffZ(-this.startEndDistance / 2 + LABEL_SPACING + 15);
 
 		double startLeftWidth = this.labelStartLeft.calcMinWidth();
 		startLeftWidth = startLeftWidth < 20 ? 20 : startLeftWidth;
 		this.labelStartLeft.setDiffX(startLeftWidth + LABEL_SPACING / 3);
-		this.labelStartLeft.setDiffZ(-this.boxDistance / 2 + LABEL_SPACING + 15);
+		this.labelStartLeft.setDiffZ(-this.startEndDistance / 2 + LABEL_SPACING + 15);
 
 		this.labelEndRight.setDiffX(-LABEL_SPACING / 3 - 1);
-		this.labelEndRight.setDiffZ(this.boxDistance / 2 - LABEL_SPACING + 10);
+		this.labelEndRight.setDiffZ(this.startEndDistance / 2 - LABEL_SPACING + 10);
 
 		double endLeftWidth = this.labelEndLeft.calcMinWidth();
 		endLeftWidth = endLeftWidth < 20 ? 20 : endLeftWidth;
 		this.labelEndLeft.setDiffX(endLeftWidth + LABEL_SPACING / 3);
-		this.labelEndLeft.setDiffZ(this.boxDistance / 2 - LABEL_SPACING + 10);
+		this.labelEndLeft.setDiffZ(this.startEndDistance / 2 - LABEL_SPACING + 10);
 	}
 
 	public void setColor(Color color) {
 		this.color = color;
 		applyColor(this.line, this.color);
-		for (Box dashedLine : this.dashedLines) {
-			applyColor(dashedLine, this.color);
-		}
 		this.arrowStart.setColor(color);
 		this.arrowEnd.setColor(color);
 		this.labelStartRight.setColor(color);
@@ -409,7 +405,7 @@ public class Arrow extends Group implements Selectable {
 		this.labelEndLeft.setColor(color);
 	}
 
-	private void applyColor(Box box, Color color) {
+	protected void applyColor(Box box, Color color) {
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(color);
 		material.setSpecularColor(color.brighter());
@@ -475,25 +471,26 @@ public class Arrow extends Group implements Selectable {
 
 	@Override
 	public void setSelected(boolean selected) {
-		this.selection.setVisible(selected);
-		Color colorToApply = getColor();
-		if (selected) {
-			colorToApply = SELECTION_COLOR;
-		}
+		Color colorToApply = colorToApply(selected);
 		applyColor(this.line, colorToApply);
-		for (Box dashedLine : this.dashedLines) {
-			applyColor(dashedLine, colorToApply);
-		}
 		this.arrowStart.setColor(colorToApply);
 		this.arrowEnd.setColor(colorToApply);
 		this.labelStartRight.setColor(Util.darker(colorToApply, 0.3));
 		this.labelStartLeft.setColor(Util.darker(colorToApply, 0.3));
 		this.labelEndRight.setColor(Util.darker(colorToApply, 0.3));
 		this.labelEndLeft.setColor(Util.darker(colorToApply, 0.3));
-
+		this.selection.setVisible(selected);
 		if (!selected) {
 			setAllLabelSelected(false);
 		}
+	}
+	
+	protected Color colorToApply(boolean selected) {
+		Color colorToApply = getColor();
+		if (selected) {
+			colorToApply = SELECTION_COLOR;
+		}
+		return colorToApply;
 	}
 
 	@Override
@@ -504,10 +501,6 @@ public class Arrow extends Group implements Selectable {
 	@Override
 	public ArrowSelection getSelection() {
 		return this.selection;
-	}
-
-	public Box getSelectionHelper() {
-		return lineSelectionHelper;
 	}
 
 	public void setTranslateXYZ(Point3D point) {
@@ -535,7 +528,7 @@ public class Arrow extends Group implements Selectable {
 	}
 
 	public double getBoxDistance() {
-		return this.boxDistance;
+		return this.startEndDistance;
 	}
 
 	public double getRotateYAngle() {
@@ -549,7 +542,7 @@ public class Arrow extends Group implements Selectable {
 	public void arrangeEndpoints(PaneBox startBox, PaneBox endBox, int actualArrowNumber, int totalArrowNumber) {
 		this.arrowNumber = actualArrowNumber;
 		this.totalArrowNumber = totalArrowNumber;
-		this.setPointsBasedOnBoxes(startBox, endBox);
+		this.setPoints(startBox, endBox);
 		drawArrow();
 	}
 

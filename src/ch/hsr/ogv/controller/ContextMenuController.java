@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
+import javafx.scene.shape.Box;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
@@ -325,14 +326,16 @@ public class ContextMenuController extends Observable implements Observer {
 
 	public void enableContextMenu(Arrow arrow, Relation relation) {
 
-		arrow.getLineSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
-				atLineSelectionHelper();
-				boolean disableMRD = relationTypeConflict(arrow);
-				boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
-				enableRelationContextMenu(arrow, me, true, disableDirection, false);
-			}
-		});
+		for(Box lineSelectionHelper : arrow.getLineSelectionHelpers()) {
+			lineSelectionHelper.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+				if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+					atLineSelectionHelper();
+					boolean disableMRD = relationTypeConflict(arrow);
+					boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
+					enableRelationContextMenu(arrow, me, true, disableDirection, false);
+				}
+			});
+		}
 
 		arrow.getStartSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {

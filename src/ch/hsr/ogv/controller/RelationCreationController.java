@@ -15,6 +15,7 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.DashedArrow;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
@@ -100,7 +101,7 @@ public class RelationCreationController extends Observable implements Observer {
 		this.isChoosingStartBox = false;
 		this.creationInProcess = true;
 		this.startBox = startBox;
-		this.viewArrow = new Arrow(startBox, startBox.getCenterPoint(), relationType);
+		initViewArrow(startBox, relationType);
 		subSceneAdapter.add(this.viewArrow);
 		subSceneAdapter.add(this.viewArrow.getSelection());
 		subSceneAdapter.worldReceiveMouseEvents();
@@ -112,6 +113,15 @@ public class RelationCreationController extends Observable implements Observer {
 		selectiveMouseEvents();
 		setChanged();
 		notifyObservers(this.viewArrow);
+	}
+	
+	private void initViewArrow(PaneBox startBox, RelationType relationType) {
+		if(!RelationType.DEPENDENCY.equals(relationType)) {
+			this.viewArrow = new Arrow(startBox, startBox.getCenterPoint(), relationType);
+		}
+		else {
+			this.viewArrow = new DashedArrow(startBox, startBox.getCenterPoint(), relationType);
+		}
 	}
 
 	public void abortProcess() {
@@ -178,9 +188,6 @@ public class RelationCreationController extends Observable implements Observer {
 			return false;
 		}
 		else if (!start.getClass().equals(end.getClass())) { // are both either of type ModelObject or ModelClass
-			return false;
-		}
-		else if (start.equals(end)) { // TODO: reflexive relation
 			return false;
 		}
 		else if (start instanceof ModelClass && (isObjectsRelation(relationType) || (relationType == RelationType.GENERALIZATION && !isCycleFree((ModelClass) start, (ModelClass) end)))) {

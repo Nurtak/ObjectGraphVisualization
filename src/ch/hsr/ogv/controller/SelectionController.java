@@ -9,6 +9,7 @@ import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Box;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.ArrowLabel;
 import ch.hsr.ogv.view.PaneBox;
@@ -154,12 +155,14 @@ public class SelectionController extends Observable implements Observer {
 			}
 		});
 
-		arrow.getLineSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
-				arrow.setAllLabelSelected(false);
-				setSelected(me, arrow, true, subSceneAdapter);
-			}
-		});
+		for(Box lineSelectionHelper : arrow.getLineSelectionHelpers()) {
+			lineSelectionHelper.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+				if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
+					arrow.setAllLabelSelected(false);
+					setSelected(me, arrow, true, subSceneAdapter);
+				}
+			});
+		}
 
 		arrow.getStartSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
