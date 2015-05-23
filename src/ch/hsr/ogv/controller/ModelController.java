@@ -10,12 +10,12 @@ import jfxtras.labs.util.Util;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
+import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelManager;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
-import ch.hsr.ogv.model.ModelBox.ModelBoxChange;
 import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.DashedArrow;
@@ -24,7 +24,7 @@ import ch.hsr.ogv.view.ReflexiveArrow;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
 /**
- * 
+ *
  * @author Simon Gwerder
  *
  */
@@ -32,16 +32,16 @@ public class ModelController implements Observer {
 
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdapter;
-	
+
 	private ModelViewConnector mvConnector;
-	
+
 	private SelectionController selectionController;
 	private ContextMenuController contextMenuController;
 	private TextFieldController textFieldController;
 	private MouseMoveController mouseMoveController;
 	private DragMoveController dragMoveController;
 	private DragResizeController dragResizeController;
-	
+
 	public void setRootLayout(BorderPane rootLayout) {
 		this.rootLayout = rootLayout;
 	}
@@ -51,7 +51,7 @@ public class ModelController implements Observer {
 	}
 
 	/**
-	 * Setter for {@link ch.hsr.ogv.controller.ModelViewConnector}, adds this class as observer of the 
+	 * Setter for {@link ch.hsr.ogv.controller.ModelViewConnector}, adds this class as observer of the
 	 * {@link ch.hsr.ogv.model.ModelManager} immediately after setting it.
 	 * @param mvConnector
 	 */
@@ -88,7 +88,7 @@ public class ModelController implements Observer {
 	 * Adds node to the subscene of the primary stage.
 	 *
 	 * @param node
-	 * 
+	 *
 	 */
 	private void addToSubScene(Node node) {
 		this.subSceneAdapter.add(node);
@@ -99,7 +99,7 @@ public class ModelController implements Observer {
 	 * Removes node from the subscene of the primary stage.
 	 *
 	 * @param node
-	 * 
+	 *
 	 */
 	private void removeFromView(Node node) {
 		this.subSceneAdapter.remove(node);
@@ -321,13 +321,9 @@ public class ModelController implements Observer {
 			if (changedArrow != null && changedBox != null && friendChangedBox != null) {
 				if (endpoint.isStart()) {
 					changedArrow.setPoints(changedBox, friendChangedBox);
-					endpoint.setCoordinates(changedArrow.getStartPoint());
-					friendEndpoint.setCoordinates(changedArrow.getEndPoint());
 				}
 				else {
 					changedArrow.setPoints(friendChangedBox, changedBox);
-					friendEndpoint.setCoordinates(changedArrow.getStartPoint());
-					endpoint.setCoordinates(changedArrow.getEndPoint());
 				}
 				changedArrow.drawArrow();
 			}
@@ -634,5 +630,5 @@ public class ModelController implements Observer {
 		}
 		this.rootLayout.applyCss();
 	}
-	
+
 }

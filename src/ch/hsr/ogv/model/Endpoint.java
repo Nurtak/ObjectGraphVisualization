@@ -2,12 +2,7 @@ package ch.hsr.ogv.model;
 
 import java.util.UUID;
 
-import javafx.geometry.Point3D;
-
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import ch.hsr.ogv.dataaccess.Point3DAdapter;
 
 /**
  *
@@ -20,7 +15,6 @@ public class Endpoint {
 	private String uniqueID = UUID.randomUUID().toString();
 
 	private EndpointType type;
-	private Point3D coordinates;
 	private String roleName;
 	private String multiplicity;
 	private Relation relation;
@@ -33,7 +27,6 @@ public class Endpoint {
 	public Endpoint(EndpointType type, ModelBox appendant) {
 		this.type = type;
 		this.appendant = appendant;
-		this.coordinates = appendant.getCoordinates();
 	}
 
 	public String getUniqueID() {
@@ -68,15 +61,6 @@ public class Endpoint {
 		this.multiplicity = multiplicity;
 	}
 
-	@XmlJavaTypeAdapter(Point3DAdapter.class)
-	public Point3D getCoordinates() {
-		return coordinates;
-	}
-
-	public void setCoordinates(Point3D coordinates) {
-		this.coordinates = coordinates;
-	}
-
 	@XmlTransient
 	public Relation getRelation() {
 		return relation;
@@ -109,7 +93,7 @@ public class Endpoint {
 		}
 		return false;
 	}
-	
+
 	public boolean isEnd() {
 		if (relation != null) {
 			return relation.isEnd(this);
