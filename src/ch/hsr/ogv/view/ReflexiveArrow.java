@@ -155,6 +155,21 @@ public class ReflexiveArrow extends Arrow {
 		this.arrowEnd.setTranslateY(this.endPoint.getY());
 		this.arrowEnd.setTranslateZ(this.endPoint.getZ());
 	}
+	
+	@Override
+	protected void setArrowLabels() {
+		this.labelStartRight.setTranslateXYZ(this.startPoint.getX() - LABEL_SPACING / 3 - 1, this.startPoint.getY(), this.startPoint.getZ() + LABEL_SPACING + 15);
+
+		double startLeftWidth = this.labelStartLeft.calcMinWidth();
+		startLeftWidth = startLeftWidth < 20 ? 20 : startLeftWidth;
+		this.labelStartLeft.setTranslateXYZ(this.startPoint.getX() + startLeftWidth + LABEL_SPACING / 3, this.startPoint.getY(), this.startPoint.getZ() + LABEL_SPACING + 15);
+
+		this.labelEndRight.setTranslateXYZ(this.endPoint.getX() - LABEL_SPACING / 3, this.endPoint.getY(), this.endPoint.getZ() + LABEL_SPACING);
+
+		double endLeftWidth = this.labelEndLeft.calcMinWidth();
+		endLeftWidth = endLeftWidth < 20 ? 20 : endLeftWidth;
+		this.labelEndLeft.setTranslateXYZ(this.endPoint.getX() - LABEL_SPACING / 3, this.endPoint.getY(), this.endPoint.getZ() - LABEL_SPACING + 20);
+	}
 
 	protected void setSingleElements() {
 		setSmallVertical();

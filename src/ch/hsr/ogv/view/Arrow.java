@@ -377,21 +377,17 @@ public class Arrow extends Group implements Selectable {
 	}
 
 	protected void setArrowLabels() {
-		this.labelStartRight.setDiffX(-LABEL_SPACING / 3 - 1);
-		this.labelStartRight.setDiffZ(-this.startEndDistance / 2 + LABEL_SPACING + 15);
+		this.labelStartRight.setTranslateXYZ(-LABEL_SPACING / 3 - 1, this.startPoint.getY(), -this.startEndDistance / 2 + LABEL_SPACING + 15);
 
 		double startLeftWidth = this.labelStartLeft.calcMinWidth();
 		startLeftWidth = startLeftWidth < 20 ? 20 : startLeftWidth;
-		this.labelStartLeft.setDiffX(startLeftWidth + LABEL_SPACING / 3);
-		this.labelStartLeft.setDiffZ(-this.startEndDistance / 2 + LABEL_SPACING + 15);
+		this.labelStartLeft.setTranslateXYZ(startLeftWidth + LABEL_SPACING / 3, this.startPoint.getY(), -this.startEndDistance / 2 + LABEL_SPACING + 15);
 
-		this.labelEndRight.setDiffX(-LABEL_SPACING / 3 - 1);
-		this.labelEndRight.setDiffZ(this.startEndDistance / 2 - LABEL_SPACING + 10);
+		this.labelEndRight.setTranslateXYZ(-LABEL_SPACING / 3 - 1, this.endPoint.getY(), this.startEndDistance / 2 - LABEL_SPACING + 10);
 
 		double endLeftWidth = this.labelEndLeft.calcMinWidth();
 		endLeftWidth = endLeftWidth < 20 ? 20 : endLeftWidth;
-		this.labelEndLeft.setDiffX(endLeftWidth + LABEL_SPACING / 3);
-		this.labelEndLeft.setDiffZ(this.startEndDistance / 2 - LABEL_SPACING + 10);
+		this.labelEndLeft.setTranslateXYZ(endLeftWidth + LABEL_SPACING / 3, this.endPoint.getY(), this.startEndDistance / 2 - LABEL_SPACING + 10);
 	}
 
 	public void setColor(Color color) {
