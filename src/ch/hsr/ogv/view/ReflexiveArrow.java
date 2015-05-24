@@ -56,9 +56,9 @@ public class ReflexiveArrow extends Arrow {
 		Point3D endBoxCenter = endBox.getCenterPoint();
 		setStartPoint(new Point3D(startBoxCenter.getX(), startBoxCenter.getY(), startBoxCenter.getZ() + startBox.getHeight() / 2));
 		setEndPoint(new Point3D(endBoxCenter.getX() - endBox.getWidth() / 2, endBoxCenter.getY(), endBoxCenter.getZ()));
-//		if (totalArrowNumber > 1) { // TODO
-//			calculateArrangement(startBox, endBox);
-//		}
+		if (totalArrowNumber > 1) {
+			calculateArrangement(startBox, endBox);
+		}
 		this.startEndDistance = this.startPoint.distance(this.endPoint);
 		calculatePartPoints();
 	}

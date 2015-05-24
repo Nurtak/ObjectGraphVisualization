@@ -38,6 +38,7 @@ public class RelationCreationController extends Observable implements Observer {
 	private PaneBox startBox;
 	private PaneBox endBox;
 	private Arrow viewArrow;
+	private ReflexiveArrow reflexiveViewArrow;
 	private RelationType relationType = RelationType.UNDIRECTED_ASSOCIATION;
 
 	public void setSelectionController(SelectionController selectionController) {
@@ -103,7 +104,7 @@ public class RelationCreationController extends Observable implements Observer {
 		this.creationInProcess = true;
 		this.startBox = startBox;
 		setRelationType(relationType);
-		initViewArrow(startBox, null, relationType);
+		initViewArrow(startBox, relationType);
 		listenToSelections();
 		selectiveMouseEvents();
 		paneBoxMovedOver(startBox);
@@ -111,55 +112,49 @@ public class RelationCreationController extends Observable implements Observer {
 		notifyObservers(this.viewArrow);
 	}
 
-	private void initViewArrow(PaneBox startBox, PaneBox endBox, RelationType relationType) {
-		if (this.viewArrow != null) {
-			subSceneAdapter.remove(this.viewArrow.getSelection());
-			subSceneAdapter.remove(this.viewArrow);
-		}
-		if (startBox != null && endBox == null && !RelationType.DEPENDENCY.equals(relationType)) {
+	private void initViewArrow(PaneBox startBox, RelationType relationType) {
+		if(!RelationType.DEPENDENCY.equals(relationType)) {
 			this.viewArrow = new Arrow(startBox, startBox.getCenterPoint(), relationType);
+			initReflexiveViewArrow();
 		}
-		else if (startBox != null && endBox == null && RelationType.DEPENDENCY.equals(relationType)) {
+		else {
 			this.viewArrow = new DashedArrow(startBox, startBox.getCenterPoint(), relationType);
 		}
-		else if (startBox != null && endBox != null && this.startBox.equals(endBox) && this.viewArrow != null) {
-			this.viewArrow = new ReflexiveArrow(startBox, endBox, relationType);
+		this.subSceneAdapter.add(this.viewArrow);
+		this.subSceneAdapter.add(this.viewArrow.getSelection());
+		this.subSceneAdapter.worldReceiveMouseEvents();
+		this.subSceneAdapter.restrictMouseEvents(this.subSceneAdapter.getVerticalHelper());
+		this.subSceneAdapter.restrictMouseEvents(this.viewArrow);
+	}
+	
+	private void initReflexiveViewArrow() {
+		this.reflexiveViewArrow = new ReflexiveArrow(startBox, startBox, relationType);
+		this.reflexiveViewArrow.setSelected(true); // only visible selection
+		this.reflexiveViewArrow.setArrowVisible(false);
+		this.subSceneAdapter.add(this.reflexiveViewArrow);
+		this.subSceneAdapter.add(this.reflexiveViewArrow.getSelection());
+	}
+	
+	private void viewArrowVisiblity(boolean isReflexive) {
+		if(isReflexive && this.viewArrow != null && this.reflexiveViewArrow != null) {
+			this.viewArrow.setArrowVisible(false);
+			this.reflexiveViewArrow.setArrowVisible(true);
 		}
-		else if (startBox != null && endBox != null && !this.startBox.equals(endBox) && this.viewArrow != null) {
-//			ModelBox startModelBox = this.mvConnector.getModelBox(startBox);
-//			ModelBox endModelBox = this.mvConnector.getModelBox(endBox);
-//			boolean checkRelation = checkRelation(startModelBox, endModelBox, relationType);
-			if (!RelationType.DEPENDENCY.equals(relationType) && !RelationType.OBJDIAGRAM.equals(relationType)) {
-				this.viewArrow = new Arrow(startBox, endBox, relationType);
-			}
-			else if (!RelationType.OBJDIAGRAM.equals(relationType)) {
-				this.viewArrow = new DashedArrow(startBox, endBox, relationType);
-			}
-//			else if (checkRelation && RelationType.OBJDIAGRAM.equals(relationType)) {
-//				ModelObject startObject = (ModelObject) startModelBox;
-//				ModelObject endObject = (ModelObject) endModelBox;
-//				if (!startObject.getModelClass().equals(endObject.getModelClass())) {
-//					this.viewArrow = new Arrow(startBox, endBox, relationType);
-//				}
-//				else {
-//					this.viewArrow = new ReflexiveArrow(startBox, endBox, relationType);
-//				}
-//			}
+		else if (!isReflexive && this.viewArrow != null && this.reflexiveViewArrow != null) {
+			this.viewArrow.setArrowVisible(true);
+			this.reflexiveViewArrow.setArrowVisible(false);
 		}
-
-		subSceneAdapter.add(this.viewArrow);
-		subSceneAdapter.add(this.viewArrow.getSelection());
-		subSceneAdapter.restrictMouseEvents(this.viewArrow);
-		setChanged();
-		notifyObservers(this.viewArrow);
+		else if(this.viewArrow != null && this.reflexiveViewArrow == null) {
+			this.viewArrow.setArrowVisible(true);
+		}
 	}
 	
 	public void endProcess(PaneBox selectedPaneBox) {
 		this.endBox = selectedPaneBox;
 
-		if (viewArrow != null && startBox != null && endBox != null) {
-			Relation relation = mvConnector.handleCreateRelation(startBox, endBox, viewArrow.getRelationType());
-			Arrow newArrow = mvConnector.getArrow(relation);
+		if (this.viewArrow != null && this.startBox != null && this.endBox != null) {
+			Relation relation = this.mvConnector.handleCreateRelation(this.startBox, this.endBox, this.viewArrow.getRelationType());
+			Arrow newArrow = this.mvConnector.getArrow(relation);
 			if (newArrow != null) {
 				this.selectionController.setSelected(newArrow, true, this.subSceneAdapter);
 			}
@@ -178,6 +173,11 @@ public class RelationCreationController extends Observable implements Observer {
 			subSceneAdapter.remove(this.viewArrow.getSelection());
 			subSceneAdapter.remove(this.viewArrow);
 			this.viewArrow = null;
+		}
+		if(this.reflexiveViewArrow != null) {
+			this.subSceneAdapter.remove(this.reflexiveViewArrow);
+			this.subSceneAdapter.remove(this.reflexiveViewArrow.getSelection());
+			this.reflexiveViewArrow = null;
 		}
 		if (this.startBox != null) {
 			this.startBox.setSelected(false);
@@ -230,7 +230,7 @@ public class RelationCreationController extends Observable implements Observer {
 			for (Relation baseRelation : baseRelations) {
 				boolean bothGeneralization = relationType == RelationType.GENERALIZATION && baseRelation.getRelationType() == RelationType.GENERALIZATION;
 				boolean bothDependency = relationType == RelationType.DEPENDENCY && baseRelation.getRelationType() == RelationType.DEPENDENCY;
-				if (bothGeneralization || (bothDependency && baseRelation.getStart().getAppendant().equals(startClass))) {
+				if ((relationType == RelationType.DEPENDENCY && start.equals(end)) || bothGeneralization || (bothDependency && baseRelation.getStart().getAppendant().equals(startClass))) {
 					return false;
 				}
 			}
@@ -261,6 +261,9 @@ public class RelationCreationController extends Observable implements Observer {
 	}
 
 	private boolean isCycleFree(ModelClass startClass, ModelClass endClass) {
+		if(startClass.equals(endClass)) {
+			return false;
+		}
 		for (ModelClass endSuperClass : endClass.getSuperClasses()) {
 			if (endSuperClass.equals(startClass)) {
 				return false;
@@ -323,7 +326,7 @@ public class RelationCreationController extends Observable implements Observer {
 			}
 			arrangedDrawArrows(false);
 			this.endBox = null;
-			initViewArrow(this.startBox, this.endBox, this.relationType);
+			viewArrowVisiblity(false);
 			this.selectionController.setSelected(this.viewArrow, true, this.subSceneAdapter);
 			if (!this.leftStartBox && !coordsInsideBox(movePoint, this.startBox)) {
 				this.leftStartBox = true;
@@ -344,7 +347,7 @@ public class RelationCreationController extends Observable implements Observer {
 		}
 		this.endBox = paneBoxMovedOver;
 		if (this.leftStartBox) { // this.endBox.equals(this.startBox) && 
-			initViewArrow(this.startBox, this.endBox, this.relationType);
+			viewArrowVisiblity(this.endBox.equals(this.startBox));
 		}
 		this.selectionController.setSelected(this.viewArrow, true, this.subSceneAdapter);
 		this.endBox.setSelected(true); // only visually show selection

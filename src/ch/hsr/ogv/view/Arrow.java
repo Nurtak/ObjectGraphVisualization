@@ -56,6 +56,7 @@ public class Arrow extends Group implements Selectable {
 	protected List<Box> lineSelectionHelpers = new ArrayList<Box>();
 	protected Box startSelectionHelper;
 	protected Box endSelectionHelper;
+	private boolean isSelected = false;
 
 	public Arrow(Point3D startPoint, Point3D endPoint, RelationType type) {
 		setPoints(startPoint, endPoint);
@@ -474,6 +475,7 @@ public class Arrow extends Group implements Selectable {
 
 	@Override
 	public void setSelected(boolean selected) {
+		this.isSelected = selected;
 		Color colorToApply = colorToApply(selected);
 		applyColor(this.line, colorToApply);
 		this.arrowStart.setColor(colorToApply);
@@ -488,17 +490,17 @@ public class Arrow extends Group implements Selectable {
 		}
 	}
 	
+	@Override
+	public boolean isSelected() {
+		return this.isSelected ;
+	}
+	
 	protected Color colorToApply(boolean selected) {
 		Color colorToApply = getColor();
 		if (selected) {
 			colorToApply = SELECTION_COLOR;
 		}
 		return colorToApply;
-	}
-
-	@Override
-	public boolean isSelected() {
-		return this.selection.isVisible();
 	}
 
 	@Override
@@ -540,6 +542,16 @@ public class Arrow extends Group implements Selectable {
 
 	public double getRotateXAngle() {
 		return this.rotateXAngle;
+	}
+	
+	public void setArrowVisible(boolean visible) {
+		setVisible(visible);
+		if(!visible) {
+			this.selection.setVisible(false);
+		}
+		else {
+			this.selection.setVisible(isSelected());
+		}
 	}
 
 }
