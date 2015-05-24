@@ -99,10 +99,10 @@ public class RelationCreationController extends Observable implements Observer {
 	}
 
 	public void startProcess(PaneBox startBox, RelationType relationType) {
-		setRelationType(relationType);
 		this.isChoosingStartBox = false;
 		this.creationInProcess = true;
 		this.startBox = startBox;
+		setRelationType(relationType);
 		initViewArrow(startBox, null, relationType);
 		listenToSelections();
 		selectiveMouseEvents();
@@ -150,8 +150,8 @@ public class RelationCreationController extends Observable implements Observer {
 		subSceneAdapter.add(this.viewArrow);
 		subSceneAdapter.add(this.viewArrow.getSelection());
 		subSceneAdapter.restrictMouseEvents(this.viewArrow);
-		//setChanged();
-		//notifyObservers(this.viewArrow);
+		setChanged();
+		notifyObservers(this.viewArrow);
 	}
 	
 	public void endProcess(PaneBox selectedPaneBox) {

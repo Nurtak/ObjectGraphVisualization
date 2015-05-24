@@ -345,6 +345,10 @@ public class ModelManager extends Observable {
 		}
 		for (Endpoint endpoint : thisModelBox.getEndpoints()) {
 			if (endpoint.getFriend() != null && endpoint.getFriend().getAppendant() != null && endpoint.getFriend().getAppendant().equals(otherModelBox)) {
+				Relation relation = endpoint.getRelation();
+				if(relation.isReflexive() && endpoint.isEnd()) { // otherwise reflexive relations end up twice in the list
+					continue;
+				}
 				relationList.add(endpoint.getRelation());
 			}
 		}
