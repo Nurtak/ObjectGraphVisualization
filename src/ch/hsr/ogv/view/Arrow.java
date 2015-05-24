@@ -261,6 +261,13 @@ public class Arrow extends Group implements Selectable {
 		this.startEndDistance = this.startPoint.distance(this.endPoint);
 	}
 	
+	public void arrangeEndpoints(PaneBox startBox, PaneBox endBox, int actualArrowNumber, int totalArrowNumber) {
+		this.arrowNumber = actualArrowNumber;
+		this.totalArrowNumber = totalArrowNumber;
+		this.setPoints(startBox, endBox);
+		drawArrow();
+	}
+	
 	protected void calculateArrangement(PaneBox startBox, PaneBox endBox) {
 		double startBoxRadius = startBox.getWidth() <= startBox.getHeight() ? startBox.getWidth() / 2 : startBox.getHeight() / 2;
 		double endBoxRadius = endBox.getWidth() <= endBox.getHeight() ? endBox.getWidth() / 2 : endBox.getHeight() / 2;
@@ -533,13 +540,6 @@ public class Arrow extends Group implements Selectable {
 
 	public double getRotateXAngle() {
 		return this.rotateXAngle;
-	}
-
-	public void arrangeEndpoints(PaneBox startBox, PaneBox endBox, int actualArrowNumber, int totalArrowNumber) {
-		this.arrowNumber = actualArrowNumber;
-		this.totalArrowNumber = totalArrowNumber;
-		this.setPoints(startBox, endBox);
-		drawArrow();
 	}
 
 }
