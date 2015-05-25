@@ -9,15 +9,37 @@ import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.GeometryUtil;
 
 public class ReflexiveArrow extends Arrow {
+
+	/**         w
+	 *      1-------2/3 
+	 *  m ->|		|
+	 *  +---s---+	| h
+	 *  |       |   |
+	 *  |	    e---4
+	 *  |       |
+	 *  +-------+
+	 * 
+	 *  s: startPoint
+	 *  e: endPoint
+	 *  1: firstPartPoint
+	 *  2: secondPartPoint
+	 *  3: thirdPartPoint
+	 *  4: fourthPartPoint
+	 *  m: smallVertical, smallPartLength
+	 *  w: largeHorizontal, box width
+	 *  h: largeVertical, box height
+	 */
 	
 	private final double SMALL_PART_LENGTH = 50;
-
+	private double smallPartLength = SMALL_PART_LENGTH;
 	private Point3D firstPartPoint;
 	private Point3D secondPartPoint;
 	private Point3D thirdPartPoint;
+	private Point3D fourthPartPoint;
 	
 	private Box smallVertical;
 	private Box largeHorizontal;
+	private Box depthLine;
 	private Box largeVertical;
 	private Box smallHorizontal;
 	
@@ -35,17 +57,35 @@ public class ReflexiveArrow extends Arrow {
 		Point3D endBoxCenter = endBox.getCenterPoint();
 		setStartPoint(new Point3D(startBoxCenter.getX(), startBoxCenter.getY(), startBoxCenter.getZ() + startBox.getHeight() / 2));
 		setEndPoint(new Point3D(endBoxCenter.getX() - endBox.getWidth() / 2, endBoxCenter.getY(), endBoxCenter.getZ()));
-//		if (totalArrowNumber > 1) { // TODO
-//			calculateArrangement(startBox, endBox);
-//		}
+		if (totalArrowNumber > 1) {
+			calculateArrangement(startBox, endBox);
+		}
 		this.startEndDistance = this.startPoint.distance(this.endPoint);
 		calculatePartPoints();
 	}
 	
+	protected void calculateArrangement(PaneBox startBox, PaneBox endBox) {
+		Point3D startCenter = startBox.getCenterPoint();
+		Point3D endCenter = endBox.getCenterPoint();
+		Point3D lineStartPointStart = new Point3D(startCenter.getX() - (startBox.getWidth() / 2), startCenter.getY(), startCenter.getZ() + (startBox.getHeight() / 2));
+		Point3D lineEndPointStart = new Point3D(startCenter.getX() + (startBox.getWidth() / 2), startCenter.getY(), startCenter.getZ() + (startBox.getHeight() / 2));
+		Point3D lineStartPointEnd = new Point3D(endCenter.getX() - (endBox.getWidth() / 2), endCenter.getY(), endCenter.getZ() + (startBox.getHeight() / 2));
+		Point3D lineEndPointEnd = new Point3D(endCenter.getX() - (endBox.getWidth() / 2), endCenter.getY(), endCenter.getZ() - (startBox.getHeight() / 2));
+		setStartPoint(GeometryUtil.divideLineFraction(lineStartPointStart, lineEndPointStart, (arrowNumber) / (totalArrowNumber + 1.0)));
+		setEndPoint(GeometryUtil.divideLineFraction(lineStartPointEnd, lineEndPointEnd, (arrowNumber) / (totalArrowNumber + 1.0)));
+		setSmallPartLength();
+	}
+	
+	private void setSmallPartLength() {
+		double fractionSize =  (SMALL_PART_LENGTH * 2) / totalArrowNumber;
+		smallPartLength = SMALL_PART_LENGTH + (fractionSize * (arrowNumber - 1));
+	}
+	
 	private void calculatePartPoints() {
-		this.firstPartPoint = new Point3D(this.startPoint.getX(), this.startPoint.getY(), this.startPoint.getZ() + SMALL_PART_LENGTH);
-		this.thirdPartPoint = new Point3D(this.endPoint.getX() - SMALL_PART_LENGTH, this.endPoint.getY(), this.endPoint.getZ());
-		this.secondPartPoint = new Point3D(this.thirdPartPoint.getX(), this.endPoint.getY(), this.firstPartPoint.getZ());
+		this.firstPartPoint = new Point3D(this.startPoint.getX(), this.startPoint.getY(), this.startPoint.getZ() + this.smallPartLength);
+		this.fourthPartPoint = new Point3D(this.endPoint.getX() - this.smallPartLength, this.endPoint.getY(), this.endPoint.getZ());
+		this.secondPartPoint = new Point3D(this.fourthPartPoint.getX(), this.startPoint.getY(), this.firstPartPoint.getZ());
+		this.thirdPartPoint = new Point3D(this.secondPartPoint.getX(), this.endPoint.getY(), this.firstPartPoint.getZ());
 	}
 	
 	@Override
@@ -62,23 +102,14 @@ public class ReflexiveArrow extends Arrow {
 	}
 	
 	@Override
-	protected void addElementsToGroup() {
-		getChildren().clear();
-		getChildren().addAll(this.smallVertical, this.largeHorizontal, this.largeVertical, this.smallHorizontal);
-		getChildren().addAll(this.arrowStart, this.arrowEnd);
-		getChildren().addAll(this.lineSelectionHelpers);
-		getChildren().addAll(this.startSelectionHelper, this.endSelectionHelper);
-		getChildren().addAll(this.labelStartRight, this.labelStartLeft, this.labelEndRight, this.labelEndLeft);
-	}
-	
-	@Override
 	protected void prepareLines() {
 		this.line = new Box(this.width, this.width, this.width);
-		if(this.firstPartPoint != null && this.secondPartPoint != null && this.thirdPartPoint != null) {
+		if(this.firstPartPoint != null && this.secondPartPoint != null && this.fourthPartPoint != null) {
 			this.smallVertical = new Box(this.width, this.width, this.startPoint.distance(this.firstPartPoint));
 			this.largeHorizontal = new Box(this.width, this.width, this.firstPartPoint.distance(this.secondPartPoint));
-			this.largeVertical = new Box(this.width, this.width, this.secondPartPoint.distance(this.thirdPartPoint));
-			this.smallHorizontal = new Box(this.width, this.width, this.thirdPartPoint.distance(this.endPoint));
+			this.depthLine = new Box(this.width, this.width, this.secondPartPoint.distance(this.thirdPartPoint));
+			this.largeVertical = new Box(this.width, this.width, this.thirdPartPoint.distance(this.fourthPartPoint));
+			this.smallHorizontal = new Box(this.width, this.width, this.fourthPartPoint.distance(this.endPoint));
 		}
 	}
 	
@@ -86,7 +117,7 @@ public class ReflexiveArrow extends Arrow {
 	protected void buildSelectionHelpers() {
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(Color.DODGERBLUE);
-		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, SMALL_PART_LENGTH);
+		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, this.smallPartLength);
 		this.startSelectionHelper.setMaterial(material); // for debugging
 		this.startSelectionHelper.translateXProperty().bind(this.smallVertical.translateXProperty());
 		this.startSelectionHelper.translateYProperty().bind(this.smallVertical.translateYProperty());
@@ -95,9 +126,10 @@ public class ReflexiveArrow extends Arrow {
 		this.startSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 
 		this.lineSelectionHelpers.add(createBindLineHelper(this.largeHorizontal));
+		this.lineSelectionHelpers.add(createBindLineHelper(this.depthLine));
 		this.lineSelectionHelpers.add(createBindLineHelper(this.largeVertical));
 		
-		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, SMALL_PART_LENGTH);
+		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, this.smallPartLength);
 		this.endSelectionHelper.setMaterial(material); // for debugging
 		this.endSelectionHelper.translateXProperty().bind(this.smallHorizontal.translateXProperty());
 		this.endSelectionHelper.translateYProperty().bind(this.smallHorizontal.translateYProperty());
@@ -124,6 +156,7 @@ public class ReflexiveArrow extends Arrow {
 		this.line.setVisible(false);
 		this.smallVertical.setVisible(true);
 		this.largeHorizontal.setVisible(true);
+		this.depthLine.setVisible(true);
 		this.largeVertical.setVisible(true);
 		this.smallHorizontal.setVisible(true);
 	}
@@ -174,6 +207,7 @@ public class ReflexiveArrow extends Arrow {
 	protected void setSingleElements() {
 		setSmallVertical();
 		setLargeHorizontal();
+		setDepthLine();
 		setLargeVertical();
 		setSmallHorizontal();
 	}
@@ -197,17 +231,27 @@ public class ReflexiveArrow extends Arrow {
 		this.largeHorizontal.setRotate(90);
 	}
 	
+	private void setDepthLine() {
+		double depthLineDist = this.secondPartPoint.distance(this.thirdPartPoint);
+		this.depthLine.setDepth(depthLineDist);
+		this.depthLine.setTranslateX(this.thirdPartPoint.getX());
+		this.depthLine.setTranslateY(this.thirdPartPoint.getY()  + (depthLineDist / 2) + (this.width / 2));
+		this.depthLine.setTranslateZ(this.thirdPartPoint.getZ());
+		this.depthLine.setRotationAxis(Rotate.X_AXIS);
+		this.depthLine.setRotate(90);
+	}
+	
 	private void setLargeVertical() {
-		double largeVerticalDist = this.secondPartPoint.distance(this.thirdPartPoint) + this.width;
+		double largeVerticalDist = this.thirdPartPoint.distance(this.fourthPartPoint) + this.width;
 		this.largeVertical.setDepth(largeVerticalDist);
-		this.largeVertical.setTranslateX(this.secondPartPoint.getX());
-		this.largeVertical.setTranslateY(this.secondPartPoint.getY());
-		this.largeVertical.setTranslateZ(this.secondPartPoint.getZ() - (largeVerticalDist / 2) + (this.width / 2));
+		this.largeVertical.setTranslateX(this.thirdPartPoint.getX());
+		this.largeVertical.setTranslateY(this.thirdPartPoint.getY());
+		this.largeVertical.setTranslateZ(this.thirdPartPoint.getZ() - (largeVerticalDist / 2) + (this.width / 2));
 	}
 	
 	private void setSmallHorizontal() {
 		double endGap = this.arrowEnd.getAdditionalGap();
-		double smallHorizontalDist = this.thirdPartPoint.distance(this.endPoint) - (endGap / 2);
+		double smallHorizontalDist = this.fourthPartPoint.distance(this.endPoint) - (endGap / 2);
 		this.smallHorizontal.setDepth(smallHorizontalDist);
 		this.smallHorizontal.setTranslateX(this.endPoint.getX() - (smallHorizontalDist / 2) + (endGap / 4));
 		this.smallHorizontal.setTranslateY(this.endPoint.getY());
@@ -224,10 +268,21 @@ public class ReflexiveArrow extends Arrow {
 	}
 	
 	@Override
+	protected void addElementsToGroup() {
+		getChildren().clear();
+		getChildren().addAll(this.smallVertical, this.largeHorizontal, this.depthLine, this.largeVertical, this.smallHorizontal);
+		getChildren().addAll(this.arrowStart, this.arrowEnd);
+		getChildren().addAll(this.lineSelectionHelpers);
+		getChildren().addAll(this.startSelectionHelper, this.endSelectionHelper);
+		getChildren().addAll(this.labelStartRight, this.labelStartLeft, this.labelEndRight, this.labelEndLeft);
+	}
+	
+	@Override
 	public void setColor(Color color) {
 		super.setColor(color);
 		applyColor(this.smallVertical, this.color);
 		applyColor(this.largeHorizontal, this.color);
+		applyColor(this.depthLine, this.color);
 		applyColor(this.largeVertical, this.color);
 		applyColor(this.smallHorizontal, this.color);
 	}
@@ -238,6 +293,7 @@ public class ReflexiveArrow extends Arrow {
 		Color colorToApply = colorToApply(selected);
 		applyColor(this.smallVertical, colorToApply);
 		applyColor(this.largeHorizontal, colorToApply);
+		applyColor(this.depthLine, colorToApply);
 		applyColor(this.largeVertical, colorToApply);
 		applyColor(this.smallHorizontal, colorToApply);
 	}

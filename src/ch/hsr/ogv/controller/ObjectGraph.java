@@ -99,8 +99,7 @@ public class ObjectGraph {
 		for (int i = 0; i < ogCollector.getClassFriendEndpoints().size(); i++) {
 			int centerLabelIndex = origSize + i;
 			Endpoint friendEndpoint = ogCollector.getClassFriendEndpoints().get(i);
-			Relation relation = friendEndpoint.getRelation();
-			String roleName = ogCollector.getReferenceNames().get(relation);
+			String roleName = ogCollector.getReferenceNames().get(friendEndpoint);
 			paneBox.setCenterText(centerLabelIndex, roleName + " " + MultiplicityParser.ASTERISK, "");
 		}
 		return origSize;
@@ -111,8 +110,8 @@ public class ObjectGraph {
 			int centerLabelIndex = origSize + i;
 			Endpoint friendEndpoint = ogCollector.getClassFriendEndpoints().get(i);
 			Relation relation = friendEndpoint.getRelation();
-			ArrayList<ModelObject> modelObjects = ogCollector.getAssociatedObjects(relation);
-			String upperBoundStr = ogCollector.getAllocates().get(relation);
+			ArrayList<ModelObject> modelObjects = ogCollector.getAssociatedObjects(friendEndpoint);
+			String upperBoundStr = ogCollector.getAllocates().get(friendEndpoint);
 			if (!modelObjects.isEmpty() && upperBoundStr != null && !upperBoundStr.isEmpty() && upperBoundStr.equals("1")) { // direct reference
 				ModelObject firstRefObject = modelObjects.get(0);
 				PaneBox firstRefBox = this.mvConnector.getPaneBox(firstRefObject);
@@ -126,8 +125,8 @@ public class ObjectGraph {
 				}
 				PaneBox arrayBox = createArrayBox(ogCollector.getModelObject(), (ModelClass) friendEndpoint.getAppendant(), relation, upperBoundStr);
 				createBoxArrow(paneBox, arrayBox, centerLabelIndex, relation);
-				createArrayBoxAttributes(arrayBox, relation, ogCollector);
-				createArrayBoxArrows(arrayBox, relation, ogCollector);
+				createArrayBoxAttributes(arrayBox, friendEndpoint, ogCollector);
+				createArrayBoxArrows(arrayBox, friendEndpoint, ogCollector);
 			}
 		}
 	}
@@ -191,7 +190,12 @@ public class ObjectGraph {
 		paneBox.setColor(Util.brighter(modelClass.getColor(), 0.1));
 		Point3D newPosition = modelObject.getCoordinates().midpoint(modelClass.getCoordinates());
 		// newPosition = modelObject.getCoordinates().midpoint(newPosition);
-		newPosition = new Point3D(newPosition.getX(), modelObject.getY(), newPosition.getZ());
+		if(!relation.isReflexive()) {
+			newPosition = new Point3D(newPosition.getX(), modelObject.getY(), newPosition.getZ());
+		}
+		else {
+			newPosition = new Point3D(newPosition.getX() + (ARRAYBOX_LEVEL_DIFF * 2), modelObject.getY(), newPosition.getZ());
+		}
 		while (hasArrayBoxAtPos(newPosition)) {
 			newPosition = new Point3D(newPosition.getX(), newPosition.getY() + ARRAYBOX_LEVEL_DIFF, newPosition.getZ());
 		}
@@ -202,9 +206,9 @@ public class ObjectGraph {
 		return paneBox;
 	}
 
-	private void createArrayBoxAttributes(PaneBox arrayBox, Relation relation, ObjectGraphCollector ogCollector) {
-		ArrayList<ModelObject> modelObjects = ogCollector.getAssociatedObjects(relation);
-		Integer upperBound = MultiplicityParser.toInteger(ogCollector.getAllocates().get(relation));
+	private void createArrayBoxAttributes(PaneBox arrayBox, Endpoint endpoint, ObjectGraphCollector ogCollector) {
+		ArrayList<ModelObject> modelObjects = ogCollector.getAssociatedObjects(endpoint);
+		Integer upperBound = MultiplicityParser.toInteger(ogCollector.getAllocates().get(endpoint));
 		if (upperBound == null) {
 			upperBound = modelObjects.size();
 		}
@@ -216,14 +220,14 @@ public class ObjectGraph {
 		arrayBox.recalcHasCenterGrid();
 	}
 
-	private void createArrayBoxArrows(PaneBox arrayBox, Relation relation, ObjectGraphCollector ogCollector) {
-		ArrayList<ModelObject> modelObjects = ogCollector.getAssociatedObjects(relation);
+	private void createArrayBoxArrows(PaneBox arrayBox, Endpoint endpoint, ObjectGraphCollector ogCollector) {
+		ArrayList<ModelObject> modelObjects = ogCollector.getAssociatedObjects(endpoint);
 		for (int i = 0; i < arrayBox.getCenterLabels().size(); i++) {
 			if (i < modelObjects.size()) {
 				ModelObject modelObject = modelObjects.get(i);
 				PaneBox refBox = this.mvConnector.getPaneBox(modelObject);
 				if (refBox != null) {
-					createBoxArrow(arrayBox, refBox, i, relation);
+					createBoxArrow(arrayBox, refBox, i, endpoint.getRelation());
 				}
 			}
 		}

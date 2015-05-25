@@ -56,6 +56,7 @@ public class Arrow extends Group implements Selectable {
 	protected List<Box> lineSelectionHelpers = new ArrayList<Box>();
 	protected Box startSelectionHelper;
 	protected Box endSelectionHelper;
+	private boolean isSelected = false;
 
 	public Arrow(Point3D startPoint, Point3D endPoint, RelationType type) {
 		setPoints(startPoint, endPoint);
@@ -63,7 +64,7 @@ public class Arrow extends Group implements Selectable {
 		buildArrow();
 		drawArrow();
 	}
-	
+
 	public Arrow(PaneBox startBox, Point3D endPoint, RelationType type) {
 		setPoints(startBox, endPoint);
 		this.type = type;
@@ -77,7 +78,7 @@ public class Arrow extends Group implements Selectable {
 		buildArrow();
 		drawArrow();
 	}
-	
+
 	public Arrow(PaneBox startBox, PaneBox endBox, RelationType type) {
 		setPoints(startBox, endBox);
 		this.type = type;
@@ -159,7 +160,7 @@ public class Arrow extends Group implements Selectable {
 		drawArrow();
 		addElementsToGroup();
 	}
-	
+
 	protected void prepareArrowLineEdge() {
 		this.arrowStart = new ArrowEdge(this.type.getStartType(), this.color);
 		this.arrowEnd = new ArrowEdge(this.type.getEndType(), this.color);
@@ -190,7 +191,7 @@ public class Arrow extends Group implements Selectable {
 		lineSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
 		lineSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 		this.lineSelectionHelpers.add(lineSelectionHelper);
-		
+
 		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, lineSelectionGap / 2);
 		this.startSelectionHelper.setMaterial(material); // for debugging
 		this.startSelectionHelper.translateXProperty().bind(this.line.translateXProperty());
@@ -207,7 +208,7 @@ public class Arrow extends Group implements Selectable {
 		this.endSelectionHelper.rotateProperty().bind(this.line.rotateProperty());
 		this.endSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 	}
-	
+
 	protected void addElementsToGroup() {
 		getChildren().clear();
 		getChildren().addAll(this.line, this.arrowStart, this.arrowEnd);
@@ -215,7 +216,7 @@ public class Arrow extends Group implements Selectable {
 		getChildren().addAll(this.startSelectionHelper, this.endSelectionHelper);
 		getChildren().addAll(this.labelStartRight, this.labelStartLeft, this.labelEndRight, this.labelEndLeft);
 	}
-	
+
 	public void setPoints(Point3D startPoint, Point3D endPoint) {
 		setStartPoint(startPoint);
 		setEndPoint(endPoint);
@@ -260,16 +261,26 @@ public class Arrow extends Group implements Selectable {
 		}
 		this.startEndDistance = this.startPoint.distance(this.endPoint);
 	}
-	
+
+	public void arrangeEndpoints(PaneBox startBox, PaneBox endBox, int actualArrowNumber, int totalArrowNumber) {
+		this.arrowNumber = actualArrowNumber;
+		this.totalArrowNumber = totalArrowNumber;
+		this.setPoints(startBox, endBox);
+		drawArrow();
+	}
+
 	protected void calculateArrangement(PaneBox startBox, PaneBox endBox) {
 		double startBoxRadius = startBox.getWidth() <= startBox.getHeight() ? startBox.getWidth() / 2 : startBox.getHeight() / 2;
 		double endBoxRadius = endBox.getWidth() <= endBox.getHeight() ? endBox.getWidth() / 2 : endBox.getHeight() / 2;
 
-		double alphaStart = GeometryUtil.rotateYAngle(startBox.getCenterPoint(), endBox.getCenterPoint());
+		Point3D startCenter = startBox.getCenterPoint();
+		Point3D endCenter = endBox.getCenterPoint();
+
+		double alphaStart = GeometryUtil.rotateYAngle(startCenter, endCenter);
 		if (alphaStart < 0.0) {
 			alphaStart += 180.0;
 		}
-		double alphaEnd = GeometryUtil.rotateYAngle(endBox.getCenterPoint(), startBox.getCenterPoint());
+		double alphaEnd = GeometryUtil.rotateYAngle(endCenter, startCenter);
 		if (alphaEnd < 0.0) {
 			alphaEnd += 180.0;
 		}
@@ -282,15 +293,15 @@ public class Arrow extends Group implements Selectable {
 		double diffXEnd = endBoxRadius * Math.sin(Math.toRadians(betaEnd));
 		double diffZEnd = endBoxRadius * Math.cos(Math.toRadians(betaEnd));
 
-		Point3D lineStartPointStart = new Point3D(startBox.getCenterPoint().getX() + diffXStart, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() - diffZStart);
-		Point3D lineEndPointStart = new Point3D(startBox.getCenterPoint().getX() - diffXStart, startBox.getCenterPoint().getY(), startBox.getCenterPoint().getZ() + diffZStart);
-		Point3D lineStartPointEnd = new Point3D(endBox.getCenterPoint().getX() + diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() - diffZEnd);
-		Point3D lineEndPointEnd = new Point3D(endBox.getCenterPoint().getX() - diffXEnd, endBox.getCenterPoint().getY(), endBox.getCenterPoint().getZ() + diffZEnd);
+		Point3D lineStartPointStart = new Point3D(startCenter.getX() + diffXStart, startCenter.getY(), startCenter.getZ() - diffZStart);
+		Point3D lineEndPointStart = new Point3D(startCenter.getX() - diffXStart, startCenter.getY(), startCenter.getZ() + diffZStart);
+		Point3D lineStartPointEnd = new Point3D(endCenter.getX() + diffXEnd, endCenter.getY(), endCenter.getZ() - diffZEnd);
+		Point3D lineEndPointEnd = new Point3D(endCenter.getX() - diffXEnd, endCenter.getY(), endCenter.getZ() + diffZEnd);
 
 		setStartPoint(GeometryUtil.divideLineFraction(lineStartPointStart, lineEndPointStart, (arrowNumber) / (totalArrowNumber + 1.0)));
 		setEndPoint(GeometryUtil.divideLineFraction(lineStartPointEnd, lineEndPointEnd, (arrowNumber) / (totalArrowNumber + 1.0)));
 	}
-	
+
 	public final void drawArrow() {
 		getTransforms().clear();
 		setLineVisibility();
@@ -299,11 +310,11 @@ public class Arrow extends Group implements Selectable {
 		setSingleElements();
 		moveRotateGroup();
 	}
-	
+
 	protected void setLineVisibility() {
 		this.line.setVisible(true);
 	}
-	
+
 	protected void setSingleElements() {
 		double endGap = this.arrowEnd.getAdditionalGap();
 		double startGap = this.arrowStart.getAdditionalGap();
@@ -312,7 +323,7 @@ public class Arrow extends Group implements Selectable {
 		this.line.setDepth(gapDistance);
 		this.line.setTranslateZ((-endGap + startGap) / 4);
 	}
-	
+
 	protected void moveRotateGroup() {
 		this.rotateYAngle = GeometryUtil.rotateYAngle(this.startPoint, this.endPoint);
 		this.rotateXAngle = -GeometryUtil.rotateXAngle(this.startPoint, this.endPoint);
@@ -329,7 +340,7 @@ public class Arrow extends Group implements Selectable {
 
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
-	
+
 	private Point2D lineRectangleIntersection(Point3D internalPoint, Point3D externalPoint, Point3D centerPoint, double width, double height) {
 		double halfWidth = width / 2;
 		double halfHeight = height / 2;
@@ -467,6 +478,7 @@ public class Arrow extends Group implements Selectable {
 
 	@Override
 	public void setSelected(boolean selected) {
+		this.isSelected = selected;
 		Color colorToApply = colorToApply(selected);
 		applyColor(this.line, colorToApply);
 		this.arrowStart.setColor(colorToApply);
@@ -480,18 +492,18 @@ public class Arrow extends Group implements Selectable {
 			setAllLabelSelected(false);
 		}
 	}
-	
+
+	@Override
+	public boolean isSelected() {
+		return this.isSelected;
+	}
+
 	protected Color colorToApply(boolean selected) {
 		Color colorToApply = getColor();
 		if (selected) {
 			colorToApply = SELECTION_COLOR;
 		}
 		return colorToApply;
-	}
-
-	@Override
-	public boolean isSelected() {
-		return this.selection.isVisible();
 	}
 
 	@Override
@@ -535,11 +547,14 @@ public class Arrow extends Group implements Selectable {
 		return this.rotateXAngle;
 	}
 
-	public void arrangeEndpoints(PaneBox startBox, PaneBox endBox, int actualArrowNumber, int totalArrowNumber) {
-		this.arrowNumber = actualArrowNumber;
-		this.totalArrowNumber = totalArrowNumber;
-		this.setPoints(startBox, endBox);
-		drawArrow();
+	public void setArrowVisible(boolean visible) {
+		setVisible(visible);
+		if (!visible) {
+			this.selection.setVisible(false);
+		}
+		else {
+			this.selection.setVisible(isSelected());
+		}
 	}
 
 }

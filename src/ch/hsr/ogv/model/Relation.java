@@ -103,6 +103,13 @@ public class Relation extends Observable {
 		}
 		return false;
 	}
+	
+	public boolean isReflexive() {
+		if (start != null && end != null && start.getAppendant() != null && start.getAppendant().equals(end.getAppendant())) {
+			return true;
+		}
+		return false;
+	}
 
 	public void changeDirection() {
 		if (this.start == null || this.end == null)
