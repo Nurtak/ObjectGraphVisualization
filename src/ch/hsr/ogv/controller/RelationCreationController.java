@@ -348,10 +348,10 @@ public class RelationCreationController extends Observable implements Observer {
 		this.endBox = paneBoxMovedOver;
 		if (this.leftStartBox) { // this.endBox.equals(this.startBox) && 
 			viewArrowVisiblity(this.endBox.equals(this.startBox));
+			arrangedDrawArrows(true);
 		}
 		this.selectionController.setSelected(this.viewArrow, true, this.subSceneAdapter);
 		this.endBox.setSelected(true); // only visually show selection
-		arrangedDrawArrows(true);
 		this.leftStartBox = false;
 	}
 	
@@ -375,10 +375,16 @@ public class RelationCreationController extends Observable implements Observer {
 			int relationsCount = this.mvConnector.getModelManager().getRelationsBetween(startModelBox, endModelBox).size();
 			this.mvConnector.arrangeArrowNumbers(startModelBox, endModelBox, 1);
 			this.viewArrow.arrangeEndpoints(this.startBox, this.endBox, relationsCount + 1, relationsCount + 1);
+			if(this.reflexiveViewArrow != null) {
+				this.reflexiveViewArrow.arrangeEndpoints(this.startBox, this.endBox, relationsCount + 1, relationsCount + 1);
+			}
 		}
 		else {
 			this.mvConnector.arrangeArrowNumbers(startModelBox, endModelBox, 0);
 			this.viewArrow.arrangeEndpoints(this.startBox, this.endBox, 1, 1);
+			if(this.reflexiveViewArrow != null) {
+				this.reflexiveViewArrow.arrangeEndpoints(this.startBox, this.endBox, 1, 1);
+			}
 		}
 	}
 

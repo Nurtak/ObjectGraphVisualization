@@ -25,12 +25,13 @@ public class ReflexiveArrow extends Arrow {
 	 *  2: secondPartPoint
 	 *  3: thirdPartPoint
 	 *  4: fourthPartPoint
-	 *  m: smallVertical, SMALL_PART_LENGTH
+	 *  m: smallVertical, smallPartLength
 	 *  w: largeHorizontal, box width
 	 *  h: largeVertical, box height
 	 */
 	
 	private final double SMALL_PART_LENGTH = 50;
+	private double smallPartLength = SMALL_PART_LENGTH;
 	private Point3D firstPartPoint;
 	private Point3D secondPartPoint;
 	private Point3D thirdPartPoint;
@@ -63,9 +64,26 @@ public class ReflexiveArrow extends Arrow {
 		calculatePartPoints();
 	}
 	
+	protected void calculateArrangement(PaneBox startBox, PaneBox endBox) {
+		Point3D startCenter = startBox.getCenterPoint();
+		Point3D endCenter = endBox.getCenterPoint();
+		Point3D lineStartPointStart = new Point3D(startCenter.getX() - (startBox.getWidth() / 2), startCenter.getY(), startCenter.getZ() + (startBox.getHeight() / 2));
+		Point3D lineEndPointStart = new Point3D(startCenter.getX() + (startBox.getWidth() / 2), startCenter.getY(), startCenter.getZ() + (startBox.getHeight() / 2));
+		Point3D lineStartPointEnd = new Point3D(endCenter.getX() - (endBox.getWidth() / 2), endCenter.getY(), endCenter.getZ() + (startBox.getHeight() / 2));
+		Point3D lineEndPointEnd = new Point3D(endCenter.getX() - (endBox.getWidth() / 2), endCenter.getY(), endCenter.getZ() - (startBox.getHeight() / 2));
+		setStartPoint(GeometryUtil.divideLineFraction(lineStartPointStart, lineEndPointStart, (arrowNumber) / (totalArrowNumber + 1.0)));
+		setEndPoint(GeometryUtil.divideLineFraction(lineStartPointEnd, lineEndPointEnd, (arrowNumber) / (totalArrowNumber + 1.0)));
+		setSmallPartLength();
+	}
+	
+	private void setSmallPartLength() {
+		double fractionSize =  (SMALL_PART_LENGTH * 2) / totalArrowNumber;
+		smallPartLength = SMALL_PART_LENGTH + (fractionSize * (arrowNumber - 1));
+	}
+	
 	private void calculatePartPoints() {
-		this.firstPartPoint = new Point3D(this.startPoint.getX(), this.startPoint.getY(), this.startPoint.getZ() + SMALL_PART_LENGTH);
-		this.fourthPartPoint = new Point3D(this.endPoint.getX() - SMALL_PART_LENGTH, this.endPoint.getY(), this.endPoint.getZ());
+		this.firstPartPoint = new Point3D(this.startPoint.getX(), this.startPoint.getY(), this.startPoint.getZ() + this.smallPartLength);
+		this.fourthPartPoint = new Point3D(this.endPoint.getX() - this.smallPartLength, this.endPoint.getY(), this.endPoint.getZ());
 		this.secondPartPoint = new Point3D(this.fourthPartPoint.getX(), this.startPoint.getY(), this.firstPartPoint.getZ());
 		this.thirdPartPoint = new Point3D(this.secondPartPoint.getX(), this.endPoint.getY(), this.firstPartPoint.getZ());
 	}
@@ -99,7 +117,7 @@ public class ReflexiveArrow extends Arrow {
 	protected void buildSelectionHelpers() {
 		PhongMaterial material = new PhongMaterial();
 		material.setDiffuseColor(Color.DODGERBLUE);
-		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, SMALL_PART_LENGTH);
+		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, this.smallPartLength);
 		this.startSelectionHelper.setMaterial(material); // for debugging
 		this.startSelectionHelper.translateXProperty().bind(this.smallVertical.translateXProperty());
 		this.startSelectionHelper.translateYProperty().bind(this.smallVertical.translateYProperty());
@@ -111,7 +129,7 @@ public class ReflexiveArrow extends Arrow {
 		this.lineSelectionHelpers.add(createBindLineHelper(this.depthLine));
 		this.lineSelectionHelpers.add(createBindLineHelper(this.largeVertical));
 		
-		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, SMALL_PART_LENGTH);
+		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, this.smallPartLength);
 		this.endSelectionHelper.setMaterial(material); // for debugging
 		this.endSelectionHelper.translateXProperty().bind(this.smallHorizontal.translateXProperty());
 		this.endSelectionHelper.translateYProperty().bind(this.smallHorizontal.translateYProperty());
