@@ -1,7 +1,8 @@
 package ch.hsr.ogv.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import ch.hsr.ogv.model.Endpoint;
@@ -21,30 +22,26 @@ import ch.hsr.ogv.util.TextUtil;
 public class ObjectGraphCollector {
 
 	private ModelObject modelObject; // the model object we gather all info for
-	private ArrayList<Relation> classRelations = new ArrayList<Relation>(); // helper list with all class relations
 	private ArrayList<Endpoint> classFriendEndpoints = new ArrayList<Endpoint>(); // helper list with all class relations friend endpoints
-	private HashMap<Endpoint, String> allocates = new HashMap<Endpoint, String>(); // k: class endpoint, v: upper multiplicity bound
-	private HashMap<Endpoint, String> referenceNames = new HashMap<Endpoint, String>(); // k: class endpoint, v: role name / mClass
-	private HashMap<Endpoint, ArrayList<Relation>> classObjectRelations = new HashMap<Endpoint, ArrayList<Relation>>(); // k: class endpoint, v: list of associated object relations.
-	private HashMap<Relation, ArrayList<ModelObject>> objectReferences = new HashMap<Relation, ArrayList<ModelObject>>(); // k: object relation, v: list of referenced objects.
+	private Map<Endpoint, String> allocates = new LinkedHashMap<Endpoint, String>(); // k: class endpoint, v: upper multiplicity bound
+	private Map<Endpoint, String> referenceNames = new LinkedHashMap<Endpoint, String>(); // k: class endpoint, v: role name / mClass
+	private Map<Endpoint, ArrayList<Relation>> classObjectRelations = new LinkedHashMap<Endpoint, ArrayList<Relation>>(); // k: class endpoint, v: list of associated object relations.
+	private ArrayList<Relation> objectRelations = new ArrayList<Relation>(); // helper list of object relations (to keep order)
+	private Map<Relation, ArrayList<ModelObject>> objectReferences = new LinkedHashMap<Relation, ArrayList<ModelObject>>(); // k: object relation, v: list of referenced objects.
 
 	public ModelObject getModelObject() {
 		return modelObject;
-	}
-
-	public ArrayList<Relation> getClassRelations() {
-		return classRelations;
 	}
 
 	public ArrayList<Endpoint> getClassFriendEndpoints() {
 		return classFriendEndpoints;
 	}
 
-	public HashMap<Endpoint, String> getAllocates() {
+	public Map<Endpoint, String> getAllocates() {
 		return allocates;
 	}
 
-	public HashMap<Endpoint, String> getReferenceNames() {
+	public Map<Endpoint, String> getReferenceNames() {
 		return referenceNames;
 	}
 
@@ -80,7 +77,6 @@ public class ObjectGraphCollector {
 			if (!RelationType.DEPENDENCY.equals(relation.getRelationType()) && !RelationType.GENERALIZATION.equals(relation.getRelationType())) {
 				if ((endpoint.getFriend().isEnd())
 					|| (endpoint.getFriend().isStart() && RelationType.BIDIRECTED_ASSOCIATION.equals(relation.getRelationType()))) {
-					this.classRelations.add(relation);
 					this.classFriendEndpoints.add(friendEndpoint);
 				}
 			}
@@ -138,15 +134,8 @@ public class ObjectGraphCollector {
 	}
 
 	private void setClassObjectRelations() {
-		ArrayList<Relation> allObjectRelations = new ArrayList<Relation>();
-		for (Endpoint endpoint : this.modelObject.getEndpoints()) {
-			Relation relation = endpoint.getRelation();
-			if(!relation.isReflexive() || endpoint.isEnd()) {
-				allObjectRelations.add(relation);
-			}
-		}
 		for (Endpoint classEndpoint : this.classFriendEndpoints) {
-			for (Relation objectRelation : allObjectRelations) {
+			for (Relation objectRelation : this.objectRelations) {
 				Relation classRelation = classEndpoint.getRelation();
 				ModelClass friendClass = (ModelClass) classRelation.getEnd().getAppendant();
 				ModelObject friendStartObject = (ModelObject) objectRelation.getStart().getAppendant();
@@ -165,15 +154,37 @@ public class ObjectGraphCollector {
 			ModelBox modelBox = endpoint.getFriend().getAppendant();
 			if (modelBox instanceof ModelObject) {
 				Relation relation = endpoint.getRelation();
-				if(!relation.isReflexive() || endpoint.isEnd()) {
+				boolean isObjectReflexive = isObjectReflexive(relation);
+				if((!relation.isReflexive() && !isObjectReflexive) || endpoint.isStart()) {
 					ArrayList<ModelObject> temp = this.objectReferences.get(relation);
 					if (temp == null) {
 						temp = new ArrayList<ModelObject>();
 					}
 					temp.add((ModelObject) modelBox);
-					this.objectReferences.put(endpoint.getRelation(), temp);
+					this.objectRelations.add(relation);
+					this.objectReferences.put(relation, temp);
 				}
 			}
 		}
+	}
+	
+	private boolean isObjectReflexive(Relation relation) {
+		ModelBox startBox = relation.getStart().getAppendant();
+		ModelBox endBox = relation.getEnd().getAppendant();
+		if(!(startBox instanceof ModelObject) || !(endBox instanceof ModelObject)) {
+			return false;
+		}
+		ModelObject startObject = (ModelObject) startBox;
+		ModelObject endObject = (ModelObject) endBox;
+		if(startObject.equals(endObject)) { // direct reflexive
+			return false;
+		}
+		if(startObject.equals(this.modelObject) && endObject.getModelClass().getModelObjects().contains(startObject)) {
+			return true;
+		}
+		if(endBox.equals(this.modelObject) && startObject.getModelClass().getModelObjects().contains(endObject)) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -194,7 +194,7 @@ public class ObjectGraph {
 			newPosition = new Point3D(newPosition.getX(), modelObject.getY(), newPosition.getZ());
 		}
 		else {
-			newPosition = new Point3D(newPosition.getX() + (ARRAYBOX_LEVEL_DIFF * 2), modelObject.getY(), newPosition.getZ());
+			newPosition = new Point3D(newPosition.getX() + (ARRAYBOX_LEVEL_DIFF * 2) + (modelObject.getWidth() / 2), modelObject.getY(), newPosition.getZ());
 		}
 		while (hasArrayBoxAtPos(newPosition)) {
 			newPosition = new Point3D(newPosition.getX(), newPosition.getY() + ARRAYBOX_LEVEL_DIFF, newPosition.getZ());

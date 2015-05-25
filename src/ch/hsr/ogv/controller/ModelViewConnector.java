@@ -1,7 +1,7 @@
 package ch.hsr.ogv.controller;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,8 +37,8 @@ public class ModelViewConnector {
 
 	private ModelManager modelManager = new ModelManager();
 
-	private Map<ModelBox, PaneBox> boxes = new HashMap<ModelBox, PaneBox>();
-	private Map<Relation, Arrow> arrows = new HashMap<Relation, Arrow>();
+	private Map<ModelBox, PaneBox> boxes = new LinkedHashMap <ModelBox, PaneBox>();
+	private Map<Relation, Arrow> arrows = new LinkedHashMap <Relation, Arrow>();
 
 	public ModelManager getModelManager() {
 		return this.modelManager;

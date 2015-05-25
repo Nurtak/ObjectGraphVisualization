@@ -1,7 +1,7 @@
 package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,7 +24,7 @@ public class ModelObject extends ModelBox {
 	// for un/marshaling only
 	private String uniqueID = UUID.randomUUID().toString();
 	
-	private Map<Attribute, String> attributeValues = new HashMap<Attribute, String>();
+	private Map<Attribute, String> attributeValues = new LinkedHashMap<Attribute, String>();
 	private ModelClass modelClass;
 
 	public static volatile AtomicInteger modelObjectCounter = new AtomicInteger(0);

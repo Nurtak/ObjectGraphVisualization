@@ -1,8 +1,9 @@
 package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.geometry.Point3D;
@@ -25,7 +26,7 @@ public class ModelClass extends ModelBox {
 	public final static double OBJECT_LEVEL_DIFF = 100;
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private List<ModelObject> modelObjects = new ArrayList<ModelObject>();
-	private HashMap<ModelObject, ArrayList<ModelObject>> superObjects = new HashMap<ModelObject, ArrayList<ModelObject>>();
+	private Map<ModelObject, ArrayList<ModelObject>> superObjects = new LinkedHashMap<ModelObject, ArrayList<ModelObject>>();
 
 	public static volatile AtomicInteger modelClassCounter = new AtomicInteger(0);
 

@@ -110,7 +110,7 @@ public class Relation extends Observable {
 		}
 		return false;
 	}
-
+	
 	public void changeDirection() {
 		if (this.start == null || this.end == null)
 			return;

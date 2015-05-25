@@ -1,7 +1,7 @@
 package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -159,7 +159,7 @@ public class ModelBox extends Observable {
 
 	@XmlTransient
 	public Map<Endpoint, Endpoint> getFriends() {
-		Map<Endpoint, Endpoint> result = new HashMap<Endpoint, Endpoint>(endpoints.size());
+		Map<Endpoint, Endpoint> result = new LinkedHashMap<Endpoint, Endpoint>(endpoints.size());
 		for (Endpoint endpoint : endpoints) {
 			Endpoint friend = endpoint.getFriend();
 			if (friend != null) {
