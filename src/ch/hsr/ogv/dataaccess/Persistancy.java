@@ -2,7 +2,7 @@ package ch.hsr.ogv.dataaccess;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -36,8 +36,8 @@ public class Persistancy {
 	}
 
 	private void saveDataAsync(SerializationStrategy serialStrategy, File file, PersistencyCallback callback) {
-		serialStrategy.setClasses(new HashSet<ModelClass>(modelManager.getClasses()));
-		serialStrategy.setRelations(new HashSet<Relation>(modelManager.getRelations()));
+		serialStrategy.setClasses(new LinkedHashSet<ModelClass>(modelManager.getClasses()));
+		serialStrategy.setRelations(new LinkedHashSet<Relation>(modelManager.getRelations()));
 		Task<Void> loadTask = new Task<Void>() {
 			@Override
 			public Void call() {
@@ -57,8 +57,8 @@ public class Persistancy {
 	}
 
 	private boolean saveData(SerializationStrategy serialStrategy, File file) {
-		serialStrategy.setClasses(new HashSet<ModelClass>(modelManager.getClasses()));
-		serialStrategy.setRelations(new HashSet<Relation>(modelManager.getRelations()));
+		serialStrategy.setClasses(new LinkedHashSet<ModelClass>(modelManager.getClasses()));
+		serialStrategy.setRelations(new LinkedHashSet<Relation>(modelManager.getRelations()));
 		return serialStrategy.serialize(file);
 	}
 

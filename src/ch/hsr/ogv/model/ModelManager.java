@@ -1,7 +1,7 @@
 package ch.hsr.ogv.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Set;
@@ -18,8 +18,8 @@ import ch.hsr.ogv.util.TextUtil;
  */
 public class ModelManager extends Observable {
 
-	private Set<ModelClass> classes = new HashSet<ModelClass>();
-	private Set<Relation> relations = new HashSet<Relation>();
+	private Set<ModelClass> classes = new LinkedHashSet<ModelClass>();
+	private Set<Relation> relations = new LinkedHashSet<Relation>();
 	
 	public Set<ModelClass> getClasses() {
 		return this.classes;

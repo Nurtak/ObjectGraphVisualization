@@ -1,7 +1,7 @@
 package ch.hsr.ogv.dataaccess;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -31,8 +31,8 @@ public class OGVSerialization implements SerializationStrategy {
 
 	private final static Logger logger = LoggerFactory.getLogger(OGVSerialization.class);
 
-	private Set<ModelClass> classes = new HashSet<ModelClass>();
-	private Set<Relation> relations = new HashSet<Relation>();
+	private Set<ModelClass> classes = new LinkedHashSet<ModelClass>();
+	private Set<Relation> relations = new LinkedHashSet<Relation>();
 
 	@XmlElementWrapper(name = "classes")
 	@XmlElement(name = "class")

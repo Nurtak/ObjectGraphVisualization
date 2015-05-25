@@ -1,7 +1,7 @@
 package ch.hsr.ogv.controller;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -66,7 +66,7 @@ public class ModelViewConnector {
 	}
 
 	public Set<PaneBox> getClassPaneBoxes() {
-		Set<PaneBox> classPaneBoxes = new HashSet<PaneBox>();
+		Set<PaneBox> classPaneBoxes = new LinkedHashSet<PaneBox>();
 		for (ModelBox modelBox : getBoxes().keySet()) {
 			if (modelBox instanceof ModelClass) {
 				classPaneBoxes.add(getBoxes().get(modelBox));
@@ -76,7 +76,7 @@ public class ModelViewConnector {
 	}
 
 	public Set<PaneBox> getObjectPaneBoxes() {
-		Set<PaneBox> objectPaneBoxes = new HashSet<PaneBox>();
+		Set<PaneBox> objectPaneBoxes = new LinkedHashSet<PaneBox>();
 		for (ModelBox modelBox : getBoxes().keySet()) {
 			if (modelBox instanceof ModelObject) {
 				objectPaneBoxes.add(getBoxes().get(modelBox));

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,7 +50,7 @@ public class XMISerialization implements SerializationStrategy {
 	 */
 	@Override
 	public Set<Relation> getRelations() {
-		return new HashSet<Relation>(xmiHandler.getRelations());
+		return new LinkedHashSet<Relation>(xmiHandler.getRelations());
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class XMISerialization implements SerializationStrategy {
 	 */
 	@Override
 	public Set<ModelClass> getClasses() {
-		return new HashSet<ModelClass>(xmiHandler.getClasses());
+		return new LinkedHashSet<ModelClass>(xmiHandler.getClasses());
 	}
 	
 	@Override

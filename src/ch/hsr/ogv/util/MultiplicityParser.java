@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -97,7 +97,7 @@ public class MultiplicityParser {
 	}
 
 	public static String getParsed(String multiString) {
-		Set<String> retContainer = new HashSet<String>();
+		Set<String> retContainer = new LinkedHashSet<String>();
 		List<String> separations = new ArrayList<String>(Arrays.asList(multiString.split(",")));
 		for (String part : separations) {
 			if (isNForm(part)) {

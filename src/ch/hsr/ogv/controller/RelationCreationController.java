@@ -1,7 +1,7 @@
 package ch.hsr.ogv.controller;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -274,7 +274,7 @@ public class RelationCreationController extends Observable implements Observer {
 	}
 
 	private void selectiveMouseEvents() {
-		Collection<PaneBox> boxes = new HashSet<PaneBox>();
+		Collection<PaneBox> boxes = new LinkedHashSet<PaneBox>();
 		boolean isClassesRelation = isClassesRelation(this.relationType);
 		boolean isObjectsRelation = isObjectsRelation(this.relationType);
 		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
