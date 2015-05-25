@@ -44,7 +44,7 @@ public class StageBuilder {
 	private static final int MIN_WIDTH = 1024;
 	private static final int MIN_HEIGHT = 768;
 	
-	private String appTitle = "Object Graph Visualizer v.2.0";
+	private String appTitle = "Object Graph Visualizer";
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private SubSceneAdapter subSceneAdapter;

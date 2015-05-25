@@ -19,6 +19,7 @@ public class MessageBar {
 
 	private static int CLEAR_TIME_SECOND = 5;
 	private static TextField messageBar;
+	private final static String defaultStyle;
 
 	private static AtomicInteger countDown = new AtomicInteger(0);
 	private static AtomicBoolean taskRunning = new AtomicBoolean(false);
@@ -31,6 +32,7 @@ public class MessageBar {
 
 	static {
 		messageBar = new TextField();
+		defaultStyle = messageBar.getStyle();
 		messageBar.setEditable(false);
 		messageBar.setFocusTraversable(false);
 		messageBar.setDisable(true);
@@ -59,9 +61,10 @@ public class MessageBar {
 						+ " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: #CC2900;");
 				break;
 			default:
-				String iconStyleDefault = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_DEFAULT_PNG).toExternalForm() + "\");";
-				messageBar.setStyle(iconStyleDefault
-						+ " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: transparent;");
+				// String iconStyleDefault = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_DEFAULT_PNG).toExternalForm() + "\");";
+				// messageBar.setStyle(iconStyleDefault
+				// 		+ " -fx-padding: 0 5 0 25; -fx-background-repeat: no-repeat; -fx-background-position: left center; -fx-font-weight: bold; -fx-text-inner-color: transparent;");
+				messageBar.setStyle(defaultStyle);
 				break;
 			}
 			countDown.set(CLEAR_TIME_SECOND);
@@ -81,9 +84,10 @@ public class MessageBar {
 				countDown.decrementAndGet();
 			}
 			messageBar.clear();
-			String iconStyleDefault = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_DEFAULT_PNG).toExternalForm() + "\");\n";
+			// String iconStyleDefault = "-fx-background-image:url(\"" + ResourceLocator.getResourcePath(Resource.MESSAGE_DEFAULT_PNG).toExternalForm() + "\");\n";
 			try {
-				messageBar.setStyle(iconStyleDefault + "-fx-padding: 0 5 0 25;\n-fx-background-repeat: no-repeat;\n-fx-background-position: left center;\n-fx-font-weight: bold;");
+				// messageBar.setStyle(iconStyleDefault + "-fx-padding: 0 5 0 25;\n-fx-background-repeat: no-repeat;\n-fx-background-position: left center;\n-fx-font-weight: bold;");
+				messageBar.setStyle(defaultStyle);
 			}
 			catch (Exception e) {
 			}

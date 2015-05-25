@@ -225,11 +225,15 @@ public class ViewController implements Observer, Initializable {
 	private void handleAbout() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("About");
-		alert.setHeaderText("About");
-		alert.setContentText("Authors: Simon Gwerder, Adrian Rieser");
+		alert.setHeaderText("Object Graph Visualizer");
+		alert.setContentText("Version:\t4.0"
+				+ "\nAuthors:\tSimon Gwerder, Adrian Rieser"
+				+ "\nRelease:\t12.06.2015\n"
+				+ "\nBachelor Thesis"
+				+ "\n© HSR - University of Applied Science Rapperswil (CH)");
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image("file:resources/images/application_icon.gif")); // add a custom icon
-		// alert.initOwner(this.stageManager.getPrimaryStage());
+		stage.getIcons().add(new Image("file:resources/images/OGV.gif")); // add a custom icon
+		alert.initOwner(this.primaryStage);
 		alert.showAndWait();
 	}
 
