@@ -89,9 +89,6 @@ public class StageBuilder {
 		initStageManager();
 
 		this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-
-		// TODO: Remove everything below this line:
-		this.mvConnector.createDummyContent();
 	}
 
 	private void setupStage() {

@@ -37,8 +37,8 @@ public class ModelViewConnector {
 
 	private ModelManager modelManager = new ModelManager();
 
-	private Map<ModelBox, PaneBox> boxes = new LinkedHashMap <ModelBox, PaneBox>();
-	private Map<Relation, Arrow> arrows = new LinkedHashMap <Relation, Arrow>();
+	private Map<ModelBox, PaneBox> boxes = new LinkedHashMap<ModelBox, PaneBox>();
+	private Map<Relation, Arrow> arrows = new LinkedHashMap<Relation, Arrow>();
 
 	public ModelManager getModelManager() {
 		return this.modelManager;
@@ -141,13 +141,11 @@ public class ModelViewConnector {
 	}
 
 	public void createDummyContent() {
-		ModelClass mcA = this.modelManager.createClass(new Point3D(0, BASE_BOX_DEPTH, 0), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		ModelClass mcA = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, 0), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
 		mcA.setName("A");
-//		ModelClass mcB = this.modelManager.createClass(new Point3D(300, BASE_BOX_DEPTH, 300), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
-//		mcB.setName("B");
-//
-//		this.modelManager.createRelation(mcA, mcB, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
-
+		ModelClass mcB = this.modelManager.createClass(new Point3D(-300, BASE_BOX_DEPTH, 0), PaneBox.MIN_WIDTH, PaneBox.MIN_HEIGHT, PaneBox.DEFAULT_COLOR);
+		mcB.setName("B");
+		this.modelManager.createRelation(mcB, mcA, RelationType.UNDIRECTED_ASSOCIATION, Arrow.DEFAULT_COLOR);
 	}
 
 	public PaneBox handleCreateNewClass(Point3D mouseCoords) {
@@ -439,19 +437,19 @@ public class ModelViewConnector {
 			}
 		}
 	}
-	
+
 	public void arrangeArrowNumbers(ModelBox startModelBox, ModelBox endModelBox, int plusNumber) {
 		List<Relation> relationList = this.modelManager.getRelationsBetween(startModelBox, endModelBox);
 		for (int i = 0; i < relationList.size(); i++) {
 			Arrow arrow = getArrow(relationList.get(i));
 			PaneBox startPaneBox = getPaneBox(relationList.get(i).getStart().getAppendant());
 			PaneBox endPaneBox = getPaneBox(relationList.get(i).getEnd().getAppendant());
-			if(arrow != null && startPaneBox != null && endPaneBox != null) {
+			if (arrow != null && startPaneBox != null && endPaneBox != null) {
 				arrow.arrangeEndpoints(startPaneBox, endPaneBox, i + 1, relationList.size() + plusNumber);
 			}
 		}
 	}
-	
+
 	public void arrangeArrowNumbers(ModelBox startModelBox, ModelBox endModelBox) {
 		arrangeArrowNumbers(startModelBox, endModelBox, 0);
 	}
