@@ -1,5 +1,6 @@
 package ch.hsr.ogv.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -246,9 +247,23 @@ public class RelationCreationController extends Observable implements Observer {
 
 			List<Relation> baseRelations = modelManager.getRelationsBetween(startClass, endObject.getModelClass());
 			if (startClass != null && baseRelations.isEmpty()) { // underlying classes are not connected
-				return false;
+				List<ModelClass> superClasses = endObject.getModelClass().getSuperClasses();
+				if(superClasses.isEmpty()) {
+					return false;
+				}
+				List<Relation> superBaseRelations = new ArrayList<Relation>();
+				for(ModelClass superClass : superClasses) {
+					superBaseRelations.addAll(modelManager.getRelationsBetween(startClass, superClass));
+				}
+				if(superBaseRelations.isEmpty()) {
+					return false;
+				}
+				else if(superBaseRelations.size() == 1 && (superBaseRelations.get(0).getRelationType().equals(RelationType.GENERALIZATION) || superBaseRelations.get(0).getRelationType().equals(RelationType.DEPENDENCY))) {
+					return false;
+				}
+
 			}
-			if (startClass != null && !baseRelations.isEmpty()) { // no object relation at Generalization / Dependency only
+			else if (startClass != null && !baseRelations.isEmpty()) { // no object relation at Generalization / Dependency only
 				if (baseRelations.size() == 1 && (baseRelations.get(0).getRelationType().equals(RelationType.GENERALIZATION) || baseRelations.get(0).getRelationType().equals(RelationType.DEPENDENCY))) {
 					return false;
 				}

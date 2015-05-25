@@ -343,10 +343,18 @@ public class ModelManager extends Observable {
 		if(thisModelBox == null || otherModelBox == null) {
 			return relationList;
 		}
+		// List<ModelClass> superClasses = new ArrayList<ModelClass>();
+		// if(thisModelBox instanceof ModelClass && otherModelBox instanceof ModelClass) {
+		// ModelClass otherClass = (ModelClass) otherModelBox;
+		// superClasses = otherClass.getSubClasses();
+		// }
+		
 		for (Endpoint endpoint : thisModelBox.getEndpoints()) {
-			if (endpoint.getFriend() != null && endpoint.getFriend().getAppendant() != null && endpoint.getFriend().getAppendant().equals(otherModelBox)) {
+			boolean directlyConnected = endpoint.getFriend() != null && endpoint.getFriend().getAppendant() != null && endpoint.getFriend().getAppendant().equals(otherModelBox);
+			// boolean superConnected = endpoint.getFriend() != null && endpoint.getFriend().getAppendant() != null && superClasses.contains(endpoint.getFriend().getAppendant());
+			if (directlyConnected) { // || superConnected
 				Relation relation = endpoint.getRelation();
-				if(relation.isReflexive() && endpoint.isEnd()) { // otherwise reflexive relations end up twice in the list
+				if(relation.isReflexive() && endpoint.isStart()) { // otherwise reflexive relations end up twice in the list
 					continue;
 				}
 				relationList.add(endpoint.getRelation());

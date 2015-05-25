@@ -277,7 +277,6 @@ public class ViewController implements Observer, Initializable {
 
 				if (!show && paneBox.isSelected() && this.selectionController != null) {
 					paneBox.getSelection().setVisible(false);
-					this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 				}
 
 				for (Endpoint endpoint : modelBox.getEndpoints()) {
@@ -285,7 +284,6 @@ public class ViewController implements Observer, Initializable {
 					arrow.setVisible(show);
 					if (!show && arrow.isSelected() && this.selectionController != null) {
 						arrow.getSelection().setVisible(false);
-						this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 					}
 				}
 			}
@@ -304,17 +302,19 @@ public class ViewController implements Observer, Initializable {
 	@FXML
 	private void handleShowObjects() {
 		if (this.showObjects.isSelected()) {
-			this.createObject.setDisable(false);
+			//this.createObject.setDisable(false);
 			this.createObjectRelation.setDisable(false);
 			this.subSceneAdapter.setYSpaceVisible(true);
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
 		} else {
 			this.createObject.setDisable(true);
 			this.createObjectRelation.setDisable(true);
 			this.subSceneAdapter.getVerticalHelper().setVisible(false);
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			this.subSceneAdapter.setYSpaceVisible(false);
+			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
+			this.objectGraphMode.setDisable(true);
 		}
-
 		showModelObjects(this.showObjects.isSelected());
 	}
 

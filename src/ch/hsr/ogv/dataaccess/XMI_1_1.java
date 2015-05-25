@@ -162,7 +162,19 @@ public class XMI_1_1 extends XMIHandler {
 				xmiRelation.setTargetID(classID);
 			}
 		}
-
+		else if (pQName.equals("UML:TaggedValue")) {
+			if (xmiRelations.isEmpty())
+				return;
+			XMIRelation xmiRelation = xmiRelations.get(xmiRelations.size() - 1);
+			String tag = pAtts.getValue("tag");
+			String direction = pAtts.getValue("value");
+			if (tag != null && tag.equals("direction") && direction != null && direction.equals("Bi-Directional")) {
+				xmiRelation.setType(RelationType.BIDIRECTED_ASSOCIATION);
+			}
+//			else if (tag != null && tag.equals("direction") && direction != null && direction.equals("Source -> Destination")) {
+//				xmiRelation.setType(RelationType.DIRECTED_ASSOCIATION);
+//			}
+		}
 		else if (pQName.equals("UML:AssociationEnd")) {
 			if (xmiRelations.isEmpty())
 				return;
@@ -171,52 +183,52 @@ public class XMI_1_1 extends XMIHandler {
 			String aggregation = pAtts.getValue("aggregation");
 			String notDirected = pAtts.getValue("isNavigable");
 			String classID = pAtts.getValue("type");
-			XMIRelation ca = xmiRelations.get(xmiRelations.size() - 1);
+			XMIRelation xmiRelation = xmiRelations.get(xmiRelations.size() - 1);
 			if (name != null) { // we draw it reversed
 				if (source) {
-					ca.setTargetRoleName(name);
+					xmiRelation.setTargetRoleName(name);
 				}
 				else {
-					ca.setSourceRoleName(name);
+					xmiRelation.setSourceRoleName(name);
 				}
 			}
 			if (multi != null) { // we draw it reversed
 				if (source) {
 					if (multi.equals("1.."))
 						multi = "1..*";
-					ca.setTargetMultiplicity(multi);
+					xmiRelation.setTargetMultiplicity(multi);
 				}
 				else {
 					if (multi.equals("1.."))
 						multi = "1..*";
-					ca.setSourceMultiplicity(multi);
+					xmiRelation.setSourceMultiplicity(multi);
 				}
 			}
 			if ((aggregation.equals("aggregate")) || (aggregation.equals("shared"))) {
 				if (notDirected.equals("false")) {
-					ca.setType(RelationType.DIRECTED_AGGREGATION);
+					xmiRelation.setType(RelationType.DIRECTED_AGGREGATION);
 				}
 				else {
-					ca.setType(RelationType.UNDIRECTED_AGGREGATION);
+					xmiRelation.setType(RelationType.UNDIRECTED_AGGREGATION);
 				}
 			}
 			else if (aggregation.equals("composite")) {
 				if (notDirected.equals("false")) {
-					ca.setType(RelationType.DIRECTED_COMPOSITION);
+					xmiRelation.setType(RelationType.DIRECTED_COMPOSITION);
 				}
 				else {
-					ca.setType(RelationType.UNDIRECTED_COMPOSITION);
+					xmiRelation.setType(RelationType.UNDIRECTED_COMPOSITION);
 				}
 			}
-			else {
-				ca.setType(RelationType.UNDIRECTED_ASSOCIATION);
-			}
+//			else {
+//				xmiRelation.setType(RelationType.UNDIRECTED_ASSOCIATION);
+//			}
 			if (classID != null) {
 				if (source) {
-					ca.setTargetID(classID); // we draw it reversed
+					xmiRelation.setTargetID(classID); // we draw it reversed
 				}
 				else {
-					ca.setSourceID(classID);
+					xmiRelation.setSourceID(classID);
 				}
 			}
 			changeSourceTarget();
