@@ -124,8 +124,8 @@ public class ObjectGraph {
 					upperBoundStr = MultiplicityParser.ASTERISK;
 				}
 				PaneBox arrayBox = createArrayBox(ogCollector.getModelObject(), (ModelClass) friendEndpoint.getAppendant(), relation, upperBoundStr);
-				createBoxArrow(paneBox, arrayBox, centerLabelIndex, relation);
 				createArrayBoxAttributes(arrayBox, friendEndpoint, ogCollector);
+				createBoxArrow(paneBox, arrayBox, centerLabelIndex, relation);
 				createArrayBoxArrows(arrayBox, friendEndpoint, ogCollector);
 			}
 		}
@@ -215,7 +215,8 @@ public class ObjectGraph {
 		for (int i = 0; i < upperBound; i++) {
 			String arrayIndexRef = "[" + i + "] " + MultiplicityParser.ASTERISK;
 			arrayBox.setCenterText(i, arrayIndexRef, arrayIndexRef);
-			arrayBox.setHeight(arrayBox.calcMinHeight());
+			arrayBox.setMinHeight(arrayBox.calcMinHeight());
+			arrayBox.setHeight(arrayBox.getMinHeight());
 		}
 		arrayBox.recalcHasCenterGrid();
 	}

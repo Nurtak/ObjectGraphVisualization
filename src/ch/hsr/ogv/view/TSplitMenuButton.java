@@ -44,6 +44,7 @@ public class TSplitMenuButton implements Toggle {
 	}
 
 	public final void setSelected(boolean value) {
+		selectedProperty().set(value);
 		toggleButton.selectedProperty().set(value);
 		if (toggleButton.selectedProperty().get()) {
 			splitMenuButton.getStyleClass().add("tsplit-menu-button");
@@ -54,7 +55,7 @@ public class TSplitMenuButton implements Toggle {
 	}
 
 	public final boolean isSelected() {
-		return toggleButton.selectedProperty() == null ? false : toggleButton.selectedProperty().get();
+		return selectedProperty() == null ? false : selectedProperty().get();
 	}
 
 	@Override

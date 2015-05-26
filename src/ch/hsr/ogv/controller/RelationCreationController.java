@@ -359,6 +359,7 @@ public class RelationCreationController extends Observable implements Observer {
 			}
 			arrangedDrawArrows(false);
 			this.endBox = null;
+			this.leftStartBox = true;
 		}
 		this.endBox = paneBoxMovedOver;
 		if (this.leftStartBox) { // this.endBox.equals(this.startBox) && 
@@ -367,7 +368,6 @@ public class RelationCreationController extends Observable implements Observer {
 		}
 		this.selectionController.setSelected(this.viewArrow, true, this.subSceneAdapter);
 		this.endBox.setSelected(true); // only visually show selection
-		this.leftStartBox = false;
 	}
 	
 	private boolean coordsInsideBox(Point3D coords, PaneBox paneBox) {

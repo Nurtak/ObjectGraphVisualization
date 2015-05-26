@@ -341,6 +341,10 @@ public class Arrow extends Group implements Selectable {
 		this.selection.setStartEndXYZ(this.startPoint, this.endPoint);
 	}
 
+	private Point2D lineBoxIntersection(Point3D internalPoint, PaneBox box, Point3D externalPoint) {
+		return lineRectangleIntersection(internalPoint, externalPoint, box.getCenterPoint(), box.getWidth(), box.getHeight());
+	}
+	
 	private Point2D lineRectangleIntersection(Point3D internalPoint, Point3D externalPoint, Point3D centerPoint, double width, double height) {
 		double halfWidth = width / 2;
 		double halfHeight = height / 2;
@@ -371,10 +375,6 @@ public class Arrow extends Group implements Selectable {
 			return interSouthWidth;
 		}
 		return null;
-	}
-
-	private Point2D lineBoxIntersection(Point3D internalPoint, PaneBox box, Point3D externalPoint) {
-		return lineRectangleIntersection(externalPoint, internalPoint, box.getCenterPoint(), box.getWidth(), box.getHeight());
 	}
 
 	protected void setArrowLineEdge() {

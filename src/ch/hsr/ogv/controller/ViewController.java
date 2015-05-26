@@ -226,7 +226,7 @@ public class ViewController implements Observer, Initializable {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("About");
 		alert.setHeaderText("Object Graph Visualizer");
-		alert.setContentText("Version:\t4.0"
+		alert.setContentText("Version:\t3.1"
 				+ "\nAuthors:\tSimon Gwerder, Adrian Rieser"
 				+ "\nRelease:\t12.06.2015\n"
 				+ "\nBachelor Thesis"
@@ -268,6 +268,33 @@ public class ViewController implements Observer, Initializable {
 		SubSceneCamera ssCamera = this.subSceneAdapter.getSubSceneCamera();
 		this.cameraController.handleLockedTopView(ssCamera, this.lockedTopView.isSelected());
 	}
+	
+	@FXML
+	private void handleShowObjects() {
+		if (this.showObjects.isSelected()) {
+			this.createObject.setDisable(!isModelClassSelected());
+			this.createObjectRelation.setDisable(false);
+			this.subSceneAdapter.setYSpaceVisible(true);
+			this.objectGraphMode.setDisable(false);
+		} else {
+			this.createObject.setDisable(true);
+			this.createObjectRelation.setDisable(true);
+			this.subSceneAdapter.getVerticalHelper().setVisible(false);
+			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
+			this.subSceneAdapter.setYSpaceVisible(false);
+			this.objectGraphMode.setDisable(true);
+		}
+		showModelObjects(this.showObjects.isSelected());
+	}
+	
+	private boolean isModelClassSelected() {
+		Selectable selected = this.selectionController.getCurrentSelected();
+		if(selected != null && selected instanceof PaneBox) {
+			ModelBox modelBox = this.mvConnector.getModelBox((PaneBox) selected);
+			return modelBox instanceof ModelClass;
+		}
+		return false;
+	}
 
 	private void showModelObjects(boolean show) {
 		for (ModelBox modelBox : this.mvConnector.getBoxes().keySet()) {
@@ -299,25 +326,6 @@ public class ViewController implements Observer, Initializable {
 		}
 	}
 	
-	@FXML
-	private void handleShowObjects() {
-		if (this.showObjects.isSelected()) {
-			//this.createObject.setDisable(false);
-			this.createObjectRelation.setDisable(false);
-			this.subSceneAdapter.setYSpaceVisible(true);
-			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-		} else {
-			this.createObject.setDisable(true);
-			this.createObjectRelation.setDisable(true);
-			this.subSceneAdapter.getVerticalHelper().setVisible(false);
-			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
-			this.subSceneAdapter.setYSpaceVisible(false);
-			this.selectionController.setSelected(this.subSceneAdapter, true, this.subSceneAdapter);
-			this.objectGraphMode.setDisable(true);
-		}
-		showModelObjects(this.showObjects.isSelected());
-	}
-
 	@FXML
 	private void handleShowModelAxis() {
 		Group axis = this.subSceneAdapter.getAxis();
@@ -424,15 +432,15 @@ public class ViewController implements Observer, Initializable {
 
 	private void splitMenuButtonSelect(MenuItem choosenItem) {
 		this.tSplitMenuButton.setChoice(choosenItem);
-		toggleToolbar(null);
+		// toggleToolbar(null);
 		handleCreateAssociation();
 	}
-
+	
 	@FXML
 	private void handleCreateAssociation() {
-		if (tSplitMenuButton.isSelected()) {
-			this.relationCreationController.endChoosingStartBox();
+		if (this.tSplitMenuButton.isSelected()) {
 			toggleToolbar(null);
+			this.relationCreationController.endChoosingStartBox();
 			this.subSceneAdapter.getSubScene().setCursor(Cursor.DEFAULT);
 			this.selectionController.setSelected(this.subSceneAdapter.getFloor(), true, this.subSceneAdapter);
 		} else {
@@ -444,7 +452,7 @@ public class ViewController implements Observer, Initializable {
 			this.pickColor.setDisable(true);
 		}
 	}
-	
+
 	@FXML
 	private void handleCreateObjectRelation() {
 		if(this.createObjectRelation.isSelected()) {
@@ -631,6 +639,7 @@ public class ViewController implements Observer, Initializable {
 			this.tSplitMenuButton.setSelected(true);
 		}
 		else {
+			this.relationCreationController.abortProcess();
 			this.tSplitMenuButton.setSelected(false);
 		}
 	}
@@ -676,19 +685,12 @@ public class ViewController implements Observer, Initializable {
 		initToggleRelationMap();
 	}
 	
-	// TODO Refactor!!
+	// Refactor!!
 	@Override
 	public void update(Observable o, Object arg) {
 		if (selectionController == null) {
 			return;
 		}
-		//		else if (o instanceof DragController) {
-		//			DragController dragController = (DragController) o;
-		//			if (dragController.isDragInProgress()) {
-		//				disableAllButtons(true);
-		//				return;
-		//			}
-		//		}
 		else if (o instanceof SelectionController && arg instanceof Floor && selectionController.hasCurrentSelection() && createClass.isSelected() && !relationCreationController.isInProcess()) { // creating class
 			PaneBox newPaneBox = mvConnector.handleCreateNewClass(selectionController.getCurrentSelectionCoord());
 			if (newPaneBox != null) {
