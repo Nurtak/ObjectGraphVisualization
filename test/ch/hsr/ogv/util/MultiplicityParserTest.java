@@ -1,15 +1,9 @@
 package ch.hsr.ogv.util;
 
-import static org.junit.Assert.*;
-import javafx.geometry.Point3D;
-import javafx.scene.paint.Color;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-
-import ch.hsr.ogv.model.Endpoint;
-import ch.hsr.ogv.model.ModelClass;
-import ch.hsr.ogv.model.Relation;
-import ch.hsr.ogv.model.RelationType;
 
 public class MultiplicityParserTest {
 
