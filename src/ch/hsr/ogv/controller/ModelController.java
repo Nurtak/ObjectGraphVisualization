@@ -236,8 +236,8 @@ public class ModelController implements Observer {
 			ModelClass modelClass = modelObject.getModelClass();
 			PaneBox paneClassBox = this.mvConnector.getPaneBox(modelClass);
 			if (paneClassBox != null && !modelObject.isSuperObject()) {
-				changedBox.setMinWidth(paneClassBox.getMinWidth());
-				changedBox.setMinHeight(paneClassBox.getMinHeight());
+				changedBox.setWidth(paneClassBox.getMinWidth());
+				changedBox.setHeight(paneClassBox.getMinHeight());
 			}
 			else if (paneClassBox != null && modelObject.isSuperObject()) {
 				for (ModelClass subClass : modelClass.getSubClasses()) {
