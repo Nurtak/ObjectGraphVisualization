@@ -67,7 +67,10 @@ public class SpeedCreationController {
 		this.classFocusChange = new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
-				if (!newHasFocus && disableSpeedCreation) {
+				if (!newHasFocus && !disableSpeedCreation) {
+					disableSpeedCreation = true;
+				}
+				else if(!newHasFocus && disableSpeedCreation) {
 					disableClassSpeedCreation();
 				}
 			}
@@ -112,7 +115,10 @@ public class SpeedCreationController {
 		this.objectFocusChange = new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> focusProperty, Boolean oldHasFocus, Boolean newHasFocus) {
-				if (!newHasFocus && disableSpeedCreation) {
+				if (!newHasFocus && !disableSpeedCreation) {
+					disableSpeedCreation = true;
+				}
+				else if(!newHasFocus && disableSpeedCreation) {
 					disableObjectSpeedCreation();
 				}
 			}
