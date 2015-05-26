@@ -143,12 +143,13 @@ public class ObjectGraph {
 		if (!modelObject.isSuperObject()) {
 			ObjectGraphCollector ogCollector = new ObjectGraphCollector(modelObject);
 			int origSize = buildReferenceNames(paneBox, ogCollector);
-			double newHeight = modelObject.getHeight() > paneBox.calcMinHeight() ? modelObject.getHeight() : paneBox.calcMinHeight();
+			double minHeight = paneBox.calcMinHeight();
+			double newHeight = modelObject.getHeight() > minHeight ? modelObject.getHeight() : minHeight;
 			paneBox.setHeight(newHeight);
 			buildReferences(paneBox, origSize, ogCollector);
-			paneBox.setMinHeight(modelObject.getHeight());
-			paneBox.recalcHasCenterGrid();
 		}
+		paneBox.setMinHeight(paneBox.calcMinHeight());
+		paneBox.recalcHasCenterGrid();
 		add(paneBox);
 		return paneBox;
 	}
