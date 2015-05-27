@@ -53,7 +53,7 @@ public class StageBuilder {
 	private ObjectGraph objectGraph;
 	private Persistancy persistancy;
 
-	private ViewController rootLayoutController = new ViewController();
+	private ViewController viewController = new ViewController();
 	private SelectionController selectionController = new SelectionController();
 	private ContextMenuController contextMenuController = new ContextMenuController();
 	private TextFieldController textFieldController = new TextFieldController();
@@ -71,14 +71,14 @@ public class StageBuilder {
 		}
 		this.primaryStage = primaryStage;
 
-		loadRootLayoutController();
+		loadRootLayout();
 		setupStage();
 
 		initMVConnector();
 		initObjectGraph();
 		initPersistancy();
 
-		initRootLayoutController();
+		initViewController();
 		initSelectionController();
 		initContextMenuController();
 		initMouseMoveController();
@@ -112,10 +112,10 @@ public class StageBuilder {
 		this.subSceneAdapter.getSubScene().requestFocus();
 	}
 
-	private void loadRootLayoutController() {
+	private void loadRootLayout() {
 		FXMLLoader loader = FXMLResourceUtil.prepareLoader(Resource.ROOTLAYOUT_FXML); // load rootlayout from fxml file
 		try {
-			loader.setController(rootLayoutController);
+			loader.setController(this.viewController);
 			this.rootLayout = (BorderPane) loader.load();
 		}
 		catch (IOException | ClassCastException e) {
@@ -137,20 +137,20 @@ public class StageBuilder {
 		persistancy = new Persistancy(this.mvConnector.getModelManager());
 	}
 
-	private void initRootLayoutController() {
-		this.rootLayoutController.setPrimaryStage(this.primaryStage);
-		this.rootLayoutController.setSubSceneAdapter(this.subSceneAdapter);
-		this.rootLayoutController.setMVConnector(this.mvConnector);
-		this.rootLayoutController.setObjectGraph(this.objectGraph);
-		this.rootLayoutController.setPersistancy(this.persistancy);
-		this.rootLayoutController.setSelectionController(this.selectionController);
-		this.rootLayoutController.setCameraController(this.cameraController);
-		this.rootLayoutController.setRelationCreationController(this.relationCreationController);
+	private void initViewController() {
+		this.viewController.setPrimaryStage(this.primaryStage);
+		this.viewController.setSubSceneAdapter(this.subSceneAdapter);
+		this.viewController.setMVConnector(this.mvConnector);
+		this.viewController.setObjectGraph(this.objectGraph);
+		this.viewController.setPersistancy(this.persistancy);
+		this.viewController.setSelectionController(this.selectionController);
+		this.viewController.setCameraController(this.cameraController);
+		this.viewController.setRelationCreationController(this.relationCreationController);
 	}
 
 	private void initSelectionController() {
 		this.selectionController.enableSubSceneSelection(this.subSceneAdapter);
-		this.selectionController.addObserver(this.rootLayoutController);
+		this.selectionController.addObserver(this.viewController);
 		this.selectionController.addObserver(this.contextMenuController);
 	}
 
@@ -172,10 +172,10 @@ public class StageBuilder {
 
 	private void initDragController() {
 		this.dragMoveController.addObserver(this.cameraController);
-		this.dragMoveController.addObserver(this.rootLayoutController);
+		this.dragMoveController.addObserver(this.viewController);
 		this.dragMoveController.addObserver(this.selectionController);
 		this.dragResizeController.addObserver(this.cameraController);
-		this.dragResizeController.addObserver(this.rootLayoutController);
+		this.dragResizeController.addObserver(this.viewController);
 		this.dragResizeController.addObserver(this.selectionController);
 	}
 
