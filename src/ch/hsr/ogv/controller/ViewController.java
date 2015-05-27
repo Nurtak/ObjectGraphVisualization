@@ -230,7 +230,7 @@ public class ViewController implements Observer, Initializable {
 				+ "\nAuthors:\tSimon Gwerder, Adrian Rieser"
 				+ "\nRelease:\t12.06.2015\n"
 				+ "\nBachelor Thesis"
-				+ "\n© HSR - University of Applied Science Rapperswil (CH)");
+				+ "\nHSR University of Applied Sciences Rapperswil");
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
 		stage.getIcons().add(new Image("file:resources/images/OGV.gif")); // add a custom icon
 		alert.initOwner(this.primaryStage);

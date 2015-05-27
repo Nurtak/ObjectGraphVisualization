@@ -10,15 +10,16 @@ import ch.hsr.ogv.util.GeometryUtil;
 
 public class ReflexiveArrow extends Arrow {
 
-	/**         w
-	 *      1-------2/3 
-	 *  m ->|		|
-	 *  +---s---+	| h
-	 *  |       |   |
-	 *  |	    e---4
-	 *  |       |
+	/**         
 	 *  +-------+
-	 * 
+	 *  |       |
+	 *  |	    s---1
+	 *  |       |   |
+	 *  +---e---+   | h
+	 *  m ->|       |
+	 *      4-------2/3
+	 *          w
+	 *          
 	 *  s: startPoint
 	 *  e: endPoint
 	 *  1: firstPartPoint
@@ -37,11 +38,11 @@ public class ReflexiveArrow extends Arrow {
 	private Point3D thirdPartPoint;
 	private Point3D fourthPartPoint;
 	
-	private Box smallVertical;
-	private Box largeHorizontal;
-	private Box depthLine;
-	private Box largeVertical;
 	private Box smallHorizontal;
+	private Box largeVertical;
+	private Box depthLine;
+	private Box largeHorizontal;
+	private Box smallVertical;
 	
 	public ReflexiveArrow(PaneBox startBox, PaneBox endBox, RelationType type) {
 		super(startBox, endBox, type);
@@ -55,8 +56,8 @@ public class ReflexiveArrow extends Arrow {
 	public void setPoints(PaneBox startBox, PaneBox endBox) { // startBox and endBox can be the same
 		Point3D startBoxCenter = startBox.getCenterPoint();
 		Point3D endBoxCenter = endBox.getCenterPoint();
-		setStartPoint(new Point3D(startBoxCenter.getX(), startBoxCenter.getY(), startBoxCenter.getZ() + startBox.getHeight() / 2));
-		setEndPoint(new Point3D(endBoxCenter.getX() - endBox.getWidth() / 2, endBoxCenter.getY(), endBoxCenter.getZ()));
+		setStartPoint(new Point3D(startBoxCenter.getX() - startBox.getWidth() / 2, startBoxCenter.getY(), startBoxCenter.getZ()));
+		setEndPoint(new Point3D(endBoxCenter.getX(), endBoxCenter.getY(), endBoxCenter.getZ() - endBox.getHeight() / 2));
 		if (totalArrowNumber > 1) {
 			calculateArrangement(startBox, endBox);
 		}
@@ -67,10 +68,10 @@ public class ReflexiveArrow extends Arrow {
 	protected void calculateArrangement(PaneBox startBox, PaneBox endBox) {
 		Point3D startCenter = startBox.getCenterPoint();
 		Point3D endCenter = endBox.getCenterPoint();
-		Point3D lineStartPointStart = new Point3D(startCenter.getX() - (startBox.getWidth() / 2), startCenter.getY(), startCenter.getZ() + (startBox.getHeight() / 2));
-		Point3D lineEndPointStart = new Point3D(startCenter.getX() + (startBox.getWidth() / 2), startCenter.getY(), startCenter.getZ() + (startBox.getHeight() / 2));
-		Point3D lineStartPointEnd = new Point3D(endCenter.getX() - (endBox.getWidth() / 2), endCenter.getY(), endCenter.getZ() + (startBox.getHeight() / 2));
-		Point3D lineEndPointEnd = new Point3D(endCenter.getX() - (endBox.getWidth() / 2), endCenter.getY(), endCenter.getZ() - (startBox.getHeight() / 2));
+		Point3D lineStartPointStart = new Point3D(startCenter.getX() - (startBox.getWidth() / 2), startCenter.getY(), startCenter.getZ() - (startBox.getHeight() / 2));
+		Point3D lineEndPointStart = new Point3D(startCenter.getX() - (startBox.getWidth() / 2), startCenter.getY(), startCenter.getZ() + (startBox.getHeight() / 2));
+		Point3D lineStartPointEnd = new Point3D(endCenter.getX() - (endBox.getWidth() / 2), endCenter.getY(), endCenter.getZ() - (startBox.getHeight() / 2));
+		Point3D lineEndPointEnd = new Point3D(endCenter.getX() + (endBox.getWidth() / 2), endCenter.getY(), endCenter.getZ() - (startBox.getHeight() / 2));
 		setStartPoint(GeometryUtil.divideLineFraction(lineStartPointStart, lineEndPointStart, (arrowNumber) / (totalArrowNumber + 1.0)));
 		setEndPoint(GeometryUtil.divideLineFraction(lineStartPointEnd, lineEndPointEnd, (arrowNumber) / (totalArrowNumber + 1.0)));
 		setSmallPartLength();
@@ -79,13 +80,15 @@ public class ReflexiveArrow extends Arrow {
 	private void setSmallPartLength() {
 		double fractionSize =  (SMALL_PART_LENGTH * 2) / totalArrowNumber;
 		smallPartLength = SMALL_PART_LENGTH + (fractionSize * (arrowNumber - 1));
+		this.startSelectionHelper.setDepth(this.smallPartLength);
+		this.endSelectionHelper.setDepth(this.smallPartLength);
 	}
 	
 	private void calculatePartPoints() {
-		this.firstPartPoint = new Point3D(this.startPoint.getX(), this.startPoint.getY(), this.startPoint.getZ() + this.smallPartLength);
-		this.fourthPartPoint = new Point3D(this.endPoint.getX() - this.smallPartLength, this.endPoint.getY(), this.endPoint.getZ());
-		this.secondPartPoint = new Point3D(this.fourthPartPoint.getX(), this.startPoint.getY(), this.firstPartPoint.getZ());
-		this.thirdPartPoint = new Point3D(this.secondPartPoint.getX(), this.endPoint.getY(), this.firstPartPoint.getZ());
+		this.firstPartPoint = new Point3D(this.startPoint.getX() - this.smallPartLength, this.startPoint.getY(), this.startPoint.getZ());
+		this.fourthPartPoint = new Point3D(this.endPoint.getX(), this.endPoint.getY(), this.endPoint.getZ() - this.smallPartLength);
+		this.secondPartPoint = new Point3D(this.firstPartPoint.getX(), this.startPoint.getY(), this.fourthPartPoint.getZ());
+		this.thirdPartPoint = new Point3D(this.firstPartPoint.getX(), this.endPoint.getY(), this.fourthPartPoint.getZ());
 	}
 	
 	@Override
@@ -105,11 +108,11 @@ public class ReflexiveArrow extends Arrow {
 	protected void prepareLines() {
 		this.line = new Box(this.width, this.width, this.width);
 		if(this.firstPartPoint != null && this.secondPartPoint != null && this.fourthPartPoint != null) {
-			this.smallVertical = new Box(this.width, this.width, this.startPoint.distance(this.firstPartPoint));
-			this.largeHorizontal = new Box(this.width, this.width, this.firstPartPoint.distance(this.secondPartPoint));
+			this.smallHorizontal = new Box(this.width, this.width, this.startPoint.distance(this.firstPartPoint));
+			this.largeVertical = new Box(this.width, this.width, this.firstPartPoint.distance(this.secondPartPoint));
 			this.depthLine = new Box(this.width, this.width, this.secondPartPoint.distance(this.thirdPartPoint));
-			this.largeVertical = new Box(this.width, this.width, this.thirdPartPoint.distance(this.fourthPartPoint));
-			this.smallHorizontal = new Box(this.width, this.width, this.fourthPartPoint.distance(this.endPoint));
+			this.largeHorizontal = new Box(this.width, this.width, this.thirdPartPoint.distance(this.fourthPartPoint));
+			this.smallVertical = new Box(this.width, this.width, this.fourthPartPoint.distance(this.endPoint));
 		}
 	}
 	
@@ -119,23 +122,25 @@ public class ReflexiveArrow extends Arrow {
 		material.setDiffuseColor(Color.DODGERBLUE);
 		this.startSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, this.smallPartLength);
 		this.startSelectionHelper.setMaterial(material); // for debugging
-		this.startSelectionHelper.translateXProperty().bind(this.smallVertical.translateXProperty());
-		this.startSelectionHelper.translateYProperty().bind(this.smallVertical.translateYProperty());
-		this.startSelectionHelper.translateZProperty().bind(this.smallVertical.translateZProperty());
-		this.startSelectionHelper.rotateProperty().bind(this.smallVertical.rotateProperty());
+		this.startSelectionHelper.translateXProperty().bind(this.smallHorizontal.translateXProperty());
+		this.startSelectionHelper.translateYProperty().bind(this.smallHorizontal.translateYProperty());
+		this.startSelectionHelper.translateZProperty().bind(this.smallHorizontal.translateZProperty());
+		this.startSelectionHelper.rotationAxisProperty().bind(this.smallHorizontal.rotationAxisProperty());
+		this.startSelectionHelper.rotateProperty().bind(this.smallHorizontal.rotateProperty());
 		this.startSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 
-		this.lineSelectionHelpers.add(createBindLineHelper(this.largeHorizontal));
-		this.lineSelectionHelpers.add(createBindLineHelper(this.depthLine));
+		this.lineSelectionHelpers.clear();
 		this.lineSelectionHelpers.add(createBindLineHelper(this.largeVertical));
+		this.lineSelectionHelpers.add(createBindLineHelper(this.depthLine));
+		this.lineSelectionHelpers.add(createBindLineHelper(this.largeHorizontal));
 		
 		this.endSelectionHelper = new Box(SELECTION_HELPER_WIDTH, SELECTION_HELPER_WIDTH / 2, this.smallPartLength);
 		this.endSelectionHelper.setMaterial(material); // for debugging
-		this.endSelectionHelper.translateXProperty().bind(this.smallHorizontal.translateXProperty());
-		this.endSelectionHelper.translateYProperty().bind(this.smallHorizontal.translateYProperty());
-		this.endSelectionHelper.translateZProperty().bind(this.smallHorizontal.translateZProperty());
-		this.endSelectionHelper.rotationAxisProperty().bind(this.smallHorizontal.rotationAxisProperty());
-		this.endSelectionHelper.rotateProperty().bind(this.smallHorizontal.rotateProperty());
+		this.endSelectionHelper.translateXProperty().bind(this.smallVertical.translateXProperty());
+		this.endSelectionHelper.translateYProperty().bind(this.smallVertical.translateYProperty());
+		this.endSelectionHelper.translateZProperty().bind(this.smallVertical.translateZProperty());
+		this.endSelectionHelper.rotationAxisProperty().bind(this.smallVertical.rotationAxisProperty());
+		this.endSelectionHelper.rotateProperty().bind(this.smallVertical.rotateProperty());
 		this.endSelectionHelper.setOpacity(0.0); // dont want to see it, but still receive mouse events
 	}
 	
@@ -154,11 +159,11 @@ public class ReflexiveArrow extends Arrow {
 	@Override
 	protected void setLineVisibility() {
 		this.line.setVisible(false);
-		this.smallVertical.setVisible(true);
-		this.largeHorizontal.setVisible(true);
-		this.depthLine.setVisible(true);
-		this.largeVertical.setVisible(true);
 		this.smallHorizontal.setVisible(true);
+		this.largeVertical.setVisible(true);
+		this.depthLine.setVisible(true);
+		this.largeHorizontal.setVisible(true);
+		this.smallVertical.setVisible(true);
 	}
 	
 	@Override
@@ -172,10 +177,10 @@ public class ReflexiveArrow extends Arrow {
 		this.arrowStart.setTranslateY(0);
 		this.arrowStart.setTranslateZ(0);
 		this.arrowStart.getTransforms().clear();
-		this.arrowStart.getTransforms().add(new Rotate(-180, arrowStart.getTranslateX(), arrowStart.getTranslateY(), arrowStart.getTranslateZ(), Rotate.Y_AXIS));
-		this.arrowStart.setTranslateX(this.startPoint.getX());
+		this.arrowStart.getTransforms().add(new Rotate(90, arrowStart.getTranslateX(), arrowStart.getTranslateY(), arrowStart.getTranslateZ(), Rotate.Y_AXIS));
+		this.arrowStart.setTranslateX(this.startPoint.getX() + EDGE_SPACING);
 		this.arrowStart.setTranslateY(this.startPoint.getY());
-		this.arrowStart.setTranslateZ(this.startPoint.getZ() - EDGE_SPACING);
+		this.arrowStart.setTranslateZ(this.startPoint.getZ());
 	}
 	
 	private void setArrowEnd() {
@@ -183,81 +188,76 @@ public class ReflexiveArrow extends Arrow {
 		this.arrowEnd.setTranslateY(0);
 		this.arrowEnd.setTranslateZ(0);
 		this.arrowEnd.getTransforms().clear();
-		this.arrowEnd.getTransforms().add(new Rotate(90, arrowEnd.getTranslateX(), arrowEnd.getTranslateY(), arrowEnd.getTranslateZ(), Rotate.Y_AXIS));
-		this.arrowEnd.setTranslateX(this.endPoint.getX() + EDGE_SPACING);
+		this.arrowEnd.setTranslateX(this.endPoint.getX());
 		this.arrowEnd.setTranslateY(this.endPoint.getY());
-		this.arrowEnd.setTranslateZ(this.endPoint.getZ());
+		this.arrowEnd.setTranslateZ(this.endPoint.getZ() + EDGE_SPACING);
 	}
 	
 	@Override
 	protected void setArrowLabels() {
-		this.labelStartRight.setTranslateXYZ(this.startPoint.getX() - LABEL_SPACING / 3 - 1, this.startPoint.getY(), this.startPoint.getZ() + LABEL_SPACING + 15);
-
-		double startLeftWidth = this.labelStartLeft.calcMinWidth();
-		startLeftWidth = startLeftWidth < 20 ? 20 : startLeftWidth;
-		this.labelStartLeft.setTranslateXYZ(this.startPoint.getX() + startLeftWidth + LABEL_SPACING / 3, this.startPoint.getY(), this.startPoint.getZ() + LABEL_SPACING + 15);
-
-		this.labelEndRight.setTranslateXYZ(this.endPoint.getX() - LABEL_SPACING / 3, this.endPoint.getY(), this.endPoint.getZ() + LABEL_SPACING);
-
+		this.labelStartRight.setTranslateXYZ(this.startPoint.getX() - LABEL_SPACING / 3 - 5, this.startPoint.getY(), this.startPoint.getZ() - LABEL_SPACING + 20);
+		this.labelStartLeft.setTranslateXYZ(this.startPoint.getX() - LABEL_SPACING / 3 - 5, this.startPoint.getY(), this.startPoint.getZ() + LABEL_SPACING + 3);
+		
+		this.labelEndRight.setTranslateXYZ(this.endPoint.getX() - LABEL_SPACING / 3 + 2, this.endPoint.getY(), this.endPoint.getZ() - LABEL_SPACING + 15);
 		double endLeftWidth = this.labelEndLeft.calcMinWidth();
 		endLeftWidth = endLeftWidth < 20 ? 20 : endLeftWidth;
-		this.labelEndLeft.setTranslateXYZ(this.endPoint.getX() - LABEL_SPACING / 3, this.endPoint.getY(), this.endPoint.getZ() - LABEL_SPACING + 20);
+		this.labelEndLeft.setTranslateXYZ(this.endPoint.getX() + LABEL_SPACING / 3 + endLeftWidth, this.endPoint.getY(), this.endPoint.getZ() - LABEL_SPACING + 15);
 	}
 
 	protected void setSingleElements() {
-		setSmallVertical();
-		setLargeHorizontal();
-		setDepthLine();
-		setLargeVertical();
 		setSmallHorizontal();
+		setLargeVertical();
+		setDepthLine();
+		setLargeHorizontal();
+		setSmallVertical();
 	}
 	
-	private void setSmallVertical() {
+	private void setSmallHorizontal() {
 		double startGap = this.arrowStart.getAdditionalGap();
-		double smallVerticalDist = this.startPoint.distance(this.firstPartPoint) - (startGap / 2);
-		this.smallVertical.setDepth(smallVerticalDist);
-		this.smallVertical.setTranslateX(this.startPoint.getX());
-		this.smallVertical.setTranslateY(this.startPoint.getY());
-		this.smallVertical.setTranslateZ(this.startPoint.getZ() + (smallVerticalDist / 2) + (startGap / 2));
+		double length = this.startPoint.distance(this.firstPartPoint) - (startGap / 2);
+		this.smallHorizontal.setDepth(length);
+		this.smallHorizontal.setTranslateX(this.startPoint.getX() - (length / 2) - (startGap / 2));
+		this.smallHorizontal.setTranslateY(this.startPoint.getY());
+		this.smallHorizontal.setTranslateZ(this.startPoint.getZ());
+		this.smallHorizontal.setRotationAxis(Rotate.Y_AXIS);
+		this.smallHorizontal.setRotate(90);
 	}
 	
-	private void setLargeHorizontal() {
-		double largeHorizontalDist = this.firstPartPoint.distance(this.secondPartPoint) + this.width;
-		this.largeHorizontal.setDepth(largeHorizontalDist);
-		this.largeHorizontal.setTranslateX(this.firstPartPoint.getX() - (largeHorizontalDist / 2) + (this.width / 2));
-		this.largeHorizontal.setTranslateY(this.firstPartPoint.getY());
-		this.largeHorizontal.setTranslateZ(this.firstPartPoint.getZ());
-		this.largeHorizontal.setRotationAxis(Rotate.Y_AXIS);
-		this.largeHorizontal.setRotate(90);
+	private void setLargeVertical() {
+		double length = this.firstPartPoint.distance(this.secondPartPoint) + this.width;
+		this.largeVertical.setDepth(length);
+		this.largeVertical.setTranslateX(this.firstPartPoint.getX());
+		this.largeVertical.setTranslateY(this.firstPartPoint.getY());
+		this.largeVertical.setTranslateZ(this.firstPartPoint.getZ() - (length / 2) + (this.width / 2));
 	}
 	
 	private void setDepthLine() {
-		double depthLineDist = this.secondPartPoint.distance(this.thirdPartPoint);
-		this.depthLine.setDepth(depthLineDist);
+		double length = this.secondPartPoint.distance(this.thirdPartPoint);
+		this.depthLine.setDepth(length);
 		this.depthLine.setTranslateX(this.thirdPartPoint.getX());
-		this.depthLine.setTranslateY(this.thirdPartPoint.getY()  + (depthLineDist / 2) + (this.width / 2));
+		this.depthLine.setTranslateY(this.thirdPartPoint.getY() + (length / 2) + (this.width / 2));
 		this.depthLine.setTranslateZ(this.thirdPartPoint.getZ());
 		this.depthLine.setRotationAxis(Rotate.X_AXIS);
 		this.depthLine.setRotate(90);
 	}
 	
-	private void setLargeVertical() {
-		double largeVerticalDist = this.thirdPartPoint.distance(this.fourthPartPoint) + this.width;
-		this.largeVertical.setDepth(largeVerticalDist);
-		this.largeVertical.setTranslateX(this.thirdPartPoint.getX());
-		this.largeVertical.setTranslateY(this.thirdPartPoint.getY());
-		this.largeVertical.setTranslateZ(this.thirdPartPoint.getZ() - (largeVerticalDist / 2) + (this.width / 2));
+	private void setLargeHorizontal() {
+		double length = this.thirdPartPoint.distance(this.fourthPartPoint) + this.width;
+		this.largeHorizontal.setDepth(length);
+		this.largeHorizontal.setTranslateX(this.thirdPartPoint.getX() + (length / 2) - (this.width / 2));
+		this.largeHorizontal.setTranslateY(this.thirdPartPoint.getY());
+		this.largeHorizontal.setTranslateZ(this.thirdPartPoint.getZ());
+		this.largeHorizontal.setRotationAxis(Rotate.Y_AXIS);
+		this.largeHorizontal.setRotate(90);
 	}
 	
-	private void setSmallHorizontal() {
+	private void setSmallVertical() {
 		double endGap = this.arrowEnd.getAdditionalGap();
-		double smallHorizontalDist = this.fourthPartPoint.distance(this.endPoint) - (endGap / 2);
-		this.smallHorizontal.setDepth(smallHorizontalDist);
-		this.smallHorizontal.setTranslateX(this.endPoint.getX() - (smallHorizontalDist / 2) + (endGap / 4));
-		this.smallHorizontal.setTranslateY(this.endPoint.getY());
-		this.smallHorizontal.setTranslateZ(this.endPoint.getZ());
-		this.smallHorizontal.setRotationAxis(Rotate.Y_AXIS);
-		this.smallHorizontal.setRotate(90);
+		double length = this.fourthPartPoint.distance(this.endPoint) - (endGap / 2);
+		this.smallVertical.setDepth(length);
+		this.smallVertical.setTranslateX(this.endPoint.getX());
+		this.smallVertical.setTranslateY(this.endPoint.getY());
+		this.smallVertical.setTranslateZ(this.endPoint.getZ() - (length / 2) + (endGap / 4));
 	}
 	
 	@Override
@@ -270,7 +270,7 @@ public class ReflexiveArrow extends Arrow {
 	@Override
 	protected void addElementsToGroup() {
 		getChildren().clear();
-		getChildren().addAll(this.smallVertical, this.largeHorizontal, this.depthLine, this.largeVertical, this.smallHorizontal);
+		getChildren().addAll(this.smallHorizontal, this.largeVertical, this.depthLine, this.largeHorizontal, this.smallVertical);
 		getChildren().addAll(this.arrowStart, this.arrowEnd);
 		getChildren().addAll(this.lineSelectionHelpers);
 		getChildren().addAll(this.startSelectionHelper, this.endSelectionHelper);
@@ -280,22 +280,22 @@ public class ReflexiveArrow extends Arrow {
 	@Override
 	public void setColor(Color color) {
 		super.setColor(color);
-		applyColor(this.smallVertical, this.color);
-		applyColor(this.largeHorizontal, this.color);
-		applyColor(this.depthLine, this.color);
-		applyColor(this.largeVertical, this.color);
 		applyColor(this.smallHorizontal, this.color);
+		applyColor(this.largeVertical, this.color);
+		applyColor(this.depthLine, this.color);
+		applyColor(this.largeHorizontal, this.color);
+		applyColor(this.smallVertical, this.color);
 	}
 	
 	@Override
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
 		Color colorToApply = colorToApply(selected);
-		applyColor(this.smallVertical, colorToApply);
-		applyColor(this.largeHorizontal, colorToApply);
-		applyColor(this.depthLine, colorToApply);
-		applyColor(this.largeVertical, colorToApply);
 		applyColor(this.smallHorizontal, colorToApply);
+		applyColor(this.largeVertical, colorToApply);
+		applyColor(this.depthLine, colorToApply);
+		applyColor(this.largeHorizontal, colorToApply);
+		applyColor(this.smallVertical, colorToApply);
 	}
 	
 }

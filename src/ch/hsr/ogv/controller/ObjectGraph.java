@@ -143,12 +143,13 @@ public class ObjectGraph {
 		if (!modelObject.isSuperObject()) {
 			ObjectGraphCollector ogCollector = new ObjectGraphCollector(modelObject);
 			int origSize = buildReferenceNames(paneBox, ogCollector);
-			double newHeight = modelObject.getHeight() > paneBox.calcMinHeight() ? modelObject.getHeight() : paneBox.calcMinHeight();
+			double minHeight = paneBox.calcMinHeight();
+			double newHeight = modelObject.getHeight() > minHeight ? modelObject.getHeight() : minHeight;
 			paneBox.setHeight(newHeight);
 			buildReferences(paneBox, origSize, ogCollector);
-			paneBox.setMinHeight(modelObject.getHeight());
-			paneBox.recalcHasCenterGrid();
 		}
+		paneBox.setMinHeight(paneBox.calcMinHeight());
+		paneBox.recalcHasCenterGrid();
 		add(paneBox);
 		return paneBox;
 	}
@@ -196,7 +197,7 @@ public class ObjectGraph {
 		else {
 			newPosition = new Point3D(newPosition.getX() + (ARRAYBOX_LEVEL_DIFF * 2) + (modelObject.getWidth() / 2), modelObject.getY(), newPosition.getZ());
 		}
-		while (hasArrayBoxAtPos(newPosition)) {
+		while (hasBoxApproxAtPos(newPosition)) {
 			newPosition = new Point3D(newPosition.getX(), newPosition.getY() + ARRAYBOX_LEVEL_DIFF, newPosition.getZ());
 		}
 		paneBox.setTranslateXYZ(newPosition);
@@ -233,24 +234,14 @@ public class ObjectGraph {
 			}
 		}
 	}
-
-	public boolean hasArrayBoxAtPos(Point3D coords) {
-		for (PaneBox paneBox : this.boxes) {
-			boolean approxEqualX = Math.floor(paneBox.getCenterPoint().getX()) == Math.floor(coords.getX());
-			boolean approxEqualY = Math.floor(paneBox.getCenterPoint().getY() + paneBox.getDepth() / 2) == Math.floor(coords.getY());
-			boolean approxEqualZ = Math.floor(paneBox.getCenterPoint().getZ()) == Math.floor(coords.getZ());
-			if (approxEqualX && approxEqualY && approxEqualZ) {
-				return true;
-			}
-		}
-		return false;
-	}
 	
-	public boolean hasArrayBoxAtYZ(Point3D coords) {
+	public boolean hasBoxApproxAtPos(Point3D coords) {
+		double approxRange = 50;
 		for (PaneBox paneBox : this.boxes) {
-			boolean approxEqualY = Math.floor(paneBox.getCenterPoint().getY() + paneBox.getDepth() / 2) == Math.floor(coords.getY());
-			boolean approxEqualZ = Math.floor(paneBox.getCenterPoint().getZ()) == Math.floor(coords.getZ());
-			if (approxEqualY && approxEqualZ) {
+			boolean approxEqualX = Math.abs(paneBox.getCenterPoint().getX() - coords.getX()) < approxRange;
+			boolean approxEqualY = Math.abs((paneBox.getCenterPoint().getY() + paneBox.getDepth() / 2) - coords.getY()) < approxRange;
+			boolean approxEqualZ = Math.abs(paneBox.getCenterPoint().getZ() - coords.getZ()) < approxRange;
+			if (approxEqualX && approxEqualY && approxEqualZ) {
 				return true;
 			}
 		}

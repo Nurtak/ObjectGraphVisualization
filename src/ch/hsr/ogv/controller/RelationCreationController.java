@@ -16,9 +16,9 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.ReflexiveArrow;
 import ch.hsr.ogv.view.DashedArrow;
 import ch.hsr.ogv.view.PaneBox;
-import ch.hsr.ogv.view.ReflexiveArrow;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
 /**
