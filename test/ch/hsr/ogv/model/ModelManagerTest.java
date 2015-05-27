@@ -8,13 +8,19 @@ import static org.junit.Assert.assertTrue;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class ModelManagerTest {
 
+	private ModelManager mm;
+
+	@Before
+	public void setUp() throws Exception {
+		mm = new ModelManager();
+	}
 	@Test
 	public void testCreateClass() {
-		ModelManager mm = new ModelManager();
 		assertTrue(mm.getClasses().isEmpty());
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		assertTrue(mm.getClasses().contains(modelClassA));
@@ -27,7 +33,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testCreateObject() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		assertTrue(modelClassA.getModelObjects().isEmpty());
 		ModelObject modelObjectA1 = mm.createObject(modelClassA);
@@ -41,7 +46,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testCreateRelation() {
-		ModelManager mm = new ModelManager();
 		assertTrue(mm.getRelations().isEmpty());
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100, 100, Color.BEIGE);
@@ -56,7 +60,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testClearClasses() {
-		ModelManager mm = new ModelManager();
 		mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		mm.createClass(new Point3D(-200, 0, 0), 100, 100, Color.BEIGE);
 		mm.clearClasses();
@@ -70,7 +73,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testDeleteClass() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		mm.deleteClass(modelClassA);
 		assertFalse(mm.getClasses().contains(modelClassA));
@@ -85,7 +87,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testDeleteClassWithRelation() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100, 100, Color.BEIGE);
 		Relation relationAB1 = mm.createRelation(modelClassA, modelClassB, RelationType.DIRECTED_ASSOCIATION, Color.BLACK);
@@ -95,7 +96,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testDeleteObject() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		modelClassA.setName("A");
 		ModelObject modelObjectA1 = mm.createObject(modelClassA);
@@ -109,7 +109,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testDeleteRelation() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100, 100, Color.BEIGE);
 		Relation relationAB1 = mm.createRelation(modelClassA, modelClassB, RelationType.DIRECTED_ASSOCIATION, Color.BLACK);
@@ -125,7 +124,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testClearRelations() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100, 100, Color.BEIGE);
 		mm.createRelation(modelClassA, modelClassB, RelationType.DIRECTED_ASSOCIATION, Color.BLACK);
@@ -139,7 +137,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testGetModelClass() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
 		modelClassA.setName("A");
 		assertNotNull(mm.getModelClass("A"));
@@ -153,7 +150,6 @@ public class ModelManagerTest {
 
 	@Test
 	public void testIsClassNameTaken() {
-		ModelManager mm = new ModelManager();
 		assertFalse(mm.isClassNameTaken(""));
 		assertFalse(mm.isClassNameTaken("A"));
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100, 100, Color.BEIGE);
@@ -163,4 +159,5 @@ public class ModelManagerTest {
 		assertFalse(mm.isClassNameTaken("A"));
 		assertTrue(mm.isClassNameTaken("B"));
 	}
+
 }

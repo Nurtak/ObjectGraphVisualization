@@ -110,6 +110,95 @@ public class ModelClassTest {
 		assertEquals(modelObjectA1, modelClassA.getSubModelObject(modelClassA.getSuperObjects().get(0)));
 	}
 
+	@Test
+	public void testGetInheritingObjects() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100.0, 100.0, Color.BEIGE);
+		mm.createRelation(modelClassA, modelClassB, RelationType.GENERALIZATION, Color.BLACK);
+		mm.createObject(modelClassA);
+		assertEquals(modelClassB, modelClassB.getInheritingObjects().get(0).getModelClass());
+	}
 
+	@Test
+	public void testCreateAttribute() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		String attrName = "bla";
+		Attribute attr = modelClassA.createAttribute(attrName);
+		assertEquals(attrName, attr.getName());
+	}
+
+	@Test
+	public void testCreateAttributeWithoutName() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		Attribute attr = modelClassA.createAttribute();
+		assertEquals("attr1", attr.getName());
+	}
+
+	@Test
+	public void testDeleteAttribute() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		Attribute attr1 = modelClassA.createAttribute("bla1");
+		Attribute attr2 = modelClassA.createAttribute("bla2");
+		assertEquals(attr1, modelClassA.getAttributes().get(0));
+		assertEquals(attr2, modelClassA.getAttributes().get(1));
+		assertEquals(2, modelClassA.getAttributes().size());
+		modelClassA.deleteAttribute(0);
+		assertEquals(attr2, modelClassA.getAttributes().get(0));
+		assertEquals(1, modelClassA.getAttributes().size());
+	}
+
+	@Test
+	public void testMoveAttributeUp() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		Attribute attr1 = modelClassA.createAttribute("bla1");
+		Attribute attr2 = modelClassA.createAttribute("bla2");
+		Attribute attr3 = modelClassA.createAttribute("bla3");
+		assertEquals(attr1, modelClassA.getAttributes().get(0));
+		assertEquals(attr2, modelClassA.getAttributes().get(1));
+		assertEquals(attr3, modelClassA.getAttributes().get(2));
+		assertEquals(3, modelClassA.getAttributes().size());
+		modelClassA.moveAttributeUp(1);
+		assertEquals(attr2, modelClassA.getAttributes().get(0));
+		assertEquals(attr1, modelClassA.getAttributes().get(1));
+		assertEquals(attr3, modelClassA.getAttributes().get(2));
+		assertEquals(3, modelClassA.getAttributes().size());
+	}
+
+	@Test
+	public void testMoveAttributeDown() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		Attribute attr1 = modelClassA.createAttribute("bla1");
+		Attribute attr2 = modelClassA.createAttribute("bla2");
+		Attribute attr3 = modelClassA.createAttribute("bla3");
+		assertEquals(attr1, modelClassA.getAttributes().get(0));
+		assertEquals(attr2, modelClassA.getAttributes().get(1));
+		assertEquals(attr3, modelClassA.getAttributes().get(2));
+		assertEquals(3, modelClassA.getAttributes().size());
+		modelClassA.moveAttributeDown(1);
+		assertEquals(attr1, modelClassA.getAttributes().get(0));
+		assertEquals(attr3, modelClassA.getAttributes().get(1));
+		assertEquals(attr2, modelClassA.getAttributes().get(2));
+		assertEquals(3, modelClassA.getAttributes().size());
+	}
+
+	@Test
+	public void testChangeAttributeName() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		Attribute attr = modelClassA.createAttribute("bla");
+		String attrNameNew = "new";
+		modelClassA.changeAttributeName(0, attrNameNew);
+		assertEquals(attrNameNew, attr.getName());
+	}
+
+	@Test
+	public void testDeleteSuperObject() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100.0, 100.0, Color.BEIGE);
+		mm.createRelation(modelClassA, modelClassB, RelationType.GENERALIZATION, Color.BLACK);
+		mm.createObject(modelClassA);
+		assertEquals(1, modelClassA.getSuperObjects().size());
+		modelClassA.deleteSuperObject(modelClassA.getSuperObjects().get(0));
+		assertTrue(modelClassA.getSuperObjects().isEmpty());
+	}
 
 }
