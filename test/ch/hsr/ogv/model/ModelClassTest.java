@@ -1,16 +1,28 @@
 package ch.hsr.ogv.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class ModelClassTest {
 
+	private ModelManager mm;
+
+	@Before
+	public void setUp() throws Exception {
+		mm = new ModelManager();
+	}
+
 	@Test
 	public void testGetXYZ() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(100, 200, 300), 100.0, 100.0, Color.BEIGE);
 		assertEquals(100, modelClassA.getX(), 0.0);
 		assertEquals(200, modelClassA.getY(), 0.0);
@@ -19,7 +31,6 @@ public class ModelClassTest {
 
 	@Test
 	public void testGetFriends() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
 		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100.0, 100.0, Color.BEIGE);
 		ModelClass modelClassC = mm.createClass(new Point3D(-400, 0, 0), 100.0, 100.0, Color.BEIGE);
@@ -34,7 +45,6 @@ public class ModelClassTest {
 
 	@Test
 	public void testGetModelObject() {
-		ModelManager mm = new ModelManager();
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
 		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100.0, 100.0, Color.BEIGE);
 		ModelObject modelObjectA1 = mm.createObject(modelClassA);
@@ -46,6 +56,60 @@ public class ModelClassTest {
 		assertEquals(modelObjectB1, modelClassB.getModelObject(modelObjectB1.getUniqueID()));
 		assertEquals(modelObjectB2, modelClassB.getModelObject(modelObjectB2.getUniqueID()));
 	}
+
+	@Test
+	public void testCreateModelObject() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		List<Attribute> attrs = new ArrayList<Attribute>();
+		Attribute attr = new Attribute("bla");
+		attrs.add(attr);
+		modelClassA.setAttributes(attrs);
+		String objName = "a1";
+		ModelObject modelObjectA1 = modelClassA.createModelObject(objName);
+		assertEquals(objName, modelObjectA1.getName());
+		assertTrue(modelObjectA1.getAttributeValues().keySet().contains(modelClassA.getAttributes().get(0)));
+	}
+
+	@Test
+	public void testGetSuperClasses() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100.0, 100.0, Color.BEIGE);
+		mm.createRelation(modelClassA, modelClassB, RelationType.GENERALIZATION, Color.BLACK);
+		assertEquals(modelClassB, modelClassA.getSuperClasses().get(0));
+		assertEquals(1, modelClassA.getSuperClasses().size());
+	}
+
+	@Test
+	public void testGetSubClasses() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100.0, 100.0, Color.BEIGE);
+		mm.createRelation(modelClassA, modelClassB, RelationType.GENERALIZATION, Color.BLACK);
+		assertEquals(modelClassA, modelClassB.getSubClasses().get(0));
+		assertEquals(1, modelClassB.getSubClasses().size());
+	}
+
+	@Test
+	public void testGetSuperObjects() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100.0, 100.0, Color.BEIGE);
+		mm.createRelation(modelClassA, modelClassB, RelationType.GENERALIZATION, Color.BLACK);
+		mm.createObject(modelClassA);
+		mm.createObject(modelClassA);
+		assertEquals(modelClassB, modelClassA.getSuperObjects().get(0).getModelClass());
+		assertEquals(modelClassB, modelClassA.getSuperObjects().get(1).getModelClass());
+		assertEquals(2, modelClassA.getSuperObjects().size());
+		assertEquals(0, modelClassB.getSuperClasses().size());
+	}
+
+	@Test
+	public void testGetSubModelObjectByModelObject() {
+		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
+		ModelClass modelClassB = mm.createClass(new Point3D(-200, 0, 0), 100.0, 100.0, Color.BEIGE);
+		mm.createRelation(modelClassA, modelClassB, RelationType.GENERALIZATION, Color.BLACK);
+		ModelObject modelObjectA1 = mm.createObject(modelClassA);
+		assertEquals(modelObjectA1, modelClassA.getSubModelObject(modelClassA.getSuperObjects().get(0)));
+	}
+
 
 
 }
