@@ -14,10 +14,10 @@ import javafx.scene.shape.Cylinder;
  *
  */
 public class CylinderAdapter extends Group {
-	
+
 	private Cylinder cylinder;
 	private Color color;
-	
+
 	public Color getColor() {
 		return color;
 	}
@@ -25,7 +25,7 @@ public class CylinderAdapter extends Group {
 	public CylinderAdapter() {
 		this(5);
 	}
-	
+
 	public CylinderAdapter(double radius) {
 		this(Color.WHITE, radius, 10);
 	}
@@ -38,7 +38,7 @@ public class CylinderAdapter extends Group {
 		setColor(color);
 		getChildren().add(this.cylinder);
 	}
-	
+
 	public void setColor(Color color) {
 		this.color = color;
 		PhongMaterial material = new PhongMaterial();
@@ -46,13 +46,13 @@ public class CylinderAdapter extends Group {
 		material.setSpecularColor(this.color.brighter());
 		this.cylinder.setMaterial(material);
 	}
-	
+
 	public DoubleProperty radiusProperty() {
 		return this.cylinder.radiusProperty();
 	}
-	
+
 	public DoubleProperty heightProperty() {
 		return this.cylinder.heightProperty();
 	}
-	
+
 }

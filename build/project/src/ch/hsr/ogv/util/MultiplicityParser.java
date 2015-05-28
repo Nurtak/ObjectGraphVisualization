@@ -1,6 +1,13 @@
 package ch.hsr.ogv.util;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,33 +18,23 @@ import java.util.regex.Pattern;
  */
 public class MultiplicityParser {
 
-	private static final String ASTERISK = "*";
+	public static final String ASTERISK = "*";
 
 	// ^(\d+|\*)(\.\.(\d+|\*))?(,(\d+|\*)(\.\.(\d+|\*))?)*$
 	private static final String MUTLIP_REGEX = "^(\\d+|\\*)(\\.\\.(\\d+|\\*))?(,(\\d+|\\*)(\\.\\.(\\d+|\\*))?)*$";
 	private static final Pattern MUTLIP_PATTERN = Pattern.compile(MUTLIP_REGEX);
 
-	public static String getParsedMultiplicity(String multiString) {
+	public static String getSimpleParsed(String multiString) {
+		if (multiString.equals("0")) {
+			return null;
+		}
 		Matcher matcher = MUTLIP_PATTERN.matcher(multiString);
 		if (matcher.matches()) {
 			return multiString;
-		} else {
+		}
+		else {
 			return null;
 		}
-	}
-
-	public static String deleteLeadingZeros(String multiString) {
-		StringBuffer sb = new StringBuffer();
-
-		String[] split = multiString.split("\\.\\.|,");
-
-		for (int i = 0; i < split.length; i++) {
-			System.out.println(split[i]);
-			if (split[i] != "*") {
-				sb.append(split[i]);
-			}
-		}
-		return sb.toString();
 	}
 
 	private static boolean isNForm(String multiString) {
@@ -88,7 +85,8 @@ public class MultiplicityParser {
 					return true;
 				}
 			}
-		} catch (ArrayIndexOutOfBoundsException aioobe) {
+		}
+		catch (ArrayIndexOutOfBoundsException aioobe) {
 			return false;
 		}
 		return false;
@@ -98,19 +96,29 @@ public class MultiplicityParser {
 		return multiString.equals(ASTERISK);
 	}
 
-	public static String getParsedMultiplicity_old(String multiString) {
-		if (isNForm(multiString)) {
-			if (multiString.length() > 1) {
-				multiString = multiString.replaceAll("^0+", ""); // remove leading zeros
+	public static String getParsed(String multiString) {
+		Set<String> retContainer = new LinkedHashSet<String>();
+		List<String> separations = new ArrayList<String>(Arrays.asList(multiString.split(",")));
+		for (String part : separations) {
+			if (isNForm(part)) {
+				if (part.length() > 1) {
+					part = part.replaceAll("^0+", ""); // remove leading zeros
+				}
+				retContainer.add(part);
 			}
-			return multiString;
+			else {
+				String n = getNInNMForm(part);
+				String m = getMInNMForm(part);
+				if (n != null && m != null) {
+					retContainer.add(n + ".." + m);
+				}
+			}
 		}
-		String n = getNInNMForm(multiString);
-		String m = getMInNMForm(multiString);
-		if (n != null && m != null) {
-			return n + ".." + m;
+		if (retContainer.isEmpty()) {
+			return null;
 		}
-		return null;
+
+		return sort(new ArrayList<String>(retContainer));
 	}
 
 	private static String getNInNMForm(String multiString) {
@@ -135,7 +143,56 @@ public class MultiplicityParser {
 		return null;
 	}
 
-	// by Jonas Klemming
+	private static String sort(List<String> multiParts) {
+		Collections.sort(multiParts, new Comparator<String>() {
+			@Override
+			public int compare(String partThis, String partOther) {
+				String upperPartThis = getUppermostBound(partThis);
+				String upperPartOther = getUppermostBound(partOther);
+				if (upperPartThis.equals(upperPartOther)) {
+					return 0;
+				}
+				else if (isAsterisk(upperPartThis)) {
+					return 1;
+				}
+				else if (isAsterisk(upperPartOther)) {
+					return -1;
+				}
+				BigInteger partThisBigInt = new BigInteger(upperPartThis);
+				BigInteger partOtherBigInt = new BigInteger(upperPartOther);
+				return partThisBigInt.compareTo(partOtherBigInt);
+			}
+		});
+		return TextUtil.join(multiParts, ",");
+	}
+
+	public static String sort(String multiString) {
+		List<String> separations = new ArrayList<String>(Arrays.asList(multiString.split(",")));
+		return sort(separations);
+	}
+
+	public static String getUppermostBound(String multiString) {
+		if (multiString == null || multiString.isEmpty()) {
+			return null;
+		}
+		List<String> separations = new ArrayList<String>(Arrays.asList(multiString.split("\\.\\.|,")));
+		String retString = null;
+		BigInteger currentBiggest = new BigInteger("0");
+		for (String part : separations) {
+			if (isAsterisk(part)) {
+				return ASTERISK;
+			}
+			else if (isInteger(part) && toBigInteger(part).compareTo(currentBiggest) > 0) {
+				currentBiggest = toBigInteger(part);
+			}
+		}
+		if (!currentBiggest.equals(new BigInteger("0"))) {
+			retString = currentBiggest.toString();
+		}
+		return retString;
+	}
+
+	// by Jonas Klemming, this is faster for simple String > Integer check than test by NumberFormatException
 	public static boolean isInteger(String str) {
 		if (str == null || str.isEmpty()) {
 			return false;
@@ -160,18 +217,26 @@ public class MultiplicityParser {
 		return true;
 	}
 
-	private static Integer toInteger(String str) {
+	public static Integer toInteger(String str) {
+		if(str == null || str.isEmpty()) {
+			return null;
+		}
 		try {
 			return Integer.parseInt(str);
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			return null;
 		}
 	}
 
 	private static BigInteger toBigInteger(String str) {
+		if(str == null || str.isEmpty()) {
+			return null;
+		}
 		try {
 			return new BigInteger(str);
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			return null;
 		}
 	}

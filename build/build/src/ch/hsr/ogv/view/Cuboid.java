@@ -15,31 +15,31 @@ import javafx.scene.paint.PhongMaterial;
  *
  */
 public class Cuboid extends Group {
-	
+
 	private CuboidMesh box = null;
 	private Color color;
-	
+
 	public Cuboid() {
 		this(10);
 	}
-	
+
 	public Cuboid(double size) {
 		this(Color.WHITE, size);
 	}
 
 	public Cuboid(Color color, double size) {
-		this.box = new CuboidMesh(size, size , size);
+		this.box = new CuboidMesh(size, size, size);
 		this.box.setDepthTest(DepthTest.ENABLE);
 		this.box.setCache(true);
 		this.box.setCacheHint(CacheHint.SCALE_AND_ROTATE);
 		setColor(color);
 		getChildren().add(this.box);
 	}
-	
+
 	public Color getColor() {
 		return this.color;
 	}
-	
+
 	public void setColor(Color color) {
 		this.color = color;
 		PhongMaterial material = new PhongMaterial();
@@ -47,27 +47,27 @@ public class Cuboid extends Group {
 		material.setSpecularColor(this.color.brighter());
 		this.box.setMaterial(material);
 	}
-		
+
 	public DoubleProperty widthProperty() {
 		return this.box.widthProperty();
 	}
-	
+
 	public DoubleProperty heightProperty() {
 		return this.box.heightProperty();
 	}
-	
+
 	public DoubleProperty depthProperty() {
 		return this.box.depthProperty();
 	}
-			
+
 	public void setDrawTopFace(boolean drawTopFace) {
 		this.box.setDrawTopFace(drawTopFace);
 	}
-	
+
 	public void setDepth(double value) {
 		this.box.setDepth(value);
 	}
-	
+
 	public double getDepth() {
 		return this.box.getDepth();
 	}

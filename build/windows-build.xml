@@ -55,12 +55,6 @@
 				<filename name="jfxtras-labs-8.0-r3.jar"/>
 			</fileset>
 		</copy>
-		<copy todir="externalLibs">
-			<fileset dir="C:\Users\Simon Gwerder\git\GitHub\ObjectGraphVisualization\ObjectGraphVisualization\lib">
-				<filename name="aquafx-0.1.jar"/>
-			</fileset>
-		</copy>
-	
 		<mkdir dir="project" />
 		<copy todir="project">
 			<fileset dir="C:\Users\Simon Gwerder\git\GitHub\ObjectGraphVisualization\ObjectGraphVisualization">
@@ -70,13 +64,6 @@
 		<copy todir="project">
 			<fileset dir="C:\Users\Simon Gwerder\git\GitHub\ObjectGraphVisualization\ObjectGraphVisualization">
 				<include name="src/**" />
-			</fileset>
-		</copy>
-	
-		<mkdir dir="projectRefs" />
-		<copy todir="projectRefs">
-			<fileset dir="C:\Users\Simon Gwerder\git\GitHub\ObjectGraphVisualization">
-				<include name="FXYZ\src/**" />
 			</fileset>
 		</copy>
 	</target>
@@ -92,7 +79,6 @@
 				<include name="slf4j-api-1.7.10.jar"/>
 				<include name="fxyzlib.jar"/>
 				<include name="jfxtras-labs-8.0-r3.jar"/>
-				<include name="aquafx-0.1.jar"/>
 				<include name="log4j-1.2.17.jar"/>
 				<include name="slf4j-log4j12-1.7.10.jar"/>
 				<include name="openjfx-dialogs-1.0.2.jar"/>
@@ -101,11 +87,6 @@
 		</copy>
 	
 		<!-- Copy project references -->
-		<copy todir="build/src">
-			<fileset dir="projectRefs/FXYZ/src">
-				<include name="**/*"/>
-			</fileset>
-		</copy>
 	
 		<!-- Copy project sources itself -->
 		<copy todir="build/src">
@@ -136,13 +117,7 @@
 			<exclude name="**/*.java"/>
 		</fileset>
 		</copy>
-	
-		<copy todir="build/classes">
-			<fileset dir="projectRefs/FXYZ/src">
-				<exclude name="**/*.java"/>
-			</fileset>
-		</copy>
-	
+		
 	</target>
 	<target name="do-deploy" depends="setup-staging-area, do-compile, init-fx-tasks">
 		<delete file="dist"/>
@@ -159,23 +134,24 @@
 	
 	
 		<fx:resources id="appRes">
-			<fx:fileset dir="dist" includes="ObjectGraphVisualization.jar"/>
+			<fx:fileset dir="dist" includes="OGV.jar"/>
 			<fx:fileset dir="dist" includes="libs/*"/>
 			<fx:fileset dir="dist" includes="resources/**"/>
+			<fx:fileset dir="dist" includes="examples/**"/>
 		</fx:resources>
 	
 		<fx:application id="fxApplication"
 			name="OGV"
 			mainClass="ch.hsr.ogv.MainApp"
 			toolkit="fx"
-			version="2.0"
+			version="3.0"
 		/>
 	
 		<mkdir dir="build/classes/META-INF" />
 	
 	
 	
-		<fx:jar destfile="dist/ObjectGraphVisualization.jar">
+		<fx:jar destfile="dist/OGV.jar">
 			<fx:application refid="fxApplication"/>
 			<fileset dir="build/classes">
 			</fileset>
@@ -184,7 +160,7 @@
 			<manifest>
 				<attribute name="Implementation-Vendor" value="hsr.ch"/>
 				<attribute name="Implementation-Title" value="OGV"/>
-				<attribute name="Implementation-Version" value="2.0"/>
+				<attribute name="Implementation-Version" value="3.0"/>
 				<attribute name="SplashScreen-Image" value="C:\Users\Simon Gwerder\git\GitHub\ObjectGraphVisualization\ObjectGraphVisualization\build\dist\resources\images\OGV.png"/>
 				<attribute name="JavaFX-Feature-Proxy" value="None"/>
 			</manifest>
@@ -199,7 +175,7 @@
 			includeDT="false"
 			offlineAllowed="true"
 			outdir="${basedir}/deploy"
-			outfile="ObjectGraphVisualization" nativeBundles="exe"
+			outfile="OGV" nativeBundles="exe"
 			updatemode="background" >
 	
 			<fx:platform basedir="${java.home}"/>

@@ -20,7 +20,7 @@ public enum RelationType {
 	DEPENDENCY(EndpointType.NONE, EndpointType.OPEN_ARROW, LineType.DASHED_LINE),
 	ASSOZIATION_CLASS(EndpointType.NONE, EndpointType.NONE, LineType.DASHED_LINE),
 	OBJDIAGRAM(EndpointType.NONE, EndpointType.NONE, LineType.CONTINUOUS_LINE),
-	OBJGRAPH(EndpointType.NONE, EndpointType.OPEN_ARROW, LineType.CONTINUOUS_LINE);
+	OBJGRAPH(EndpointType.NONE, EndpointType.FILLED_ARROW, LineType.CONTINUOUS_LINE);
 
 	private final EndpointType startType;
 	private final EndpointType endType;

@@ -1,7 +1,8 @@
 package ch.hsr.ogv.dataaccess;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -18,7 +19,7 @@ public class XMIHandler extends DefaultHandler {
 
 	protected ArrayList<XMIRelation> xmiRelations = new ArrayList<XMIRelation>();
 	protected StringBuffer characters = new StringBuffer();
-	protected HashMap<String, ModelClass> idClassMap = new HashMap<String, ModelClass>();
+	protected Map<String, ModelClass> idClassMap = new LinkedHashMap<String, ModelClass>();
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +56,7 @@ public class XMIHandler extends DefaultHandler {
 		for (XMIRelation xmiRelation : xmiRelations) {
 			ModelClass sourceClass = idClassMap.get(xmiRelation.getSourceID());
 			ModelClass targetClass = idClassMap.get(xmiRelation.getTargetID());
-			if(sourceClass != null && targetClass != null) {
+			if (sourceClass != null && targetClass != null) {
 				Relation relation = new Relation(sourceClass, targetClass, xmiRelation.getType());
 				relations.add(relation);
 				relation.setName(xmiRelation.getName());

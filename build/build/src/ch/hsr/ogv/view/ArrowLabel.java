@@ -32,7 +32,7 @@ public class ArrowLabel extends Group {
 	private HBox container = new HBox();
 	private Text arrowText;
 	private TextField arrowTextField;
-	private Point3D diffCoords = new Point3D(0, 0, 0);
+	private Point3D coords = new Point3D(0, 0, 0);
 	
 	private Color color = Color.BLACK;
 	
@@ -51,12 +51,12 @@ public class ArrowLabel extends Group {
 	}
 	
 	public Point3D getDiffCoords() {
-		return diffCoords;
+		return coords;
 	}
 
 	public void setDiffCoords(Point3D diffCoords) {
-		this.diffCoords = diffCoords;
-		setTranslateDiff();
+		this.coords = diffCoords;
+		setTranslate();
 	}
 	
 	public ArrowLabel() {
@@ -71,7 +71,7 @@ public class ArrowLabel extends Group {
 		this.container.setPadding(new Insets(2, 0, 2, 0));
 		HBox.setHgrow(this.arrowTextField, Priority.ALWAYS);
 		setWidth(calcMinWidth());
-		setTranslateDiff();
+		setTranslate();
 		this.container.getTransforms().add(new Rotate(90, Rotate.X_AXIS));
 		this.container.getTransforms().add(new Rotate(180, Rotate.Z_AXIS));
 		getChildren().add(this.container);
@@ -155,29 +155,34 @@ public class ArrowLabel extends Group {
 		this.arrowTextField.setFont(font);
 	}
 	
-	public void setDiffX(double x) {
-		this.diffCoords = new Point3D(x, this.diffCoords.getY(), this.diffCoords.getZ());
-		setTranslateX(this.diffCoords.getX());
+	public void setCoordsX(double x) {
+		this.coords = new Point3D(x, this.coords.getY(), this.coords.getZ());
+		setTranslateX(this.coords.getX());
 	}
 	
-	public void setDiffY(double y) {
-		this.diffCoords = new Point3D(this.diffCoords.getX(), y, this.diffCoords.getZ());
-		setTranslateY(this.diffCoords.getY());
+	public void setCoordsY(double y) {
+		this.coords = new Point3D(this.coords.getX(), y, this.coords.getZ());
+		setTranslateY(this.coords.getY());
 	}
 	
-	public void setDiffZ(double z) {
-		this.diffCoords = new Point3D(this.diffCoords.getX(), this.diffCoords.getY(), z);
-		setTranslateZ(this.diffCoords.getZ());
+	public void setCoordsZ(double z) {
+		this.coords = new Point3D(this.coords.getX(), this.coords.getY(), z);
+		setTranslateZ(this.coords.getZ());
 	}
 	
-	private void setTranslateDiff() {
-		setTranslateX(this.diffCoords.getX());
-		setTranslateY(this.diffCoords.getY());
-		setTranslateZ(this.diffCoords.getZ());
+	public void setTranslateXYZ(double x, double y, double z) {
+		setCoordsX(x);
+		setCoordsY(y);
+		setCoordsZ(z);
+	}
+	
+	private void setTranslate() {
+		setTranslateX(this.coords.getX());
+		setTranslateY(this.coords.getY());
+		setTranslateZ(this.coords.getZ());
 	}
 	
 	public void setRotateYAxis(double degree) {
-		//getTransforms().add(new Rotate(degree, Rotate.Y_AXIS));
 		setRotationAxis(Rotate.Y_AXIS);
 		setRotate(degree);
 	}

@@ -9,6 +9,7 @@ import javafx.scene.SubScene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Box;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.ArrowLabel;
 import ch.hsr.ogv.view.PaneBox;
@@ -68,7 +69,7 @@ public class SelectionController extends Observable implements Observer {
 		selectOnMouseClicked(paneBox, subSceneAdapter, allowTopTextInput);
 		selectOnDragDetected(paneBox, subSceneAdapter);
 	}
-	
+
 	public void enableCenterLabelSelection(PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		selectOnMouseClicked(paneBox.getCenterLabels(), paneBox, subSceneAdapter);
 	}
@@ -76,7 +77,7 @@ public class SelectionController extends Observable implements Observer {
 	public void enableArrowSelection(Arrow arrow, SubSceneAdapter subSceneAdapter) {
 		selectOnMouseClicked(arrow, subSceneAdapter);
 	}
-	
+
 	public void enableArrowLabelSelection(Arrow arrow, SubSceneAdapter subSceneAdapter) {
 		selectOnMouseClicked(arrow.getLabelStartLeft(), arrow, subSceneAdapter);
 		selectOnMouseClicked(arrow.getLabelStartRight(), arrow, subSceneAdapter);
@@ -119,7 +120,7 @@ public class SelectionController extends Observable implements Observer {
 				paneBox.setAllLabelSelected(false);
 			}
 		});
-		
+
 		paneBox.getTopLabel().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton())) {
 				paneBox.setLabelSelected(paneBox.getTopLabel(), true);
@@ -153,21 +154,23 @@ public class SelectionController extends Observable implements Observer {
 				setSelected(me, arrow, true, subSceneAdapter);
 			}
 		});
-		
-		arrow.getLineSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
-				arrow.setAllLabelSelected(false);
-				setSelected(me, arrow, true, subSceneAdapter);
-			}
-		});
-		
+
+		for(Box lineSelectionHelper : arrow.getLineSelectionHelpers()) {
+			lineSelectionHelper.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+				if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
+					arrow.setAllLabelSelected(false);
+					setSelected(me, arrow, true, subSceneAdapter);
+				}
+			});
+		}
+
 		arrow.getStartSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
 				arrow.setAllLabelSelected(false);
 				setSelected(me, arrow, true, subSceneAdapter);
 			}
 		});
-		
+
 		arrow.getEndSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if ((MouseButton.PRIMARY.equals(me.getButton()) || MouseButton.SECONDARY.equals(me.getButton()))) {
 				arrow.setAllLabelSelected(false);
@@ -175,7 +178,7 @@ public class SelectionController extends Observable implements Observer {
 			}
 		});
 	}
-	
+
 	private void selectOnMouseClicked(ArrowLabel arrowLabel, Arrow arrow, SubSceneAdapter subSceneAdapter) {
 		arrowLabel.getArrowText().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			arrow.setAllLabelSelected(false);
@@ -229,11 +232,13 @@ public class SelectionController extends Observable implements Observer {
 			}
 			this.currentSelected = selectable;
 			selectable.requestFocus();
-			if(subSceneAdapter != null) subSceneAdapter.getFloor().toFront();
+			if (subSceneAdapter != null)
+				subSceneAdapter.getFloor().toFront();
 
 			setChanged();
 			notifyObservers(selectable);
-		} else {
+		}
+		else {
 			this.currentSelected = null;
 
 			setChanged();
@@ -245,7 +250,7 @@ public class SelectionController extends Observable implements Observer {
 	public void update(Observable o, Object arg) {
 		if (o instanceof DragController) {
 			DragController dragController = (DragController) o;
-			if(!dragController.isDragInProgress() && hasCurrentSelection()) {
+			if (!dragController.isDragInProgress() && hasCurrentSelection()) {
 				setSelected(getCurrentSelected(), true, null);
 			}
 		}

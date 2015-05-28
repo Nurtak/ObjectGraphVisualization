@@ -2,18 +2,11 @@ package ch.hsr.ogv.dataaccess;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.LinkedHashSet;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.geometry.Point3D;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ch.hsr.ogv.controller.ModelViewConnector;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
@@ -29,8 +22,7 @@ import ch.hsr.ogv.model.Relation;
  *
  */
 public class Persistancy {
-	
-	private final static Logger logger = LoggerFactory.getLogger(Persistancy.class);
+
 
 	private ModelManager modelManager;
 
@@ -38,53 +30,68 @@ public class Persistancy {
 		this.modelManager = modelManager;
 	}
 
-	public boolean saveOGVDataAsync(File file) {
+	public void saveOGVDataAsync(File file, PersistencyCallback callback) {
 		OGVSerialization ogvSerialization = new OGVSerialization();
-		return saveDataAsync(ogvSerialization, file);
+		saveDataAsync(ogvSerialization, file, callback);
+	}
+
+	private void saveDataAsync(SerializationStrategy serialStrategy, File file, PersistencyCallback callback) {
+		serialStrategy.setClasses(new LinkedHashSet<ModelClass>(modelManager.getClasses()));
+		serialStrategy.setRelations(new LinkedHashSet<Relation>(modelManager.getRelations()));
+		Task<Void> loadTask = new Task<Void>() {
+			@Override
+			public Void call() {
+				boolean saved = serialStrategy.serialize(file);
+				Platform.runLater(() -> {
+					callback.completed(saved);
+				});
+				return null;
+			}
+		};
+		new Thread(loadTask).start();
 	}
 	
 	public boolean saveOGVData(File file) {
 		OGVSerialization ogvSerialization = new OGVSerialization();
 		return saveData(ogvSerialization, file);
 	}
-	
-	public boolean saveDataAsync(SerializationStrategy serialStrategy, File file) {
-		serialStrategy.setClasses(new HashSet<ModelClass>(modelManager.getClasses()));
-		serialStrategy.setRelations(new HashSet<Relation>(modelManager.getRelations()));
-		ExecutorService threadPool = Executors.newSingleThreadExecutor();
-		Future<Boolean> asyncResult = threadPool.submit(new Callable<Boolean>() {
-			public Boolean call() throws Exception {
-				return serialStrategy.serialize(file);
-			}
-		});
-		
-		boolean saved = false;
-		try {
-			saved = asyncResult.get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-			logger.debug(e.getMessage());
-		}
-		threadPool.shutdown();
-		return saved;
-	}
 
-	public boolean saveData(SerializationStrategy serialStrategy, File file) {
-		serialStrategy.setClasses(new HashSet<ModelClass>(modelManager.getClasses()));
-		serialStrategy.setRelations(new HashSet<Relation>(modelManager.getRelations()));
+	private boolean saveData(SerializationStrategy serialStrategy, File file) {
+		serialStrategy.setClasses(new LinkedHashSet<ModelClass>(modelManager.getClasses()));
+		serialStrategy.setRelations(new LinkedHashSet<Relation>(modelManager.getRelations()));
 		return serialStrategy.serialize(file);
 	}
 
-	public boolean loadOGVDataAsync(File file) {
+	public void loadOGVDataAsync(File file, PersistencyCallback callback) {
 		OGVSerialization ogvSerialization = new OGVSerialization();
-		return loadDataAsync(ogvSerialization, file);
+		loadDataAsync(ogvSerialization, file, callback);
 	}
 
-	public boolean loadXMIDataAsync(File file) {
+	public void loadXMIDataAsync(File file, PersistencyCallback callback) {
 		XMISerialization xmiSerialization = new XMISerialization();
-		return loadDataAsync(xmiSerialization, file);
+		loadDataAsync(xmiSerialization, file, callback);
 	}
-	
+
+	private void loadDataAsync(SerializationStrategy serialStrategy, File file, PersistencyCallback callback) {
+		Task<Void> loadTask = new Task<Void>() {
+			@Override
+			public Void call() {
+				boolean loaded = serialStrategy.parse(file);
+				Platform.runLater(() -> {
+					if (!loaded) {
+						callback.completed(false);
+					}
+					else {
+						loadedToModel(serialStrategy);
+						callback.completed(true);
+					}
+				});
+				return null;
+			}
+		};
+		new Thread(loadTask).start();
+	}
+
 	public boolean loadOGVData(File file) {
 		OGVSerialization ogvSerialization = new OGVSerialization();
 		return loadData(ogvSerialization, file);
@@ -94,33 +101,8 @@ public class Persistancy {
 		XMISerialization xmiSerialization = new XMISerialization();
 		return loadData(xmiSerialization, file);
 	}
-
-	public boolean loadDataAsync(SerializationStrategy serialStrategy, File file) {
-		ExecutorService threadPool = Executors.newSingleThreadExecutor();
-		Future<Boolean> asyncResult = threadPool.submit(new Callable<Boolean>() {
-			public Boolean call() throws Exception {
-				return serialStrategy.parse(file);
-			}
-		});
-		
-		boolean loaded = false;
-		try {
-			loaded = asyncResult.get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-			logger.debug(e.getMessage());
-		}
-		threadPool.shutdown();
-		
-		if(!loaded) {
-			return false;
-		}
-		
-		loadedToModel(serialStrategy);
-		return true;
-	}
 	
-	public boolean loadData(SerializationStrategy serialStrategy, File file) {
+	private boolean loadData(SerializationStrategy serialStrategy, File file) {
 		boolean loaded = serialStrategy.parse(file);
 		if (!loaded) {
 			return false;
@@ -128,7 +110,7 @@ public class Persistancy {
 		loadedToModel(serialStrategy);
 		return true;
 	}
-	
+
 	private void loadedToModel(SerializationStrategy serialStrategy) {
 		modelManager.clearClasses();
 		modelManager.clearRelations();
@@ -141,7 +123,7 @@ public class Persistancy {
 			loadedRelationToModel(loadedRelation);
 		}
 	}
-	
+
 	private void loadedClassToModel(ModelClass loadedClass) {
 		ModelClass newClass = modelManager.createClass(new Point3D(loadedClass.getX(), ModelViewConnector.BASE_BOX_DEPTH, loadedClass.getZ()), loadedClass.getWidth(), loadedClass.getHeight(),
 				loadedClass.getColor());
@@ -188,7 +170,8 @@ public class Persistancy {
 						newObject.changeAttributeValue(newAttribute.getName(), newAttributeValue);
 					}
 				}
-			} catch (IndexOutOfBoundsException ioobe) {
+			}
+			catch (IndexOutOfBoundsException ioobe) {
 				continue;
 			}
 		}
@@ -230,13 +213,13 @@ public class Persistancy {
 		}
 		else if (loadedStartBox instanceof ModelObject && loadedEndBox instanceof ModelObject) {
 			for (ModelClass newModelClass : modelManager.getClasses()) {
-				newStartBox = newModelClass.getModelObject(loadedStartBox.getName());
+				newStartBox = newModelClass.getModelObject(((ModelObject) loadedStartBox).getUniqueID());
 				if (newStartBox != null) {
 					break;
 				}
 			}
 			for (ModelClass newModelClass : modelManager.getClasses()) {
-				newEndBox = newModelClass.getModelObject(loadedEndBox.getName());
+				newEndBox = newModelClass.getModelObject(((ModelObject) loadedEndBox).getUniqueID());
 				if (newEndBox != null) {
 					break;
 				}
@@ -246,7 +229,7 @@ public class Persistancy {
 		if (newStartBox == null || newEndBox == null)
 			return;
 
-		Relation newRelation = modelManager.createRelation(newStartBox, newEndBox, loadedRelation.getType(), loadedRelation.getColor());
+		Relation newRelation = modelManager.createRelation(newStartBox, newEndBox, loadedRelation.getRelationType(), loadedRelation.getColor());
 		if (newRelation != null) {
 			loadedRoleMultiToModel(newRelation, loadedRelation);
 		}

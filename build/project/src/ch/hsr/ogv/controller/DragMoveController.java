@@ -23,7 +23,7 @@ public class DragMoveController extends DragController {
 	protected volatile double origRelMouseX;
 	protected volatile double origRelMouseY;
 	protected volatile double origRelMouseZ;
-	
+
 	public void enableDragMove(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		startOnMouseMoved(modelBox, paneBox, subSceneAdapter);
 		moveOnMouseDragged(modelBox, paneBox, subSceneAdapter);
@@ -42,7 +42,7 @@ public class DragMoveController extends DragController {
 		paneBox.get().addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
 			setDragInProgress(subSceneAdapter, true);
 			if (MouseButton.PRIMARY.equals(me.getButton()) && paneBox.isSelected()) {
-				if(modelBox instanceof ModelClass) {
+				if (modelBox instanceof ModelClass) {
 					Floor floor = subSceneAdapter.getFloor();
 					subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
 					PickResult pick = me.getPickResult();
@@ -52,10 +52,11 @@ public class DragMoveController extends DragController {
 						modelBox.setCoordinates(classCoordinates);
 					}
 				}
-				else if(modelBox instanceof ModelObject) {
+				else if (modelBox instanceof ModelObject) {
 					VerticalHelper verticalHelper = subSceneAdapter.getVerticalHelper();
-					if(verticalHelper == null) return;
-					verticalHelper.setSpan(paneBox);
+					if (verticalHelper == null)
+						return;
+					verticalHelper.setDimension(paneBox);
 					verticalHelper.setVisible(true);
 					verticalHelper.toFront();
 					subSceneAdapter.getSubScene().setCursor(Cursor.MOVE);
@@ -63,16 +64,16 @@ public class DragMoveController extends DragController {
 					if (pick != null && pick.getIntersectedNode() != null && verticalHelper.isVerticalHelper(pick.getIntersectedNode())) {
 						Point3D coords = pick.getIntersectedNode().localToParent(pick.getIntersectedPoint());
 						double newY = coords.getY() - origRelMouseY;
-						if(newY < ModelClass.OBJECT_LEVEL_DIFF) {
+						if (newY < ModelClass.OBJECT_LEVEL_DIFF) {
 							newY = ModelClass.OBJECT_LEVEL_DIFF;
 						}
 						Point3D objectCoordinates = new Point3D(modelBox.getX(), newY, modelBox.getZ());
 						modelBox.setCoordinates(objectCoordinates);
-						verticalHelper.setSpan(paneBox);
+						verticalHelper.setDimension(paneBox);
 					}
 				}
 			}
 		});
 	}
-	
+
 }

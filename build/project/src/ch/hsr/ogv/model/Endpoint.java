@@ -2,12 +2,7 @@ package ch.hsr.ogv.model;
 
 import java.util.UUID;
 
-import javafx.geometry.Point3D;
-
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import ch.hsr.ogv.dataaccess.Point3DAdapter;
 
 /**
  *
@@ -19,23 +14,21 @@ public class Endpoint {
 	// for un/marshaling only
 	private String uniqueID = UUID.randomUUID().toString();
 
-	private EndpointType type;
-	private Point3D coordinates;
+	private EndpointType endpointType;
 	private String roleName;
 	private String multiplicity;
 	private Relation relation;
 	private ModelBox appendant;
-	
+
 	// for un/marshaling only
 	public Endpoint() {
 	}
 
 	public Endpoint(EndpointType type, ModelBox appendant) {
-		this.type = type;
+		this.endpointType = type;
 		this.appendant = appendant;
-		this.coordinates = appendant.getCoordinates();
 	}
-	
+
 	public String getUniqueID() {
 		return uniqueID;
 	}
@@ -44,12 +37,12 @@ public class Endpoint {
 		this.uniqueID = uniqueID;
 	}
 
-	public EndpointType getType() {
-		return type;
+	public EndpointType getEndpointType() {
+		return endpointType;
 	}
 
-	public void setType(EndpointType type) {
-		this.type = type;
+	public void setEndpointType(EndpointType endpointType) {
+		this.endpointType = endpointType;
 	}
 
 	public String getRoleName() {
@@ -66,15 +59,6 @@ public class Endpoint {
 
 	public void setMultiplicity(String multiplicity) {
 		this.multiplicity = multiplicity;
-	}
-
-	@XmlJavaTypeAdapter(Point3DAdapter.class)
-	public Point3D getCoordinates() {
-		return coordinates;
-	}
-
-	public void setCoordinates(Point3D coordinates) {
-		this.coordinates = coordinates;
 	}
 
 	@XmlTransient
@@ -103,9 +87,16 @@ public class Endpoint {
 		return null;
 	}
 
-	public boolean isStart(){
+	public boolean isStart() {
 		if (relation != null) {
 			return relation.isStart(this);
+		}
+		return false;
+	}
+
+	public boolean isEnd() {
+		if (relation != null) {
+			return relation.isEnd(this);
 		}
 		return false;
 	}

@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
+import javafx.scene.shape.Box;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
@@ -35,9 +36,7 @@ import ch.hsr.ogv.view.SubSceneAdapter;
 public class ContextMenuController extends Observable implements Observer {
 
 	private ModelViewConnector mvConnector;
-	private RelationCreationProcess relationCreationProcess = new RelationCreationProcess();
-
-	private MouseMoveController mouseMoveController;
+	private RelationCreationController relationCreationController;
 
 	private volatile Selectable selected;
 	private volatile Point3D position;
@@ -52,12 +51,13 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem renameClass;
 	private MenuItem addAttribute;
 	private MenuItem deleteClass;
-
-	// Object
-	private ContextMenu objectCM;
-	private MenuItem renameObject;
-	private MenuItem deleteObject;
-
+	
+	// Attribute
+	private MenuItem renameAttribute;
+	private MenuItem moveAttributeUp;
+	private MenuItem moveAttributeDown;
+	private MenuItem deleteAttribute;
+	
 	// Relation
 	private ContextMenu relationCM;
 	private MenuItem changeDirection;
@@ -76,22 +76,22 @@ public class ContextMenuController extends Observable implements Observer {
 	private MenuItem createGeneralization;
 	private MenuItem createDependency;
 
-	private volatile boolean atLineSelectionHelper = false;
-	private volatile boolean atStartSelectionHelper = false;
-	private volatile boolean atEndSelectionHelper = false;
-
-	// Attribute
-	private MenuItem renameAttribute;
-	private MenuItem moveAttributeUp;
-	private MenuItem moveAttributeDown;
-	private MenuItem deleteAttribute;
-
+	// Object
+	private ContextMenu objectCM;
+	private MenuItem renameObject;
+	private MenuItem createObjectRelation;
+	private MenuItem deleteObject;
+	
 	// Value (Attribute)
 	private MenuItem setValue;
 	private MenuItem deleteValue;
 
-	public void setMouseMoveController(MouseMoveController mouseMoveController) {
-		this.mouseMoveController = mouseMoveController;
+	private volatile boolean atLineSelectionHelper = false;
+	private volatile boolean atStartSelectionHelper = false;
+	private volatile boolean atEndSelectionHelper = false;
+
+	public void setRelationCreationController(RelationCreationController relationCreationProcess) {
+		this.relationCreationController = relationCreationProcess;
 	}
 
 	private void atLineSelectionHelper() {
@@ -126,7 +126,7 @@ public class ContextMenuController extends Observable implements Observer {
 		classCM = new ContextMenu();
 		renameClass = getMenuItem("Rename Class", Resource.RENAME_GIF, classCM);
 		createObject = getMenuItem("Create Object", Resource.OBJECT_GIF, classCM);
-		getClassRelationMenu("Create Relation", Resource.RELATION_GIF, classCM);
+		getClassRelationMenu("Class Relation", Resource.RELATION_GIF, classCM);
 		addAttribute = getMenuItem("Add Attribute", Resource.ADD_ATTR_GIF, classCM);
 		classCM.getItems().add(new SeparatorMenuItem());
 		renameAttribute = getMenuItem("Rename Attribute", Resource.RENAME_ATTR_GIF, classCM);
@@ -139,6 +139,7 @@ public class ContextMenuController extends Observable implements Observer {
 		// Object
 		objectCM = new ContextMenu();
 		renameObject = getMenuItem("Rename Object", Resource.RENAME_GIF, objectCM);
+		createObjectRelation = getMenuItem("Object Relation", Resource.OBJRELATION_GIF, objectCM);
 		objectCM.getItems().add(new SeparatorMenuItem());
 		setValue = getMenuItem("Set Value", Resource.RENAME_ATTR_GIF, objectCM);
 		deleteValue = getMenuItem("Delete Value", Resource.DELETE_PNG, objectCM);
@@ -186,7 +187,8 @@ public class ContextMenuController extends Observable implements Observer {
 				}
 				subSceneCM.hide();
 				subSceneCM.show(subSceneAdapter.getFloor(), me.getScreenX(), me.getScreenY());
-			} else if (subSceneCM.isShowing()) {
+			}
+			else if (subSceneCM.isShowing()) {
 				subSceneCM.hide();
 			}
 		});
@@ -196,20 +198,27 @@ public class ContextMenuController extends Observable implements Observer {
 		paneBox.get().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
-				if (modelBox instanceof ModelClass) {
-					// Class
+				if (modelBox instanceof ModelClass) { // Class
+					if(subSceneAdapter.isYSpaceVisible()) {
+						createObject.setDisable(false);
+					}
+					else {
+						createObject.setDisable(true);
+					}
 					enableAttributeSelected(false);
 					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-				} else if ((modelBox instanceof ModelObject)) {
-					// Object
+				}
+				else if ((modelBox instanceof ModelObject)) { // Object
 					ModelObject modelObject = (ModelObject) modelBox;
-					if(modelObject.isSuperObject()) {
+					if (modelObject.isSuperObject()) {
 						renameObject.setDisable(true);
+						createObjectRelation.setDisable(true);
 						deleteObject.setDisable(true);
 					}
 					else {
 						renameObject.setDisable(false);
+						createObjectRelation.setDisable(false);
 						deleteObject.setDisable(false);
 					}
 					hideAllContextMenus();
@@ -224,13 +233,12 @@ public class ContextMenuController extends Observable implements Observer {
 		paneBox.getSelection().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
-				if (modelBox instanceof ModelClass) {
-					// Class
+				if (modelBox instanceof ModelClass) { // Class
 					enableAttributeSelected(false);
 					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-				} else if ((modelBox instanceof ModelObject)) {
-					// Object
+				}
+				else if ((modelBox instanceof ModelObject)) { // Object
 					hideAllContextMenus();
 					setValue.setDisable(true);
 					deleteValue.setDisable(true);
@@ -243,24 +251,29 @@ public class ContextMenuController extends Observable implements Observer {
 
 	public void enableCenterFieldContextMenu(ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		for (Label centerLabel : paneBox.getCenterLabels()) {
-			enableContextMenu(centerLabel, modelBox, paneBox, subSceneAdapter);
+			enableLabelContextMenu(centerLabel, modelBox, paneBox, subSceneAdapter);
 		}
 	}
 
-	private void enableContextMenu(Label label, ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
+	private void enableLabelContextMenu(Label label, ModelBox modelBox, PaneBox paneBox, SubSceneAdapter subSceneAdapter) {
 		label.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
 				hideAllContextMenus();
-				if (modelBox instanceof ModelClass) {
-					// Label on Class
+				if (modelBox instanceof ModelClass) { // Label on Class
+					if(subSceneAdapter.isYSpaceVisible()) {
+						createObject.setDisable(false);
+					}
+					else {
+						createObject.setDisable(true);
+					}
 					enableAttributeSelected(true);
 					addAttribute.setDisable(paneBox.getCenterLabels().size() >= PaneBox.MAX_CENTER_LABELS);
 					int rowIndex = paneBox.getCenterLabels().indexOf(paneBox.getSelectedLabel());
 					moveAttributeUp.setDisable(rowIndex <= 0 || rowIndex > paneBox.getCenterLabels().size() - 1);
 					moveAttributeDown.setDisable(rowIndex < 0 || rowIndex >= paneBox.getCenterLabels().size() - 1);
 					classCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
-				} else if (modelBox instanceof ModelObject) {
-					// Label on Object
+				}
+				else if (modelBox instanceof ModelObject) { // Label on Object
 					setValue.setDisable(false);
 					deleteValue.setDisable(false);
 					objectCM.show(paneBox.get(), me.getScreenX(), me.getScreenY());
@@ -283,21 +296,21 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	private boolean roleAttributeConflict(Arrow arrow, Relation relation) {
-		if(relation != null) {
+		if (relation != null) {
 			ModelBox startModelBox = relation.getStart().getAppendant();
 			ModelBox endModelBox = relation.getEnd().getAppendant();
-			if(startModelBox instanceof ModelClass && endModelBox instanceof ModelClass) {
+			if (startModelBox instanceof ModelClass && endModelBox instanceof ModelClass) {
 				ModelClass startModelClass = (ModelClass) startModelBox;
 				ModelClass endModelClass = (ModelClass) endModelBox;
-				for(Attribute attribute : startModelClass.getAttributes()) {
+				for (Attribute attribute : startModelClass.getAttributes()) {
 					boolean conflictStart = arrow.getLabelStartLeft().getLabelText().equals(attribute.getName());
-					if(conflictStart) {
+					if (conflictStart) {
 						return true;
 					}
 				}
-				for(Attribute attribute : endModelClass.getAttributes()) {
+				for (Attribute attribute : endModelClass.getAttributes()) {
 					boolean conflictEnd = arrow.getLabelEndLeft().getLabelText().equals(attribute.getName());
-					if(conflictEnd) {
+					if (conflictEnd) {
 						return true;
 					}
 				}
@@ -307,23 +320,22 @@ public class ContextMenuController extends Observable implements Observer {
 	}
 
 	private boolean relationTypeConflict(Arrow arrow) {
-		return arrow.getRelationType().equals(RelationType.GENERALIZATION)
-				|| arrow.getRelationType().equals(RelationType.DEPENDENCY)
-				|| arrow.getRelationType().equals(RelationType.ASSOZIATION_CLASS)
-				|| arrow.getRelationType().equals(RelationType.OBJDIAGRAM)
-				|| arrow.getRelationType().equals(RelationType.OBJGRAPH);
+		return arrow.getRelationType().equals(RelationType.GENERALIZATION) || arrow.getRelationType().equals(RelationType.DEPENDENCY) || arrow.getRelationType().equals(RelationType.ASSOZIATION_CLASS)
+				|| arrow.getRelationType().equals(RelationType.OBJDIAGRAM) || arrow.getRelationType().equals(RelationType.OBJGRAPH);
 	}
 
 	public void enableContextMenu(Arrow arrow, Relation relation) {
 
-		arrow.getLineSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
-				atLineSelectionHelper();
-				boolean disableMRD = relationTypeConflict(arrow);
-				boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
-				enableRelationContextMenu(arrow, me, true, disableDirection, false);
-			}
-		});
+		for(Box lineSelectionHelper : arrow.getLineSelectionHelpers()) {
+			lineSelectionHelper.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+				if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
+					atLineSelectionHelper();
+					boolean disableMRD = relationTypeConflict(arrow);
+					boolean disableDirection = disableMRD || roleAttributeConflict(arrow, relation);
+					enableRelationContextMenu(arrow, me, true, disableDirection, false);
+				}
+			});
+		}
 
 		arrow.getStartSelectionHelper().addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
 			if (me.getButton() == MouseButton.SECONDARY && me.isStillSincePress()) {
@@ -393,11 +405,9 @@ public class ContextMenuController extends Observable implements Observer {
 		moveAttributeDown.setDisable(!isAttributeActive);
 		deleteAttribute.setDisable(!isAttributeActive);
 	}
-
-	private void startRelationCreation(SelectionController selectionController, SubSceneAdapter subSceneAdapter, PaneBox selectedPaneBox, RelationType relationType) {
-		//TODO
-		this.mouseMoveController.addObserver(this.relationCreationProcess);
-		this.relationCreationProcess.startProcess(this.mvConnector, selectionController, subSceneAdapter, selectedPaneBox, relationType);
+	
+	private void startRelationCreation(PaneBox selectedPaneBox, RelationType relationType) {
+		this.relationCreationController.startProcess(selectedPaneBox, relationType);
 	}
 
 	public void enableActionEvents(SelectionController selectionController, SubSceneAdapter subSceneAdapter) {
@@ -405,13 +415,19 @@ public class ContextMenuController extends Observable implements Observer {
 		// SubScene
 		createClass.setOnAction((ActionEvent e) -> {
 			PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(position);
-			selectionController.setSelected(newPaneBox, true, subSceneAdapter);
+			if (newPaneBox != null) {
+				new SpeedCreationController(newPaneBox, this.mvConnector);
+				selectionController.setSelected(newPaneBox, true, subSceneAdapter);
+			}
 		});
 
 		// Class
 		createObject.setOnAction((ActionEvent e) -> {
 			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject(selected);
-			selectionController.setSelected(newPaneBox, true, subSceneAdapter);
+			if (newPaneBox != null) {
+				new SpeedCreationController(newPaneBox, this.mvConnector);
+				selectionController.setSelected(newPaneBox, true, subSceneAdapter);
+			}
 		});
 		renameClass.setOnAction((ActionEvent e) -> {
 			this.mvConnector.handleRenameClassOrObject(selected);
@@ -424,63 +440,69 @@ public class ContextMenuController extends Observable implements Observer {
 			this.mvConnector.handleDelete(selected);
 		});
 		createUndirectedAssociation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
-				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.UNDIRECTED_ASSOCIATION);
+				startRelationCreation(selectedPaneBox, RelationType.UNDIRECTED_ASSOCIATION);
 			}
 		});
 		createDirectedAssociation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
-				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DIRECTED_ASSOCIATION);
+				startRelationCreation(selectedPaneBox, RelationType.DIRECTED_ASSOCIATION);
 			}
 		});
 		createBidirectedAssociation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
-				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.BIDIRECTED_ASSOCIATION);
+				startRelationCreation(selectedPaneBox, RelationType.BIDIRECTED_ASSOCIATION);
 			}
 		});
 		createUndirectedAggregation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
-				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.UNDIRECTED_AGGREGATION);
+				startRelationCreation(selectedPaneBox, RelationType.UNDIRECTED_AGGREGATION);
 			}
 		});
 		createDirectedAggregation.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
-				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DIRECTED_AGGREGATION);
+				startRelationCreation(selectedPaneBox, RelationType.DIRECTED_AGGREGATION);
 			}
 		});
 		createUndirectedComposition.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
-				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.UNDIRECTED_COMPOSITION);
+				startRelationCreation(selectedPaneBox, RelationType.UNDIRECTED_COMPOSITION);
 			}
 		});
 		createDirectedComposition.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
-				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DIRECTED_COMPOSITION);
+				startRelationCreation(selectedPaneBox, RelationType.DIRECTED_COMPOSITION);
 			}
 		});
 		createGeneralization.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
-				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.GENERALIZATION);
+				startRelationCreation(selectedPaneBox, RelationType.GENERALIZATION);
 			}
 		});
 		createDependency.setOnAction((ActionEvent e) -> {
-			if(selected instanceof PaneBox) {
+			if (selected instanceof PaneBox) {
 				PaneBox selectedPaneBox = (PaneBox) selected;
-				startRelationCreation(selectionController, subSceneAdapter, selectedPaneBox, RelationType.DEPENDENCY);
+				startRelationCreation(selectedPaneBox, RelationType.DEPENDENCY);
 			}
 		});
 
 		// Object
 		renameObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleRenameClassOrObject(selected);
+		});
+		createObjectRelation.setOnAction((ActionEvent e) -> {
+			if (selected instanceof PaneBox) {
+				PaneBox selectedPaneBox = (PaneBox) selected;
+				startRelationCreation(selectedPaneBox, RelationType.OBJDIAGRAM);
+			}
 		});
 		deleteObject.setOnAction((ActionEvent e) -> {
 			mvConnector.handleDelete(selected);
@@ -492,49 +514,49 @@ public class ContextMenuController extends Observable implements Observer {
 		});
 
 		setMultiplicity.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) {
+			if (atLineSelectionHelper) {
 				return;
 			}
-			if(atStartSelectionHelper) {
+			if (atStartSelectionHelper) {
 				mvConnector.handleSetMultiplicity(selected, true);
 			}
-			else if(atEndSelectionHelper) {
+			else if (atEndSelectionHelper) {
 				mvConnector.handleSetMultiplicity(selected, false);
 			}
 		});
 
 		deleteMultiplicity.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) {
+			if (atLineSelectionHelper) {
 				return;
 			}
-			if(atStartSelectionHelper) {
+			if (atStartSelectionHelper) {
 				mvConnector.handleDeleteMultiplicty(selected, true);
 			}
-			else if(atEndSelectionHelper) {
+			else if (atEndSelectionHelper) {
 				mvConnector.handleDeleteMultiplicty(selected, false);
 			}
 		});
 
 		setRoleName.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) {
+			if (atLineSelectionHelper) {
 				return;
 			}
-			if(atStartSelectionHelper) {
+			if (atStartSelectionHelper) {
 				mvConnector.handleSetRoleName(selected, true);
 			}
-			else if(atEndSelectionHelper) {
+			else if (atEndSelectionHelper) {
 				mvConnector.handleSetRoleName(selected, false);
 			}
 		});
 
 		deleteRoleName.setOnAction((ActionEvent e) -> {
-			if(atLineSelectionHelper) {
+			if (atLineSelectionHelper) {
 				return;
 			}
-			if(atStartSelectionHelper) {
+			if (atStartSelectionHelper) {
 				mvConnector.handleDeleteRoleName(selected, true);
 			}
-			else if(atEndSelectionHelper) {
+			else if (atEndSelectionHelper) {
 				mvConnector.handleDeleteRoleName(selected, false);
 			}
 
@@ -569,16 +591,6 @@ public class ContextMenuController extends Observable implements Observer {
 
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow)) {
-			SelectionController selectionController = (SelectionController) o;
-			if (selectionController.hasCurrentSelection()) {
-				this.selected = (Selectable) arg;
-			}
-		}
-	}
-
 	private ImageView getImageView(Resource image) {
 		return new ImageView(ResourceLocator.getResourcePath(image).toExternalForm());
 	}
@@ -595,5 +607,15 @@ public class ContextMenuController extends Observable implements Observer {
 		menuItem.setGraphic(getImageView(image));
 		parent.getItems().add(menuItem);
 		return menuItem;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o instanceof SelectionController && (arg instanceof PaneBox || arg instanceof Arrow)) {
+			SelectionController selectionController = (SelectionController) o;
+			if (selectionController.hasCurrentSelection()) {
+				this.selected = (Selectable) arg;
+			}
+		}
 	}
 }

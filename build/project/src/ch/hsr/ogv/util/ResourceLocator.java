@@ -29,8 +29,6 @@ public class ResourceLocator {
 
 		SCENE_CSS("css/Scene.css"),
 		TSPLITMENUBUTTON_CSS("css/TSplitMenuButton.css"),
-		LIGHTHEME_CSS("css/LightTheme.css"),
-		DARKTHEME_CSS("css/DarkTheme.css"),
 		TEXTFIELD_CSS("css/TextField.css"),
 
 		OPEN_ARROW_OBJ("models/open_arrow.obj"),
@@ -38,6 +36,7 @@ public class ResourceLocator {
 		EMPTY_ARROW_OBJ("models/empty_arrow.obj"),
 		FILLED_DIAMOND_OBJ("models/filled_diamond.obj"),
 		EMPTY_DIAMOND_OBJ("models/empty_diamond.obj"),
+		ARC_OBJ("models/arc.obj"),
 
 		UNDIRECTED_ASSOCIATION_GIF("images/menu/assoc.gif"),
 		DIRECTED_ASSOCIATION_GIF("images/menu/assoWithNav.gif"),
@@ -48,9 +47,10 @@ public class ResourceLocator {
 		DIRECTED_COMPOSITION_GIF("images/menu/compositeToNavi.gif"),
 		GENERALIZATION_GIF("images/menu/general.gif"),
 		DEPENDENCY_GIF("images/menu/depend.gif"),
+		OBJRELATION_GIF("images/menu/rightAngleOff.gif"),
 
 		IMPORT_PNG("images/menu/application-import.png"),
-		ADD_ATTR_GIF("images/menu/artifactPrj.gif"),	
+		ADD_ATTR_GIF("images/menu/artifactPrj.gif"),
 		CLASS_GIF("images/menu/structureclass.gif"),
 		OBJECT_GIF("images/menu/instance.gif"),
 		RELATION_GIF("images/menu/relation.gif"),
@@ -63,12 +63,11 @@ public class ResourceLocator {
 		ADD_MULTIPLICITY_GIF("images/menu/multiplicity.gif"),
 		ADD_ROLE_GIF("images/menu/ColRole.gif"),
 		DELETE_PNG("images/menu/trash.png"),
-		
+
 		MESSAGE_DEFAULT_PNG("images/menu/message_default.png"),
 		MESSAGE_INFO_PNG("images/menu/message_info.png"),
 		MESSAGE_WARN_PNG("images/menu/message_warn.png"),
 		MESSAGE_ERROR_PNG("images/menu/message_error.png");
-
 
 		private String relativePath = "./";
 
