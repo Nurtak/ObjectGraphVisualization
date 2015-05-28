@@ -124,7 +124,7 @@ public class ModelClassTest {
 		ModelClass modelClassA = mm.createClass(new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
 		String attrName = "bla";
 		Attribute attr = modelClassA.createAttribute(attrName);
-		assertEquals(attrName, attr.getName());
+		assertTrue(modelClassA.getAttributes().contains(attr));
 	}
 
 	@Test

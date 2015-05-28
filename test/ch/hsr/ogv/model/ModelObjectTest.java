@@ -1,7 +1,7 @@
 package ch.hsr.ogv.model;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
@@ -16,14 +16,15 @@ public class ModelObjectTest {
 	@Before
 	public void setUp() throws Exception
 	{
-		modelClassA = new ModelClass("A", new Point3D(-200, 200, 0), 100, 100, Color.BEIGE);
-		modelObjectA1 = new ModelObject("a", modelClassA, new Point3D(-200, 200, 200), 100, 100, Color.BEIGE.brighter().brighter());
+		ModelManager mm = new ModelManager();
+		modelClassA = mm.createClass(new Point3D(-200, 200, 0), 100, 100, Color.BEIGE);
+		modelObjectA1 = mm.createObject(modelClassA);
 	}
 
 	@Test
 	public void testAttributeValue() {
 		String attrName1 = "attr1";
-		Attribute attr1 = modelClassA.createAttribute(attrName1);
+		Attribute attr1 = new Attribute(attrName1);
 		String attrValue1 = "bla1";
 		modelObjectA1.addAttributeValue(attr1, attrValue1);
 		assertEquals(attrValue1, modelObjectA1.getAttributeValue(attrName1));
@@ -32,15 +33,26 @@ public class ModelObjectTest {
 
 	@Test
 	public void testIsSuperObject() {
-		assertTrue(modelObjectA1.isSuperObject());
+		assertFalse(modelObjectA1.isSuperObject());
 	}
 
 	@Test
 	public void testChangeAttributeValue() {
 		String attrName1 = "attr1";
 		Attribute attr1 = modelClassA.createAttribute(attrName1);
+		assertEquals("", modelObjectA1.getAttributeValue(attrName1));
 		String newAttrValue = "bli";
 		modelObjectA1.changeAttributeValue(attr1, newAttrValue);
+		assertEquals(newAttrValue, modelObjectA1.getAttributeValue(attrName1));
+	}
+
+	@Test
+	public void testChangeAttributeValueWithName() {
+		String attrName1 = "attr1";
+		Attribute attr1 = modelClassA.createAttribute(attrName1);
+		assertEquals("", modelObjectA1.getAttributeValue(attrName1));
+		String newAttrValue = "bli";
+		modelObjectA1.changeAttributeValue(attr1.getName(), newAttrValue);
 		assertEquals(newAttrValue, modelObjectA1.getAttributeValue(attrName1));
 	}
 
