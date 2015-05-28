@@ -6,6 +6,11 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import jfxtras.labs.util.Util;
 
+/**
+ * 
+ * @author Adrian Rieser
+ *
+ */
 public class ColorAdapter extends XmlAdapter<String, Color> {
 
 	/*

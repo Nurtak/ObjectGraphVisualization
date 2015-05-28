@@ -34,7 +34,7 @@ public class UserPreferences {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the ogv file preference, i.e. the file that was last opened. The preference is read from the OS specific registry. If no such preference can be found, null is returned.
 	 * 

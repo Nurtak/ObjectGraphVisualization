@@ -10,19 +10,19 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../css/LightTheme.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane cache="true" cacheHint="QUALITY" minHeight="768.0" minWidth="1024.0" prefHeight="900.0" prefWidth="1600.0" stylesheets="@../css/Scene.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<top>
       <GridPane>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-      		<MenuBar id="menubar" prefHeight="25.0" prefWidth="956.0" stylesheets="@../css/LightTheme.css" BorderPane.alignment="CENTER" GridPane.columnSpan="2">
+      		<MenuBar id="menubar" prefHeight="25.0" prefWidth="956.0" BorderPane.alignment="CENTER" GridPane.columnSpan="2">
       			<menus>
       				<Menu id="menu_file" mnemonicParsing="false" text="File">
       					<items>
@@ -141,7 +141,7 @@
                <items>
                   <ToggleButton fx:id="createClass" mnemonicParsing="false" onAction="#handleCreateClass" text="Create Class">
                      <toggleGroup>
-                        <ToggleGroup fx:id="createToolbar" />
+                        <ToggleGroup fx:id="toolbarGroup" />
                      </toggleGroup>
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -160,11 +160,12 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Separator orientation="VERTICAL">
+                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="30.0">
                      <padding>
                         <Insets left="3.0" />
                      </padding>
                   </Separator>
+                  <Label fx:id="classRelationLabel" text="Class Relation:" />
                   <SplitMenuButton fx:id="createAssociation" mnemonicParsing="false" onAction="#handleCreateAssociation" prefWidth="185.0" text="Association">
                     <items>
                         <MenuItem fx:id="createUndirectedAssociation" mnemonicParsing="false" onAction="#handleCreateUndirectedAssociation" text="Association">
@@ -225,6 +226,26 @@
                                  </image>
                               </ImageView>                           </graphic>
                         </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/general.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency">
+                           <graphic>
+                              <ImageView pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/menu/depend.gif" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </MenuItem>
                     </items>
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -234,25 +255,17 @@
                         </ImageView>
                      </graphic>
                   </SplitMenuButton>
-                  <ToggleButton fx:id="createGeneralization" mnemonicParsing="false" onAction="#handleCreateGeneralization" text="Generalization" toggleGroup="$createToolbar">
+                  <Separator orientation="VERTICAL" prefHeight="30.0" visible="false" />
+                  <ToggleButton fx:id="createObjectRelation" mnemonicParsing="false" onAction="#handleCreateObjectRelation" text="Object Relation" toggleGroup="$toolbarGroup">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../images/menu/general.gif" />
+                              <Image url="@../images/menu/rightAngleOff.gif" />
                            </image>
                         </ImageView>
                      </graphic>
                   </ToggleButton>
-                  <ToggleButton fx:id="createDependency" mnemonicParsing="false" onAction="#handleCreateDependency" text="Dependency" toggleGroup="$createToolbar">
-                     <graphic>
-                        <ImageView pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/menu/depend.gif" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </ToggleButton>
-                  <Separator orientation="VERTICAL">
+                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="30.0">
                      <padding>
                         <Insets left="3.0" />
                      </padding>
@@ -266,18 +279,27 @@
                         </ImageView>
                      </graphic>
                   </Button>
-                  <Separator orientation="VERTICAL">
+                  <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="30.0">
                      <padding>
                         <Insets left="3.0" />
                      </padding>
                   </Separator>
+                  <Label fx:id="pickColorLabel" text="Pick color: " />
+                  <ColorPicker fx:id="pickColor" disable="true" nodeOrientation="LEFT_TO_RIGHT" onAction="#handlePickColor" />
                </items>
             </ToolBar>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-              <items>
-                  <ColorPicker fx:id="colorPick" disable="true" nodeOrientation="LEFT_TO_RIGHT" onAction="#handleColorPick" promptText="Set Color" />
-                  <Label fx:id="pickColorLabel" text="Pick color: " />
-              </items>
+               <items>
+                  <ToggleButton fx:id="objectGraphMode" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#handleObjectGraphMode" text="Object Graph Mode" toggleGroup="$toolbarGroup">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/menu/ActivityClassDiagram.gif" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </ToggleButton>
+               </items>
             </ToolBar>
          </children>
       </GridPane>

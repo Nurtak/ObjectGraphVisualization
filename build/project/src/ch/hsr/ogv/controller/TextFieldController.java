@@ -19,11 +19,11 @@ import ch.hsr.ogv.model.ModelBox;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
+import ch.hsr.ogv.util.MessageBar;
 import ch.hsr.ogv.util.MultiplicityParser;
+import ch.hsr.ogv.util.MessageBar.MessageLevel;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.ArrowLabel;
-import ch.hsr.ogv.view.MessageBar;
-import ch.hsr.ogv.view.MessageBar.MessageLevel;
 import ch.hsr.ogv.view.PaneBox;
 
 /**
@@ -69,14 +69,21 @@ public class TextFieldController {
 					}
 					else if(modelBox instanceof ModelObject) {
 						ModelObject modelObject = (ModelObject) modelBox;
-						if(topTextField.getText() != null && !topTextField.getText().isEmpty() && !topTextField.getText().equals(modelBox.getName())
-								&& mvConnector.getModelManager().isObjectNameTaken(modelObject.getModelClass(), topTextField.getText())) {
+						if(topTextField.getText() == null) {
 							MessageBar.setText("Could not rename object \"" + modelBox.getName() + "\", an object \"" + topTextField.getText() + "\" already exists for this class.", MessageLevel.ALERT);
 							modelBox.setName(modelBox.getName());
 						}
 						else {
+							if(topTextField.getText().isEmpty()) {
+								MessageBar.setText("Former Object \"" + modelBox.getName() + "\" is now anonyous.", MessageLevel.INFO);
+							}
+							else if (!topTextField.getText().isEmpty() && !topTextField.getText().equals(modelBox.getName())
+									&& mvConnector.getModelManager().isObjectNameTaken(modelObject.getModelClass(), topTextField.getText())) {
+								MessageBar.setText("Object \"" + topTextField.getText() + "\" is not unique for its class.", MessageLevel.WARN);
+							}
 							modelBox.setName(checkObjectName(modelBox.getName(), topTextField.getText()));
 						}
+						
 					}
 				}
 			}
@@ -384,8 +391,8 @@ public class TextFieldController {
 	}
 	
 	private String checkObjectName(String oldName, String newName) {
-		if(newName == null || newName.isEmpty()) {
-			MessageBar.setText("Could not rename object \"" + oldName + "\", objectname can not be empty.", MessageLevel.ALERT);
+		if(newName == null) { // empty name allowed
+			MessageBar.setText("Could not rename object \"" + oldName + "\", objectname can not be null.", MessageLevel.ALERT);
 			return oldName;
 		}
 		return newName;
@@ -426,10 +433,14 @@ public class TextFieldController {
 		if(newMultiplicity == null || newMultiplicity.isEmpty()) {
 			return oldMultiplicity;
 		}
-		newMultiplicity = MultiplicityParser.getParsedMultiplicity(newMultiplicity);
+		String copyNewMulti = newMultiplicity;
+		newMultiplicity = MultiplicityParser.getParsed(newMultiplicity);
 		if(newMultiplicity == null) {
-			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be of in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N. (Comma separation possible)", MessageLevel.ALERT);
+			MessageBar.setText("Could not set multiplicity replacing \"" + oldMultiplicity + "\", multiplicity must be in the N-Form, where N is a digit > 0 or '*' or in the N..M-Form, where N is a digit >= 0, M is a digit >= 1 or '*' and M > N. (Comma separation possible)", MessageLevel.ALERT);
 			return oldMultiplicity;
+		}
+		if(!newMultiplicity.equals(copyNewMulti)) {
+			MessageBar.setText("Converted new multiplicity to a correct form.", MessageLevel.WARN);
 		}
 		return newMultiplicity;
 	}

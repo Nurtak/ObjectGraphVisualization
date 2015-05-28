@@ -10,20 +10,19 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.hsr.ogv.controller.StageManager;
 import ch.hsr.ogv.util.ResourceLocator;
 import ch.hsr.ogv.util.ResourceLocator.Resource;
 
 /**
  * Starts the application.
  * 
- * @author Simon Gwerder
+ * @author Simon Gwerder, Adrian Rieser
  *
  */
 public class MainApp extends Application {
 
 	private final static Logger logger = LoggerFactory.getLogger(MainApp.class);
-	
+
 	private final static UncaughtExceptionHandler ueHandler = new UncaughtExceptionHandler() {
 		public void uncaughtException(Thread thread, final Throwable throwable) {
 			logger.debug("Error in thread " + thread + ": " + throwable.getMessage());
@@ -44,7 +43,7 @@ public class MainApp extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		Thread.currentThread().setUncaughtExceptionHandler(ueHandler);
-		new StageManager(primaryStage);
+		new StageBuilder(primaryStage);
 	}
 
 }

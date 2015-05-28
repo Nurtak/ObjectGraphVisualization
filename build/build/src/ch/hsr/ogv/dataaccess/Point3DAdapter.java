@@ -4,6 +4,11 @@ import javafx.geometry.Point3D;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+/**
+ * 
+ * @author Adrian Rieser
+ *
+ */
 public class Point3DAdapter extends XmlAdapter<OGVPoint3D, Point3D> {
 
 	/*

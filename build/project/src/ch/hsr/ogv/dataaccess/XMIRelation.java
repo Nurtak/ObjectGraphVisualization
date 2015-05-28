@@ -8,7 +8,7 @@ import ch.hsr.ogv.model.RelationType;
  *
  */
 public class XMIRelation {
-	
+
 	private String name = "";
 	private RelationType type = RelationType.UNDIRECTED_ASSOCIATION;
 	private String sourceID;
@@ -17,35 +17,35 @@ public class XMIRelation {
 	private String targetRoleName;
 	private String sourceMultiplicity;
 	private String targetMultiplicity;
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public RelationType getType() {
 		return type;
 	}
-	
+
 	public void setType(RelationType type) {
 		this.type = type;
 	}
-	
+
 	public String getSourceID() {
 		return sourceID;
 	}
-	
+
 	public void setSourceID(String sourceID) {
 		this.sourceID = sourceID;
 	}
-	
+
 	public String getTargetID() {
 		return targetID;
 	}
-	
+
 	public void setTargetID(String targetID) {
 		this.targetID = targetID;
 	}

@@ -1,7 +1,7 @@
 package ch.hsr.ogv.dataaccess;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -19,17 +19,23 @@ import org.slf4j.LoggerFactory;
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.Relation;
 
+
+/**
+ * 
+ * @author Adrian Rieser
+ *
+ */
 @XmlRootElement(name = "model")
-@XmlType(propOrder = { "classes", "relations"})
+@XmlType(propOrder = { "classes", "relations" })
 public class OGVSerialization implements SerializationStrategy {
 
 	private final static Logger logger = LoggerFactory.getLogger(OGVSerialization.class);
-	
-	private Set<ModelClass> classes = new HashSet<ModelClass>();
-	private Set<Relation> relations = new HashSet<Relation>();
 
-	@XmlElementWrapper (name = "classes")
-	@XmlElement (name = "class")
+	private Set<ModelClass> classes = new LinkedHashSet<ModelClass>();
+	private Set<Relation> relations = new LinkedHashSet<Relation>();
+
+	@XmlElementWrapper(name = "classes")
+	@XmlElement(name = "class")
 	@Override
 	public Set<ModelClass> getClasses() {
 		return this.classes;
@@ -39,14 +45,14 @@ public class OGVSerialization implements SerializationStrategy {
 	public void setClasses(Set<ModelClass> classes) {
 		this.classes = classes;
 	}
-	
-	@XmlElementWrapper (name = "relations")
-	@XmlElement (name = "relation")
+
+	@XmlElementWrapper(name = "relations")
+	@XmlElement(name = "relation")
 	@Override
 	public Set<Relation> getRelations() {
 		return this.relations;
 	}
-	
+
 	@Override
 	public void setRelations(Set<Relation> relations) {
 		this.relations = relations;
@@ -63,7 +69,8 @@ public class OGVSerialization implements SerializationStrategy {
 			setClasses(ogvUnmarshalled.getClasses());
 			setRelations(ogvUnmarshalled.getRelations());
 			return true;
-		} catch (JAXBException e) {
+		}
+		catch (JAXBException e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());
 		}
@@ -78,7 +85,8 @@ public class OGVSerialization implements SerializationStrategy {
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			m.marshal(this, file);
 			return true;
-		} catch (JAXBException e) {
+		}
+		catch (JAXBException e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());
 		}

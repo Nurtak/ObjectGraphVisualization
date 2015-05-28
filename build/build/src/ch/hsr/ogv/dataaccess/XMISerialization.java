@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,8 +17,8 @@ import org.xml.sax.SAXException;
 
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.Relation;
-import ch.hsr.ogv.view.MessageBar;
-import ch.hsr.ogv.view.MessageBar.MessageLevel;
+import ch.hsr.ogv.util.MessageBar;
+import ch.hsr.ogv.util.MessageBar.MessageLevel;
 
 /**
  * This class represents a XMI Parser. It reads the Version of the XMI File and use an according handler. If no handler for the version exists or the 
@@ -50,7 +50,7 @@ public class XMISerialization implements SerializationStrategy {
 	 */
 	@Override
 	public Set<Relation> getRelations() {
-		return new HashSet<Relation>(xmiHandler.getRelations());
+		return new LinkedHashSet<Relation>(xmiHandler.getRelations());
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class XMISerialization implements SerializationStrategy {
 	 */
 	@Override
 	public Set<ModelClass> getClasses() {
-		return new HashSet<ModelClass>(xmiHandler.getClasses());
+		return new LinkedHashSet<ModelClass>(xmiHandler.getClasses());
 	}
 	
 	@Override
@@ -91,7 +91,8 @@ public class XMISerialization implements SerializationStrategy {
 			try {
 				mParser.parse(xmiFile, xmiHandler);
 				return true;
-			} catch (org.xml.sax.SAXParseException e) {
+			}
+			catch (org.xml.sax.SAXParseException e) {
 				logger.debug(e.getMessage());
 				MessageBar.setText("Unable to read XMI file: \"" + xmiFile.getPath() + "\".", MessageLevel.ALERT);
 			}

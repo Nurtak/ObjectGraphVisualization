@@ -323,7 +323,7 @@ public class ModelClass extends ModelBox {
 	public List<ModelClass> getSubClasses() {
 		ArrayList<ModelClass> subClassList = new ArrayList<ModelClass>();
 		for (Endpoint endpoint : getEndpoints()) {
-			if (endpoint.getFriend() != null && endpoint.getType() == EndpointType.EMPTY_ARROW) {
+			if (endpoint.getFriend() != null && endpoint.getEndpointType() == EndpointType.EMPTY_ARROW) {
 				ModelBox modelBox = endpoint.getFriend().getAppendant();
 				if (modelBox != null && modelBox instanceof ModelClass) {
 					ModelClass subClass = (ModelClass) modelBox;
@@ -338,7 +338,7 @@ public class ModelClass extends ModelBox {
 	}
 	
 	private ModelClass getDirectSuperClass(Endpoint endpoint) {
-		if (endpoint.getFriend() != null && endpoint.getFriend().getType() == EndpointType.EMPTY_ARROW) {
+		if (endpoint.getFriend() != null && endpoint.getFriend().getEndpointType() == EndpointType.EMPTY_ARROW) {
 			ModelBox modelBox = endpoint.getFriend().getAppendant();
 			if (modelBox != null && modelBox instanceof ModelClass) {
 				return (ModelClass) modelBox;

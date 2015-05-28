@@ -14,7 +14,7 @@ public class Endpoint {
 	// for un/marshaling only
 	private String uniqueID = UUID.randomUUID().toString();
 
-	private EndpointType type;
+	private EndpointType endpointType;
 	private String roleName;
 	private String multiplicity;
 	private Relation relation;
@@ -25,7 +25,7 @@ public class Endpoint {
 	}
 
 	public Endpoint(EndpointType type, ModelBox appendant) {
-		this.type = type;
+		this.endpointType = type;
 		this.appendant = appendant;
 	}
 
@@ -37,12 +37,12 @@ public class Endpoint {
 		this.uniqueID = uniqueID;
 	}
 
-	public EndpointType getType() {
-		return type;
+	public EndpointType getEndpointType() {
+		return endpointType;
 	}
 
-	public void setType(EndpointType type) {
-		this.type = type;
+	public void setEndpointType(EndpointType endpointType) {
+		this.endpointType = endpointType;
 	}
 
 	public String getRoleName() {
