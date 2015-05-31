@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  *
  * @author Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 public class Endpoint {

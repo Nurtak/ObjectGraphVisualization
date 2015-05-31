@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 
+/**
+ * 
+ * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
+ *
+ */
 public class ObjModelLoader {
 	
 	private final static Logger logger = LoggerFactory.getLogger(ObjModelLoader.class);

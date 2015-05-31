@@ -17,6 +17,7 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
  * Starts the application.
  * 
  * @author Simon Gwerder, Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 public class MainApp extends Application {

@@ -21,6 +21,7 @@ import ch.hsr.ogv.dataaccess.Point3DAdapter;
 /**
  *
  * @author Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 @XmlType(propOrder = { "name", "coordinates", "width", "height", "color", "endpoints" })

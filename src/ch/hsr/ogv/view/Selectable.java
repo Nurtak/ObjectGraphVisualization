@@ -5,6 +5,7 @@ import javafx.scene.Group;
 /**
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public interface Selectable {

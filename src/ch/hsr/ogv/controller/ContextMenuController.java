@@ -31,6 +31,7 @@ import ch.hsr.ogv.view.SubSceneAdapter;
 /**
  *
  * @author Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 public class ContextMenuController extends Observable implements Observer {

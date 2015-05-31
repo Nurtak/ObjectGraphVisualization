@@ -53,6 +53,7 @@ import ch.hsr.ogv.view.TSplitMenuButton;
 /**
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class ViewController implements Observer, Initializable {
@@ -226,9 +227,9 @@ public class ViewController implements Observer, Initializable {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("About");
 		alert.setHeaderText("Object Graph Visualizer");
-		alert.setContentText("Version:\t3.0"
+		alert.setContentText("Version:\t3.1"
 				+ "\nAuthors:\tSimon Gwerder, Adrian Rieser"
-				+ "\nRelease:\t28.05.2015\n"
+				+ "\nRelease:\t12.06.2015\n"
 				+ "\nBachelor Thesis"
 				+ "\nHSR University of Applied Sciences Rapperswil");
 		Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();

@@ -18,6 +18,7 @@ import jfxtras.labs.util.Util;
 /**
  *
  * @author Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 @XmlType(propOrder = { "attributes", "modelObjects" })

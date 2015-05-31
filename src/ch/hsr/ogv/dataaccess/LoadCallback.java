@@ -9,6 +9,7 @@ import ch.hsr.ogv.util.MessageBar.MessageLevel;
 /**
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class LoadCallback implements PersistencyCallback {

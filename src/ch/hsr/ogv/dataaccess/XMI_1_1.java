@@ -14,7 +14,7 @@ import ch.hsr.ogv.model.RelationType;
  * This Class is a handler for parsing XMI 1.1 files from Enterprise Architect.
  * 
  * @author Dario Vonaesch, Simon Gwerder
- * @version 3DCOV 3.0, May 2007 / OGV 3.0, May 2015
+ * @version 3DCOV 3.0, May 2007 / OGV 3.1, May 2015
  */
 public class XMI_1_1 extends XMIHandler {
 

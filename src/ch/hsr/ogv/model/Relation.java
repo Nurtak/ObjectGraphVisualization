@@ -11,6 +11,7 @@ import ch.hsr.ogv.dataaccess.ColorAdapter;
 /**
  *
  * @author Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 public class Relation extends Observable {

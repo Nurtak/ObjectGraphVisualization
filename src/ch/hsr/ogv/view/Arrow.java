@@ -18,6 +18,7 @@ import ch.hsr.ogv.util.GeometryUtil;
 /**
  *
  * @author Simon Gwerder, Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 public class Arrow extends Group implements Selectable {

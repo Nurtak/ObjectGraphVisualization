@@ -33,8 +33,10 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
 import ch.hsr.ogv.view.SubSceneAdapter;
 
 /**
+ * Initialises the stage and the controllers.
  *
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class StageBuilder {

@@ -15,6 +15,7 @@ import ch.hsr.ogv.util.ResourceLocator.Resource;
 /**
  * 
  * @author Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 public class TSplitMenuButton implements Toggle {

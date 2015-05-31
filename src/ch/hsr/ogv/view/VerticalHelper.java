@@ -13,6 +13,7 @@ import ch.hsr.ogv.model.ModelClass;
 /**
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class VerticalHelper extends Group {

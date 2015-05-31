@@ -25,7 +25,7 @@ import ch.hsr.ogv.util.MessageBar.MessageLevel;
  * version is not supported an Error Message is created.
  * 
  * @author Dario Vonaesch, Simon Gwerder
- * @version 3DCOV 3.0, May 2007 / OGV 3.0, May 2015
+ * @version 3DCOV 3.0, May 2007 / OGV 3.1, May 2015
  */
 public class XMISerialization implements SerializationStrategy {
 

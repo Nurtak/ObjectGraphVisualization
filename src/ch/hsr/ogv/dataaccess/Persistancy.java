@@ -19,6 +19,7 @@ import ch.hsr.ogv.model.Relation;
 /**
  * 
  * @author Adrian Rieser, Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class Persistancy {

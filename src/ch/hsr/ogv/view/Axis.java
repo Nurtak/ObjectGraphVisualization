@@ -9,6 +9,7 @@ import jfxtras.labs.util.Util;
 /**
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class Axis extends Group {

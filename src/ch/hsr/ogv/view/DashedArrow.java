@@ -8,6 +8,12 @@ import javafx.scene.shape.Box;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.GeometryUtil;
 
+/**
+ * 
+ * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
+ *
+ */
 public class DashedArrow extends Arrow {
 	
 	private static final int DASHED_ELEMENT_COUNT = 20;

@@ -8,6 +8,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  * @author Dario Vonaesch
  * @version 3.0, May 2007
+ * 
  */
 public class VersionHandler extends DefaultHandler {
 	private StringBuffer mChars;

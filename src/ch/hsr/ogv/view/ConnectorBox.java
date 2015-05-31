@@ -5,6 +5,12 @@ import javafx.scene.Group;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
+/**
+ * 
+ * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
+ *
+ */
 public class ConnectorBox extends Group {
 	
 	public ConnectorBox(PaneBox paneBox, Point3D centerLabelPos, Arrow arrow) {

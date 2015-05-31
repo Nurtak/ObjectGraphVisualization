@@ -12,6 +12,7 @@ import ch.hsr.ogv.view.VerticalHelper;
 /**
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class MouseMoveController extends Observable {

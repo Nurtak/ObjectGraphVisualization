@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 /**
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class TextUtil {

@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 /**
  * 
  * @author Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 public class Point3DAdapter extends XmlAdapter<OGVPoint3D, Point3D> {

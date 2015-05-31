@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  *
  * @author Adrian Rieser
+ * @version OGV 3.1, May 2015
  *
  */
 @XmlType(propOrder = { "uniqueID", "attributeValues" })

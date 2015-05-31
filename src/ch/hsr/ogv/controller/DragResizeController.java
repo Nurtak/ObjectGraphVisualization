@@ -14,6 +14,7 @@ import javafx.scene.Cursor;
 /**
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class DragResizeController extends DragController {

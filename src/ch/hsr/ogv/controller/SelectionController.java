@@ -19,6 +19,7 @@ import ch.hsr.ogv.view.SubSceneAdapter;
 /**
  *
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class SelectionController extends Observable implements Observer {

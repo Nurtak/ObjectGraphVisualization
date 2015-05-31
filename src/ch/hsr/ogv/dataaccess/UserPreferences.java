@@ -7,6 +7,7 @@ import java.util.prefs.Preferences;
  * Class that handles user preferences
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class UserPreferences {

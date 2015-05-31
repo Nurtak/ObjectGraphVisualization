@@ -7,6 +7,7 @@ import javafx.scene.transform.Rotate;
 /**
  * 
  * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
  *
  */
 public class BoxSelection extends Group {

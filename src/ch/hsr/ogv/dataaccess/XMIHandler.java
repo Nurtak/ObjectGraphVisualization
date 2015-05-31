@@ -13,7 +13,7 @@ import ch.hsr.ogv.model.Relation;
  * This class is the Definition for a XMI Handler.
  * 
  * @author Dario Vonaesch, Simon Gwerder
- * @version 3DCOV 3.0, May 2007 / OGV 3.0, May 2015
+ * @version 3DCOV 3.0, May 2007 / OGV 3.1, May 2015
  */
 public class XMIHandler extends DefaultHandler {
 

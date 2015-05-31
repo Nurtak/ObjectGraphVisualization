@@ -8,6 +8,12 @@ import javafx.scene.transform.Rotate;
 import ch.hsr.ogv.model.RelationType;
 import ch.hsr.ogv.util.GeometryUtil;
 
+/**
+ * 
+ * @author Simon Gwerder
+ * @version OGV 3.1, May 2015
+ *
+ */
 public class ReflexiveArrow extends Arrow {
 
 	/**         
