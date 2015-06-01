@@ -417,7 +417,7 @@ public class ContextMenuController extends Observable implements Observer {
 		createClass.setOnAction((ActionEvent e) -> {
 			PaneBox newPaneBox = this.mvConnector.handleCreateNewClass(position);
 			if (newPaneBox != null) {
-				new SpeedCreationController(newPaneBox, this.mvConnector);
+				new QuickCreationController(newPaneBox, this.mvConnector);
 				selectionController.setSelected(newPaneBox, true, subSceneAdapter);
 			}
 		});
@@ -426,7 +426,7 @@ public class ContextMenuController extends Observable implements Observer {
 		createObject.setOnAction((ActionEvent e) -> {
 			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject(selected);
 			if (newPaneBox != null) {
-				new SpeedCreationController(newPaneBox, this.mvConnector);
+				new QuickCreationController(newPaneBox, this.mvConnector);
 				selectionController.setSelected(newPaneBox, true, subSceneAdapter);
 			}
 		});

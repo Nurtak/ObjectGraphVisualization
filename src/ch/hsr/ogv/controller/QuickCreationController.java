@@ -19,7 +19,7 @@ import ch.hsr.ogv.view.PaneBox;
  * @version OGV 3.1, May 2015
  *
  */
-public class SpeedCreationController {
+public class QuickCreationController {
 
 	private ModelViewConnector mvConnector;
 	private TextField textField;
@@ -32,11 +32,11 @@ public class SpeedCreationController {
 
 	private volatile boolean disableSpeedCreation = false;
 
-	public SpeedCreationController(PaneBox paneBox, ModelViewConnector mvConnector) {
+	public QuickCreationController(PaneBox paneBox, ModelViewConnector mvConnector) {
 		this(paneBox.getTopTextField(), paneBox, mvConnector); // starting with topTextField
 	}
 
-	private SpeedCreationController(TextField textField, PaneBox paneBox, ModelViewConnector mvConnector) {
+	private QuickCreationController(TextField textField, PaneBox paneBox, ModelViewConnector mvConnector) {
 		this.textField = textField;
 		this.paneBox = paneBox;
 		this.mvConnector = mvConnector;
@@ -56,7 +56,7 @@ public class SpeedCreationController {
 				Attribute newAttribute = this.mvConnector.handleCreateNewAttribute(this.paneBox);
 				for (TextField centerTextField : this.paneBox.getCenterTextFields()) {
 					if (centerTextField.getText().equals(newAttribute.getName())) {
-						new SpeedCreationController(centerTextField, this.paneBox, this.mvConnector);
+						new QuickCreationController(centerTextField, this.paneBox, this.mvConnector);
 					}
 				}
 			}
@@ -97,14 +97,14 @@ public class SpeedCreationController {
 				if (selectedLabel != null && selectedLabel.equals(this.paneBox.getTopLabel()) && !this.paneBox.getCenterLabels().isEmpty()) {
 					Label firstCenterLabel = this.paneBox.getCenterLabels().get(0);
 					this.paneBox.allowCenterFieldTextInput(firstCenterLabel, true);
-					new SpeedCreationController(this.paneBox.getCenterTextFields().get(0), paneBox, mvConnector);
+					new QuickCreationController(this.paneBox.getCenterTextFields().get(0), paneBox, mvConnector);
 				}
 				else if (selectedLabel != null && this.paneBox.getCenterLabels().contains(selectedLabel)) {
 					int rowIndex = this.paneBox.getCenterLabels().indexOf(selectedLabel);
 					if (rowIndex + 1 > 0 && rowIndex + 1 < this.paneBox.getCenterLabels().size()) {
 						Label nextCenterLabel = this.paneBox.getCenterLabels().get(rowIndex + 1);
 						this.paneBox.allowCenterFieldTextInput(nextCenterLabel, true);
-						new SpeedCreationController(this.paneBox.getCenterTextFields().get(rowIndex + 1), paneBox, mvConnector);
+						new QuickCreationController(this.paneBox.getCenterTextFields().get(rowIndex + 1), paneBox, mvConnector);
 					}
 				}
 			}

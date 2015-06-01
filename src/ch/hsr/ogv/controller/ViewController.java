@@ -425,7 +425,7 @@ public class ViewController implements Observer, Initializable {
 		if (this.selectionController.hasCurrentSelection() && selected instanceof PaneBox && mvConnector.getModelBox((PaneBox) selected) instanceof ModelClass) {
 			PaneBox newPaneBox = this.mvConnector.handleCreateNewObject(selected);
 			if (newPaneBox != null) {
-				new SpeedCreationController(newPaneBox, this.mvConnector);
+				new QuickCreationController(newPaneBox, this.mvConnector);
 				this.selectionController.setSelected(newPaneBox, true, this.subSceneAdapter);
 			}
 		}
@@ -695,7 +695,7 @@ public class ViewController implements Observer, Initializable {
 		else if (o instanceof SelectionController && arg instanceof Floor && selectionController.hasCurrentSelection() && createClass.isSelected() && !relationCreationController.isInProcess()) { // creating class
 			PaneBox newPaneBox = mvConnector.handleCreateNewClass(selectionController.getCurrentSelectionCoord());
 			if (newPaneBox != null) {
-				new SpeedCreationController(newPaneBox, mvConnector);
+				new QuickCreationController(newPaneBox, mvConnector);
 				selectionController.setSelected(newPaneBox, true, subSceneAdapter);
 				createClass.setSelected(false);
 			}
