@@ -179,7 +179,7 @@
 			updatemode="background" >
 	
 			<fx:platform basedir="${java.home}"/>
-			<fx:info title="ObjectGraphVisualization" vendor="hsr.ch"/>
+			<fx:info title="ObjectGraphVisualizer" vendor="hsr.ch"/>
 	
 			<fx:application refId="fxApplication"/>
 			<fx:resources refid="appRes"/>
