@@ -25,7 +25,7 @@ import ch.hsr.ogv.dataaccess.Point3DAdapter;
  *
  */
 @XmlType(propOrder = { "name", "coordinates", "width", "height", "color", "endpoints" })
-public class ModelBox extends Observable {
+public abstract class ModelBox extends Observable {
 
 	protected String name = "";
 	protected Point3D coordinates = new Point3D(0, 0, 0);

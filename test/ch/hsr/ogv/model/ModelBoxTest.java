@@ -13,7 +13,7 @@ public class ModelBoxTest {
 
 	@Before
 	public void setUp() throws Exception {
-		mb = new ModelBox("", new Point3D(-200, 200, 0), 100, 100, Color.BEIGE);
+		mb = new ModelClass("", new Point3D(-200, 200, 0), 100, 100, Color.BEIGE);
 	}
 
 	@Test
