@@ -1,10 +1,9 @@
 package ch.hsr.ogv.dataaccess;
 
-import javafx.scene.paint.Color;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import jfxtras.labs.util.Util;
+import ch.hsr.ogv.util.ColorUtil;
+import javafx.scene.paint.Color;
 
 /**
  * 
@@ -19,7 +18,7 @@ public class ColorAdapter extends XmlAdapter<String, Color> {
 	 */
 	@Override
 	public String marshal(Color val) throws Exception {
-		return Util.colorToWebColor(val);
+		return ColorUtil.colorToWebColor(val);
 	}
 
 	/*
@@ -27,6 +26,6 @@ public class ColorAdapter extends XmlAdapter<String, Color> {
 	 */
 	@Override
 	public Color unmarshal(String val) throws Exception {
-		return Util.webColorToColor(val);
+		return ColorUtil.webColorToColor(val);
 	}
 }

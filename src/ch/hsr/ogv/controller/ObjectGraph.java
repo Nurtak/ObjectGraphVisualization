@@ -3,8 +3,6 @@ package ch.hsr.ogv.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.geometry.Point3D;
-import jfxtras.labs.util.Util;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
@@ -12,11 +10,13 @@ import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.RelationType;
+import ch.hsr.ogv.util.ColorUtil;
 import ch.hsr.ogv.util.MultiplicityParser;
 import ch.hsr.ogv.view.Arrow;
 import ch.hsr.ogv.view.ConnectorBox;
 import ch.hsr.ogv.view.PaneBox;
 import ch.hsr.ogv.view.SubSceneAdapter;
+import javafx.geometry.Point3D;
 
 /**
  * 
@@ -189,7 +189,7 @@ public class ObjectGraph {
 		paneBox.setTopText(" : " + modelClass.getName() + "[" + upperBoundStr + "]");
 		paneBox.setTopUnderline(true);
 		paneBox.setIndexCenterGrid(0);
-		paneBox.setColor(Util.brighter(modelClass.getColor(), 0.1));
+		paneBox.setColor(ColorUtil.brighter(modelClass.getColor(), 0.1));
 		Point3D newPosition = modelObject.getCoordinates().midpoint(modelClass.getCoordinates());
 		// newPosition = modelObject.getCoordinates().midpoint(newPosition);
 		if(!relation.isReflexive()) {

@@ -7,6 +7,26 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
 
+import ch.hsr.ogv.dataaccess.ImportCallback;
+import ch.hsr.ogv.dataaccess.LoadCallback;
+import ch.hsr.ogv.dataaccess.Persistancy;
+import ch.hsr.ogv.dataaccess.SaveCallback;
+import ch.hsr.ogv.dataaccess.UserPreferences;
+import ch.hsr.ogv.model.Endpoint;
+import ch.hsr.ogv.model.ModelBox;
+import ch.hsr.ogv.model.ModelClass;
+import ch.hsr.ogv.model.ModelObject;
+import ch.hsr.ogv.model.RelationType;
+import ch.hsr.ogv.util.ColorUtil;
+import ch.hsr.ogv.util.MessageBar;
+import ch.hsr.ogv.util.MessageBar.MessageLevel;
+import ch.hsr.ogv.view.Arrow;
+import ch.hsr.ogv.view.Floor;
+import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.Selectable;
+import ch.hsr.ogv.view.SubSceneAdapter;
+import ch.hsr.ogv.view.SubSceneCamera;
+import ch.hsr.ogv.view.TSplitMenuButton;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -29,26 +49,6 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import jfxtras.labs.util.Util;
-import ch.hsr.ogv.dataaccess.ImportCallback;
-import ch.hsr.ogv.dataaccess.LoadCallback;
-import ch.hsr.ogv.dataaccess.Persistancy;
-import ch.hsr.ogv.dataaccess.SaveCallback;
-import ch.hsr.ogv.dataaccess.UserPreferences;
-import ch.hsr.ogv.model.Endpoint;
-import ch.hsr.ogv.model.ModelBox;
-import ch.hsr.ogv.model.ModelClass;
-import ch.hsr.ogv.model.ModelObject;
-import ch.hsr.ogv.model.RelationType;
-import ch.hsr.ogv.util.MessageBar;
-import ch.hsr.ogv.util.MessageBar.MessageLevel;
-import ch.hsr.ogv.view.Arrow;
-import ch.hsr.ogv.view.Floor;
-import ch.hsr.ogv.view.PaneBox;
-import ch.hsr.ogv.view.Selectable;
-import ch.hsr.ogv.view.SubSceneAdapter;
-import ch.hsr.ogv.view.SubSceneCamera;
-import ch.hsr.ogv.view.TSplitMenuButton;
 
 /**
  * 
@@ -682,7 +682,7 @@ public class ViewController implements Observer, Initializable {
 		this.pickColor.getCustomColors().add(SubSceneAdapter.DEFAULT_COLOR);
 		this.pickColor.getCustomColors().add(Floor.DEFAULT_COLOR);
 		this.pickColor.getCustomColors().add(PaneBox.DEFAULT_COLOR);
-		this.pickColor.getCustomColors().add(Util.brighter(PaneBox.DEFAULT_COLOR, 0.1));
+		this.pickColor.getCustomColors().add(ColorUtil.brighter(PaneBox.DEFAULT_COLOR, 0.1));
 		initToggleRelationMap();
 	}
 	

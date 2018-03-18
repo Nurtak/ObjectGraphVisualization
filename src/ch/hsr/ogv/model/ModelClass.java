@@ -6,14 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javafx.geometry.Point3D;
-import javafx.scene.paint.Color;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
-import jfxtras.labs.util.Util;
+import ch.hsr.ogv.util.ColorUtil;
+import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -179,7 +178,7 @@ public class ModelClass extends ModelBox {
 	public ModelObject createModelObject(String name) {
 		double levelPlus = getTopLevel() + OBJECT_LEVEL_DIFF;
 		Point3D modelObjectCoordinates = new Point3D(this.getX(), levelPlus, this.getZ());
-		ModelObject modelObject = new ModelObject(name, this, modelObjectCoordinates, this.getWidth(), this.getHeight(), Util.brighter(this.getColor(), 0.1));
+		ModelObject modelObject = new ModelObject(name, this, modelObjectCoordinates, this.getWidth(), this.getHeight(), ColorUtil.brighter(this.getColor(), 0.1));
 		for (Attribute attribute : getAttributes()) {
 			modelObject.addAttributeValue(attribute, "");
 		}

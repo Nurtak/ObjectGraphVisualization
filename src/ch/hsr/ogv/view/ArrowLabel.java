@@ -1,5 +1,9 @@
 package ch.hsr.ogv.view;
 
+import ch.hsr.ogv.util.ColorUtil;
+import ch.hsr.ogv.util.FXMLResourceUtil;
+import ch.hsr.ogv.util.ResourceLocator.Resource;
+import ch.hsr.ogv.util.TextUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
@@ -14,10 +18,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
-import jfxtras.labs.util.Util;
-import ch.hsr.ogv.util.FXMLResourceUtil;
-import ch.hsr.ogv.util.ResourceLocator.Resource;
-import ch.hsr.ogv.util.TextUtil;
 
 /**
  * 
@@ -103,7 +103,7 @@ public class ArrowLabel extends Group {
 	public void setLabelSelected(boolean isLabelSelected) {
 		this.isLabelSelected = isLabelSelected;
 		if(isLabelSelected) {
-			this.container.setStyle("-fx-border-color: " + Util.colorToCssColor(SELECTION_COLOR) + ";\n" + "-fx-border-width: 1;");
+			this.container.setStyle("-fx-border-color: " + ColorUtil.colorToCssColor(SELECTION_COLOR) + ";\n" + "-fx-border-width: 1;");
 			setColor(SELECTION_COLOR);
 		}
 		else {

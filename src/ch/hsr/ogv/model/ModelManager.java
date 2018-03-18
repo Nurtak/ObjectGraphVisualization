@@ -1,15 +1,16 @@
 package ch.hsr.ogv.model;
 
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 
+import ch.hsr.ogv.util.ColorUtil;
+import ch.hsr.ogv.util.TextUtil;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
-import jfxtras.labs.util.Util;
-import ch.hsr.ogv.util.TextUtil;
 
 /**
  *
@@ -95,7 +96,7 @@ public class ModelManager extends Observable {
 		}
 		newZ += superClass.getHeight() / 2;
 		Point3D modelObjectCoordinates = new Point3D(subObject.getX(), subObject.getY(), newZ);
-		ModelObject superObject = new ModelObject("", superClass, modelObjectCoordinates, subClass.getWidth(), superClass.getHeight(), Util.brighter(superClass.getColor(), 0.1));
+		ModelObject superObject = new ModelObject("", superClass, modelObjectCoordinates, subClass.getWidth(), superClass.getHeight(), ColorUtil.brighter(superClass.getColor(), 0.1));
 		for (Attribute attribute : superClass.getAttributes()) {
 			superObject.addAttributeValue(attribute, "");
 		}

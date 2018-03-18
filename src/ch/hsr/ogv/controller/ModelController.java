@@ -4,9 +4,6 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import javafx.scene.Node;
-import javafx.scene.layout.BorderPane;
-import jfxtras.labs.util.Util;
 import ch.hsr.ogv.model.Attribute;
 import ch.hsr.ogv.model.Endpoint;
 import ch.hsr.ogv.model.ModelBox;
@@ -17,11 +14,14 @@ import ch.hsr.ogv.model.ModelObject;
 import ch.hsr.ogv.model.Relation;
 import ch.hsr.ogv.model.Relation.RelationChange;
 import ch.hsr.ogv.model.RelationType;
+import ch.hsr.ogv.util.ColorUtil;
 import ch.hsr.ogv.view.Arrow;
-import ch.hsr.ogv.view.ReflexiveArrow;
 import ch.hsr.ogv.view.DashedArrow;
 import ch.hsr.ogv.view.PaneBox;
+import ch.hsr.ogv.view.ReflexiveArrow;
 import ch.hsr.ogv.view.SubSceneAdapter;
+import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 
 /**
  *
@@ -427,10 +427,10 @@ public class ModelController implements Observer {
 		if (modelBox instanceof ModelClass) {
 			ModelClass modelClass = (ModelClass) modelBox;
 			for (ModelObject modelObject : modelClass.getModelObjects()) {
-				modelObject.setColor(Util.brighter(modelClass.getColor(), 0.1));
+				modelObject.setColor(ColorUtil.brighter(modelClass.getColor(), 0.1));
 			}
 			for (ModelObject inheritingObject : modelClass.getInheritingObjects()) {
-				inheritingObject.setColor(Util.brighter(modelClass.getColor(), 0.1));
+				inheritingObject.setColor(ColorUtil.brighter(modelClass.getColor(), 0.1));
 			}
 		}
 	}

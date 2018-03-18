@@ -2,6 +2,13 @@ package ch.hsr.ogv.view;
 
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.hsr.ogv.util.ColorUtil;
+import ch.hsr.ogv.util.FXMLResourceUtil;
+import ch.hsr.ogv.util.ResourceLocator.Resource;
+import ch.hsr.ogv.util.TextUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
@@ -23,14 +30,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
-import jfxtras.labs.util.Util;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ch.hsr.ogv.util.FXMLResourceUtil;
-import ch.hsr.ogv.util.ResourceLocator.Resource;
-import ch.hsr.ogv.util.TextUtil;
 
 /**
  * 
@@ -130,7 +129,7 @@ public class PaneBox implements Selectable {
 	}
 
 	private String getPaneStyle() {
-		return "-fx-background-color: " + Util.colorToCssColor(getColor()) + ";\n" + "-fx-border-color: black;\n" + "-fx-border-width: 2;";
+		return "-fx-background-color: " + ColorUtil.colorToCssColor(getColor()) + ";\n" + "-fx-border-color: black;\n" + "-fx-border-width: 2;";
 	}
 
 	private void initLayout() {

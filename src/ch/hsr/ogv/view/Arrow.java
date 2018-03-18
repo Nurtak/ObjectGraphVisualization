@@ -3,6 +3,9 @@ package ch.hsr.ogv.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.hsr.ogv.model.RelationType;
+import ch.hsr.ogv.util.ColorUtil;
+import ch.hsr.ogv.util.GeometryUtil;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -11,9 +14,6 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-import jfxtras.labs.util.Util;
-import ch.hsr.ogv.model.RelationType;
-import ch.hsr.ogv.util.GeometryUtil;
 
 /**
  *
@@ -484,10 +484,10 @@ public class Arrow extends Group implements Selectable {
 		applyColor(this.line, colorToApply);
 		this.arrowStart.setColor(colorToApply);
 		this.arrowEnd.setColor(colorToApply);
-		this.labelStartRight.setColor(Util.darker(colorToApply, 0.3));
-		this.labelStartLeft.setColor(Util.darker(colorToApply, 0.3));
-		this.labelEndRight.setColor(Util.darker(colorToApply, 0.3));
-		this.labelEndLeft.setColor(Util.darker(colorToApply, 0.3));
+		this.labelStartRight.setColor(ColorUtil.darker(colorToApply, 0.3));
+		this.labelStartLeft.setColor(ColorUtil.darker(colorToApply, 0.3));
+		this.labelEndRight.setColor(ColorUtil.darker(colorToApply, 0.3));
+		this.labelEndLeft.setColor(ColorUtil.darker(colorToApply, 0.3));
 		this.selection.setVisible(selected);
 		if (!selected) {
 			setAllLabelSelected(false);
