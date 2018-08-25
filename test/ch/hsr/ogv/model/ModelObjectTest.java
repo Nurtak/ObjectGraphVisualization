@@ -1,19 +1,19 @@
 package ch.hsr.ogv.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class ModelObjectTest {
 
 	private ModelClass modelClassA;
 	private ModelObject modelObjectA1;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception
 	{
 		ModelManager mm = new ModelManager();

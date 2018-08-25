@@ -1,21 +1,17 @@
 package ch.hsr.ogv.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelManagerTest {
 
 	private ModelManager mm;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		mm = new ModelManager();
 	}

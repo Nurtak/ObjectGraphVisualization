@@ -1,11 +1,10 @@
 package ch.hsr.ogv.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RelationTest {
 

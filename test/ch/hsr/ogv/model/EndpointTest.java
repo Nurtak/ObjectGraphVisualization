@@ -1,13 +1,11 @@
 package ch.hsr.ogv.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EndpointTest {
 
@@ -15,7 +13,7 @@ public class EndpointTest {
 	private ModelClass modelClassB;
 	private Relation relationAB;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		modelClassA = new ModelClass("A", new Point3D(0, 0, 0), 100.0, 100.0, Color.BEIGE);
 		modelClassB = new ModelClass("B", new Point3D(-200, 0, 0), 100.0, 100.0, Color.BEIGE);

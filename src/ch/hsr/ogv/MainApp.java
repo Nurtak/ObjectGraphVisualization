@@ -1,17 +1,15 @@
 package ch.hsr.ogv;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Locale;
-
+import ch.hsr.ogv.util.ResourceLocator;
+import ch.hsr.ogv.util.ResourceLocator.Resource;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.hsr.ogv.util.ResourceLocator;
-import ch.hsr.ogv.util.ResourceLocator.Resource;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Locale;
 
 /**
  * Starts the application.

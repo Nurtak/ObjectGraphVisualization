@@ -1,22 +1,20 @@
 package ch.hsr.ogv.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.geometry.Point3D;
-import javafx.scene.paint.Color;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ModelClassTest {
 
 	private ModelManager mm;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		mm = new ModelManager();
 	}
@@ -24,9 +22,9 @@ public class ModelClassTest {
 	@Test
 	public void testGetXYZ() {
 		ModelClass modelClassA = mm.createClass(new Point3D(100, 200, 300), 100.0, 100.0, Color.BEIGE);
-		assertEquals(100, modelClassA.getX(), 0.0);
-		assertEquals(200, modelClassA.getY(), 0.0);
-		assertEquals(300, modelClassA.getZ(), 0.0);
+		assertEquals(100, modelClassA.getX());
+		assertEquals(200, modelClassA.getY());
+		assertEquals(300, modelClassA.getZ());
 	}
 
 	@Test
