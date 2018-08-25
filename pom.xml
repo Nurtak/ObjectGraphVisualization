@@ -15,7 +15,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
+                    <source>10</source>
                     <target>1.8</target>
                 </configuration>
             </plugin>
@@ -28,6 +28,7 @@
 		<jaxb-api.version>2.3.0</jaxb-api.version>
 		<jaxb-core.version>2.3.0</jaxb-core.version>
 		<jaxb-impl.version>2.3.0</jaxb-impl.version>
+        <javafx.version>11-ea+23</javafx.version>
         <fxyzlib.version>0.3.0</fxyzlib.version>
         <objimporterjfx.version>0.8</objimporterjfx.version>
         <junit.version>5.2.0</junit.version>
@@ -73,6 +74,17 @@
 
         <!-- JavaFX -->
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.FXyz</groupId>
             <artifactId>FXyz</artifactId>
             <version>${fxyzlib.version}</version>
@@ -95,28 +107,24 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
             <version>${junit-platform.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
