@@ -1,6 +1,6 @@
 # Object Graph Visualizer v.3.1
 
-![alt tag](https://github.com/Nurtak/ObjectGraphVisualization/blob/master/resources/images/OGV.png?raw=true)
+![alt tag](https://github.com/Nurtak/ObjectGraphVisualization/blob/master/src/main/resources/images/OGV.png?raw=true)
 
 ## Description
 Object Graph Visualizer is a tool primarily meant to be used in CS courses to help new students understand the Object Oriented paradigm and patterns. Classes and objects - that can be part of a software project - are visualised in 3D: The classes stay In the xz-plane in form of an UML class diagram. Directly above in the y-axis objects can be instantiated as an object diagram. Classes can be connected with all sorts of relations (Associations, Compositions, Generalization, etc.), objects with object relations.
