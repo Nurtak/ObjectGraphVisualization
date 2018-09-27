@@ -4,36 +4,43 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Versions -->
+    <properties>
+        <version.ogv>3.2.0</version.ogv>
+        <version.maven-compiler-plugin>3.8.0</version.maven-compiler-plugin>
+        <version.javafx-maven-plugin>8.8.3</version.javafx-maven-plugin>
+        <version.log4j>2.11.1</version.log4j>
+        <version.jaxb>2.3.0</version.jaxb>
+        <version.openjfx>11</version.openjfx>
+        <version.fxyzlib>0.3.0</version.fxyzlib>
+        <version.objimporterjfx>0.8</version.objimporterjfx>
+        <version.junit>5.2.0</version.junit>
+        <version.junit-platform>1.2.0</version.junit-platform>
+    </properties>
+
+    <!-- Artifact -->
     <groupId>ch.hsr.ogv</groupId>
-    <artifactId>objgraphvis</artifactId>
-    <version>3.1.0</version>
+    <artifactId>ogv</artifactId>
+    <version>${version.ogv}</version>
 
     <!-- Build -->
     <build>
         <plugins>
+
+            <!-- Compile -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${version.maven-compiler-plugin}</version>
                 <configuration>
-                    <source>10</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 
-    <!-- Versions -->
-    <properties>
-        <log4j.version>2.11.1</log4j.version>
-		<jaxb-api.version>2.3.0</jaxb-api.version>
-		<jaxb-core.version>2.3.0</jaxb-core.version>
-		<jaxb-impl.version>2.3.0</jaxb-impl.version>
-        <javafx.version>11-ea+23</javafx.version>
-        <fxyzlib.version>0.3.0</fxyzlib.version>
-        <objimporterjfx.version>0.8</objimporterjfx.version>
-        <junit.version>5.2.0</junit.version>
-        <junit-platform.version>1.2.0</junit-platform.version>
-    </properties>
 
     <!-- Dependencies -->
     <dependencies>
@@ -42,52 +49,52 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
+            <version>${version.log4j}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
+            <version>${version.log4j}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
+            <version>${version.log4j}</version>
         </dependency>
 
         <!-- JAX-B -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>${jaxb-api.version}</version>
+            <version>${version.jaxb}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>${jaxb-core.version}</version>
+            <version>${version.jaxb}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-impl.version}</version>
+            <version>${version.jaxb}</version>
         </dependency>
 
         <!-- JavaFX -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
+            <version>${version.openjfx}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
+            <version>${version.openjfx}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.FXyz</groupId>
             <artifactId>FXyz</artifactId>
-            <version>${fxyzlib.version}</version>
+            <version>${version.fxyzlib}</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/fxyzlib.jar</systemPath>
         </dependency>
@@ -95,7 +102,7 @@
         <dependency>
             <groupId>com.interactivemesh.jfx.importer</groupId>
             <artifactId>interactivemesh.jimObjModelImporterJFX</artifactId>
-            <version>${objimporterjfx.version}</version>
+            <version>${version.objimporterjfx}</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/jimObjModelImporterJFX.jar</systemPath>
         </dependency>
@@ -104,31 +111,31 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>${junit.version}</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>${junit-platform.version}</version>
+            <version>${version.junit-platform}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
-            <version>${junit-platform.version}</version>
+            <version>${version.junit-platform}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
