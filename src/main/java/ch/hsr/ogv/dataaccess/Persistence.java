@@ -10,23 +10,22 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
-public class Persistancy {
-
+public class Persistence {
 
     private ModelManager modelManager;
 
-    public Persistancy(ModelManager modelManager) {
+    public Persistence(ModelManager modelManager) {
         this.modelManager = modelManager;
     }
 
-    public void saveOGVDataAsync(File file, PersistencyCallback callback) {
+    public void saveOGVDataAsync(File file, PersistenceCallback callback) {
         OGVSerialization ogvSerialization = new OGVSerialization();
         saveDataAsync(ogvSerialization, file, callback);
     }
 
-    private void saveDataAsync(SerializationStrategy serialStrategy, File file, PersistencyCallback callback) {
-        serialStrategy.setClasses(new LinkedHashSet<ModelClass>(modelManager.getClasses()));
-        serialStrategy.setRelations(new LinkedHashSet<Relation>(modelManager.getRelations()));
+    private void saveDataAsync(SerializationStrategy serialStrategy, File file, PersistenceCallback callback) {
+        serialStrategy.setClasses(new LinkedHashSet<>(modelManager.getClasses()));
+        serialStrategy.setRelations(new LinkedHashSet<>(modelManager.getRelations()));
         Task<Void> loadTask = new Task<Void>() {
             @Override
             public Void call() {
@@ -51,17 +50,17 @@ public class Persistancy {
         return serialStrategy.serialize(file);
     }
 
-    public void loadOGVDataAsync(File file, PersistencyCallback callback) {
+    public void loadOGVDataAsync(File file, PersistenceCallback callback) {
         OGVSerialization ogvSerialization = new OGVSerialization();
         loadDataAsync(ogvSerialization, file, callback);
     }
 
-    public void loadXMIDataAsync(File file, PersistencyCallback callback) {
+    public void loadXMIDataAsync(File file, PersistenceCallback callback) {
         XMISerialization xmiSerialization = new XMISerialization();
         loadDataAsync(xmiSerialization, file, callback);
     }
 
-    private void loadDataAsync(SerializationStrategy serialStrategy, File file, PersistencyCallback callback) {
+    private void loadDataAsync(SerializationStrategy serialStrategy, File file, PersistenceCallback callback) {
         Task<Void> loadTask = new Task<Void>() {
             @Override
             public Void call() {

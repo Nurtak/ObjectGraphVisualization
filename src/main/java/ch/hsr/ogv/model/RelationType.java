@@ -21,7 +21,7 @@ public enum RelationType {
     private final EndpointType endType;
     private final LineType lineType;
 
-    private RelationType(EndpointType startType, EndpointType endType, LineType lineType) {
+    RelationType(EndpointType startType, EndpointType endType, LineType lineType) {
         this.startType = startType;
         this.endType = endType;
         this.lineType = lineType;

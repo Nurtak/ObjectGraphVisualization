@@ -18,11 +18,9 @@ public class MainApp extends Application {
 
     private final static Logger logger = LoggerFactory.getLogger(MainApp.class);
 
-    private final static UncaughtExceptionHandler ueHandler = new UncaughtExceptionHandler() {
-        public void uncaughtException(Thread thread, final Throwable throwable) {
-            logger.debug("Error in thread " + thread + ": " + throwable.getMessage());
-            throwable.printStackTrace();
-        }
+    private final static UncaughtExceptionHandler ueHandler = (thread, throwable) -> {
+        logger.debug("Error in thread " + thread + ": " + throwable.getMessage());
+        throwable.printStackTrace();
     };
 
     public static void main(String[] args) {

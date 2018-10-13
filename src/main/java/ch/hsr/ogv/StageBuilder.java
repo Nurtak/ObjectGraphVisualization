@@ -1,7 +1,7 @@
 package ch.hsr.ogv;
 
 import ch.hsr.ogv.controller.*;
-import ch.hsr.ogv.dataaccess.Persistancy;
+import ch.hsr.ogv.dataaccess.Persistence;
 import ch.hsr.ogv.dataaccess.UserPreferences;
 import ch.hsr.ogv.util.FXMLResourceUtil;
 import ch.hsr.ogv.util.ResourceLocator;
@@ -36,7 +36,7 @@ public class StageBuilder {
 
     private ModelViewConnector mvConnector;
     private ObjectGraph objectGraph;
-    private Persistancy persistancy;
+    private Persistence persistence;
 
     private ViewController viewController = new ViewController();
     private SelectionController selectionController = new SelectionController();
@@ -119,7 +119,7 @@ public class StageBuilder {
 
     private void initPersistancy() {
         UserPreferences.setOGVFilePath(null); // reset user preferences of file path
-        persistancy = new Persistancy(this.mvConnector.getModelManager());
+        persistence = new Persistence(this.mvConnector.getModelManager());
     }
 
     private void initViewController() {
@@ -127,7 +127,7 @@ public class StageBuilder {
         this.viewController.setSubSceneAdapter(this.subSceneAdapter);
         this.viewController.setMVConnector(this.mvConnector);
         this.viewController.setObjectGraph(this.objectGraph);
-        this.viewController.setPersistancy(this.persistancy);
+        this.viewController.setPersistence(this.persistence);
         this.viewController.setSelectionController(this.selectionController);
         this.viewController.setCameraController(this.cameraController);
         this.viewController.setRelationCreationController(this.relationCreationController);

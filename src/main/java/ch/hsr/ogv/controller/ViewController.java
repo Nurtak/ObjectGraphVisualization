@@ -35,7 +35,7 @@ public class ViewController implements Observer, Initializable {
     private SubSceneAdapter subSceneAdapter;
     private ModelViewConnector mvConnector;
     private ObjectGraph objectGraph;
-    private Persistancy persistancy;
+    private Persistence persistence;
     private SelectionController selectionController;
     private CameraController cameraController;
     private RelationCreationController relationCreationController;
@@ -60,8 +60,8 @@ public class ViewController implements Observer, Initializable {
         this.objectGraph = objectGraph;
     }
 
-    public void setPersistancy(Persistancy persistancy) {
-        this.persistancy = persistancy;
+    public void setPersistence(Persistence persistence) {
+        this.persistence = persistence;
     }
 
     public void setSelectionController(SelectionController selectionController) {
@@ -116,7 +116,7 @@ public class ViewController implements Observer, Initializable {
         if (file != null) {
             UserPreferences.setOGVFilePath(file);
             MessageBar.setText("Loading file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
-            persistancy.loadOGVDataAsync(file, new LoadCallback(this.primaryStage, this.appTitle, file));
+            persistence.loadOGVDataAsync(file, new LoadCallback(this.primaryStage, this.appTitle, file));
             exitObjectGraphMode();
         }
     }
@@ -141,7 +141,7 @@ public class ViewController implements Observer, Initializable {
             UserPreferences.setXMIFilePath(file);
             UserPreferences.setOGVFilePath(null);
             MessageBar.setText("Importing file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
-            persistancy.loadXMIDataAsync(file, new ImportCallback(this.primaryStage, this.appTitle, file));
+            persistence.loadXMIDataAsync(file, new ImportCallback(this.primaryStage, this.appTitle, file));
             exitObjectGraphMode();
         }
     }
@@ -154,7 +154,7 @@ public class ViewController implements Observer, Initializable {
         File file = UserPreferences.getOGVFilePath();
         if (file != null) {
             MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
-            persistancy.saveOGVDataAsync(file, new SaveCallback(this.primaryStage, this.appTitle, file));
+            persistence.saveOGVDataAsync(file, new SaveCallback(this.primaryStage, this.appTitle, file));
         }
         else {
             handleSaveAs();
@@ -185,7 +185,7 @@ public class ViewController implements Observer, Initializable {
             }
             UserPreferences.setOGVFilePath(file);
             MessageBar.setText("Saving file: \"" + file.getPath() + "\"...", MessageLevel.WARN);
-            persistancy.saveOGVDataAsync(file, new SaveCallback(this.primaryStage, this.appTitle, file));
+            persistence.saveOGVDataAsync(file, new SaveCallback(this.primaryStage, this.appTitle, file));
         }
         else {
             MessageBar.setText("Could not save data. No save file specified.", MessageLevel.ALERT);

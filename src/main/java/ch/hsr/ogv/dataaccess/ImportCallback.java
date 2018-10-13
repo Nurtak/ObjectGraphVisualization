@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-public class ImportCallback implements PersistencyCallback {
+public class ImportCallback implements PersistenceCallback {
 
     private Stage primaryStage;
     private String appTitle;
