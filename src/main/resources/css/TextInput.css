@@ -1,5 +1,5 @@
 .text-input {
-	-fx-font-size: 15;
+    -fx-font-size: 15;
     -fx-background-color: transparent;
 }
 
@@ -11,6 +11,6 @@
 }
 
 .text-input:disabled {
-	-fx-font-size: 15;
-	-fx-opacity: 1.0;
+    -fx-font-size: 15;
+    -fx-opacity: 1.0;
 }

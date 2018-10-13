@@ -1,22 +1,20 @@
 /* ====   SELECTED ToggleButton  ================================================= */
 
 .toggle-button:selected {
-        -fx-background-color:
-            linear-gradient(to bottom, derive(-fx-outer-border, -20%), -fx-outer-border),
-            linear-gradient(to bottom,
-                    derive(-fx-text-box-border, -10%) 0%,
-                    derive(-fx-text-box-border, -2%) 20%,
-                    derive(-fx-text-box-border, 5%) 50%);
+    -fx-background-color: linear-gradient(to bottom, derive(-fx-outer-border, -20%), -fx-outer-border),
+    linear-gradient(to bottom,
+            derive(-fx-text-box-border, -10%) 0%,
+            derive(-fx-text-box-border, -2%) 20%,
+            derive(-fx-text-box-border, 5%) 50%);
     -fx-background-insets: 0, 1;
 }
 
 .toggle-button:selected:focused {
-    -fx-background-color:
-        -fx-faint-focus-color, -fx-focus-color,
-            linear-gradient(to bottom,
-                    derive(-fx-text-box-border, -10%) 0%,
-                    derive(-fx-text-box-border, -2%) 20%,
-                    derive(-fx-text-box-border, 5%) 50%);
+    -fx-background-color: -fx-faint-focus-color, -fx-focus-color,
+    linear-gradient(to bottom,
+            derive(-fx-text-box-border, -10%) 0%,
+            derive(-fx-text-box-border, -2%) 20%,
+            derive(-fx-text-box-border, 5%) 50%);
     -fx-background-insets: -2, -0.3, 1;
     -fx-background-radius: 7, 6, 4;
 }
@@ -33,11 +31,13 @@
     -fx-background-radius: 5;
     -fx-padding: 0;
 }
+
 .split-menu-button:focused {
     -fx-background-color: -fx-faint-focus-color, -fx-focus-color;
     -fx-background-insets: -2, -0.3;
     -fx-background-radius: 7, 6;
 }
+
 .split-menu-button > .label {
     -fx-text-fill: -fx-text-base-color;
     -fx-background-color: -fx-inner-border, -fx-body-color;
@@ -45,6 +45,7 @@
     -fx-background-radius: 4 0 0 4, 3 0 0 3;
     -fx-padding: 0.333333em 0.667em 0.416667em 0.667em; /* 4 8 5 8 */
 }
+
 .split-menu-button > .arrow-button {
     -fx-background-color: -fx-inner-border, -fx-body-color;
     -fx-background-insets: 1, 2;
@@ -56,11 +57,10 @@
 /* ====   SELECTED TOGGLE SplitMenuButton ================================================= */
 
 .tsplit-menu-button > .label {
-	-fx-background-color:
-            linear-gradient(to bottom, derive(-fx-outer-border, -20%), -fx-outer-border),
-            linear-gradient(to bottom,
-                    derive(-fx-text-box-border, -10%) 0%,
-                    derive(-fx-text-box-border, -2%) 20%,
-                    derive(-fx-text-box-border, 5%) 50%);
+    -fx-background-color: linear-gradient(to bottom, derive(-fx-outer-border, -20%), -fx-outer-border),
+    linear-gradient(to bottom,
+            derive(-fx-text-box-border, -10%) 0%,
+            derive(-fx-text-box-border, -2%) 20%,
+            derive(-fx-text-box-border, 5%) 50%);
     -fx-background-insets: 0, 1;
 }

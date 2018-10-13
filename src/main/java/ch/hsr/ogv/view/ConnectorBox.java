@@ -5,24 +5,18 @@ import javafx.scene.Group;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
-/**
- * 
- * @author Simon Gwerder
- * @version OGV 3.1, May 2015
- *
- */
 public class ConnectorBox extends Group {
-	
-	public ConnectorBox(PaneBox paneBox, Point3D centerLabelPos, Arrow arrow) {
-		Box conectorBox = new Box(arrow.getWidth(), paneBox.getDepth(), arrow.getWidth());
-		setTranslateX(centerLabelPos.getX() + PaneBox.HORIZONTAL_BORDER_GAP);
-		setTranslateY(centerLabelPos.getY() + (paneBox.getDepth() / 2));
-		setTranslateZ(centerLabelPos.getZ());
-		PhongMaterial material = new PhongMaterial();
-		material.setDiffuseColor(arrow.getColor());
-		material.setSpecularColor(arrow.getColor().brighter());
-		conectorBox.setMaterial(material);
-		getChildren().add(conectorBox);
-	}
-	
+
+    public ConnectorBox(PaneBox paneBox, Point3D centerLabelPos, Arrow arrow) {
+        Box conectorBox = new Box(arrow.getWidth(), paneBox.getDepth(), arrow.getWidth());
+        setTranslateX(centerLabelPos.getX() + PaneBox.HORIZONTAL_BORDER_GAP);
+        setTranslateY(centerLabelPos.getY() + (paneBox.getDepth() / 2));
+        setTranslateZ(centerLabelPos.getZ());
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseColor(arrow.getColor());
+        material.setSpecularColor(arrow.getColor().brighter());
+        conectorBox.setMaterial(material);
+        getChildren().add(conectorBox);
+    }
+
 }

@@ -6,22 +6,25 @@
 
     <!-- Versions -->
     <properties>
-        <version.ogv>3.2.0</version.ogv>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <version.jdk>11</version.jdk>
         <version.maven-compiler-plugin>3.8.0</version.maven-compiler-plugin>
-        <version.javafx-maven-plugin>8.8.3</version.javafx-maven-plugin>
         <version.log4j>2.11.1</version.log4j>
+        <version.activation>1.2.0</version.activation>
         <version.jaxb>2.3.0</version.jaxb>
         <version.openjfx>11</version.openjfx>
         <version.fxyzlib>0.3.0</version.fxyzlib>
         <version.objimporterjfx>0.8</version.objimporterjfx>
         <version.junit>5.2.0</version.junit>
-        <version.junit-platform>1.2.0</version.junit-platform>
+        <version.junit.platform>1.2.0</version.junit.platform>
+        <version.junit.jupiter>RELEASE</version.junit.jupiter>
     </properties>
 
     <!-- Artifact -->
     <groupId>ch.hsr.ogv</groupId>
     <artifactId>ogv</artifactId>
-    <version>${version.ogv}</version>
+    <version>3.2.0</version>
 
     <!-- Build -->
     <build>
@@ -33,14 +36,53 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${version.maven-compiler-plugin}</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>${version.jdk}</source>
+                    <target>${version.jdk}</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <archive>
+                                <manifest>
+                                    <mainClass>ch.hsr.ogv.Main</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
     </build>
-
 
     <!-- Dependencies -->
     <dependencies>
@@ -62,15 +104,16 @@
             <version>${version.log4j}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+            <version>${version.activation}</version>
+        </dependency>
+
         <!-- JAX-B -->
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>${version.jaxb}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-core</artifactId>
             <version>${version.jaxb}</version>
         </dependency>
         <dependency>
@@ -129,19 +172,19 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>${version.junit-platform}</version>
+            <version>${version.junit.platform}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
-            <version>${version.junit-platform}</version>
+            <version>${version.junit.platform}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>RELEASE</version>
+            <version>${version.junit.jupiter}</version>
             <scope>compile</scope>
         </dependency>
 

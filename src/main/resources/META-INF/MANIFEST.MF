@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Implementation-Title: ObjectGraphVisualizer
+Implementation-Version: 3.2
+Permissions: sandbox
+Class-Path: apiguardian-api-1.0.0.jar fxyzlib.jar javafx-base-11-win.j
+ ar javafx-base-11.jar javafx-controls-11-win.jar javafx-controls-11.j
+ ar javafx-fxml-11-win.jar javafx-fxml-11.jar javafx-graphics-11-win.j
+ ar javafx-graphics-11.jar javax.activation-1.2.0.jar jaxb-api-2.3.0.j
+ ar jaxb-impl-2.3.0.jar jimObjModelImporterJFX.jar junit-jupiter-api-5
+ .3.1.jar junit-platform-commons-1.3.1.jar log4j-api-2.11.1.jar log4j-
+ core-2.11.1.jar log4j-slf4j-impl-2.11.1.jar opentest4j-1.1.1.jar slf4
+ j-api-1.7.25.jar
+Implementation-Vendor: hsr.ch
+Main-Class: ch.hsr.ogv.Main
