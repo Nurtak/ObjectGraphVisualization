@@ -4,31 +4,106 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Artifact -->
+    <groupId>ch.hsr.ogv</groupId>
+    <artifactId>ogv</artifactId>
+    <version>3.2.0</version>
+
     <!-- Versions -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <version.jdk>11</version.jdk>
+        <version.os-maven-plugin>1.6.1</version.os-maven-plugin>
+        <version.maven-install-plugin>3.0.0-M1</version.maven-install-plugin>
         <version.maven-compiler-plugin>3.8.0</version.maven-compiler-plugin>
+        <version.maven-jar-plugin>3.1.0</version.maven-jar-plugin>
+        <version.maven-assembly-plugin>3.1.0</version.maven-assembly-plugin>
         <version.log4j>2.11.1</version.log4j>
         <version.activation>1.2.0</version.activation>
-        <version.jaxb>2.3.0</version.jaxb>
+        <version.jaxb-api>2.3.1</version.jaxb-api>
+        <version.jaxb-core>2.3.0.1</version.jaxb-core>
+        <version.jaxb-runtime>2.3.1</version.jaxb-runtime>
         <version.openjfx>11</version.openjfx>
-        <version.fxyzlib>0.3.0</version.fxyzlib>
+        <version.fxyzlib>0.3.0-patched</version.fxyzlib>
         <version.objimporterjfx>0.8</version.objimporterjfx>
         <version.junit>5.2.0</version.junit>
         <version.junit.platform>1.2.0</version.junit.platform>
         <version.junit.jupiter>RELEASE</version.junit.jupiter>
     </properties>
 
-    <!-- Artifact -->
-    <groupId>ch.hsr.ogv</groupId>
-    <artifactId>ogv</artifactId>
-    <version>3.2.0</version>
-
     <!-- Build -->
     <build>
+        <extensions>
+            <!-- native platform classifier -->
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>${version.os-maven-plugin}</version>
+            </extension>
+        </extensions>
+
         <plugins>
+
+            <!-- Install jar in local repository -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>${version.maven-install-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>copy-fxyzlib</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <file>${project.basedir}/lib/fxyzlib-0.3.0-patched.jar</file>
+                            <groupId>org.fxyz</groupId>
+                            <artifactId>fxyzlib</artifactId>
+                            <version>${version.fxyzlib}</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>copy-objmodelimporter</id>
+                        <phase>validate</phase>
+                        <configuration>
+                            <file>${project.basedir}/lib/objmodelimporterjfx-0.8.jar</file>
+                            <groupId>com.interactivemesh</groupId>
+                            <artifactId>objmodelimporterjfx</artifactId>
+                            <version>${version.objimporterjfx}</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- Compile -->
             <plugin>
@@ -41,42 +116,44 @@
                 </configuration>
             </plugin>
 
+            <!-- Assembly -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${version.maven-jar-plugin}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>ch.hsr.ogv.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>${version.maven-assembly-plugin}</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <finalName>${artifactId}-${version}-runnable</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>ch.hsr.ogv.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
                         <goals>
-                            <goal>attached</goal>
+                            <goal>single</goal>
                         </goals>
-                        <phase>package</phase>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                            <archive>
-                                <manifest>
-                                    <mainClass>ch.hsr.ogv.Main</mainClass>
-                                </manifest>
-                            </archive>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -114,45 +191,104 @@
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>${version.jaxb}</version>
+            <version>${version.jaxb-api}</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
+            <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>${version.jaxb}</version>
+            <version>${version.jaxb-core}</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${version.jaxb}</version>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${version.jaxb-runtime}</version>
         </dependency>
 
         <!-- JavaFX -->
         <dependency>
             <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>win</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${version.openjfx}</version>
+            <classifier>win</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${version.openjfx}</version>
+            <classifier>win</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>win</classifier>
         </dependency>
 
         <dependency>
-            <groupId>com.github.FXyz</groupId>
-            <artifactId>FXyz</artifactId>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>linux</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>linux</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>linux</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>linux</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>mac</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>mac</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>mac</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${version.openjfx}</version>
+            <classifier>mac</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.fxyz</groupId>
+            <artifactId>fxyzlib</artifactId>
             <version>${version.fxyzlib}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/fxyzlib.jar</systemPath>
         </dependency>
-
         <dependency>
-            <groupId>com.interactivemesh.jfx.importer</groupId>
-            <artifactId>interactivemesh.jimObjModelImporterJFX</artifactId>
+            <groupId>com.interactivemesh</groupId>
+            <artifactId>objmodelimporterjfx</artifactId>
             <version>${version.objimporterjfx}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/jimObjModelImporterJFX.jar</systemPath>
         </dependency>
 
         <!-- Testing -->
