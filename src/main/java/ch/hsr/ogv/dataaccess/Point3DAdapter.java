@@ -1,8 +1,8 @@
 package ch.hsr.ogv.dataaccess;
 
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import javafx.geometry.Point3D;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class Point3DAdapter extends XmlAdapter<OGVPoint3D, Point3D> {
 

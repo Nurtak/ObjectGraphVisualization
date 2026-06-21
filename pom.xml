@@ -20,10 +20,9 @@
         <version.maven-jar-plugin>3.5.0</version.maven-jar-plugin>
         <version.maven-assembly-plugin>3.8.0</version.maven-assembly-plugin>
         <version.log4j>2.26.0</version.log4j>
-        <version.activation>1.2.0</version.activation>
-        <version.jaxb-api>2.3.1</version.jaxb-api>
-        <version.jaxb-core>2.3.0.1</version.jaxb-core>
-        <version.jaxb-runtime>2.3.1</version.jaxb-runtime>
+        <version.jakarta.activation-api>2.1.4</version.jakarta.activation-api>
+        <version.jakarta.xml.bind-api>4.0.5</version.jakarta.xml.bind-api>
+        <version.jaxb-runtime>4.0.9</version.jaxb-runtime>
         <version.openjfx>26.0.1</version.openjfx>
         <version.fxyzlib>0.3.0-patched</version.fxyzlib>
         <version.objimporterjfx>0.8</version.objimporterjfx>
@@ -180,22 +179,16 @@
             <version>${version.log4j}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
-            <version>${version.activation}</version>
-        </dependency>
-
         <!-- JAX-B -->
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${version.jaxb-api}</version>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>${version.jakarta.activation-api}</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>${version.jaxb-core}</version>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${version.jakarta.xml.bind-api}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
