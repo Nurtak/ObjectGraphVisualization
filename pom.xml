@@ -7,7 +7,7 @@
     <!-- Artifact -->
     <groupId>ch.hsr.ogv</groupId>
     <artifactId>ogv</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
 
     <!-- Versions -->
     <properties>
