@@ -6,8 +6,8 @@ import javafx.scene.paint.Color;
 
 public class ArrowSelection extends Group {
 
-    private final static int INIT_SELECT_SIZE = 4;
-    private final static Color SELECTION_COLOR = Color.DODGERBLUE;
+    private static final int INIT_SELECT_SIZE = 4;
+    private static final Color SELECTION_COLOR = Color.DODGERBLUE;
 
     private SphereAdapter sphereStart;
     private SphereAdapter sphereEnd;

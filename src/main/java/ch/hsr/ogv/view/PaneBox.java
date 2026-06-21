@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 public class PaneBox implements Selectable {
 
-    private final static Logger logger = LoggerFactory.getLogger(PaneBox.class);
+    private static final Logger logger = LoggerFactory.getLogger(PaneBox.class);
 
     public final static int CLASSBOX_DEPTH = 10;
     public final static int OBJECTBOX_DEPTH = 20;

@@ -10,7 +10,7 @@ import java.net.URL;
 
 public class ObjModelLoader {
 
-    private final static Logger logger = LoggerFactory.getLogger(ObjModelLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObjModelLoader.class);
 
     public static Node[] load(URL modelUrl) {
         Node[] rootNodes = {};
@@ -20,8 +20,7 @@ public class ObjModelLoader {
                 tdsImporter.read(modelUrl);
             }
             catch (ImportException e) {
-                e.printStackTrace();
-                logger.debug(e.getMessage());
+                LOGGER.error(e.getMessage(), e);
             }
             return tdsImporter.getImport();
         }

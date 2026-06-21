@@ -21,7 +21,7 @@ import java.util.Set;
 @XmlType(propOrder = {"classes", "relations"})
 public class OGVSerialization implements SerializationStrategy {
 
-    private final static Logger logger = LoggerFactory.getLogger(OGVSerialization.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OGVSerialization.class);
 
     private Set<ModelClass> classes = new LinkedHashSet<ModelClass>();
     private Set<Relation> relations = new LinkedHashSet<Relation>();
@@ -63,8 +63,7 @@ public class OGVSerialization implements SerializationStrategy {
             return true;
         }
         catch (JAXBException e) {
-            e.printStackTrace();
-            logger.debug(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
     }
@@ -79,8 +78,7 @@ public class OGVSerialization implements SerializationStrategy {
             return true;
         }
         catch (JAXBException e) {
-            e.printStackTrace();
-            logger.debug(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
     }

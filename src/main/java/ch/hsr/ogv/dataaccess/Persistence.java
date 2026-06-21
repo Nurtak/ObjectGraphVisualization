@@ -5,12 +5,18 @@ import ch.hsr.ogv.model.*;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Point3D;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Optional;
 
 public class Persistence {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Persistence.class);
 
     private ModelManager modelManager;
 
@@ -26,7 +32,7 @@ public class Persistence {
     private void saveDataAsync(SerializationStrategy serialStrategy, File file, PersistenceCallback callback) {
         serialStrategy.setClasses(new LinkedHashSet<>(modelManager.getClasses()));
         serialStrategy.setRelations(new LinkedHashSet<>(modelManager.getRelations()));
-        Task<Void> loadTask = new Task<Void>() {
+        Task<Void> saveTask = new Task<Void>() {
             @Override
             public Void call() {
                 boolean saved = serialStrategy.serialize(file);
@@ -36,7 +42,13 @@ public class Persistence {
                 return null;
             }
         };
-        new Thread(loadTask).start();
+        saveTask.setOnFailed(_ -> {
+            String message = "An error occurred while trying to save to file: "
+                    + file.getAbsolutePath()
+                    + (saveTask.getException() != null ? ". Exception: " + saveTask.getException().getMessage() : "");
+            LOGGER.error(message, saveTask.getException());
+        });
+        new Thread(saveTask).start();
     }
 
     public boolean saveOGVData(File file) {
@@ -68,8 +80,7 @@ public class Persistence {
                 Platform.runLater(() -> {
                     if (!loaded) {
                         callback.completed(false);
-                    }
-                    else {
+                    } else {
                         loadedToModel(serialStrategy);
                         callback.completed(true);
                     }
@@ -77,6 +88,12 @@ public class Persistence {
                 return null;
             }
         };
+        loadTask.setOnFailed(_ -> {
+            String message = "An error occurred while trying to load from file: "
+                    + file.getAbsolutePath()
+                    + (loadTask.getException() != null ? ". Exception: " + loadTask.getException().getMessage() : "");
+            LOGGER.error(message, loadTask.getException());
+        });
         new Thread(loadTask).start();
     }
 
@@ -114,7 +131,7 @@ public class Persistence {
 
     private void loadedClassToModel(ModelClass loadedClass) {
         ModelClass newClass = modelManager.createClass(new Point3D(loadedClass.getX(), ModelViewConnector.BASE_BOX_DEPTH, loadedClass.getZ()), loadedClass.getWidth(), loadedClass.getHeight(),
-                                                       loadedClass.getColor());
+                loadedClass.getColor());
         if (newClass != null) {
             newClass.setName(loadedClass.getName());
             newClass.setEndpoints(loadedClass.getEndpoints());
@@ -158,8 +175,7 @@ public class Persistence {
                         newObject.changeAttributeValue(newAttribute.getName(), newAttributeValue);
                     }
                 }
-            }
-            catch (IndexOutOfBoundsException ioobe) {
+            } catch (IndexOutOfBoundsException ioobe) {
                 continue;
             }
         }
@@ -198,8 +214,7 @@ public class Persistence {
         if (loadedStartBox instanceof ModelClass && loadedEndBox instanceof ModelClass) {
             newStartBox = modelManager.getModelClass(loadedStartBox.getName());
             newEndBox = modelManager.getModelClass(loadedEndBox.getName());
-        }
-        else if (loadedStartBox instanceof ModelObject && loadedEndBox instanceof ModelObject) {
+        } else if (loadedStartBox instanceof ModelObject && loadedEndBox instanceof ModelObject) {
             for (ModelClass newModelClass : modelManager.getClasses()) {
                 newStartBox = newModelClass.getModelObject(((ModelObject) loadedStartBox).getUniqueID());
                 if (newStartBox != null) {

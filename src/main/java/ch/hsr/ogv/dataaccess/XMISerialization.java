@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class XMISerialization implements SerializationStrategy {
 
-    private final static Logger logger = LoggerFactory.getLogger(SerializationStrategy.class);
+    private static final Logger logger = LoggerFactory.getLogger(SerializationStrategy.class);
 
     private static final String[] SUPPORTED_VERSIONS = {"1.1"};
 

@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class FXMLResourceUtil {
 
-    private final static Logger logger = LoggerFactory.getLogger(FXMLResourceUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(FXMLResourceUtil.class);
 
     public static Object loadPreset(Resource resource) {
         FXMLLoader loader = new FXMLLoader();

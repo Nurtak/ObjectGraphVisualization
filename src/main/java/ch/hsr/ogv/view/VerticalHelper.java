@@ -17,7 +17,7 @@ public class VerticalHelper extends Group {
     public final static double DEPTH_DIMENSION = 3;
     public final static double OPACITY = 0.1;
 
-    private final static double PLUS_SIZE = 2;
+    private static final double PLUS_SIZE = 2;
 
     public final static Color DEFAULT_COLOR = Color.DODGERBLUE;
 

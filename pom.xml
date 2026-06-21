@@ -19,6 +19,7 @@
         <version.maven-compiler-plugin>3.15.0</version.maven-compiler-plugin>
         <version.maven-jar-plugin>3.5.0</version.maven-jar-plugin>
         <version.maven-assembly-plugin>3.8.0</version.maven-assembly-plugin>
+        <version.javafx-maven-plugin>0.0.8</version.javafx-maven-plugin>
         <version.log4j>2.26.0</version.log4j>
         <version.jakarta.activation-api>2.1.4</version.jakarta.activation-api>
         <version.jakarta.xml.bind-api>4.0.5</version.jakarta.xml.bind-api>
@@ -109,8 +110,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${version.maven-compiler-plugin}</version>
                 <configuration>
-                    <source>${version.jdk}</source>
-                    <target>${version.jdk}</target>
+                    <release>${version.jdk}</release>
                 </configuration>
             </plugin>
 
@@ -136,7 +136,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <finalName>${artifactId}-${version}-runnable</finalName>
+                    <finalName>${project.artifactId}-${project.version}-runnable</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
@@ -156,12 +156,23 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>${version.javafx-maven-plugin}</version>
+
+                <configuration>
+                    <mainClass>
+                        ch.hsr.ogv/ch.hsr.ogv.Main
+                    </mainClass>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
     <!-- Dependencies -->
     <dependencies>
-
         <!-- Logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -175,7 +186,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${version.log4j}</version>
         </dependency>
 
@@ -201,75 +212,29 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>${version.openjfx}</version>
-            <classifier>win</classifier>
+            <!--suppress UnresolvedMavenProperty -->
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${version.openjfx}</version>
-            <classifier>win</classifier>
+            <!--suppress UnresolvedMavenProperty -->
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${version.openjfx}</version>
-            <classifier>win</classifier>
+            <!--suppress UnresolvedMavenProperty -->
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>${version.openjfx}</version>
-            <classifier>win</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-base</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>linux</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>linux</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>linux</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>linux</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-base</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>mac</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>mac</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>mac</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>mac</classifier>
+            <!--suppress UnresolvedMavenProperty -->
+            <classifier>${javafx.platform}</classifier>
         </dependency>
 
         <dependency>
@@ -314,7 +279,44 @@
             <version>${version.junit-platform-runner}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>win</javafx.platform>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>linux</javafx.platform>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>mac</javafx.platform>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
