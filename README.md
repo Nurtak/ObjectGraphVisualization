@@ -39,3 +39,42 @@ In depth thesis is available in German: http://eprints.hsr.ch/459/
 ![alt tag](https://a.fsdn.com/con/app/proj/ogvisualizer/screenshots/screenshot2.PNG)
 
 ![alt tag](https://a.fsdn.com/con/app/proj/ogvisualizer/screenshots/screenshot3.PNG)
+
+## Build and Run
+
+### Install fxyzlib 0.3.0-patched
+```
+mvn install:install-file -Dfile=lib/fxyzlib-0.3.0-patched.jar -DgroupId=org.fxyz -DartifactId=fxyzlib -Dversion=0.3.0-patched -Dpackaging=jar`
+```
+
+### Install objmodelimporterjfx 0.8
+```
+mvn install:install-file -Dfile=lib/objmodelimporterjfx-0.8.jar -DgroupId=com.interactivemesh -DartifactId=objmodelimporterjfx -Dversion=0.8 -Dpackaging=jar`
+```
+
+### Build
+```
+mvn clean install
+```
+
+### Run (classpath)
+```
+java -jar --enable-native-access=ALL-UNNAMED ogv-3.3.0-runnable.jar
+```
+
+### Run (modulepath)
+bash:
+```bash
+java --module-path "target/classes:target/lib:target/dependency" \
+     --add-modules javafx.controls,javafx.fxml,javafx.graphics \
+     --enable-native-access=javafx.graphics \
+     -m ch.hsr.ogv/ch.hsr.ogv.Main
+```
+
+cmd:
+```cmd
+java --module-path "target/classes;target/lib;target/dependency" ^
+     --add-modules javafx.controls,javafx.fxml,javafx.graphics ^
+	 --enable-native-access=javafx.graphics ^
+	 -m ch.hsr.ogv/ch.hsr.ogv.Main
+```
