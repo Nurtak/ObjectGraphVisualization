@@ -24,7 +24,7 @@ import java.io.IOException;
  */
 public class StageBuilder {
 
-    private final static Logger logger = LoggerFactory.getLogger(StageBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StageBuilder.class);
 
     private static final int MIN_WIDTH = 1024;
     private static final int MIN_HEIGHT = 768;
@@ -104,8 +104,7 @@ public class StageBuilder {
             this.rootLayout = (BorderPane) loader.load();
         }
         catch (IOException | ClassCastException e) {
-            logger.debug(e.getMessage());
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

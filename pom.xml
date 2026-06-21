@@ -7,28 +7,28 @@
     <!-- Artifact -->
     <groupId>ch.hsr.ogv</groupId>
     <artifactId>ogv</artifactId>
-    <version>3.2.0</version>
+    <version>3.3.0</version>
 
     <!-- Versions -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <version.jdk>11</version.jdk>
-        <version.os-maven-plugin>1.6.1</version.os-maven-plugin>
-        <version.maven-install-plugin>3.0.0-M1</version.maven-install-plugin>
-        <version.maven-compiler-plugin>3.8.0</version.maven-compiler-plugin>
-        <version.maven-jar-plugin>3.1.0</version.maven-jar-plugin>
-        <version.maven-assembly-plugin>3.1.0</version.maven-assembly-plugin>
-        <version.log4j>2.25.4</version.log4j>
-        <version.activation>1.2.0</version.activation>
-        <version.jaxb-api>2.3.1</version.jaxb-api>
-        <version.jaxb-core>2.3.0.1</version.jaxb-core>
-        <version.jaxb-runtime>2.3.1</version.jaxb-runtime>
-        <version.openjfx>11</version.openjfx>
+        <version.jdk>25</version.jdk>
+        <version.os-maven-plugin>1.7.1</version.os-maven-plugin>
+        <version.maven-install-plugin>3.1.4</version.maven-install-plugin>
+        <version.maven-compiler-plugin>3.15.0</version.maven-compiler-plugin>
+        <version.maven-jar-plugin>3.5.0</version.maven-jar-plugin>
+        <version.maven-assembly-plugin>3.8.0</version.maven-assembly-plugin>
+        <version.javafx-maven-plugin>0.0.8</version.javafx-maven-plugin>
+        <version.log4j>2.26.0</version.log4j>
+        <version.jakarta.activation-api>2.1.4</version.jakarta.activation-api>
+        <version.jakarta.xml.bind-api>4.0.5</version.jakarta.xml.bind-api>
+        <version.jaxb-runtime>4.0.9</version.jaxb-runtime>
+        <version.openjfx>26.0.1</version.openjfx>
         <version.fxyzlib>0.3.0-patched</version.fxyzlib>
         <version.objimporterjfx>0.8</version.objimporterjfx>
-        <version.junit>5.2.0</version.junit>
-        <version.junit.platform>1.2.0</version.junit.platform>
+        <version.junit>6.1.0</version.junit>
+        <version.junit-platform-runner>1.14.4</version.junit-platform-runner>
     </properties>
 
     <!-- Build -->
@@ -110,8 +110,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${version.maven-compiler-plugin}</version>
                 <configuration>
-                    <source>${version.jdk}</source>
-                    <target>${version.jdk}</target>
+                    <release>${version.jdk}</release>
                 </configuration>
             </plugin>
 
@@ -137,7 +136,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <finalName>${artifactId}-${version}-runnable</finalName>
+                    <finalName>${project.artifactId}-${project.version}-runnable</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
@@ -157,12 +156,23 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>${version.javafx-maven-plugin}</version>
+
+                <configuration>
+                    <mainClass>
+                        ch.hsr.ogv/ch.hsr.ogv.Main
+                    </mainClass>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
     <!-- Dependencies -->
     <dependencies>
-
         <!-- Logging -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -176,26 +186,20 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${version.log4j}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>javax.activation</artifactId>
-            <version>${version.activation}</version>
         </dependency>
 
         <!-- JAX-B -->
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${version.jaxb-api}</version>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>${version.jakarta.activation-api}</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>${version.jaxb-core}</version>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${version.jakarta.xml.bind-api}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
@@ -208,75 +212,29 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>${version.openjfx}</version>
-            <classifier>win</classifier>
+            <!--suppress UnresolvedMavenProperty -->
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${version.openjfx}</version>
-            <classifier>win</classifier>
+            <!--suppress UnresolvedMavenProperty -->
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${version.openjfx}</version>
-            <classifier>win</classifier>
+            <!--suppress UnresolvedMavenProperty -->
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>${version.openjfx}</version>
-            <classifier>win</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-base</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>linux</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>linux</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>linux</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>linux</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-base</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>mac</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>mac</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>mac</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <version>${version.openjfx}</version>
-            <classifier>mac</classifier>
+            <!--suppress UnresolvedMavenProperty -->
+            <classifier>${javafx.platform}</classifier>
         </dependency>
 
         <dependency>
@@ -312,16 +270,53 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>${version.junit.platform}</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-runner</artifactId>
-            <version>${version.junit.platform}</version>
+            <version>${version.junit-platform-runner}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>win</javafx.platform>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>linux</javafx.platform>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <javafx.platform>mac</javafx.platform>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

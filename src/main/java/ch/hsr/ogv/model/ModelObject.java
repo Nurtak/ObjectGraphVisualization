@@ -1,10 +1,10 @@
 package ch.hsr.ogv.model;
 
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 

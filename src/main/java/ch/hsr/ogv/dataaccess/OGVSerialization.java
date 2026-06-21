@@ -2,17 +2,17 @@ package ch.hsr.ogv.dataaccess;
 
 import ch.hsr.ogv.model.ModelClass;
 import ch.hsr.ogv.model.Relation;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -21,7 +21,7 @@ import java.util.Set;
 @XmlType(propOrder = {"classes", "relations"})
 public class OGVSerialization implements SerializationStrategy {
 
-    private final static Logger logger = LoggerFactory.getLogger(OGVSerialization.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OGVSerialization.class);
 
     private Set<ModelClass> classes = new LinkedHashSet<ModelClass>();
     private Set<Relation> relations = new LinkedHashSet<Relation>();
@@ -63,8 +63,7 @@ public class OGVSerialization implements SerializationStrategy {
             return true;
         }
         catch (JAXBException e) {
-            e.printStackTrace();
-            logger.debug(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
     }
@@ -79,8 +78,7 @@ public class OGVSerialization implements SerializationStrategy {
             return true;
         }
         catch (JAXBException e) {
-            e.printStackTrace();
-            logger.debug(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
     }

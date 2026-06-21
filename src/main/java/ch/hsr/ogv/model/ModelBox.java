@@ -2,14 +2,14 @@ package ch.hsr.ogv.model;
 
 import ch.hsr.ogv.dataaccess.ColorAdapter;
 import ch.hsr.ogv.dataaccess.Point3DAdapter;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.*;
 
 @XmlType(propOrder = {"name", "coordinates", "width", "height", "color", "endpoints"})

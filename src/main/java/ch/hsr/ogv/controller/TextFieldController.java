@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 public class TextFieldController {
 
-    private final static Logger logger = LoggerFactory.getLogger(TextFieldController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TextFieldController.class);
 
     private final Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
 

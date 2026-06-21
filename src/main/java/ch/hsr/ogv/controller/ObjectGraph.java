@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ObjectGraph {
 
-    private final static double ARRAYBOX_LEVEL_DIFF = 100.0;
+    private static final double ARRAYBOX_LEVEL_DIFF = 100.0;
 
     private List<PaneBox> boxes = new ArrayList<PaneBox>(); // contains normal and arrayBoxes
     private List<Arrow> arrows = new ArrayList<Arrow>();

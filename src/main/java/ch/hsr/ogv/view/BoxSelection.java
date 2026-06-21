@@ -7,7 +7,7 @@ import javafx.scene.transform.Rotate;
 public class BoxSelection extends Group {
 
     public final static int INIT_SELECT_SIZE = 4;
-    private final static Color SELECTION_COLOR = Color.DODGERBLUE;
+    private static final Color SELECTION_COLOR = Color.DODGERBLUE;
 
     private Group selection = new Group();
     private Cuboid box;

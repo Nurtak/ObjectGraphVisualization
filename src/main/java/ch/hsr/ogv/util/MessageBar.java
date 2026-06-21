@@ -14,7 +14,7 @@ public class MessageBar {
 
     private static int CLEAR_TIME_SECOND = 5;
     private static TextField messageBar;
-    private final static String defaultStyle;
+    private static final String defaultStyle;
 
     private static AtomicInteger countDown = new AtomicInteger(0);
     private static AtomicBoolean taskRunning = new AtomicBoolean(false);

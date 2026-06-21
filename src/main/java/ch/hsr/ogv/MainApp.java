@@ -16,18 +16,17 @@ import java.util.Locale;
  */
 public class MainApp extends Application {
 
-    private final static Logger logger = LoggerFactory.getLogger(MainApp.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainApp.class);
 
-    private final static UncaughtExceptionHandler ueHandler = (thread, throwable) -> {
-        logger.debug("Error in thread " + thread + ": " + throwable.getMessage());
-        throwable.printStackTrace();
+    private static final UncaughtExceptionHandler ueHandler = (thread, throwable) -> {
+        LOGGER.error("Error in thread {}: {}", thread, throwable.getMessage());
     };
 
     public static void main(String[] args) {
         // System.setProperty("prism.lcdtext", "false");
         // System.setProperty("prism.text", "t2k");
         // System.setProperty("prism.marlin", "true");
-        Locale.setDefault(new Locale("en", "EN")); // set to English
+        Locale.setDefault(Locale.ENGLISH); // set to English
         Font.loadFont(ResourceLocator.getResourcePath(Resource.SEGOEUI_TTF).toExternalForm(), Font.getDefault().getSize());
         Font.loadFont(ResourceLocator.getResourcePath(Resource.LUCIDASANS_TTF).toExternalForm(), Font.getDefault().getSize());
         Thread.setDefaultUncaughtExceptionHandler(ueHandler);

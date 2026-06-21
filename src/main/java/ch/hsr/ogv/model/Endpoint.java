@@ -1,6 +1,7 @@
 package ch.hsr.ogv.model;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
+
 import java.util.UUID;
 
 public class Endpoint {
