@@ -29,7 +29,6 @@
         <version.objimporterjfx>0.8</version.objimporterjfx>
         <version.junit>5.2.0</version.junit>
         <version.junit.platform>1.2.0</version.junit.platform>
-        <version.junit.jupiter>RELEASE</version.junit.jupiter>
     </properties>
 
     <!-- Build -->
@@ -321,12 +320,6 @@
             <artifactId>junit-platform-runner</artifactId>
             <version>${version.junit.platform}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${version.junit.jupiter}</version>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>
