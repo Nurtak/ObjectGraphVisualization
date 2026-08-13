@@ -20,7 +20,7 @@
         <version.maven-jar-plugin>3.5.0</version.maven-jar-plugin>
         <version.maven-assembly-plugin>3.8.0</version.maven-assembly-plugin>
         <version.javafx-maven-plugin>0.0.8</version.javafx-maven-plugin>
-        <version.log4j>2.26.0</version.log4j>
+        <version.log4j>2.26.1</version.log4j>
         <version.jakarta.activation-api>2.1.4</version.jakarta.activation-api>
         <version.jakarta.xml.bind-api>4.0.5</version.jakarta.xml.bind-api>
         <version.jaxb-runtime>4.0.9</version.jaxb-runtime>
